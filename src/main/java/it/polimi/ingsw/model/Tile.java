@@ -1,4 +1,11 @@
 package it.polimi.ingsw.model;
 
-public class Tile {
+public enum Tile {
+    CATS,
+    BOOKS,
+    GAMES,
+    FRAMES,
+    TROPHIES,
+    PLANTS,
+    NOTILE
 }
