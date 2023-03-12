@@ -6,6 +6,7 @@ public class Player {
     private int score;
     final private int pgID;
 
+    private Shelf shelf;
     protected Player (String nickname, int pgID){
         this.nickname = nickname;
         this.pgID = pgID;

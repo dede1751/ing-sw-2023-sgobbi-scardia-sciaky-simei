@@ -13,6 +13,7 @@ public class GameModel {
     private int currentPlayerIndex;
     private boolean gameOver;
     private List<Player> players;
+    private Board board;
 
     public GameModel(int numPlayers, int commonGoalX, int commonGoalY) {
         this.commonGoalNumX = commonGoalX;
