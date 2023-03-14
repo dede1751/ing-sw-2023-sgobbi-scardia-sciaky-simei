@@ -13,8 +13,7 @@ public class Shelf{
     */
     private final List<Stack<Tile>> content;
 
-    protected Shelf()
-    {
+    protected Shelf() {
         this.content = new ArrayList<Stack<Tile>>();
         for (int i = 0; i < N_COL; i++) {
             this.content.add(i, new Stack<Tile>());
@@ -24,11 +23,10 @@ public class Shelf{
     /*
     * if row or col is out of index the function returns null
     */
-    public Tile getTile(int row, int col)
-    {
+    public Tile getTile(int row, int col) {
         try {
             return this.content.get(col).get(row);
-        }catch (IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             return null;
         }
     };
