@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.utils.exceptions.occupiedTileException;
+
 import java.util.*;
 
 public class GameModel {
@@ -15,11 +17,15 @@ public class GameModel {
     private List<Player> players;
     private Board board;
 
+    private TileBag tileBag;
+
     public GameModel(int numPlayers, int commonGoalX, int commonGoalY) {
         this.commonGoalNumX = commonGoalX;
         this.commonGoalNumY = commonGoalY;
-
-        System.out.println("Initialized game with " + numPlayers +  " players");
+        this.tileBag=new TileBag();
+this.board=new Board();
+this.players=new ArrayList<Player>();
+ System.out.println("Initialized game with " + numPlayers +  " players");
     }
 
     public int getCommonGoalX(){
@@ -42,26 +48,59 @@ public class GameModel {
         return this.gameOver;
     };
 
-    public void addPlayer(String nickname, int pgID){};
+    public void addPlayer(String nickname, int pgID){
+        players.add(new Player(nickname,pgID));
+        System.out.println("Player " + nickname +  " with id: "+ pgID);
+    };
 
-    public List<Player> getPlayers(){};
+    public List<Player> getPlayers(){
+            return players;
+    };
 
-    public Player getCurrentPlayer(){};
+    public Player getCurrentPlayer(){
+        return players.get(currentPlayerIndex);
+    };
 
-    public Player setCurrentPlayer(int index){};
+    public Player setCurrentPlayer(int index){
+        return players.get(index);
+    };
 
-    public Tile getTile(Coordinate coordinates){};
+    public Tile getTile(Coordinate coordinates){
+        return board.getTile(coordinates);
+    };
 
-    public List<Coordinate> getAllCoordinates(){};
+    public List<Coordinate> getAllCoordinates(){
+        return board.getTiles().keySet().stream().toList();
+    };
 
-    public List<Coordinate> getOccupied(){};
+    public List<Coordinate> getOccupied(){
+        List<Coordinate> occupied= board.getTiles()
+                .entrySet()
+                .stream()
+                .filter(x-> !(Tile.NOTILE.equals(x.getValue())))
+                .map(Map.Entry::getKey).toList();
+        return occupied;
+    };
 
-    public void insertTile(Coordinate coordinates, Tile tiles){};
+    public void insertTile(Coordinate coordinates, Tile tile) throws occupiedTileException{
+        if (board.getTile(coordinates).equals(Tile.NOTILE)){
+            board.insertTile(coordinates,tile);
+        }
+        else{
+            throw new occupiedTileException();
+        }
 
-    public void shelveSelection(List<Coordinate> tiles, int column){};
+    };
 
-    public void addCurrentPlayerScore(int score){};
+    public void shelveSelection(List<Coordinate> tiles, int column){
 
-    public int getTileAmount(Tile tile){};
+
+    };
+
+    public void addCurrentPlayerScore(int score){
+        players.get(currentPlayerIndex).addScore(score);
+    };
+
+    public int getTileAmount(Tile tile){return tileBag.getTileAmount(tile);}
 
 }
