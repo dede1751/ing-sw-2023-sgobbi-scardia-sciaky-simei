@@ -2,23 +2,41 @@ package it.polimi.ingsw.model;
 
 public class Coordinate {
 
-    private int row;
+    private final int row;
 
-    private int col;
+    private final int col;
 
     protected Coordinate(int row, int col) {
         this.row = row;
         this.col = col;
     }
-    public int getRow() {};
 
-    public int getCol() {};
+    public int getRow() {
+        return this.row;
+    };
 
-    public Coordinate getLeft() {};
+    public int getCol() {
+        return this.col;
+    };
 
-    public Coordinate getRight() {};
+    public Coordinate getLeft() {
+        return new Coordinate(row, col - 1);
+    };
 
-    public Coordinate getUp() {};
+    public Coordinate getRight() {
+        return new Coordinate(row, col + 1);
+    };
 
-    public Coordinate getDown() {};
+    public Coordinate getUp() {
+        return new Coordinate(row + 1, col);
+    };
+
+    public Coordinate getDown() {
+        return new Coordinate(row - 1, col);
+    };
+
+    @Override
+    public int hashCode() {
+        return this.row * 9 + this.col;
+    }
 }
