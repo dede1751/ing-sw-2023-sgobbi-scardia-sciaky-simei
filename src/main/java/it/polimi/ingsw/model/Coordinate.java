@@ -28,11 +28,11 @@ public class Coordinate {
     };
 
     public Coordinate getUp() {
-        return new Coordinate(row + 1, col);
+        return new Coordinate(row - 1, col);
     };
 
     public Coordinate getDown() {
-        return new Coordinate(row - 1, col);
+        return new Coordinate(row + 1, col);
     };
 
     @Override
