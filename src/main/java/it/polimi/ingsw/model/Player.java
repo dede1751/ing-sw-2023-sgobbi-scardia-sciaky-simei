@@ -25,7 +25,7 @@ public class Player {
         return pgID;
     }
 
-    public Shelf getShelf(){};
+    public Shelf getShelf(){return shelf;};
 
     public int addScore(int score){
         this.score = this.score+score;
