@@ -39,4 +39,13 @@ public class Coordinate {
     public int hashCode() {
         return this.row * 9 + this.col;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Coordinate c)) {
+            return false;
+        }
+
+        return this.row == c.row && this.col == c.col;
+    }
 }
