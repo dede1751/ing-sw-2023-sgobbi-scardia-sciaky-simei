@@ -83,7 +83,7 @@ public class Shelf{
     /*
     * return all the indexes of the columns that still have space, with the remaining spaces
     */
-    public Map<Integer, Integer> remaingSpace()
+    public Map<Integer, Integer> remainingSpace()
     {
         var res = new HashMap<Integer, Integer>();
         for(var x : availableColumns(0)){
