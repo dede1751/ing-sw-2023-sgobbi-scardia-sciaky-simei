@@ -4,8 +4,8 @@ import java.util.*;
 
 public class Shelf{
 
-    private final static int N_ROW = 6;
-    private final static int N_COL = 5;
+    protected final static int N_ROW = 6;
+    protected final static int N_COL = 5;
 
 
     /**

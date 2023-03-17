@@ -1,6 +1,17 @@
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofMinutes;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTimeout;
+import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,22 +49,24 @@ public class ShelfTest {
         for (int i = 0; i < columns.size(); i++) {
             shelf.addTiles(columns.get(i), i);
         }
-
         var s = shelf.getAllShelf();
         for (int i = 0; i < columns.size() ; i++) {
             for (int j = 0; j < columns.get(i).size(); j++) {
-
+                assertEquals(columns.get(i).get(j), s[j][i]);
+                assertEquals(columns.get(i).get(j), shelf.getTile(j, i));
+                assertEquals(s[j][j], shelf.getTile(j, i));
+            }
+            for(int j = columns.get(i).size()-1; j < Shelf.N_ROW; j++) {
+                assertEquals(s[j][i], Tile.NOTILE);
+            }
+        }
+        for (int i = columns.size()-1; i < Shelf.N_COL; i++){
+            for (int j = 0; j < Shelf.N_ROW; j++){
+                assertEquals(s[j][i], Tile.NOTILE);
+                assertEquals(shelf.getTile(j, i),Tile.NOTILE);
             }
         }
 
-        for
-
-
-
-
-
     }
-
-
 
 }
