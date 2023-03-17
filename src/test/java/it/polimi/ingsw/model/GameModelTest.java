@@ -1,5 +1,5 @@
 package it.polimi.ingsw.model;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class GameModelTest {
@@ -11,14 +11,9 @@ public class GameModelTest {
             var player=new Player("nick_"+i,i);
             game.addPlayer("nick_"+i,i);
 
-
-
-
-
-
             if (!(player.getNickname().equals(game.getPlayers().get(i).getNickname())&&player.getPg()==game.getPlayers().get(i).getPg())){
-                assertTrue(false);
-           }
+                fail();
+            }
 
           //  assertTrue(player.equals(game.getPlayers().get(i)) );
 
@@ -30,9 +25,9 @@ public class GameModelTest {
         var game = new GameModel(4, 0, 0);
         var occupied= game.getOccupied();
         var board= game.getAllCoordinates();
-        for(int i=0;i< board.size();i++){
-            if(!(game.getTile(board.get(i)).equals(Tile.NOTILE))){
-                assertTrue(occupied.contains(board.get(i)));
+        for (Coordinate coordinate : board) {
+            if (!(game.getTile(coordinate).equals(Tile.NOTILE))) {
+                assertTrue(occupied.contains(coordinate));
             }
 
         }

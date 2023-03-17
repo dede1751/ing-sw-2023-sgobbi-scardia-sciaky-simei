@@ -44,14 +44,13 @@ public class Shelf{
         Tile[][] result = new Tile[N_ROW][N_COL];
         for (int i = 0; i < N_ROW; i++){
             for(int j = 0; j<N_COL; j++){
-                var tile = getTile(j, i);
+                var tile = getTile(i, j);
                 if(tile == null){
                     result[i][j] = Tile.NOTILE;
                 }
                 else {
                     result[i][j] = tile;
                 }
-                //content is transposed respectively to the traditional matrix, where the [0,0]point
             }
         }
         return result;
