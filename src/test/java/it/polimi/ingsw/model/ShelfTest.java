@@ -49,7 +49,7 @@ public class ShelfTest {
      */
     @Test
     @DisplayName("Test addTiles, getAllShelf, getTiles all together")
-    public void test_addTiles_getAllShelf_getTiles() {
+    public void addTiles_getAllShelf_getTilesTest() {
         var s = shelf.getAllShelf();
         for( int i = 0; i < columns.size(); i++ ) {
             for( int j = 0; j < columns.get(i).size(); j++ ) {
@@ -72,7 +72,7 @@ public class ShelfTest {
     
     @Test
     @DisplayName("test for all valid insertion sizes")
-    public void test_availableColumn() {
+    public void availableColumnTest() {
         assertEquals(shelf.availableColumns(1), List.of(0, 1, 3, 4));
         assertEquals(shelf.availableColumns(2), List.of(0, 1, 4));
         assertEquals(shelf.availableColumns(3), List.of(0, 4));
@@ -80,7 +80,7 @@ public class ShelfTest {
     }
     
     @Test
-    public void test_spaceInColumn() {
+    public void spaceInColumnTest() {
         assertEquals(3, shelf.spaceInColumn(0));
         assertEquals(2, shelf.spaceInColumn(1));
         assertEquals(0, shelf.spaceInColumn(2));
@@ -89,13 +89,13 @@ public class ShelfTest {
     }
     
     @Test
-    public void test_remainingSpace() {
+    public void remainingSpaceTest() {
         var rem = shelf.remainingSpace();
         rem.forEach((x, y) -> assertEquals(shelf.spaceInColumn(x), y));
     }
     
     @Test
-    public void test_isFull() {
+    public void isFullTest() {
         assertFalse(shelf.isFull());
         var s = new Shelf();
         for( int i = 0; i < Shelf.N_COL; i++ ) {

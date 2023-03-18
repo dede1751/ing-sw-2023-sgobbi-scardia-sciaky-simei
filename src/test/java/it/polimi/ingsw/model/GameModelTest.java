@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.occupiedTileException;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * this class tests {@link GameModel}
  */
+@Tag("GameModel")
+@Tag("Model")
 public class GameModelTest {
     
     @Test

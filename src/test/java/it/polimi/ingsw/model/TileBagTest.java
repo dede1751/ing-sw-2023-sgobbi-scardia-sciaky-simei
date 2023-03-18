@@ -23,7 +23,7 @@ public class TileBagTest {
     }
     
     @Test
-    public void test_getTileAmount() {
+    public void getTileAmountTest() {
         for( var tile : Tile.values() ) {
             if( tile != Tile.NOTILE )
                 assertEquals(22, bag.getTileAmount(tile), () -> "tile :" + tile.name());
@@ -31,7 +31,7 @@ public class TileBagTest {
     }
     
     @Test
-    public void test_removeSelection() {
+    public void removeSelectionTest() {
         var sel = List.of(Tile.PLANTS, Tile.CATS, Tile.GAMES);
         bag.removeSelection(sel);
         for( var tile : sel ) {
