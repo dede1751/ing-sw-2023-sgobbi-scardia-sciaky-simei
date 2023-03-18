@@ -18,19 +18,25 @@ public class TileBag {
     /**
      *
      * @param tile the type of the tiles
-     * @return number of tiles of type tile currently in the bag and in the board
+     * @return number of tiles of type tile currently in the bag and in the board.
+     *         If tile=NOTILE returns 0
+     *
      */
     int getTileAmount(Tile tile){
-        return this.bag.get(tile);
+        if(tile != Tile.NOTILE) return this.bag.get(tile);
+        else return 0;
     }
     /**
-     * @param selection selection of tiles to remove. Every tile mustn't be NOTILE and the caller
+     * @param selection selection of tiles to remove. the caller
      *                  must ensure that there are enough tile in the bag
+     *                  and NOTILEs are ignored
      */
     void removeSelection(List<Tile> selection){
         for(Tile tile: Tile.values()) {
-            int newValue = this.bag.get(tile) - Collections.frequency(selection, tile);
-            this.bag.replace(tile, newValue);
+            if(tile != Tile.NOTILE) {
+                int newValue = this.bag.get(tile) - Collections.frequency(selection, tile);
+                this.bag.replace(tile, newValue);
+            }
         }
     }
 }

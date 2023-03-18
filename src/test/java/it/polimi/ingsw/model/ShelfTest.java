@@ -2,12 +2,11 @@ package it.polimi.ingsw.model;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,17 +15,17 @@ import java.util.List;
  */
 @Tag("Shelf")
 @Tag("Model")
-@TestInstance(Lifecycle.PER_CLASS)
+@TestInstance(Lifecycle.PER_METHOD)
 public class ShelfTest {
-    private Shelf shelf;
-    private List<List<Tile>> columns;
-    @BeforeAll
+    public Shelf shelf;
+    public List<List<Tile>> columns;
+    @BeforeEach
     public void initParam(){
         shelf = new Shelf();
         fillShelfDet();
     }
 
-    private void fillShelfDet() {
+    public void fillShelfDet() {
 
         columns = new ArrayList<List<Tile>>();
 
@@ -90,8 +89,23 @@ public class ShelfTest {
     }
 
     @Test
-    public void remainingSpace(){
+    public void test_remainingSpace(){
         var rem = shelf.remainingSpace();
         rem.forEach((x, y) -> assertEquals(shelf.spaceInColumn(x), y));
+    }
+
+    @Test
+    public void test_isFull(){
+        assertFalse(shelf.isFull());
+        var s = new Shelf();
+        for (int i = 0; i < Shelf.N_COL; i++){
+            s.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES), i);
+        }
+        assertTrue(s.isFull());
+        s = new Shelf();
+        for (int i = 0; i < Shelf.N_COL; i++){
+            s.addTiles(List.of(Tile.NOTILE, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES), i);
+        }
+        assertFalse(s.isFull());
     }
 }

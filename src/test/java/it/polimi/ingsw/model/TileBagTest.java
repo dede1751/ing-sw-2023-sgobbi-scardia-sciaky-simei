@@ -1,21 +1,18 @@
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance.*;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 @Tag("TileBag")
 @Tag("Model")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestInstance(Lifecycle.PER_METHOD)
 public class TileBagTest {
 
-    private TileBag bag;
+    public TileBag bag;
 
-    @BeforeAll
+    @BeforeEach
     public void init_param(){
         bag = new TileBag();
     }
@@ -23,16 +20,15 @@ public class TileBagTest {
     @Test
     public void test_getTileAmount(){
         for(var tile : Tile.values()){
-            assertEquals(22, bag.getTileAmount(tile));
+            if(tile != Tile.NOTILE) assertEquals(22, bag.getTileAmount(tile), ()-> "tile :" + tile.name());
         }
     }
-
     @Test
     public void test_removeSelection(){
         var sel = List.of(Tile.PLANTS, Tile.CATS, Tile.GAMES);
         bag.removeSelection(sel);
         for (var tile: sel) {
-            assertEquals(21, bag.getTileAmount(tile));
+            assertEquals(21, bag.getTileAmount(tile), () -> "tile : " + tile.name());
         }
     }
 
