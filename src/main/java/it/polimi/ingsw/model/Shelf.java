@@ -62,13 +62,7 @@ public class Shelf{
      * @return True if every box of the shelf is occupied (not Tile.NOTILE)
      */
     public boolean isFull() {
-        int result = 0;
-
-        for(List<Tile> x: content){
-            result += x.size();
-        }
-
-        return result == N_COL+N_ROW;
+        return content.stream().allMatch(x -> x.size()== N_ROW);
     }
 
     /**
@@ -110,12 +104,12 @@ public class Shelf{
 
     /**
      * Add ordered list of tiles to given column
-     * @param tiles Not null, have less or equal than 3 element, be already ordered
+     * @param tiles Not null, have less or equal than 3 element, be already ordered, NOTILEs will be ignored
      * @param col   Column index, between 0 and 5
      */
     public void addTiles(List<Tile> tiles, int col) {
         for(var x : tiles){
-            content.get(col).push(x);
+            if (x != Tile.NOTILE) content.get(col).push(x);
         }
     }
 
