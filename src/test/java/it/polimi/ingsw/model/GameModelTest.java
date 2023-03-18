@@ -2,6 +2,10 @@ package it.polimi.ingsw.model;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * this class tests {@link GameModel}
+ */
 public class GameModelTest {
     @Test
     public void addPlayerTest() {
@@ -29,12 +33,6 @@ public class GameModelTest {
             if (!(game.getTile(coordinate).equals(Tile.NOTILE))) {
                 assertTrue(occupied.contains(coordinate));
             }
-
         }
-
-
     }
-
-
-
 }

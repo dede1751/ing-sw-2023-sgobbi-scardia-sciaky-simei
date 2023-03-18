@@ -69,14 +69,15 @@ public class Shelf{
     };
 
     /**
-     * @param selectionLength the lenght of the selection, is supposed to be correct and between 1 and 3
+     * @param selectionLength the length of the selection, is supposed to be correct and between 1 and 3
      * @return the index of all columns that have enough space for the selection
      */
     public List<Integer> availableColumns(int selectionLength)
     {
         var res = new ArrayList<Integer>();
         for(int i = 0; i < N_COL; i++){
-            if(content.get(i).size() < N_ROW-selectionLength) res.add(i);
+            if(content.get(i).size() <= (N_ROW-selectionLength))
+                res.add(i);
         }
         return res;
     };
@@ -90,7 +91,6 @@ public class Shelf{
     {
         return N_ROW - content.get(column).size();
     };
-
 
     /**
      * @return all the indexes of the columns that still have space, with the remaining space

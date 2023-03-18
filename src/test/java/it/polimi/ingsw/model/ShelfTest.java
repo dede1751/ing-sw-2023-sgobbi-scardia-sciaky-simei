@@ -1,48 +1,57 @@
 package it.polimi.ingsw.model;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.util.ArrayList;
 import java.util.List;
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ShelfTest {
 
-    Shelf shelf;
+/**
+ * this class test {@link Shelf}
+ */
+@Tag("Shelf")
+@Tag("Model")
+@TestInstance(Lifecycle.PER_CLASS)
+public class ShelfTest {
+    private Shelf shelf;
+    private List<List<Tile>> columns;
     @BeforeAll
-    public void init_param(){
+    public void initParam(){
         shelf = new Shelf();
+        fillShelfDet();
     }
 
-    @Test
-    public void test_insert_and_getShelf(){
+    private void fillShelfDet() {
 
-        var columns = new ArrayList<List<Tile>>();
+        columns = new ArrayList<List<Tile>>();
 
-        columns.add(0,new ArrayList<>());
-        columns.get(0).add(0, Tile.CATS);
-        columns.get(0).add(1, Tile.BOOKS);
-        columns.get(0).add(2, Tile.PLANTS);
-        columns.add(1, new ArrayList<>());
-        columns.get(1).add(0, Tile.PLANTS);
-        columns.get(1).add(1, Tile.TROPHIES);
-        columns.add(2, new ArrayList<>());
-        columns.get(2).add(0, Tile.FRAMES);
-        columns.get(2).add(1, Tile.TROPHIES);
-        columns.get(2).add(2, Tile.TROPHIES);
-        columns.get(2).add(3, Tile.TROPHIES);
-        columns.get(2).add(4, Tile.TROPHIES);
-        columns.get(2).add(5, Tile.TROPHIES);
-        columns.add(3, new ArrayList<>());
-        columns.get(3).add(0, Tile.PLANTS);
-
+        columns.add(0, List.of(Tile.CATS, Tile.BOOKS, Tile.PLANTS));
+        columns.add(1, List.of(Tile.PLANTS, Tile.TROPHIES, Tile.BOOKS, Tile.CATS));
+        columns.add(2, List.of(Tile.FRAMES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES));
+        columns.add(3, List.of(Tile.PLANTS, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS));
+        /*
+         * COL 0 : CBP
+         * COL 1 : PTBC
+         * COL 2 : FTTTTT (full)
+         * COL 3 : PPPPP
+         * COL 4 : (empty)
+         */
         for (int i = 0; i < columns.size(); i++) {
             shelf.addTiles(columns.get(i), i);
         }
+    }
+
+    /**
+     * this method tests the addTiles(), getAllShelf(), getTiles() methods
+     */
+    @Test
+    @DisplayName("Test addTiles, getAllShelf, getTiles all together")
+    public void test_addTiles_getAllShelf_getTiles(){
         var s = shelf.getAllShelf();
         for (int i = 0; i < columns.size() ; i++) {
             for (int j = 0; j < columns.get(i).size(); j++) {
@@ -62,5 +71,27 @@ public class ShelfTest {
         }
 
     }
+    @Test
+    @DisplayName("test for all valid insertion sizes")
+    public void test_availableColumn(){
+        assertEquals(shelf.availableColumns(1), List.of(0, 1, 3, 4 ));
+        assertEquals(shelf.availableColumns(2), List.of(0, 1, 4 ));
+        assertEquals(shelf.availableColumns(3), List.of(0, 4));
+        assertEquals(shelf.availableColumns(0), List.of(0, 1, 2, 3, 4));
+    }
 
+    @Test
+    public void test_spaceInColumn(){
+        assertEquals(3, shelf.spaceInColumn(0));
+        assertEquals(2, shelf.spaceInColumn(1));
+        assertEquals(0, shelf.spaceInColumn(2));
+        assertEquals(1, shelf.spaceInColumn(3));
+        assertEquals(6, shelf.spaceInColumn(4));
+    }
+
+    @Test
+    public void remainingSpace(){
+        var rem = shelf.remainingSpace();
+        rem.forEach((x, y) -> assertEquals(shelf.spaceInColumn(x), y));
+    }
 }
