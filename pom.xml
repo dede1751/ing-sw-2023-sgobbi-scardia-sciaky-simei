@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>it.polimi.ingsw</groupId>
-  <artifactId>ing-sw-2023-sgobbi-scardia-sciaky-simei</artifactId>
+  <artifactId>softeng-gc05</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
