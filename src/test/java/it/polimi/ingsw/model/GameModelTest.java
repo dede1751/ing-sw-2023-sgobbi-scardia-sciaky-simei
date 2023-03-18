@@ -1,17 +1,45 @@
 package it.polimi.ingsw.model;
-import org.junit.jupiter.api.Test;
+import it.polimi.ingsw.utils.exceptions.occupiedTileException;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * this class tests {@link GameModel}
  */
 public class GameModelTest {
+
+    @Test
+    void testInitialization() {
+        GameModel game = new GameModel(4, 6, 5);
+        assertEquals(6, game.getCommonGoalX());
+        assertEquals(5, game.getCommonGoalY());
+        assertEquals(4,game.getNumPlayers());
+        assertFalse(game.isFinalTurn());
+    }
+
+
+@Test
+public void isFinalTurn(){
+    GameModel game = new GameModel(4, 0, 0);
+    assertFalse(game.isFinalTurn());
+
+
+}
     @Test
     public void addPlayerTest() {
-        int numPlayers = 4;
-        var game = new GameModel(numPlayers, 0, 0);
-        for (int i=0; i < numPlayers; i++) {
+
+        GameModel game = new GameModel(4, 0, 0);
+        for (int i=0; i < 4; i++) {
             var player=new Player("nick_"+i,i);
             game.addPlayer("nick_"+i,i);
 
@@ -24,8 +52,39 @@ public class GameModelTest {
 
         }
     }
+
+
     @Test
-    public void getOccupiedTest(){
+    void testGetAndSetCurrentPlayer() {
+        GameModel game = new GameModel(2, 5, 6);
+        game.addPlayer("Player 1", 1);
+        game.addPlayer("Player 2", 2);
+
+        assertEquals("Player 1", game.getCurrentPlayer().getNickname());
+    }
+
+
+
+
+
+
+
+
+
+    @Test
+    void testGetCoordinates() throws occupiedTileException {
+        GameModel game = new GameModel(4, 5, 6);
+        Tile tile1 =Tile.TROPHIES;
+        game.insertTile(new Coordinate(3, 4), tile1);
+        assertTrue(game.getAllCoordinates().contains(new Coordinate(3, 4)));
+        assertTrue(game.getOccupied().contains(new Coordinate(3, 4)));
+        assertEquals(45, game.getAllCoordinates().size());
+        assertEquals(1, game.getOccupied().size());
+
+}
+
+    @Test
+    public void getOccupiedATest(){
         var game = new GameModel(4, 0, 0);
         var occupied= game.getOccupied();
         var board= game.getAllCoordinates();
@@ -35,4 +94,69 @@ public class GameModelTest {
             }
         }
     }
+    @Test
+    void getTileInsertTileTest() throws occupiedTileException {
+        GameModel game = new GameModel(4, 5, 6);
+        Tile tile =Tile.GAMES;
+        Coordinate coordinate = new Coordinate(0, 0);
+        game.insertTile(coordinate, tile);
+        assertEquals(tile, game.getTile(coordinate));
+        assertNull(game.getTile(new Coordinate(5, 5)));
+    }
+
+
+    @Test
+    void removeSelectionTest() throws occupiedTileException {
+        GameModel game = new GameModel(4, 5, 6);
+        Tile tile1 =Tile.TROPHIES;
+        Tile tile2 =Tile.TROPHIES;
+        Tile tile3 =Tile.TROPHIES;
+
+        game.insertTile(new Coordinate(3, 4), tile1);
+        game.insertTile(new Coordinate(3, 5), tile2);
+        game.insertTile(new Coordinate(3, 6), tile3);
+
+        assertEquals(Tile.TROPHIES,game.getTile(new Coordinate(3,4)));
+        assertEquals(Tile.TROPHIES,game.getTile(new Coordinate(3,5)));
+        assertEquals(Tile.TROPHIES,game.getTile(new Coordinate(3,6)));
+
+        List<Coordinate> removing= new ArrayList<Coordinate>();
+        removing.add(new Coordinate(3,4));
+        removing.add(new Coordinate(3,5));
+        removing.add(new Coordinate(3,6));
+        game.removeSelection(removing);
+
+        assertEquals(Tile.NOTILE,game.getTile(new Coordinate(3,4)));
+        assertEquals(Tile.NOTILE,game.getTile(new Coordinate(3,5)));
+        assertEquals(Tile.NOTILE,game.getTile(new Coordinate(3,6)));
+
+
+
+
+    }
+
+    @Test
+    public void addCurrentPlayerScoreTest() {
+        GameModel game = new GameModel(2,5,6);
+        game.addPlayer("Player 1", 1);
+        game.addPlayer("Player 2", 2);
+        int startingScore = game.getCurrentPlayer().getScore();
+        int scoreToAdd = 10;
+        int expectedScore = startingScore + scoreToAdd;
+        game.addCurrentPlayerScore(scoreToAdd);
+
+        assertEquals(expectedScore, game.getCurrentPlayer().getScore());
+    }
+
+
+        @Test
+    public void getTileAmountTest() throws occupiedTileException {
+            GameModel game = new GameModel(2,5,6);
+
+            assertEquals(22,game.getTileAmount(Tile.TROPHIES));
+
+
+
+        }
+
 }
