@@ -12,6 +12,8 @@ public class GameModel {
     private final int commonGoalNumX;
     private final int commonGoalNumY;
 
+    private final int numPlayers;
+
     private final Stack<Integer> commonGoalStackX;
     private final Stack<Integer> commonGoalStackY;
 
@@ -31,15 +33,17 @@ public class GameModel {
     public GameModel(int numPlayers, int commonGoalX, int commonGoalY) {
         this.commonGoalNumX = commonGoalX;
         this.commonGoalStackX = new Stack<Integer>();
-
+        //c'è da inizializzare gli stack in base al numero di giocatori
         this.commonGoalNumY = commonGoalY;
         this.commonGoalStackY = new Stack<Integer>();
 
         this.tileBag = new TileBag();
+        this.gameOver=false;
 
         this.board = new Board(numPlayers);
         this.players = new ArrayList<Player>();
-
+        this.numPlayers=numPlayers;
+        this.currentPlayerIndex=0;
         System.out.println("Initialized game with " + numPlayers +  " players");
     }
 
@@ -57,6 +61,10 @@ public class GameModel {
      */
     public int getCommonGoalY(){
         return commonGoalNumY;
+    };
+
+    public int getNumPlayers(){
+        return numPlayers;
     };
 
     /**
