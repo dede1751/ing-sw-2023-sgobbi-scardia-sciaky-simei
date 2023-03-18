@@ -40,15 +40,8 @@ public class GameModelTest {
         for( int i = 0; i < 4; i++ ) {
             var player = new Player("nick_" + i, i);
             game.addPlayer("nick_" + i, i);
-            
-            if( !(player.getNickname().equals(game.getPlayers().get(i).getNickname()) &&
-                  player.getPg() == game.getPlayers().get(i).getPg()) ) {
-                fail();
-            }
-            
-            //  assertTrue(player.equals(game.getPlayers().get(i)) );
-            
-            
+            assertFalse(!(player.getNickname().equals(game.getPlayers().get(i).getNickname()) &&
+                          player.getPg() == game.getPlayers().get(i).getPg()));
         }
     }
     
@@ -64,17 +57,10 @@ public class GameModelTest {
     
     
     @Test
-    void testGetCoordinates() throws occupiedTileException {
+    void testGetCoordinates() {
         GameModel game = new GameModel(4, 5, 6);
         Tile tile1 = Tile.TROPHIES;
-        assertDoesNotThrow(() -> {
-            try {
-                game.insertTile(new Coordinate(3, 4), tile1);
-            }
-            catch( Exception e ) {
-                throw e;
-            }
-        });
+        assertDoesNotThrow(() -> game.insertTile(new Coordinate(3, 4), tile1));
         assertTrue(game.getAllCoordinates().contains(new Coordinate(3, 4)));
         assertTrue(game.getOccupied().contains(new Coordinate(3, 4)));
         assertEquals(45, game.getAllCoordinates().size());
@@ -95,24 +81,23 @@ public class GameModelTest {
     }
     
     @Test
-    void getTileInsertTileTest() throws occupiedTileException {
+    void getTileInsertTileTest() {
         GameModel game = new GameModel(4, 5, 6);
         Tile tile = Tile.GAMES;
         Coordinate coordinate = new Coordinate(4, 4);
-        var out = assertThrows(OutOfBoundCoordinateException.class, () -> {
-            game.insertTile(new Coordinate(0, 0), Tile.TROPHIES);
-        });
+        var out = assertThrows(OutOfBoundCoordinateException.class,
+                               () -> game.insertTile(new Coordinate(0, 0), Tile.TROPHIES));
+        out.stackPrintOrigin();
         assertDoesNotThrow(() -> game.insertTile(coordinate, tile));
         assertEquals(tile, game.getTile(coordinate));
-        var occ = assertThrows(occupiedTileException.class, () -> {
-            game.insertTile(coordinate, Tile.TROPHIES);
-        });
+        var occ = assertThrows(occupiedTileException.class, () -> game.insertTile(coordinate, Tile.TROPHIES));
+        occ.stackPrintOrigin();
         assertEquals(Tile.NOTILE, game.getTile(new Coordinate(5, 5)));
     }
     
     
     @Test
-    void removeSelectionTest() throws occupiedTileException {
+    void removeSelectionTest() {
         GameModel game = new GameModel(4, 5, 6);
         Tile tile1 = Tile.TROPHIES;
         Tile tile2 = Tile.TROPHIES;
@@ -154,12 +139,9 @@ public class GameModelTest {
     
     
     @Test
-    public void getTileAmountTest() throws occupiedTileException {
+    public void getTileAmountTest() {
         GameModel game = new GameModel(2, 5, 6);
-        
         assertEquals(22, game.getTileAmount(Tile.TROPHIES));
-        
-        
     }
     
 }

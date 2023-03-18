@@ -38,9 +38,34 @@ public class GameModel {
     public GameModel(int numPlayers, int commonGoalX, int commonGoalY) {
         this.commonGoalNumX = commonGoalX;
         this.commonGoalStackX = new Stack<Integer>();
-        //c'è da inizializzare gli stack in base al numero di giocatori
+        
         this.commonGoalNumY = commonGoalY;
         this.commonGoalStackY = new Stack<Integer>();
+        switch( numPlayers ) {
+            case 2:
+                this.commonGoalStackX.push(4);
+                this.commonGoalStackX.push(8);
+                this.commonGoalStackY.push(4);
+                this.commonGoalStackY.push(8);
+            case 3:
+                this.commonGoalStackX.push(4);
+                this.commonGoalStackX.push(6);
+                this.commonGoalStackX.push(8);
+                this.commonGoalStackY.push(4);
+                this.commonGoalStackY.push(6);
+                this.commonGoalStackY.push(8);
+            case 4:
+                this.commonGoalStackX.push(2);
+                this.commonGoalStackX.push(4);
+                this.commonGoalStackX.push(6);
+                this.commonGoalStackX.push(8);
+                this.commonGoalStackY.push(4);
+                this.commonGoalStackY.push(2);
+                this.commonGoalStackY.push(6);
+                this.commonGoalStackY.push(8);
+            
+        }
+        
         
         this.tileBag = new TileBag();
         this.gameOver = false;

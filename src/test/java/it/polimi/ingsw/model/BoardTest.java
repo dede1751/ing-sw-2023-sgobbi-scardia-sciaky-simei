@@ -40,12 +40,7 @@ public class BoardTest {
         var c = new Coordinate(6, 6);
         selection.add(c);
         assertDoesNotThrow(() -> {
-            try {
-                board.insertTile(c, Tile.TROPHIES);
-            }
-            catch( Exception e ) {
-                throw e;
-            }
+            board.insertTile(c, Tile.TROPHIES);
         });
         assertEquals(board.getTile(c), Tile.TROPHIES);
         

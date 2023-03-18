@@ -91,6 +91,6 @@ public class Coordinate {
     
     @Override
     public String toString() {
-        return "(" + String.valueOf(row) + String.valueOf(col) + ")";
+        return "(" + row + "," + col + ")";
     }
 }
