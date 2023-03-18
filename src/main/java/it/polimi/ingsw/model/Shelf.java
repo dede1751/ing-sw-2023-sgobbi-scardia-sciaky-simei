@@ -1,6 +1,11 @@
 package it.polimi.ingsw.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Stack;
 
 /**
  * Shelf representation within the model
@@ -10,7 +15,6 @@ public class Shelf{
     protected final static int N_ROW = 6;
     protected final static int N_COL = 5;
 
-
     /**
      * Shelf represented as a list of stacks, where each stack represents a column.
      * Row: 0 is the bottom row, 5 is the top row
@@ -19,10 +23,10 @@ public class Shelf{
     private final List<Stack<Tile>> content;
 
     protected Shelf() {
-        this.content = new ArrayList<Stack<Tile>>();
+        this.content = new ArrayList<>();
 
         for (int i = 0; i < N_COL; i++) {
-            this.content.add(i, new Stack<Tile>());
+            this.content.add(i, new Stack<>());
         }
     }
 
