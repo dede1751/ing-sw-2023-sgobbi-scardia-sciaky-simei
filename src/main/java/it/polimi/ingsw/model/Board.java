@@ -2,10 +2,18 @@ package it.polimi.ingsw.model;
 
 import java.util.*;
 
+/**
+ * Board representation for the model
+ */
 public class Board {
 
     private final Map<Coordinate, Tile> tileOccupancy;
 
+    /**
+     * Initialize board for the given number of players
+     * The player number cannot change dynamically throughout the game
+     * @param numPlayers Total number of players for the game
+     */
     protected Board(int numPlayers) {
         this.tileOccupancy = new HashMap<Coordinate, Tile>();
 
@@ -48,20 +56,42 @@ public class Board {
         }
     };
 
+    /**
+     * Get the tile on the board at the given coordinate
+     * @param coordinate Coordinate to search for a tile
+     * @return           Tile at coordinate, null if coordinate is not in the board
+     */
     public Tile getTile(Coordinate coordinate) {
         return this.tileOccupancy.get(coordinate);
     };
 
+    /**
+     * Get Coordinate to File mapping for the current board
+     * The map only contains "legal" coordinates, meaning coordinates usable when playing with the number of players
+     * the board has been initialized with.
+     * @return Copy of the Coordinate->Tile map
+     */
     public Map<Coordinate, Tile> getTiles() {
         return new HashMap<Coordinate, Tile>(this.tileOccupancy);
     };
 
+    /**
+     * Remove the tiles the list of selected coordinates.
+     * Coordinates must be already present in the board.
+     * @param selection List of coordinates to be emptied
+     */
     public void removeSelection(List<Coordinate> selection) {
         for (Coordinate coordinate: selection) {
             this.tileOccupancy.put(coordinate, Tile.NOTILE);
         }
     };
 
+    /**
+     * Insert tile at given coordinate.
+     * Coordinate must be already present in the board.
+     * @param coordinate Coordinate to set the tile at
+     * @param tile       Tile to set at given coordinate
+     */
     public void insertTile(Coordinate coordinate, Tile tile) {
         this.tileOccupancy.put(coordinate, tile);
     };
