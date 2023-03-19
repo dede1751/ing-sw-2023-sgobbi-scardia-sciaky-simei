@@ -9,12 +9,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * this class test {@link Shelf}
+ * This class tests {@link Shelf}
  */
 @Tag("Shelf")
 @Tag("Model")
 @TestInstance(Lifecycle.PER_METHOD)
 public class ShelfTest {
+    
     public Shelf shelf;
     public List<List<Tile>> columns;
     
@@ -25,8 +26,7 @@ public class ShelfTest {
     }
     
     public void fillShelfDet() {
-        
-        columns = new ArrayList<List<Tile>>();
+        columns = new ArrayList<>();
         
         columns.add(0, List.of(Tile.CATS, Tile.BOOKS, Tile.PLANTS));
         columns.add(1, List.of(Tile.PLANTS, Tile.TROPHIES, Tile.BOOKS, Tile.CATS));
@@ -45,12 +45,13 @@ public class ShelfTest {
     }
     
     /**
-     * this method tests the addTiles(), getAllShelf(), getTiles() methods
+     * This method tests the addTiles(), getAllShelf(), getTiles() methods
      */
     @Test
     @DisplayName("Test addTiles, getAllShelf, getTiles all together")
     public void addTiles_getAllShelf_getTilesTest() {
         var s = shelf.getAllShelf();
+        
         for( int i = 0; i < columns.size(); i++ ) {
             for( int j = 0; j < columns.get(i).size(); j++ ) {
                 assertEquals(columns.get(i).get(j), s[j][i]);
@@ -61,6 +62,7 @@ public class ShelfTest {
                 assertEquals(s[j][i], Tile.NOTILE);
             }
         }
+        
         for( int i = columns.size(); i < Shelf.N_COL; i++ ) {
             for( int j = 0; j < Shelf.N_ROW; j++ ) {
                 assertEquals(s[j][i], Tile.NOTILE);
@@ -104,6 +106,7 @@ public class ShelfTest {
                     i);
         }
         assertTrue(s.isFull());
+        
         s = new Shelf();
         for( int i = 0; i < Shelf.N_COL; i++ ) {
             s.addTiles(List.of(Tile.NOTILE, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES),

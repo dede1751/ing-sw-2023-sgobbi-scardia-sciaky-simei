@@ -1,9 +1,7 @@
 package it.polimi.ingsw.utils.exceptions;
 
-import it.polimi.ingsw.exceptions.CommonException;
-
-public class occupiedTileException extends CommonException {
-    public occupiedTileException() {
+public class OccupiedTileException extends CommonException {
+    public OccupiedTileException() {
         System.err.println("Exception : Trying to insert a tile in an already occupied coordinate");
         this.printStackTrace(System.err);
     }

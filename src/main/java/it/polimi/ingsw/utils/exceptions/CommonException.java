@@ -1,4 +1,4 @@
-package it.polimi.ingsw.exceptions;
+package it.polimi.ingsw.utils.exceptions;
 
 public class CommonException extends Exception {
     //not sure that it will always work

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
-import it.polimi.ingsw.utils.exceptions.occupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +37,10 @@ public class GameModel {
      */
     public GameModel(int numPlayers, int commonGoalX, int commonGoalY) {
         this.commonGoalNumX = commonGoalX;
-        this.commonGoalStackX = new Stack<Integer>();
+        this.commonGoalStackX = new Stack<>();
         
         this.commonGoalNumY = commonGoalY;
-        this.commonGoalStackY = new Stack<Integer>();
+        this.commonGoalStackY = new Stack<>();
         switch( numPlayers ) {
             case 2:
                 this.commonGoalStackX.push(4);
@@ -71,7 +71,7 @@ public class GameModel {
         this.gameOver = false;
         
         this.board = new Board(numPlayers);
-        this.players = new ArrayList<Player>();
+        this.players = new ArrayList<>();
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
         System.out.println("Initialized game with " + numPlayers + " players");
@@ -208,9 +208,9 @@ public class GameModel {
      * @param coordinates Coordinate at which to insert the tile
      * @param tile        Tile type to insert
      *
-     * @throws occupiedTileException Trying to insert a tile in an already occupied position
+     * @throws OccupiedTileException Trying to insert a tile in an already occupied position
      */
-    public void insertTile(Coordinate coordinates, Tile tile) throws occupiedTileException, OutOfBoundCoordinateException {
+    public void insertTile(Coordinate coordinates, Tile tile) throws OccupiedTileException, OutOfBoundCoordinateException {
         this.board.insertTile(coordinates, tile);
     }
     

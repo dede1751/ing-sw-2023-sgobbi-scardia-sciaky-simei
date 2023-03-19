@@ -11,9 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * this class tests {@link Player}
+ * This class tests {@link Player}
  */
-
 @Tag("Player")
 @Tag("Model")
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)

@@ -9,7 +9,7 @@ public class TileBag {
     private final Map<Tile, Integer> bag;
     
     protected TileBag() {
-        this.bag = new HashMap<Tile, Integer>();
+        this.bag = new HashMap<>();
         this.bag.put(Tile.CATS, 22);
         this.bag.put(Tile.BOOKS, 22);
         this.bag.put(Tile.GAMES, 22);

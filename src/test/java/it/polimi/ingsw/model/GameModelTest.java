@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
-import it.polimi.ingsw.utils.exceptions.occupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * this class tests {@link GameModel}
+ * This class tests {@link GameModel}
  */
 
 @Tag("GameModel")
@@ -39,8 +39,8 @@ public class GameModelTest {
         for( int i = 0; i < 4; i++ ) {
             var player = new Player("nick_" + i, i);
             game.addPlayer("nick_" + i, i);
-            assertFalse(!(player.getNickname().equals(game.getPlayers().get(i).getNickname()) &&
-                          player.getPg() == game.getPlayers().get(i).getPg()));
+            assertTrue(player.getNickname().equals(game.getPlayers().get(i).getNickname()) &&
+                       player.getPg() == game.getPlayers().get(i).getPg());
         }
     }
     
@@ -85,7 +85,7 @@ public class GameModelTest {
         out.stackPrintOrigin();
         assertDoesNotThrow(() -> game.insertTile(coordinate, tile));
         assertEquals(tile, game.getTile(coordinate));
-        var occ = assertThrows(occupiedTileException.class, () -> game.insertTile(coordinate, Tile.TROPHIES));
+        var occ = assertThrows(OccupiedTileException.class, () -> game.insertTile(coordinate, Tile.TROPHIES));
         occ.stackPrintOrigin();
         assertEquals(Tile.NOTILE, game.getTile(new Coordinate(5, 5)));
     }
@@ -103,7 +103,7 @@ public class GameModelTest {
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 4)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 5)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 6)));
-        List<Coordinate> removing = new ArrayList<Coordinate>();
+        List<Coordinate> removing = new ArrayList<>();
         removing.add(new Coordinate(3, 4));
         removing.add(new Coordinate(3, 5));
         removing.add(new Coordinate(3, 6));

@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
-import it.polimi.ingsw.utils.exceptions.occupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +21,7 @@ public class Board {
      * @param numPlayers Total number of players for the game
      */
     protected Board(int numPlayers) {
-        this.tileOccupancy = new HashMap<Coordinate, Tile>();
+        this.tileOccupancy = new HashMap<>();
         
         Coordinate[] commonCoordinates = {
                 new Coordinate(1, 3), new Coordinate(1, 4), new Coordinate(2, 3),
@@ -81,7 +81,7 @@ public class Board {
      * @return Copy of the Coordinate->Tile map
      */
     public Map<Coordinate, Tile> getTiles() {
-        return new HashMap<Coordinate, Tile>(this.tileOccupancy);
+        return new HashMap<>(this.tileOccupancy);
     }
     
     /**
@@ -105,12 +105,12 @@ public class Board {
      *
      * @throws OutOfBoundCoordinateException If the coordinate doesn't belong to the board
      */
-    public void insertTile(Coordinate coordinate, Tile tile) throws OutOfBoundCoordinateException, occupiedTileException {
+    public void insertTile(Coordinate coordinate, Tile tile) throws OutOfBoundCoordinateException, OccupiedTileException {
         if( tileOccupancy.containsKey(coordinate) )
             if( tileOccupancy.get(coordinate) == Tile.NOTILE )
                 this.tileOccupancy.replace(coordinate, tile);
             else
-                throw new occupiedTileException();
+                throw new OccupiedTileException();
         else
             throw new OutOfBoundCoordinateException(coordinate);
     }

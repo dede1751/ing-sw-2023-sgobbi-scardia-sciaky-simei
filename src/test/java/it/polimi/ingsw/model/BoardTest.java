@@ -42,9 +42,7 @@ public class BoardTest {
         
         var c = new Coordinate(6, 6);
         selection.add(c);
-        assertDoesNotThrow(() -> {
-            board.insertTile(c, Tile.TROPHIES);
-        });
+        assertDoesNotThrow(() -> board.insertTile(c, Tile.TROPHIES));
         assertEquals(board.getTile(c), Tile.TROPHIES);
         
         board.removeSelection(selection);

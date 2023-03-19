@@ -10,6 +10,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * This class tests {@link TileBag}
+ */
 @Tag("TileBag")
 @Tag("Model")
 @TestInstance(Lifecycle.PER_METHOD)
@@ -38,6 +41,5 @@ public class TileBagTest {
             assertEquals(21, bag.getTileAmount(tile), () -> "tile : " + tile.name());
         }
     }
-    
     
 }
