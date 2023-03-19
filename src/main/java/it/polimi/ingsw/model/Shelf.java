@@ -94,14 +94,14 @@ public class Shelf {
      */
     public int spaceInColumn(int column) {
         return N_ROW - content.get(column).size();
-    }
-    
-    /**
-     * Get mapping of column indices to amount of remaining spaces.
-     *
-     * @return All the indices of the columns that still have space, with the remaining space
-     */
-    public Map<Integer, Integer> remainingSpace() {
+    };
+
+
+    /*
+    * return all the indexes of the columns that still have space, with the remaining spaces
+    */
+    public Map<Integer, Integer> remainingSpace()
+    {
         var res = new HashMap<Integer, Integer>();
         for( var x : availableColumns(0) ) {
             res.put(x, spaceInColumn(x));
