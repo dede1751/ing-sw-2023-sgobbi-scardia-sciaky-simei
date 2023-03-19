@@ -10,10 +10,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 /**
  * this class tests {@link GameModel}
  */
+
 @Tag("GameModel")
 @Tag("Model")
 public class GameModelTest {
@@ -27,18 +27,14 @@ public class GameModelTest {
         assertFalse(game.isFinalTurn());
     }
     
-    
     @Test
     public void isFinalTurn() {
         GameModel game = new GameModel(4, 0, 0);
         assertFalse(game.isFinalTurn());
-        
-        
     }
     
     @Test
     public void addPlayerTest() {
-        
         GameModel game = new GameModel(4, 0, 0);
         for( int i = 0; i < 4; i++ ) {
             var player = new Player("nick_" + i, i);
@@ -48,16 +44,13 @@ public class GameModelTest {
         }
     }
     
-    
     @Test
     void testGetAndSetCurrentPlayer() {
         GameModel game = new GameModel(2, 5, 6);
         game.addPlayer("Player 1", 1);
         game.addPlayer("Player 2", 2);
-        
         assertEquals("Player 1", game.getCurrentPlayer().getNickname());
     }
-    
     
     @Test
     void testGetCoordinates() {
@@ -68,7 +61,6 @@ public class GameModelTest {
         assertTrue(game.getOccupied().contains(new Coordinate(3, 4)));
         assertEquals(45, game.getAllCoordinates().size());
         assertEquals(1, game.getOccupied().size());
-        
     }
     
     @Test
@@ -98,7 +90,6 @@ public class GameModelTest {
         assertEquals(Tile.NOTILE, game.getTile(new Coordinate(5, 5)));
     }
     
-    
     @Test
     void removeSelectionTest() {
         GameModel game = new GameModel(4, 5, 6);
@@ -108,23 +99,40 @@ public class GameModelTest {
         assertDoesNotThrow(() -> {
             game.insertTile(new Coordinate(3, 4), tile1);
             game.insertTile(new Coordinate(3, 5), tile2);
-            game.insertTile(new Coordinate(3, 6), tile3);
-        });
+            game.insertTile(new Coordinate(3, 6), tile3); });
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 4)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 5)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 6)));
-        
         List<Coordinate> removing = new ArrayList<Coordinate>();
         removing.add(new Coordinate(3, 4));
         removing.add(new Coordinate(3, 5));
         removing.add(new Coordinate(3, 6));
         game.removeSelection(removing);
-        
         assertEquals(Tile.NOTILE, game.getTile(new Coordinate(3, 4)));
         assertEquals(Tile.NOTILE, game.getTile(new Coordinate(3, 5)));
         assertEquals(Tile.NOTILE, game.getTile(new Coordinate(3, 6)));
-        
-        
+    }
+    
+    @Test
+    public void shelveSelectionTest() {
+         GameModel game = new GameModel(2,5, 6);
+         Coordinate coordinate1 = new Coordinate(1, 3);
+         Coordinate coordinate2 = new Coordinate(1, 4);
+         assertDoesNotThrow( () -> game.insertTile(coordinate1, Tile.CATS) );
+         assertDoesNotThrow( () -> game.insertTile(coordinate2, Tile.TROPHIES) );
+         var orderedTiles = List.of(game.getTile(coordinate1), game.getTile(coordinate2));
+         var column = 1;
+         game.addPlayer("Lucrezia", 1);
+         game.addPlayer("Luca", 2);
+         game.setCurrentPlayer(1);
+         game.shelveSelection(orderedTiles, column);
+         assertEquals(Tile.CATS, game.getCurrentPlayer().getShelf().getTile(0,column));
+         assertEquals(Tile.TROPHIES, game.getCurrentPlayer().getShelf().getTile(1,column));
+         var tileAmount1 = game.getTileAmount(Tile.CATS);
+         var tileAmount2 = game.getTileAmount(Tile.TROPHIES);
+         game.removeSelection(List.of(coordinate1, coordinate2));
+         assertEquals(tileAmount1, game.getTileAmount(Tile.CATS));
+         assertEquals(tileAmount2, game.getTileAmount(Tile.TROPHIES));
     }
     
     @Test
@@ -136,15 +144,12 @@ public class GameModelTest {
         int scoreToAdd = 10;
         int expectedScore = startingScore + scoreToAdd;
         game.addCurrentPlayerScore(scoreToAdd);
-        
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
     }
-    
     
     @Test
     public void getTileAmountTest() {
         GameModel game = new GameModel(2, 5, 6);
         assertEquals(22, game.getTileAmount(Tile.TROPHIES));
     }
-    
 }
