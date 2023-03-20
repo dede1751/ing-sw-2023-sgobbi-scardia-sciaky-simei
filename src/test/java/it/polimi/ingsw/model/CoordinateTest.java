@@ -22,8 +22,8 @@ public class CoordinateTest {
     
     @Test
     public void getterSetter() {
-        assertEquals(c.getRow(), 6);
-        assertEquals(c.getCol(), 0);
+        assertEquals(c.row(), 6);
+        assertEquals(c.col(), 0);
     }
     
     @Test
