@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
+import it.polimi.ingsw.utils.exceptions.CommonException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Board representation for the model
@@ -114,4 +114,64 @@ public class Board {
         else
             throw new OutOfBoundCoordinateException(coordinate);
     }
+    
+    public void refill(TileBag tileBag) {
+        var coord_list = tileOccupancy.keySet().stream().toList();
+        this.removeSelection(coord_list);
+        var selected_matrix = new boolean[9][9];
+        
+        var engine = new Random();
+        var initial = coord_list.get(engine.nextInt(0, coord_list.size()));
+        var selected = new ArrayList<Coordinate>();
+        Predicate<Coordinate> is_valid = (x) -> this.tileOccupancy.containsKey(x) &&
+                                                !selected_matrix[x.getRow()][x.getCol()];
+        
+        int nTiles = Math.min(tileBag.currentTileNumber(), tileOccupancy.size());
+        Queue<Coordinate> e = new LinkedList<>();
+        e.add(initial);
+        int i = 1;
+        
+        while( !e.isEmpty() ) {
+            var current = e.peek();
+            selected.add(e.remove());
+            selected_matrix[current.getRow()][current.getCol()] = true;
+            if( is_valid.test(current.getDown()) && i < nTiles ) {
+                e.add(current.getDown());
+                selected_matrix[current.getDown().getRow()][current.getDown().getCol()] = true;
+                i++;
+            }
+            if( is_valid.test(current.getLeft()) && i < nTiles ) {
+                e.add(current.getLeft());
+                selected_matrix[current.getLeft().getRow()][current.getLeft().getCol()] = true;
+                i++;
+            }
+            if( is_valid.test(current.getRight()) && i < nTiles ) {
+                e.add(current.getRight());
+                selected_matrix[current.getRight().getRow()][current.getRight().getCol()] = true;
+                i++;
+            }
+            if( is_valid.test(current.getUp()) && i < nTiles ) {
+                e.add(current.getUp());
+                selected_matrix[current.getUp().getRow()][current.getUp().getCol()] = true;
+                i++;
+            }
+        }
+        var map = tileBag.getAllBag();
+        var it = Tile.values();
+        try {
+            for( var x : selected ) {
+                var randomTile = 0;
+                do {
+                    randomTile = engine.nextInt(0, 6); //git blame someone-else
+                }
+                while( map.get(it[randomTile]) == 0 );
+                
+                insertTile(x, it[randomTile]);
+            }
+        }
+        catch( CommonException ex ) {
+            System.err.println("there shouldn't be an error in there...");
+        }
+    }
+    
 }

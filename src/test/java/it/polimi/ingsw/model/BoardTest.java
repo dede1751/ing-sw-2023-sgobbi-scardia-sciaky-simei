@@ -49,4 +49,15 @@ public class BoardTest {
         assertEquals(board.getTile(c), Tile.NOTILE);
         
     }
+    
+    @Test
+    public void refillTest() {
+        Board board = new Board(3);
+        TileBag tileBag = new TileBag();
+        board.refill(tileBag);
+        for( Coordinate x : board.getTiles().keySet().stream().toList() ) {
+            assertNotEquals(Tile.NOTILE, board.getTile(x));
+        }
+    }
+    
 }

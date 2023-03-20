@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TileBag {
-    private final Map<Tile, Integer> bag;
+    private Map<Tile, Integer> bag;
     
     protected TileBag() {
         this.bag = new HashMap<>();
@@ -44,4 +44,19 @@ public class TileBag {
             }
         }
     }
+    
+    public Map<Tile, Integer> getAllBag() {
+        return Map.copyOf(this.bag);
+    }
+    
+    public int currentTileNumber() {
+        int result = 0;
+        for( var x : Tile.values() ) {
+            if( x != Tile.NOTILE )
+                result += this.bag.get(x);
+        }
+        return result;
+    }
+    
+    
 }
