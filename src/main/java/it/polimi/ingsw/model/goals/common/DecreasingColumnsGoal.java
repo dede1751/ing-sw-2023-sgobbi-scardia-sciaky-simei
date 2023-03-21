@@ -10,28 +10,28 @@ public class DecreasingColumnsGoal implements CommonGoalStrategy {
     }
     
     public boolean checkShelf(Shelf shelf) {
-        return (((shelf.getTile(5, 0) == null) &&
-                 (shelf.getTile(4, 1) == null) &&
-                 (shelf.getTile(3, 2) == null) &&
-                 (shelf.getTile(2, 3) == null) &&
-                 (shelf.getTile(1, 4) == null)) ||
+        return (((shelf.getTile(5, 0) == null && shelf.getTile(4, 0) != null) &&
+                 (shelf.getTile(4, 1) == null && shelf.getTile(3, 1) != null) &&
+                 (shelf.getTile(3, 2) == null && shelf.getTile(2, 2) != null) &&
+                 (shelf.getTile(2, 3) == null && shelf.getTile(1, 3) != null) &&
+                 (shelf.getTile(1, 4) == null && shelf.getTile(0, 4) != null)) ||
                 
                 ((shelf.getTile(5, 0) != null) &&
-                 (shelf.getTile(5, 1) == null) &&
-                 (shelf.getTile(4, 2) == null) &&
-                 (shelf.getTile(3, 3) == null) &&
-                 (shelf.getTile(2, 4) == null)) ||
+                 (shelf.getTile(5, 1) == null && shelf.getTile(4, 1) != null) &&
+                 (shelf.getTile(4, 2) == null && shelf.getTile(3, 2) != null) &&
+                 (shelf.getTile(3, 3) == null && shelf.getTile(2, 3) != null) &&
+                 (shelf.getTile(2, 4) == null && shelf.getTile(1, 4) != null)) ||
 
-                ((shelf.getTile(5, 4) == null) &&
-                 (shelf.getTile(4, 3) == null) &&
-                 (shelf.getTile(3, 2) == null) &&
-                 (shelf.getTile(2, 1) == null) &&
-                 (shelf.getTile(1, 0) == null)) ||
+                ((shelf.getTile(5, 4) == null && shelf.getTile(4, 4) != null) &&
+                 (shelf.getTile(4, 3) == null && shelf.getTile(3, 3) != null) &&
+                 (shelf.getTile(3, 2) == null && shelf.getTile(2, 2) != null) &&
+                 (shelf.getTile(2, 1) == null && shelf.getTile(1, 1) != null) &&
+                 (shelf.getTile(1, 0) == null && shelf.getTile(0, 0) != null)) ||
 
                 ((shelf.getTile(5, 4) != null) &&
-                 (shelf.getTile(5, 3) == null) &&
-                 (shelf.getTile(4, 2) == null) &&
-                 (shelf.getTile(3, 1) == null) &&
-                 (shelf.getTile(2, 0) == null)));
+                 (shelf.getTile(5, 3) == null && shelf.getTile(4, 3) != null) &&
+                 (shelf.getTile(4, 2) == null && shelf.getTile(3, 2) != null) &&
+                 (shelf.getTile(3, 1) == null && shelf.getTile(2, 1) != null) &&
+                 (shelf.getTile(2, 0) == null && shelf.getTile(1, 0) != null)));
     }
 }
