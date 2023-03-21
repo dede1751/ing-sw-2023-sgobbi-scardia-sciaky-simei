@@ -35,7 +35,6 @@ public class SixGroupTwoTileGoal implements CommonGoalStrategy {
                         check_matrix[i][j] = true;
                         check_matrix[i][j + 1] = true;
                         count++;
-                        found = true;
                     }
                 }
             }

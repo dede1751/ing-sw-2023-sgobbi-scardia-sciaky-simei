@@ -13,12 +13,11 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
     }
     
     public boolean checkShelf(Shelf shelf) {
-        final record coor(int r, int c) {
+        record coor(int r, int c) {
             coor sum_off(coor offset) {
                 return new coor(r + offset.r(), c + offset.c());
             }
         }
-        ;
         var square = List.of(new coor(0, 0), new coor(0, 1), new coor(1, 0), new coor(1, 1));
         var oriz_line = List.of(new coor(0, 0), new coor(0, 1), new coor(0, 2), new coor(0, 3));
         var ver_line = List.of(new coor(0, 0), new coor(1, 0), new coor(2, 0), new coor(3, 0));
@@ -38,55 +37,28 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
                     var index = curr.sum_off(off);
                     return !valid_matrix[index.r][index.c] && shelf.getTile(index.r, index.c) == tile_t;
                 };
-                for( var x : square ) {
-                    valid &= is_valid.test(current_coor, x);
-                }
+                //tests for square forms
+                valid = square.stream().map(x -> is_valid.test(current_coor, x)).reduce(true, (a, b) -> a && b);
                 if( valid ) {
                     count++;
                     for( var x : square ) {
                         var y = current_coor.sum_off(x);
                         valid_matrix[y.r][y.c] = true;
                     }
-                }
-            }
-        }
-        for( int i = Shelf.N_ROW - 1; i > 0; i-- ) {
-            for( int j = 0; j < Shelf.N_COL - 1; j++ ) {
-                Tile tile_t = mat[i][j];
-                var valid = tile_t != Tile.NOTILE;
-                if( !valid )
                     continue;
-                var current_coor = new coor(i, j);
-                BiPredicate<coor, coor> is_valid = (curr, off) -> {
-                    var index = curr.sum_off(off);
-                    return !valid_matrix[index.r][index.c] && shelf.getTile(index.r, index.c) == tile_t;
-                };
-                for( var x : oriz_line ) {
-                    valid &= is_valid.test(current_coor, x);
                 }
+                //tests for orizzontal lines forms
+                valid = oriz_line.stream().map(x -> is_valid.test(current_coor, x)).reduce(true, (a, b) -> a && b);
                 if( valid ) {
                     count++;
                     for( var x : oriz_line ) {
                         var y = current_coor.sum_off(x);
                         valid_matrix[y.r][y.c] = true;
                     }
-                }
-            }
-        }
-        for( int i = Shelf.N_ROW - 1; i > 0; i-- ) {
-            for( int j = 0; j < Shelf.N_COL - 1; j++ ) {
-                Tile tile_t = mat[i][j];
-                var valid = tile_t != Tile.NOTILE;
-                if( !valid )
                     continue;
-                var current_coor = new coor(i, j);
-                BiPredicate<coor, coor> is_valid = (curr, off) -> {
-                    var index = curr.sum_off(off);
-                    return !valid_matrix[index.r][index.c] && shelf.getTile(index.r, index.c) == tile_t;
-                };
-                for( var x : ver_line ) {
-                    valid &= is_valid.test(current_coor, x);
                 }
+                //tests for vertical lines forms
+                valid = ver_line.stream().map(x -> is_valid.test(current_coor, x)).reduce(true, (a, b) -> a && b);
                 if( valid ) {
                     count++;
                     for( var x : ver_line ) {
@@ -96,7 +68,6 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
                 }
             }
         }
-        
         return count >= 6;
     }
     
