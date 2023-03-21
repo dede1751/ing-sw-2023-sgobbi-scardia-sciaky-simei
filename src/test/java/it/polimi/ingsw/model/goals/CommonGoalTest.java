@@ -3,10 +3,7 @@ package it.polimi.ingsw.model.goals;
 import it.polimi.ingsw.model.Shelf;
 
 import it.polimi.ingsw.model.Tile;
-import it.polimi.ingsw.model.goals.common.CommonGoal;
-import it.polimi.ingsw.model.goals.common.CrossGoal;
-import it.polimi.ingsw.model.goals.common.DecreasingColumnsGoal;
-import it.polimi.ingsw.model.goals.common.DiagonalFiveTileGoal;
+import it.polimi.ingsw.model.goals.common.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -87,6 +84,42 @@ public class CommonGoalTest {
         shelf.addTiles(List.of(Tile.CATS), 4);
         var goal = new DiagonalFiveTileGoal();
         assertFalse(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void EightUniqueGoalTrue() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES), 1);
+        shelf.addTiles(List.of(Tile.CATS), 2);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS), 3);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 4);
+        var goal = new EightUniqueGoal();
+        assertTrue(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void EightUniqueGoalFalse() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES), 1);
+        shelf.addTiles(List.of(Tile.CATS), 2);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS), 3);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 4);
+        var goal = new EightUniqueGoal();
+        assertFalse(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void FourCornersTrue() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS, Tile.CATS, Tile.CATS, Tile.CATS, Tile.TROPHIES), 0);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES), 1);
+        shelf.addTiles(List.of(Tile.CATS), 2);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS), 3);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS, Tile.TROPHIES), 4);
+        var goal = new FourCornersGoal();
+        assertTrue(goal.checkShelf(shelf));
     }
 }
 
