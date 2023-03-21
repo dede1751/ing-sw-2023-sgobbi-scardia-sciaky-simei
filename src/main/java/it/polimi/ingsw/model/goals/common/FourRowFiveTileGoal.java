@@ -13,7 +13,8 @@ public class FourRowFiveTileGoal implements CommonGoalStrategy {
         int counter = 0;
         for (int i = 0; i < 6; i++) {
             int[] temp = new int[] {0, 0, 0, 0, 0, 0};
-            int notpresent = 0;
+            int ispresent = 0;
+            int numoftiles = 0;
             for (int j = 0; j < 5; j++) {
                 if (shelf.getTile(i, j) == Tile.CATS) temp[0]++;
                 if (shelf.getTile(i, j) == Tile.BOOKS) temp[1]++;
@@ -21,11 +22,12 @@ public class FourRowFiveTileGoal implements CommonGoalStrategy {
                 if (shelf.getTile(i, j) == Tile.FRAMES) temp[3]++;
                 if (shelf.getTile(i, j) == Tile.TROPHIES) temp[4]++;
                 if (shelf.getTile(i, j) == Tile.PLANTS) temp[5]++;
+                if (shelf.getTile(i, j) != null) numoftiles++;
             }
             for (int j = 0; j < 6; j++) {
-                if (temp[j] == 0) notpresent++;
+                if (temp[j] != 0) ispresent++;
             }
-            if (notpresent >= 3) counter++;
+            if (ispresent <= 3 && numoftiles == 5) counter++;
         }
         return counter >= 4;
     }
