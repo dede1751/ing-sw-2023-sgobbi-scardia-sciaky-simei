@@ -21,8 +21,8 @@ public class CommonGoalTest {
     public void CrossGoalTest() {
         var shelf = new Shelf();
         shelf.addTiles(List.of(Tile.CATS, Tile.TROPHIES, Tile.CATS), 0);
-        shelf.addTiles(List.of(Tile.PLANTS, Tile.CATS, Tile.PLANTS), 0);
-        shelf.addTiles(List.of(Tile.CATS, Tile.TROPHIES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.CATS, Tile.PLANTS), 1);
+        shelf.addTiles(List.of(Tile.CATS, Tile.TROPHIES, Tile.CATS), 2);
         var goal = new CrossGoal();
         assertTrue(goal.checkShelf(shelf));
     }
