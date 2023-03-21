@@ -121,5 +121,64 @@ public class CommonGoalTest {
         var goal = new FourCornersGoal();
         assertTrue(goal.checkShelf(shelf));
     }
+    
+    @Test
+    public void FourCornersFalse() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS, Tile.CATS, Tile.CATS, Tile.CATS, Tile.TROPHIES), 0);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES), 1);
+        shelf.addTiles(List.of(Tile.CATS), 2);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.CATS), 3);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS), 4);
+        var goal = new FourCornersGoal();
+        assertFalse(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void FourRowFiveTileTrue() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.PLANTS, Tile.TROPHIES, Tile.FRAMES, Tile.CATS), 1);
+        shelf.addTiles(List.of(Tile.CATS, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES), 2);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES), 3);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES), 4);
+        var goal = new FourRowFiveTileGoal();
+        assertTrue(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void FourRowFiveTileFalse() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.PLANTS, Tile.TROPHIES, Tile.FRAMES, Tile.CATS), 1);
+        shelf.addTiles(List.of(Tile.CATS, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES), 2);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES), 3);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES), 4);
+        var goal = new FourRowFiveTileGoal();
+        assertFalse(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void ThreeColumnSixTileTrue() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.PLANTS, Tile.TROPHIES, Tile.FRAMES, Tile.FRAMES, Tile.PLANTS), 1);
+        shelf.addTiles(List.of(Tile.CATS, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES), 2);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES, Tile.BOOKS, Tile.BOOKS), 3);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.BOOKS, Tile.PLANTS, Tile.PLANTS), 4);
+        var goal = new ThreeColumnSixTileGoal();
+        assertTrue(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void ThreeColumnSixTileFalse() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.PLANTS, Tile.TROPHIES, Tile.BOOKS, Tile.FRAMES, Tile.PLANTS), 1);
+        shelf.addTiles(List.of(Tile.TROPHIES, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES, Tile.BOOKS, Tile.BOOKS), 3);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.BOOKS, Tile.PLANTS, Tile.PLANTS), 4);
+        var goal = new ThreeColumnSixTileGoal();
+        assertFalse(goal.checkShelf(shelf));
+    }
 }
 
