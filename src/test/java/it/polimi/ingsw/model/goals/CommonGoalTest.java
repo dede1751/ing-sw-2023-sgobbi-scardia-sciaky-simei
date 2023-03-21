@@ -158,6 +158,8 @@ public class CommonGoalTest {
         assertFalse(goal.checkShelf(shelf));
     }
     
+    
+    //Test failed
     @Test
     public void ThreeColumnSixTileTrue() {
         var shelf = new Shelf();
@@ -178,6 +180,48 @@ public class CommonGoalTest {
         shelf.addTiles(List.of(Tile.TROPHIES, Tile.BOOKS, Tile.TROPHIES, Tile.FRAMES, Tile.BOOKS, Tile.BOOKS), 3);
         shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.TROPHIES, Tile.BOOKS, Tile.PLANTS, Tile.PLANTS), 4);
         var goal = new ThreeColumnSixTileGoal();
+        assertFalse(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void TwoColumnDistinctTrue() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.BOOKS, Tile.TROPHIES, Tile.CATS, Tile.PLANTS, Tile.GAMES), 0);
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.BOOKS), 1);
+        shelf.addTiles(List.of(Tile.CATS, Tile.BOOKS, Tile.TROPHIES, Tile.GAMES, Tile.PLANTS, Tile.FRAMES), 3);
+        var goal = new TwoColumnDistinctGoal();
+        assertTrue(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void TwoColumnDistinctFalse() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.BOOKS, Tile.TROPHIES, Tile.CATS, Tile.PLANTS, Tile.GAMES), 0);
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.BOOKS), 1);
+        var goal = new TwoColumnDistinctGoal();
+        assertFalse(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void TwoRowDistinctTrue() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.BOOKS, Tile.FRAMES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.BOOKS, Tile.TROPHIES, Tile.TROPHIES), 1);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.BOOKS, Tile.GAMES), 2);
+        shelf.addTiles(List.of(Tile.CATS, Tile.BOOKS, Tile.CATS), 3);
+        shelf.addTiles(List.of(Tile.GAMES, Tile.BOOKS, Tile.PLANTS, Tile.CATS), 4);
+        var goal = new TwoRowDistinctGoal();
+        assertTrue(goal.checkShelf(shelf));
+    }
+    
+    @Test
+    public void TwoRowDistinctFalse() {
+        var shelf = new Shelf();
+        shelf.addTiles(List.of(Tile.FRAMES, Tile.BOOKS, Tile.FRAMES, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.BOOKS, Tile.TROPHIES, Tile.TROPHIES), 1);
+        shelf.addTiles(List.of(Tile.PLANTS, Tile.BOOKS, Tile.BOOKS, Tile.GAMES), 2);
+        shelf.addTiles(List.of(Tile.GAMES, Tile.BOOKS, Tile.PLANTS, Tile.CATS), 4);
+        var goal = new TwoRowDistinctGoal();
         assertFalse(goal.checkShelf(shelf));
     }
 }
