@@ -50,6 +50,52 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
                 }
             }
         }
+        for( int i = Shelf.N_ROW - 1; i > 0; i-- ) {
+            for( int j = 0; j < Shelf.N_COL - 1; j++ ) {
+                Tile tile_t = mat[i][j];
+                var valid = tile_t != Tile.NOTILE;
+                if( !valid )
+                    continue;
+                var current_coor = new coor(i, j);
+                BiPredicate<coor, coor> is_valid = (curr, off) -> {
+                    var index = curr.sum_off(off);
+                    return !valid_matrix[index.r][index.c] && shelf.getTile(index.r, index.c) == tile_t;
+                };
+                for( var x : oriz_line ) {
+                    valid &= is_valid.test(current_coor, x);
+                }
+                if( valid ) {
+                    count++;
+                    for( var x : oriz_line ) {
+                        var y = current_coor.sum_off(x);
+                        valid_matrix[y.r][y.c] = true;
+                    }
+                }
+            }
+        }
+        for( int i = Shelf.N_ROW - 1; i > 0; i-- ) {
+            for( int j = 0; j < Shelf.N_COL - 1; j++ ) {
+                Tile tile_t = mat[i][j];
+                var valid = tile_t != Tile.NOTILE;
+                if( !valid )
+                    continue;
+                var current_coor = new coor(i, j);
+                BiPredicate<coor, coor> is_valid = (curr, off) -> {
+                    var index = curr.sum_off(off);
+                    return !valid_matrix[index.r][index.c] && shelf.getTile(index.r, index.c) == tile_t;
+                };
+                for( var x : ver_line ) {
+                    valid &= is_valid.test(current_coor, x);
+                }
+                if( valid ) {
+                    count++;
+                    for( var x : ver_line ) {
+                        var y = current_coor.sum_off(x);
+                        valid_matrix[y.r][y.c] = true;
+                    }
+                }
+            }
+        }
         
         return count >= 6;
     }

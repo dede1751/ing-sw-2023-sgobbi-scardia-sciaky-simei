@@ -1,20 +1,30 @@
 package it.polimi.ingsw.model.goals;
 
 import it.polimi.ingsw.model.Shelf;
-
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.goals.common.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests {@link CommonGoal}
  */
 
 public class CommonGoalTest {
+    
+    Shelf shelf;
+    
+    @BeforeEach
+    public void initShelf() {
+        this.shelf = new Shelf();
+    }
+    
     
     @Test
     public void CrossGoalTrue() {
@@ -53,7 +63,7 @@ public class CommonGoalTest {
     @Test
     public void DecreasingColumnFalse() {
         var shelf = new Shelf();
-        shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS), 0);
         shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS, Tile.CATS), 1);
         shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS), 2);
         shelf.addTiles(List.of(Tile.CATS, Tile.CATS), 3);
@@ -121,5 +131,49 @@ public class CommonGoalTest {
         var goal = new FourCornersGoal();
         assertTrue(goal.checkShelf(shelf));
     }
+    
+    @Nested
+    class SixGroupTwoTileGoalTest {
+        @Test
+        void test_true1() {
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.BOOKS), 0);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 1);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 2);
+            shelf.addTiles(List.of(Tile.BOOKS, Tile.BOOKS), 3);
+            shelf.addTiles(List.of(Tile.GAMES), 4);
+            var goal = new SixGroupTwoTileGoal();
+            assertTrue(goal.checkShelf(shelf));
+        }
+        
+        @Test
+        void test_false1() {
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.BOOKS), 0);
+            shelf.addTiles(List.of(Tile.CATS, Tile.TROPHIES), 1);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 2);
+            shelf.addTiles(List.of(Tile.BOOKS, Tile.BOOKS), 3);
+            shelf.addTiles(List.of(Tile.GAMES), 4);
+            var goal = new SixGroupTwoTileGoal();
+            assertFalse(goal.checkShelf(shelf));
+            
+        }
+        
+    }
+    
+    @Nested
+    class FourGroupFourTileGoalTest {
+        @Test
+        void test_true1() {
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.BOOKS, Tile.GAMES), 0);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.GAMES), 1);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES, Tile.GAMES), 2);
+            shelf.addTiles(List.of(Tile.BOOKS, Tile.BOOKS, Tile.BOOKS, Tile.BOOKS, Tile.GAMES), 3);
+            shelf.addTiles(List.of(Tile.GAMES), 4);
+            var goal = new SixGroupTwoTileGoal();
+            assertTrue(goal.checkShelf(shelf));
+            
+        }
+    }
+    
+    
 }
 

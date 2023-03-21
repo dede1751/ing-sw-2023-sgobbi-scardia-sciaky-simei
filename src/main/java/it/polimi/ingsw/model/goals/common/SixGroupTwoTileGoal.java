@@ -16,8 +16,8 @@ public class SixGroupTwoTileGoal implements CommonGoalStrategy {
         var mat = shelf.getAllShelf();
         var check_matrix = new boolean[Shelf.N_ROW][Shelf.N_COL];
         BiPredicate<Integer, Integer> is_valid = (r, c) -> {
-            return mat[r][c] != Tile.NOTILE && !check_matrix[r][c] &&
-                   (r < Shelf.N_ROW && r > 0 && c > 0 && c < Shelf.N_COL);
+            return (r < Shelf.N_ROW && r >= 0 && c >= 0 && c < Shelf.N_COL) && mat[r][c] != Tile.NOTILE &&
+                   !check_matrix[r][c];
         };
         
         int count = 0;
@@ -33,22 +33,10 @@ public class SixGroupTwoTileGoal implements CommonGoalStrategy {
                     }
                     if( !found && is_valid.test(i, j + 1) && mat[i][j] == mat[i][j + 1] ) {
                         check_matrix[i][j] = true;
-                        check_matrix[i + 1][j] = true;
+                        check_matrix[i][j + 1] = true;
                         count++;
                         found = true;
                     }
-                    if( !found && is_valid.test(i - 1, j) && mat[i][j] == mat[i - 1][j] ) {
-                        check_matrix[i][j] = true;
-                        check_matrix[i - 1][j] = true;
-                        count++;
-                        found = true;
-                    }
-                    if( !found && is_valid.test(i, j - 1) && mat[i][j] == mat[i][j - 1] ) {
-                        check_matrix[i][j] = true;
-                        check_matrix[i][j - 1] = true;
-                        count++;
-                    }
-                    
                 }
             }
         }
