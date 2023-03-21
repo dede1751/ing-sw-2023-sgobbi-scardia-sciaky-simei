@@ -7,8 +7,8 @@ import java.util.*;
  */
 public class Shelf {
     
-    protected final static int N_ROW = 6;
-    protected final static int N_COL = 5;
+    public final static int N_ROW = 6;
+    public final static int N_COL = 5;
     
     /**
      * Shelf represented as a list of stacks, where each stack represents a column.
@@ -94,14 +94,15 @@ public class Shelf {
      */
     public int spaceInColumn(int column) {
         return N_ROW - content.get(column).size();
-    };
-
-
+    }
+    
+    ;
+    
+    
     /*
-    * return all the indexes of the columns that still have space, with the remaining spaces
-    */
-    public Map<Integer, Integer> remainingSpace()
-    {
+     * return all the indexes of the columns that still have space, with the remaining spaces
+     */
+    public Map<Integer, Integer> remainingSpace() {
         var res = new HashMap<Integer, Integer>();
         for( var x : availableColumns(0) ) {
             res.put(x, spaceInColumn(x));

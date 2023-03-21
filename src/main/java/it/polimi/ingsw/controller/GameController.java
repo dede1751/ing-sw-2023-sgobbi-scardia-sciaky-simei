@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.GameModel;
 
 
 
@@ -32,42 +32,33 @@ public class GameController {
     public final GameModel model;
     //public final GameView view;
     private int numPlayers;
-
-
-/* constructor tobe used for paused game*/
-    public GameController( GameModel model) {
+    
+    
+    /* constructor tobe used for paused game*/
+    public GameController(GameModel model) {
         this.model = model;
         //this.view=view;
     }
-
-
-/*constructor to be used for new games*/
-    public GameController(int numPlayers,String firstPlayerNick) {
+    
+    
+    /*constructor to be used for new games*/
+    public GameController(int numPlayers, String firstPlayerNick) {
         this.numPlayers = numPlayers;
-        this.model=new GameModel(numPlayers,0,0);
-        this.model.addPlayer(firstPlayerNick,0);
+        this.model = new GameModel(numPlayers, 0, 0);
+        this.model.addPlayer(firstPlayerNick, 0);
         //this.view=view;
     }
-
-
-
-
+    
+    
     public void awaitPlayers() {
-
+        
         int currentPlayer = 0;
-        while (currentPlayer != numPlayers) {
+        while( currentPlayer != numPlayers ) {
             //    waitForPlayer();
-
+            
             currentPlayer++;
         }
         //startGame();
     }
-
-
-    void gam
-
-
-
-
-
+    
 }

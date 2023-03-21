@@ -124,7 +124,7 @@ public class Board {
         var initial = coord_list.get(engine.nextInt(0, coord_list.size()));
         var selected = new ArrayList<Coordinate>();
         Predicate<Coordinate> is_valid = (x) -> this.tileOccupancy.containsKey(x) &&
-                                                !selected_matrix[x.getRow()][x.getCol()];
+                                                !selected_matrix[x.row()][x.col()];
         
         int nTiles = Math.min(tileBag.currentTileNumber(), tileOccupancy.size());
         Queue<Coordinate> e = new LinkedList<>();
@@ -134,25 +134,25 @@ public class Board {
         while( !e.isEmpty() ) {
             var current = e.peek();
             selected.add(e.remove());
-            selected_matrix[current.getRow()][current.getCol()] = true;
+            selected_matrix[current.row()][current.col()] = true;
             if( is_valid.test(current.getDown()) && i < nTiles ) {
                 e.add(current.getDown());
-                selected_matrix[current.getDown().getRow()][current.getDown().getCol()] = true;
+                selected_matrix[current.getDown().row()][current.getDown().col()] = true;
                 i++;
             }
             if( is_valid.test(current.getLeft()) && i < nTiles ) {
                 e.add(current.getLeft());
-                selected_matrix[current.getLeft().getRow()][current.getLeft().getCol()] = true;
+                selected_matrix[current.getLeft().row()][current.getLeft().col()] = true;
                 i++;
             }
             if( is_valid.test(current.getRight()) && i < nTiles ) {
                 e.add(current.getRight());
-                selected_matrix[current.getRight().getRow()][current.getRight().getCol()] = true;
+                selected_matrix[current.getRight().row()][current.getRight().col()] = true;
                 i++;
             }
             if( is_valid.test(current.getUp()) && i < nTiles ) {
                 e.add(current.getUp());
-                selected_matrix[current.getUp().getRow()][current.getUp().getCol()] = true;
+                selected_matrix[current.getUp().row()][current.getUp().col()] = true;
                 i++;
             }
         }
