@@ -35,7 +35,7 @@ public class TwoRowDistinctGoal implements CommonGoalStrategy {
                 }
             }
             for (int j = 0; j < 6; j++) {
-                sum = sum + temp[i];
+                sum = sum + temp[j];
             }
             if (sum == 1) counter++;
         }

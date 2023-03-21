@@ -22,6 +22,7 @@ public class ThreeColumnSixTileGoal implements CommonGoalStrategy {
                 if (shelf.getTile(i, j) == Tile.FRAMES) temp[3]++;
                 if (shelf.getTile(i, j) == Tile.TROPHIES) temp[4]++;
                 if (shelf.getTile(i, j) == Tile.PLANTS) temp[5]++;
+                if (shelf.getTile(i, j) != null) numoftiles++;
             }
             for (int i = 0; i < 6; i++) {
                 if (temp[i] == 0) notpresent++;
