@@ -53,7 +53,7 @@ public class CommonGoalTest {
     @Test
     public void DecreasingColumnFalse() {
         var shelf = new Shelf();
-        shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS, Tile.CATS), 0);
+        shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS), 0);
         shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS, Tile.CATS), 1);
         shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS), 2);
         shelf.addTiles(List.of(Tile.CATS, Tile.CATS), 3);
