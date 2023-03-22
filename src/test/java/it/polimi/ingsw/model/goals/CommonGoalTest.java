@@ -61,7 +61,6 @@ public class CommonGoalTest {
         }
         
         
-        // Test failed
         @Test
         public void DecreasingColumnFalse() {
             shelf.addTiles(List.of(Tile.CATS, Tile.CATS, Tile.CATS), 0);
@@ -153,8 +152,9 @@ public class CommonGoalTest {
     
     @Nested
     class SixGroupTwoTileGoalTest {
+        //TODO redo all testes to accomodate new definition of the goal
         @Test
-        void SixGroupTwoTileGoalTrue() {
+        void SixGroupTwoTileGoalTrue1() {
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.BOOKS), 0);
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 1);
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 2);
@@ -173,7 +173,18 @@ public class CommonGoalTest {
             shelf.addTiles(List.of(Tile.GAMES), 4);
             var goal = new SixGroupTwoTileGoal();
             assertFalse(goal.checkShelf(shelf));
+        }
+        
+        @Test
+        void SixGroupTwoTileGoalTrue2() {
             
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.BOOKS), 0);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.GAMES, Tile.CATS), 1);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.GAMES, Tile.CATS, Tile.TROPHIES), 2);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES), 3);
+            shelf.addTiles(List.of(Tile.GAMES, Tile.TROPHIES), 4);
+            var goal = new SixGroupTwoTileGoal();
+            assertFalse(goal.checkShelf(shelf));
         }
         
     }
