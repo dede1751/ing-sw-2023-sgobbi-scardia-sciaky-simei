@@ -3,8 +3,6 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +27,6 @@ public class GameModel {
     private final Board board;
     
     private final TileBag tileBag;
-    
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     /**
      * Initialize an empty model
@@ -79,10 +75,6 @@ public class GameModel {
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
         System.out.println("Initialized game with " + numPlayers + " players");
-    }
-    
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
     }
     
     /**
@@ -144,8 +136,6 @@ public class GameModel {
     public void addPlayer(String nickname, int pgID) {
         players.add(new Player(nickname, pgID));
         System.out.println("Player " + nickname + " with id: " + pgID);
-        
-        this.pcs.firePropertyChange("ADD PLAYER", "", nickname);
     }
     
     /**
