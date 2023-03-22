@@ -156,16 +156,16 @@ public class CommonGoalTest {
         @Test
         void SixGroupTwoTileGoalTrue1() {
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.BOOKS), 0);
-            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 1);
-            shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 2);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.GAMES, Tile.CATS, Tile.TROPHIES), 1);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.GAMES, Tile.CATS, Tile.TROPHIES), 2);
             shelf.addTiles(List.of(Tile.BOOKS, Tile.BOOKS), 3);
-            shelf.addTiles(List.of(Tile.GAMES), 4);
+            shelf.addTiles(List.of(Tile.GAMES, Tile.GAMES), 4);
             var goal = new SixGroupTwoTileGoal();
             assertTrue(goal.checkShelf(shelf));
         }
         
         @Test
-        void SixGroupTwoTileGoalFalse() {
+        void SixGroupTwoTileGoalFalse1() {
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.BOOKS), 0);
             shelf.addTiles(List.of(Tile.CATS, Tile.TROPHIES), 1);
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.TROPHIES), 2);
@@ -176,10 +176,10 @@ public class CommonGoalTest {
         }
         
         @Test
-        void SixGroupTwoTileGoalTrue2() {
+        void SixGroupTwoTileGoalFalse2() {
             
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.CATS, Tile.BOOKS), 0);
-            shelf.addTiles(List.of(Tile.TROPHIES, Tile.GAMES, Tile.CATS), 1);
+            shelf.addTiles(List.of(Tile.TROPHIES, Tile.GAMES, Tile.CATS, Tile.TROPHIES), 1);
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.GAMES, Tile.CATS, Tile.TROPHIES), 2);
             shelf.addTiles(List.of(Tile.TROPHIES, Tile.TROPHIES), 3);
             shelf.addTiles(List.of(Tile.GAMES, Tile.TROPHIES), 4);
