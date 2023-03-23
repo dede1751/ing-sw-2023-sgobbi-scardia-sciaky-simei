@@ -17,7 +17,7 @@ public class Shelf {
      */
     private final List<Stack<Tile>> content;
     
-    protected Shelf() {
+    public Shelf() {
         this.content = new ArrayList<>();
         
         for( int i = 0; i < N_COL; i++ ) {
