@@ -20,10 +20,8 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
         }
         var checked_matrix = new boolean[Shelf.N_ROW][Shelf.N_COL];
         var square = List.of(new coor(0, 0), new coor(1, 0), new coor(1, 1), new coor(0, 1));
-        Predicate<coor> is_valid = (x) -> {
-            return (x.r >= 0 && x.r < Shelf.N_ROW && x.c >= 0 && x.c < Shelf.N_COL) &&
-                   (shelf.getTile(x.r, x.c) != null) && (!checked_matrix[x.r][x.c]);
-        };
+        Predicate<coor> is_valid = (x) -> (x.r >= 0 && x.r < Shelf.N_ROW && x.c >= 0 && x.c < Shelf.N_COL) &&
+                                          (shelf.getTile(x.r, x.c) != null) && (!checked_matrix[x.r][x.c]);
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
             for( int j = 0; j < Shelf.N_COL; j++ ) {
                 var current = new coor(i, j);
