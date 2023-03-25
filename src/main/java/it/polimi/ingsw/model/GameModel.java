@@ -167,6 +167,10 @@ public class GameModel {
         return players.get(currentPlayerIndex);
     }
     
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+    
     /**
      * Set current player based on index from getPlayers() list
      *
@@ -174,8 +178,8 @@ public class GameModel {
      *
      * @return Selected player
      */
-    public Player setCurrentPlayer(int index) {
-        return players.get(index);
+    public Player setCurrentPlayer() {
+        return players.get(getCurrentPlayerIndex());
     }
     
     /**
