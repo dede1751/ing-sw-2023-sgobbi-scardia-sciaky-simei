@@ -14,54 +14,55 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
     
     public boolean checkShelf(Shelf shelf) {
         
-        record coor(int r, int c) {
-            coor sum_off(coor offset) {
-                return new coor(r + offset.r(), c + offset.c());
+        record Coord(int r, int c) {
+            Coord sumOffset(Coord offset) {
+                return new Coord(r + offset.r(), c + offset.c());
             }
             
-            List<coor> sum_list(List<coor> offset) {
-                return offset.stream().map((x) -> x.sum_off(this)).toList();
+            List<Coord> sumList(List<Coord> offset) {
+                return offset.stream().map((x) -> x.sumOffset(this)).toList();
             }
         }
         
-        var square = List.of(new coor(0, 0), new coor(0, 1),
-                             new coor(1, 0), new coor(1, 1));
-        var oriz_line = List.of(new coor(0, 0), new coor(0, 1),
-                                new coor(0, 2), new coor(0, 3));
-        var ver_line = List.of(new coor(0, 0), new coor(1, 0),
-                               new coor(2, 0), new coor(3, 0));
-        var mat = shelf.getAllShelf();
-        var valid_matrix = new boolean[Shelf.N_ROW][Shelf.N_COL];
+        Tile[][] mat = shelf.getAllShelf();
+        boolean[][] checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
         
-        var count = 0;
-        for( int i = Shelf.N_ROW - 1; i > 0; i-- ) {
-            for( int j = 0; j < Shelf.N_COL - 1; j++ ) {
-                Tile tile_t = mat[i][j];
-                var valid = tile_t != Tile.NOTILE;
-                if( !valid )
+        List<Coord> square = List.of(new Coord(0, 0), new Coord(0, 1), new Coord(1, 0), new Coord(1, 1));
+        List<Coord> orizonthalLine = List.of(new Coord(0, 0), new Coord(0, 1), new Coord(0, 2), new Coord(0, 3));
+        List<Coord> verticalLine = List.of(new Coord(0, 0), new Coord(1, 0), new Coord(2, 0), new Coord(3, 0));
+        
+        int count = 0;
+        for ( int i = Shelf.N_ROW - 1; i > 0; i-- ) {
+            for ( int j = 0; j < Shelf.N_COL - 1; j++ ) {
+                Tile.Type tile = mat[i][j].type();
+                
+                if ( tile == Tile.Type.NOTILE ) {
                     continue;
-                var current = new coor(i, j);
-                Predicate<coor> is_valid =
-                        (curr) -> !valid_matrix[curr.r][curr.c] && shelf.getTile(curr.r, curr.c) == tile_t;
+                }
+                
+                Coord current = new Coord(i, j);
+                Predicate<Coord> isValid = curr -> 
+                        !checked[curr.r][curr.c]
+                        && shelf.getTile(curr.r, curr.c).type() == tile;
+                
                 //tests for square forms
-                valid = current.sum_list(square).stream().allMatch(is_valid);
-                if( valid ) {
+                if( current.sumList(square).stream().allMatch(isValid) ) {
                     count++;
-                    current.sum_list(square).forEach((x) -> valid_matrix[x.r][x.c] = true);
+                    current.sumList(square).forEach((x) -> checked[x.r][x.c] = true);
                     continue;
                 }
-                //tests for orizzontal lines forms
-                valid = current.sum_list(oriz_line).stream().allMatch(is_valid);
-                if( valid ) {
+                
+                //tests for orizonthal line forms
+                if( current.sumList(orizonthalLine).stream().allMatch(isValid) ) {
                     count++;
-                    current.sum_list(oriz_line).forEach((x) -> valid_matrix[x.r][x.c] = true);
+                    current.sumList(orizonthalLine).forEach((x) -> checked[x.r][x.c] = true);
                     continue;
                 }
-                //tests for vertical lines forms
-                valid = current.sum_list(ver_line).stream().allMatch(is_valid);
-                if( valid ) {
+                
+                //tests for vertical line forms
+                if( current.sumList(verticalLine).stream().allMatch(isValid) ) {
                     count++;
-                    current.sum_list(ver_line).forEach((x) -> valid_matrix[x.r][x.c] = true);
+                    current.sumList(verticalLine).forEach((x) -> checked[x.r][x.c] = true);
                 }
             }
         }

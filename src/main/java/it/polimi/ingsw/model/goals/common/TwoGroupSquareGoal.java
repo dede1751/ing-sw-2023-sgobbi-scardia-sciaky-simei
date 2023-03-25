@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model.goals.common;
 
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.Tile;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -12,27 +13,37 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
     }
     
     public boolean checkShelf(Shelf shelf) {
-        var count = 0;
-        record coor(int r, int c) {
-            coor sum_off(coor off) {
-                return new coor(r + off.r, c + off.c);
+        
+        record Coord(int r, int c) {
+            Coord sumOffset(Coord offset) {
+                return new Coord(r + offset.r, c + offset.c);
             }
         }
-        var checked_matrix = new boolean[Shelf.N_ROW][Shelf.N_COL];
-        var square = List.of(new coor(0, 0), new coor(1, 0), new coor(1, 1), new coor(0, 1));
-        Predicate<coor> is_valid = (x) -> (x.r >= 0 && x.r < Shelf.N_ROW && x.c >= 0 && x.c < Shelf.N_COL) &&
-                                          (shelf.getTile(x.r, x.c) != null) && (!checked_matrix[x.r][x.c]);
+        
+        boolean[][] checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
+        
+        List<Coord> square = List.of(new Coord(0, 0), new Coord(1, 0), new Coord(1, 1), new Coord(0, 1));
+        
+        Predicate<Coord> isValid = (x) -> (
+                x.r >= 0
+                && x.r < Shelf.N_ROW
+                && x.c >= 0
+                && x.c < Shelf.N_COL
+                && shelf.getTile(x.r, x.c) != Tile.NOTILE
+                && !checked[x.r][x.c]);
+        
+        int count = 0;
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
             for( int j = 0; j < Shelf.N_COL; j++ ) {
-                var current = new coor(i, j);
-                var valid = square.stream()
-                        .map(x -> is_valid.test(x.sum_off(current)) &&
-                                  shelf.getTile(current.r, current.c) ==
-                                  shelf.getTile(current.r + x.r, current.c + x.c))
+                Coord curr = new Coord(i, j);
+                boolean valid = square.stream()
+                        .map(x -> isValid.test(x.sumOffset(curr))
+                                  && shelf.getTile(curr.r, curr.c).type() == shelf.getTile(curr.r + x.r, curr.c + x.c).type())
                         .reduce(true, (a, b) -> a && b);
+                
                 if( valid ) {
-                    for( var x : square ) {
-                        checked_matrix[i + x.r][j + x.c] = true;
+                    for( Coord x : square ) {
+                        checked[i + x.r][j + x.c] = true;
                     }
                     count++;
                 }
@@ -41,6 +52,5 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
         
         return count > 1;
     }
-    
     
 }

@@ -19,4 +19,5 @@ public interface CommonGoalStrategy {
      * @return      true if common goal is achieved, else false
      */
     public boolean checkShelf(Shelf shelf);
+    
 }

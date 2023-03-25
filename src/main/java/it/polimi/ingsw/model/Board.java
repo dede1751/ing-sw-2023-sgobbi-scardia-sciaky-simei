@@ -115,58 +115,72 @@ public class Board {
             throw new OutOfBoundCoordinateException(coordinate);
     }
     
+    /**
+     * Refill the board using the given tilebag.
+     * The bag will not be modified, as the contents of the tilebag include the contents of the board.
+     * If not enough tiles are present to refill the board, it will only be partially refilled.
+     * Refilling happens in a breadth-first approach starting at a random coordinate
+     * @param tileBag Bag to draw the tiles from.
+     */
     public void refill(TileBag tileBag) {
-        var coord_list = tileOccupancy.keySet().stream().toList();
-        this.removeSelection(coord_list);
-        var selected_matrix = new boolean[9][9];
-        
         var engine = new Random();
-        var initial = coord_list.get(engine.nextInt(0, coord_list.size()));
-        var selected = new ArrayList<Coordinate>();
-        Predicate<Coordinate> is_valid = (x) -> this.tileOccupancy.containsKey(x) &&
-                                                !selected_matrix[x.row()][x.col()];
+        List<Coordinate> coordList = tileOccupancy.keySet().stream().toList();
+        this.removeSelection(coordList);
         
-        int nTiles = Math.min(tileBag.currentTileNumber(), tileOccupancy.size());
-        Queue<Coordinate> e = new LinkedList<>();
-        e.add(initial);
+        boolean[][] visited = new boolean[9][9];
+        
+        Predicate<Coordinate> needVisiting = x ->
+                this.tileOccupancy.containsKey(x)
+                && !visited[x.row()][x.col()];
+        
+        ArrayList<Coordinate> selected = new ArrayList<Coordinate>();
+        Queue<Coordinate> coordGraph = new LinkedList<>();
+        Coordinate initial = coordList.get(engine.nextInt(0, coordList.size()));
+        coordGraph.add(initial);
+        
         int i = 1;
+        int nTiles = Math.min(tileBag.currentTileNumber(), tileOccupancy.size());
         
-        while( !e.isEmpty() ) {
-            var current = e.peek();
-            selected.add(e.remove());
-            selected_matrix[current.row()][current.col()] = true;
-            if( is_valid.test(current.getDown()) && i < nTiles ) {
-                e.add(current.getDown());
-                selected_matrix[current.getDown().row()][current.getDown().col()] = true;
+        while( !coordGraph.isEmpty() ) {
+            Coordinate current = coordGraph.peek();
+            
+            selected.add(coordGraph.remove());
+            visited[current.row()][current.col()] = true;
+            
+            if( needVisiting.test(current.getDown()) && i < nTiles ) {
+                coordGraph.add(current.getDown());
+                visited[current.getDown().row()][current.getDown().col()] = true;
                 i++;
             }
-            if( is_valid.test(current.getLeft()) && i < nTiles ) {
-                e.add(current.getLeft());
-                selected_matrix[current.getLeft().row()][current.getLeft().col()] = true;
+            if( needVisiting.test(current.getLeft()) && i < nTiles ) {
+                coordGraph.add(current.getLeft());
+                visited[current.getLeft().row()][current.getLeft().col()] = true;
                 i++;
             }
-            if( is_valid.test(current.getRight()) && i < nTiles ) {
-                e.add(current.getRight());
-                selected_matrix[current.getRight().row()][current.getRight().col()] = true;
+            if( needVisiting.test(current.getRight()) && i < nTiles ) {
+                coordGraph.add(current.getRight());
+                visited[current.getRight().row()][current.getRight().col()] = true;
                 i++;
             }
-            if( is_valid.test(current.getUp()) && i < nTiles ) {
-                e.add(current.getUp());
-                selected_matrix[current.getUp().row()][current.getUp().col()] = true;
+            if( needVisiting.test(current.getUp()) && i < nTiles ) {
+                coordGraph.add(current.getUp());
+                visited[current.getUp().row()][current.getUp().col()] = true;
                 i++;
             }
         }
-        var map = tileBag.getAllBag();
-        var it = Tile.values();
+        
+        var bag = tileBag.getAllBag();
+        
         try {
-            for( var x : selected ) {
-                var randomTile = 0;
+            for( Coordinate coord : selected ) {
+                Tile randomTile;
                 do {
-                    randomTile = engine.nextInt(0, 6); //git blame someone-else
+                    randomTile = Tile.ALL_TILES[engine.nextInt(0, Tile.NUM_TILES)]; //git blame someone-else
                 }
-                while( map.get(it[randomTile]) == 0 );
+                while( bag.get(randomTile) == 0 );
                 
-                insertTile(x, it[randomTile]);
+                insertTile(coord, randomTile);
+                bag.put(randomTile, bag.get(randomTile) - 1);
             }
         }
         catch( CommonException ex ) {

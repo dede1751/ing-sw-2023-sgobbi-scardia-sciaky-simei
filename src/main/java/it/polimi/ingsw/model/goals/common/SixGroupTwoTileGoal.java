@@ -14,67 +14,71 @@ public class SixGroupTwoTileGoal implements CommonGoalStrategy {
     
     @Override
     public boolean checkShelf(Shelf shelf) {
-        int count = 0;
         
-        record coor(int r, int c) {
-            coor sum_off(coor off) {
-                return new coor(r + off.r, c + off.c);
+        record Coord(int r, int c) {
+            Coord sumOffset(Coord offset) {
+                return new Coord(r + offset.r, c + offset.c);
+            }
+        
+            List<Coord> sumList(List<Coord> off) {
+                return off.stream().map((x) -> x.sumOffset(this)).toList();
             }
             
-            List<coor> sum_list(List<coor> off) {
-                return off.stream().map((x) -> x.sum_off(this)).toList();
-            }
+            boolean inBounds() { return r >= 0 && r < Shelf.N_ROW && c >= 0 && c < Shelf.N_COL; }
         }
+    
+        var tileMatrix = shelf.getAllShelf();
+        var checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
+    
+        List<Coord> orLine = List.of(new Coord(0, 0), new Coord(0, 1));
+        List<Coord> veLine = List.of(new Coord(0, 0), new Coord(1, 0));
+        List<Coord> orCont = List.of(new Coord(1, 0), new Coord(1, 1), new Coord(0, 2), new Coord(-1, 1), new Coord(-1, 0), new Coord(0, -1));
+        List<Coord> veCont = List.of(new Coord(-1, 0), new Coord(0, 1), new Coord(0, -1), new Coord(1, -1), new Coord(1, 1), new Coord(2, 0));
         
-        var tile_matrix = shelf.getAllShelf();
-        var valid_matrix = new boolean[Shelf.N_ROW][Shelf.N_COL];
+        BiPredicate<List<Coord>, Tile> isValidForm = (x, t) -> (
+                x.stream().allMatch(y -> y.inBounds()
+                                         && tileMatrix[y.r][y.c].type() == t.type()
+                                         && t != Tile.NOTILE));
         
-        var or_line = List.of(new coor(0, 0), new coor(0, 1));
-        var ve_line = List.of(new coor(0, 0), new coor(1, 0));
-        
-        var or_cont = List.of(new coor(1, 0), new coor(1, 1), new coor(0, 2),
-                              new coor(-1, 1), new coor(-1, 0), new coor(0, -1));
-        var ve_cont = List.of(new coor(-1, 0), new coor(0, 1), new coor(0, -1),
-                              new coor(1, -1), new coor(1, 1), new coor(2, 0));
-        
-        BiPredicate<List<coor>, Tile> is_valid_form = (x, t) -> (
-                x.stream().allMatch(y -> (y.r < Shelf.N_ROW && y.c < Shelf.N_COL && y.r >= 0 && y.c >= 0) &&
-                                         tile_matrix[y.r][y.c] == t && t != Tile.NOTILE));
-        BiPredicate<List<coor>, Tile> is_valis_cont = (x, t) -> (
-                x.stream().allMatch(y -> shelf.getTile(y.r, y.c) != t ||
-                                         shelf.getTile(y.r, y.c) == t && !valid_matrix[y.r][y.c]));
-        
+        BiPredicate<List<Coord>, Tile> isValidCont = (x, t) -> (
+                x.stream().allMatch(y -> shelf.getTile(y.r, y.c).type() != t.type()
+                                             || (shelf.getTile(y.r, y.c).type() == t.type() && !checked[y.r][y.c])));
+    
+        int count = 0;
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
             for( int j = 0; j < Shelf.N_COL; j++ ) {
-                var current = new coor(i, j);
-                var tile = tile_matrix[i][j];
-                boolean valid;
-                valid = is_valid_form.test(current.sum_list(or_line), tile) &&
-                        is_valis_cont.test(current.sum_list(or_cont), tile);
-                if( valid ) {
-                    current.sum_list(or_line).forEach((x) -> valid_matrix[x.r][x.c] = true);
-                    current.sum_list(or_cont).forEach((x) -> {
-                        if( shelf.getTile(x.r, x.c) == tile ) {
-                            valid_matrix[x.r][x.c] = true;
+                Coord curr = new Coord(i, j);
+                Tile tile = tileMatrix[i][j];
+                
+                boolean valid = isValidForm.test(curr.sumList(orLine), tile)
+                                && isValidCont.test(curr.sumList(orCont), tile);
+                if ( valid ) {
+                    curr.sumList(orLine).forEach((x) -> checked[x.r][x.c] = true);
+                    curr.sumList(orCont).forEach((x) -> {
+                        if( x.inBounds() && shelf.getTile(x.r, x.c).type() == tile.type() ) {
+                            checked[x.r][x.c] = true;
                         }
                     });
                     count++;
                     continue;
                 }
-                current.sum_list(or_cont).forEach((x) -> {
-                    if( shelf.getTile(x.r, x.c) == tile ) {
-                        valid_matrix[x.r][x.c] = true;
+                
+                curr.sumList(orCont).forEach((x) -> {
+                    if( x.inBounds() && shelf.getTile(x.r, x.c).type() == tile.type() ) {
+                        checked[x.r][x.c] = true;
                     }
                 });
-                valid = is_valid_form.test(current.sum_list(ve_line), tile) &&
-                        is_valis_cont.test(current.sum_list(ve_cont), tile);
-                if( valid ) {
-                    current.sum_list(ve_line).forEach((x) -> valid_matrix[x.r][x.c] = true);
+                
+                valid = isValidForm.test(curr.sumList(veLine), tile)
+                        && isValidCont.test(curr.sumList(veCont), tile);
+                if ( valid ) {
+                    curr.sumList(veLine).forEach((x) -> checked[x.r][x.c] = true);
                     count++;
                 }
-                current.sum_list(ve_cont).forEach((x) -> {
-                    if( shelf.getTile(x.r, x.c) == tile ) {
-                        valid_matrix[x.r][x.c] = true;
+                
+                curr.sumList(veCont).forEach((x) -> {
+                    if( x.inBounds() && shelf.getTile(x.r, x.c).type() == tile.type() ) {
+                        checked[x.r][x.c] = true;
                     }
                 });
             }

@@ -2,18 +2,11 @@ package it.polimi.ingsw.model;
 
 /**
  * Coordinate class to index locations on the board.
+ * Top row is 0 and bottom is 8.
+ * Leftmost col is 0 and rightmost is 8.
  * This class is immutable.
  */
 public record Coordinate(int row, int col) {
-    
-    /**
-     * Initialize coordinate with given x,y values
-     *
-     * @param row Row index, top row is 0 and bottom is 8
-     * @param col Column index, leftmost column is 0 and rightmost is 8
-     */
-    public Coordinate {
-    }
     
     /**
      * Get coordinate row id
@@ -72,16 +65,8 @@ public record Coordinate(int row, int col) {
     }
     
     @Override
-    public boolean equals(Object obj) {
-        if( !(obj instanceof Coordinate c) ) {
-            return false;
-        }
-        
-        return this.row == c.row && this.col == c.col;
-    }
-    
-    @Override
     public String toString() {
         return "(" + row + "," + col + ")";
     }
+    
 }

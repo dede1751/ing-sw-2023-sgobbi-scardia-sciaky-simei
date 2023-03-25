@@ -35,29 +35,26 @@ class PlayerTest {
     public void getScoreTest() {
         int startingScore = p.getScore();
         assertEquals(0, startingScore);
-        int scoreToAdd = 10;
-        p.addScore(scoreToAdd);
-        assertEquals(10, p.getScore());
+
+        p.addScore(10);
+        assertEquals(startingScore + 10, p.getScore());
+        assertEquals(startingScore + 20, p.addScore(10));
     }
     
     @Test
     public void getShelfTest() {
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
             for( int j = 0; j < Shelf.N_COL; j++ ) {
-                assertNull(p.getShelf().getTile(i, j));
+                assertEquals(p.getShelf().getTile(i, j), Tile.NOTILE);
             }
         }
-        p.getShelf().addTiles(List.of(Tile.CATS, Tile.TROPHIES), 1);
-        assertEquals(Tile.CATS, p.getShelf().getTile(0, 1));
-        assertEquals(Tile.TROPHIES, p.getShelf().getTile(1, 1));
+        
+        p.getShelf().addTiles(
+                List.of(new Tile(Tile.Type.CATS, Tile.Sprite.ONE), new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)),
+                1);
+        
+        assertEquals(Tile.Type.CATS, p.getShelf().getTile(0, 1).type());
+        assertEquals(Tile.Type.TROPHIES, p.getShelf().getTile(1, 1).type());
     }
-    
-    @Test
-    public void addScoreTest() {
-        Player player = new Player("Lucrezia", 1);
-        int startingScore = player.getScore();
-        int scoreToAdd = 10;
-        int expectedScore = startingScore + scoreToAdd;
-        assertEquals(expectedScore, player.addScore(scoreToAdd));
-    }
+
 }

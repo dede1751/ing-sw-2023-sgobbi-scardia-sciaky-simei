@@ -28,10 +28,28 @@ public class ShelfTest {
     public void fillShelfDet() {
         columns = new ArrayList<>();
         
-        columns.add(0, List.of(Tile.CATS, Tile.BOOKS, Tile.PLANTS));
-        columns.add(1, List.of(Tile.PLANTS, Tile.TROPHIES, Tile.BOOKS, Tile.CATS));
-        columns.add(2, List.of(Tile.FRAMES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES));
-        columns.add(3, List.of(Tile.PLANTS, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS, Tile.PLANTS));
+        columns.add(0, List.of(
+                new Tile(Tile.Type.CATS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.BOOKS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE)));
+        columns.add(1, List.of(
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                new Tile(Tile.Type.BOOKS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.CATS, Tile.Sprite.ONE)));
+        columns.add(2, List.of(
+                new Tile(Tile.Type.FRAMES, Tile.Sprite.ONE),
+                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)));
+        columns.add(3, List.of(
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE)));
         /*
          * COL 0 : CBP
          * COL 1 : PTBC
@@ -50,7 +68,7 @@ public class ShelfTest {
     @Test
     @DisplayName("Test addTiles, getAllShelf, getTiles all together")
     public void addTiles_getAllShelf_getTilesTest() {
-        var s = shelf.getAllShelf();
+        Tile[][] s = shelf.getAllShelf();
         
         for( int i = 0; i < columns.size(); i++ ) {
             for( int j = 0; j < columns.get(i).size(); j++ ) {
@@ -66,7 +84,7 @@ public class ShelfTest {
         for( int i = columns.size(); i < Shelf.N_COL; i++ ) {
             for( int j = 0; j < Shelf.N_ROW; j++ ) {
                 assertEquals(s[j][i], Tile.NOTILE);
-                assertNull(shelf.getTile(j, i));
+                assertEquals(shelf.getTile(j, i), Tile.NOTILE);
             }
         }
         
@@ -99,18 +117,32 @@ public class ShelfTest {
     @Test
     public void isFullTest() {
         assertFalse(shelf.isFull());
-        var s = new Shelf();
+        Shelf s = new Shelf();
+        
         for( int i = 0; i < Shelf.N_COL; i++ ) {
             s.addTiles(
-                    List.of(Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES),
+                    List.of(
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)),
                     i);
         }
         assertTrue(s.isFull());
         
         s = new Shelf();
         for( int i = 0; i < Shelf.N_COL; i++ ) {
-            s.addTiles(List.of(Tile.NOTILE, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES, Tile.TROPHIES),
-                       i);
+            s.addTiles(
+                    List.of(
+                            Tile.NOTILE,
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)),
+                    i);
         }
         assertFalse(s.isFull());
     }

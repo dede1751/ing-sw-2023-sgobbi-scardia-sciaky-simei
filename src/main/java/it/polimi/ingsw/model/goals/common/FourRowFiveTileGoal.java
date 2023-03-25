@@ -3,6 +3,10 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+
 public class FourRowFiveTileGoal implements CommonGoalStrategy {
     
     public String getDescription() {
@@ -10,25 +14,24 @@ public class FourRowFiveTileGoal implements CommonGoalStrategy {
     }
     
     public boolean checkShelf(Shelf shelf) {
-        int counter = 0;
+        int rowCounter = 0;
         for (int i = 0; i < 6; i++) {
-            int[] temp = new int[] {0, 0, 0, 0, 0, 0};
-            int ispresent = 0;
-            int numoftiles = 0;
+            HashSet<Tile.Type> uniqueTiles = new HashSet<>();
+            boolean skipRow = false;
+            
             for (int j = 0; j < 5; j++) {
-                if (shelf.getTile(i, j) == Tile.CATS) temp[0]++;
-                if (shelf.getTile(i, j) == Tile.BOOKS) temp[1]++;
-                if (shelf.getTile(i, j) == Tile.GAMES) temp[2]++;
-                if (shelf.getTile(i, j) == Tile.FRAMES) temp[3]++;
-                if (shelf.getTile(i, j) == Tile.TROPHIES) temp[4]++;
-                if (shelf.getTile(i, j) == Tile.PLANTS) temp[5]++;
-                if (shelf.getTile(i, j) != null) numoftiles++;
+                Tile tile = shelf.getTile(i, j);
+                
+                if ( tile == Tile.NOTILE ) {
+                    skipRow = true;
+                    break;
+                }
+                uniqueTiles.add(tile.type());
             }
-            for (int j = 0; j < 6; j++) {
-                if (temp[j] != 0) ispresent++;
-            }
-            if (ispresent <= 3 && numoftiles == 5) counter++;
+            
+            if ( !skipRow && uniqueTiles.size() <= 3 ) rowCounter++;
         }
-        return counter >= 4;
+        return rowCounter >= 4;
     }
+    
 }

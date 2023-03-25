@@ -20,7 +20,7 @@ public class Shelf {
     public Shelf() {
         this.content = new ArrayList<>();
         
-        for( int i = 0; i < N_COL; i++ ) {
+        for ( int i = 0; i < N_COL; i++ ) {
             this.content.add(i, new Stack<>());
         }
     }
@@ -29,16 +29,15 @@ public class Shelf {
      * Get tile at given x, y coordinates
      *
      * @param row Row of the desired tile
-     * @param col Colum of the desired tile
+     * @param col Column of the desired tile
      *
-     * @return Tile in the position [row, col], null if the coordinates are out of bounds
+     * @return Tile in the position [row, col], NOTILE if out of bounds or empty
      */
     public Tile getTile(int row, int col) {
         try {
             return this.content.get(col).get(row);
-        }
-        catch( IndexOutOfBoundsException e ) {
-            return null;
+        } catch( IndexOutOfBoundsException e ) {
+            return Tile.NOTILE;
         }
     }
     
@@ -50,10 +49,9 @@ public class Shelf {
     public Tile[][] getAllShelf() {
         Tile[][] result = new Tile[N_ROW][N_COL];
         
-        for( int i = 0; i < N_ROW; i++ ) {
+        for ( int i = 0; i < N_ROW; i++ ) {
             for( int j = 0; j < N_COL; j++ ) {
-                var tile = getTile(i, j);
-                result[i][j] = Objects.requireNonNullElse(tile, Tile.NOTILE);
+                result[i][j] = Objects.requireNonNullElse(getTile(i, j), Tile.NOTILE);
             }
         }
         return result;
@@ -78,9 +76,10 @@ public class Shelf {
     public List<Integer> availableColumns(int selectionLength) {
         var res = new ArrayList<Integer>();
         
-        for( int i = 0; i < N_COL; i++ ) {
-            if( content.get(i).size() <= (N_ROW - selectionLength) )
+        for ( int i = 0; i < N_COL; i++ ) {
+            if ( content.get(i).size() <= (N_ROW - selectionLength) ) {
                 res.add(i);
+            }
         }
         return res;
     }
@@ -96,15 +95,14 @@ public class Shelf {
         return N_ROW - content.get(column).size();
     }
     
-    ;
-    
-    
-    /*
-     * return all the indexes of the columns that still have space, with the remaining spaces
+    /**
+     * Get the amount of space left in each column.
+     * @return Map linking each available column to the amount of space it has.
      */
     public Map<Integer, Integer> remainingSpace() {
         var res = new HashMap<Integer, Integer>();
-        for( var x : availableColumns(0) ) {
+        
+        for ( var x : availableColumns(0) ) {
             res.put(x, spaceInColumn(x));
         }
         return res;
@@ -117,9 +115,10 @@ public class Shelf {
      * @param col   Column index, between 0 and 5
      */
     public void addTiles(List<Tile> tiles, int col) {
-        for( var x : tiles ) {
-            if( x != Tile.NOTILE )
+        for ( var x : tiles ) {
+            if ( x != Tile.NOTILE ) {
                 content.get(col).push(x);
+            }
         }
     }
     
