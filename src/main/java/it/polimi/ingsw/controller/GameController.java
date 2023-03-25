@@ -2,11 +2,13 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
+import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Random;
 
 
 public class GameController implements PropertyChangeListener {
@@ -17,8 +19,7 @@ public class GameController implements PropertyChangeListener {
     
     private int numPlayers;
     
-    private CommonGoal commonGoalx;
-    private CommonGoal commonGoaly;
+    private boolean isPaused;
     
     
     /* constructor tobe used for paused game*/
@@ -41,14 +42,14 @@ public class GameController implements PropertyChangeListener {
     }
     
     
-    //function to be written, need to check if the board need to be refilled
+    //TODO
     public Boolean needRefill() {
         Board toBeChecked = model.getBoard();
         return true;
     }
     
-    
-    public void turnController(List<Tile> selection, int col) {
+    //TODO we need to understand how to take the coordinate and column from player
+    public void turn(List<Tile> selection, int col) {
         
         
         //check if the current player is the last in the list of players, if it is, set current player to the first in the list
@@ -58,19 +59,24 @@ public class GameController implements PropertyChangeListener {
             model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
         }
         
-        
+        //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
         
+        //remove teh selection from the board and add it to the current player shelfe
+        model.shelveSelection(selection, col);
         
-        this.model.shelveSelection(selection, col);
+        
+        if( CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
+            model.addCurrentPlayerScore(model.popStackCGX());
+        }
+        if( CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
+            model.addCurrentPlayerScore(model.popStackCGY());
+        }
         
         
-        if( getCommonGoal )
-            
-            
-            if( needRefill() == true ) {
-                model.getBoard().refill(model.getTileBag());
-            }
+        if( needRefill() ) {
+            model.getBoard().refill(model.getTileBag());
+        }
         
         
         if( currentPlayer.getShelf().isFull() ) {
@@ -79,5 +85,57 @@ public class GameController implements PropertyChangeListener {
         
         
     }
+    
+    
+    public void initGame() {
+        model.getBoard().refill(model.getTileBag());
+        game();
+    }
+    
+    //TODO once understood how to take coordinates and column, update the turn call accordingly
+    public void game() {
+        while( !isPaused ) {
+            while( !model.isFinalTurn() ) {
+                //turn();
+            }
+            do {
+                //turn();
+            }
+            while( model.getCurrentPlayerIndex() != numPlayers - 1 );
+            
+            
+            endGame();
+        }
+    }
+    
+    public void endGame() {
+        int winnerIndex = 0;
+        for( int i = 0; i < model.getNumPlayers(); i++ ) {
+            model.getPlayers().get(i).addScore(
+                    PersonalGoal.getPersonalGoal(model.getPlayers().get(i).getPg()).checkGoal(
+                            model.getPlayers().get(i).getShelf()));
+        }
+        
+        for( int i = 0; i < numPlayers - 1; i++ ) {
+            if( model.getPlayers().get(i).getScore() > model.getPlayers().get(winnerIndex).getScore() ) {
+                winnerIndex = i;
+            }
+        }
+        
+        System.out.println("The winner is" + model.getPlayers().get(winnerIndex) + "!!!");
+        
+    }
+    
+    
+    public void pause() {
+        isPaused = true;
+        //TODO save teh model into the server
+    }
+    
+    public void resume() {
+        isPaused = false;
+        game();
+    }
+    
     
 }
