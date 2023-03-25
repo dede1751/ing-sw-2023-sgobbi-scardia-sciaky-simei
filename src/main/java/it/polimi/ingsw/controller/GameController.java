@@ -1,9 +1,7 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Coordinate;
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.view.VirtualView;
 
 import java.beans.PropertyChangeEvent;
@@ -18,6 +16,9 @@ public class GameController implements PropertyChangeListener {
     private final VirtualView view;
     
     private int numPlayers;
+    
+    private CommonGoal commonGoalx;
+    private CommonGoal commonGoaly;
     
     
     /* constructor tobe used for paused game*/
@@ -39,24 +40,42 @@ public class GameController implements PropertyChangeListener {
         }
     }
     
-    public void turnController(List<Coordinate> selection, int col) {
+    
+    //function to be written, need to check if the board need to be refilled
+    public Boolean needRefill() {
+        Board toBeChecked = model.getBoard();
+        return true;
+    }
+    
+    
+    public void turnController(List<Tile> selection, int col) {
+        
         
         //check if the current player is the last in the list of players, if it is, set current player to the first in the list
-        if( model.getCurrentPlayer() == model.getPlayers().get(model.getNumPlayers()) ) {
-            model.setCurrentPlayer(0);
+        if( model.getCurrentPlayerIndex() == model.getNumPlayers() ) {
+            model.setCurrentPlayerIndex(0);
         }else {
-            model.setCurrentPlayer(model.getCurrentPlayer());
+            model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
         }
         
         
         Player currentPlayer = model.getCurrentPlayer();
         
         
-        for( Coordinate c : selection ) {
-            Tile t = this.model.getTile(c);
-            currentPlayer.getShelf().addTiles(t, col);
+        this.model.shelveSelection(selection, col);
+        
+        
+        if( getCommonGoal )
+            
+            
+            if( needRefill() == true ) {
+                model.getBoard().refill(model.getTileBag());
+            }
+        
+        
+        if( currentPlayer.getShelf().isFull() ) {
+            model.setGameOver();
         }
-        this.model.removeSelection(selection);
         
         
     }

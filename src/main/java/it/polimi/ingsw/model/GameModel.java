@@ -23,8 +23,8 @@ public class GameModel {
     private final Stack<Integer> commonGoalStackX;
     private final Stack<Integer> commonGoalStackY;
     
-    private final int currentPlayerIndex;
-    private final boolean gameOver;
+    private int currentPlayerIndex;
+    private boolean gameOver;
     private final List<Player> players;
     private final Board board;
     
@@ -125,11 +125,25 @@ public class GameModel {
         return commonGoalStackY.pop();
     }
     
+    
+    public Board getBoard() {
+        return this.board;
+    }
+    
+    public TileBag getTileBag() {
+        return this.tileBag;
+    }
+    
     /**
      * Checks if the game is on its final turn
      *
      * @return true if the turn is final (although some players might still have to play)
      */
+    public void setGameOver() {
+        gameOver = true;
+    }
+    
+    
     public boolean isFinalTurn() {
         return this.gameOver;
     }
@@ -158,6 +172,17 @@ public class GameModel {
         return players;
     }
     
+    
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+    
+    
+    public void setCurrentPlayerIndex(int i) {
+        currentPlayerIndex = i;
+    }
+    
+    
     /**
      * Return the current player
      *
@@ -167,20 +192,6 @@ public class GameModel {
         return players.get(currentPlayerIndex);
     }
     
-    public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
-    }
-    
-    /**
-     * Set current player based on index from getPlayers() list
-     *
-     * @param index Index of player to set as first in the player list
-     *
-     * @return Selected player
-     */
-    public Player setCurrentPlayer() {
-        return players.get(getCurrentPlayerIndex());
-    }
     
     /**
      * Get tile on the board at the given coordinate
