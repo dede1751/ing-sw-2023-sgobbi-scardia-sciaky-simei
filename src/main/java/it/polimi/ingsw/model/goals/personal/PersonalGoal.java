@@ -3,7 +3,6 @@ package it.polimi.ingsw.model.goals.personal;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
-import it.polimi.ingsw.model.Tile.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +29,7 @@ public class PersonalGoal {
      * Goals can only be created internally, only pre-initialized ones can actually be used.
      * @param goalIndex Unique integer ID of the goal
      */
-    private PersonalGoal(int goalIndex) {
+    public PersonalGoal(int goalIndex) {
         this.goalIndex = goalIndex;
         this.goal = new HashMap<>();
         
