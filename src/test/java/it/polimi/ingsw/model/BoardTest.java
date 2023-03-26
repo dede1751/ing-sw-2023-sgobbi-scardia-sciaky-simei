@@ -20,7 +20,7 @@ public class BoardTest {
     public void initTwoPlayer() {
         Board board = new Board(2);
         
-        assertNotNull(board.getTile(new Coordinate(1, 3)));
+        assertNotNull(board.getTile(new Coordinate(7, 3)));
         assertNull(board.getTile(new Coordinate(0, 3)));
     }
     
@@ -29,8 +29,8 @@ public class BoardTest {
         Board board = new Board(4);
         
         assertNotNull(board.getTile(new Coordinate(1, 3)));
-        assertNotNull(board.getTile(new Coordinate(3, 8)));
-        assertNotNull(board.getTile(new Coordinate(7, 3)));
+        assertNotNull(board.getTile(new Coordinate(2, 2)));
+        assertNotNull(board.getTile(new Coordinate(3, 1)));
         assertNull(board.getTile(new Coordinate(-1, -1)));
     }
     

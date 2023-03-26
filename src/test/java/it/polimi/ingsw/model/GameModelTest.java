@@ -128,8 +128,8 @@ public class GameModelTest {
     @Test
     public void shelveRemoveSelectionTest() {
          GameModel game = new GameModel(2,5, 6);
-         Coordinate coord1 = new Coordinate(1, 3);
-         Coordinate coord2 = new Coordinate(1, 4);
+         Coordinate coord1 = new Coordinate(7, 3);
+         Coordinate coord2 = new Coordinate(7, 4);
          Tile tile1 = new Tile(Tile.Type.CATS, Tile.Sprite.ONE);
          Tile tile2 = new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE);
          

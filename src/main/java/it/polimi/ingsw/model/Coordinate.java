@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 /**
  * Coordinate class to index locations on the board.
- * Top row is 0 and bottom is 8.
+ * Bottom row is 0 and top is 8.
  * Leftmost col is 0 and rightmost is 8.
  * This class is immutable.
  */
@@ -52,7 +52,7 @@ public record Coordinate(int row, int col) {
      * @return New coordinate atop the current one
      */
     public Coordinate getUp() {
-        return new Coordinate(row - 1, col);
+        return new Coordinate(row + 1, col);
     }
     
     /**
@@ -61,7 +61,7 @@ public record Coordinate(int row, int col) {
      * @return New coordinate under the current one
      */
     public Coordinate getDown() {
-        return new Coordinate(row + 1, col);
+        return new Coordinate(row - 1, col);
     }
     
     @Override
