@@ -22,23 +22,24 @@ public class CoordinateTest {
     
     @Test
     public void getterSetter() {
-        assertEquals(c.getRow(), 6);
-        assertEquals(c.getCol(), 0);
+        assertEquals(c.row(), 6);
+        assertEquals(c.col(), 0);
     }
     
     @Test
     public void leftRight() {
-        var left = c.getLeft();
-        var right = left.getRight();
+        Coordinate left = c.getLeft();
+        Coordinate right = left.getRight();
         
         assertEquals(c, right);
     }
     
     @Test
     public void upDown() {
-        var up = c.getUp();
-        var down = up.getDown();
+        Coordinate up = c.getUp();
+        Coordinate down = up.getDown();
         
         assertEquals(c, down);
     }
+    
 }

@@ -27,18 +27,27 @@ public class TileBagTest {
     
     @Test
     public void getTileAmountTest() {
-        for( var tile : Tile.values() ) {
-            if( tile != Tile.NOTILE )
-                assertEquals(22, bag.getTileAmount(tile), () -> "tile :" + tile.name());
+        for ( Tile.Type type : Tile.Type.values() ) {
+            if ( type != Tile.Type.NOTILE ) {
+                int count = bag.getTileAmount(new Tile(type, Tile.Sprite.ONE));
+                count += bag.getTileAmount(new Tile(type, Tile.Sprite.TWO));
+                count += bag.getTileAmount(new Tile(type, Tile.Sprite.THREE));
+                
+                assertEquals(22, count, () -> "tile :" + type.name());
+            }
         }
     }
     
     @Test
     public void removeSelectionTest() {
-        var sel = List.of(Tile.PLANTS, Tile.CATS, Tile.GAMES);
-        bag.removeSelection(sel);
-        for( var tile : sel ) {
-            assertEquals(21, bag.getTileAmount(tile), () -> "tile : " + tile.name());
+        List<Tile> selection = List.of(
+                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.CATS, Tile.Sprite.ONE),
+                new Tile(Tile.Type.GAMES, Tile.Sprite.ONE));
+        bag.removeSelection(selection);
+        
+        for ( Tile tile: selection ) {
+            assertEquals(7, bag.getTileAmount(tile), () -> "tile : " + tile.type().name());
         }
     }
     

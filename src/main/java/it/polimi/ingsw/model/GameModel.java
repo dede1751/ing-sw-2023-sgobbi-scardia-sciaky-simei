@@ -41,31 +41,22 @@ public class GameModel {
         
         this.commonGoalNumY = commonGoalY;
         this.commonGoalStackY = new Stack<>();
-        switch( numPlayers ) {
-            case 2:
-                this.commonGoalStackX.push(4);
-                this.commonGoalStackX.push(8);
-                this.commonGoalStackY.push(4);
-                this.commonGoalStackY.push(8);
-            case 3:
-                this.commonGoalStackX.push(4);
-                this.commonGoalStackX.push(6);
-                this.commonGoalStackX.push(8);
-                this.commonGoalStackY.push(4);
-                this.commonGoalStackY.push(6);
-                this.commonGoalStackY.push(8);
-            case 4:
-                this.commonGoalStackX.push(2);
-                this.commonGoalStackX.push(4);
-                this.commonGoalStackX.push(6);
-                this.commonGoalStackX.push(8);
-                this.commonGoalStackY.push(4);
-                this.commonGoalStackY.push(2);
-                this.commonGoalStackY.push(6);
-                this.commonGoalStackY.push(8);
-            
-        }
         
+        if ( numPlayers > 3 ) {
+            this.commonGoalStackX.push(2);
+            this.commonGoalStackY.push(2);
+        }
+    
+        this.commonGoalStackX.push(4);
+        this.commonGoalStackY.push(4);
+    
+        if ( numPlayers > 2 ) {
+            this.commonGoalStackX.push(6);
+            this.commonGoalStackY.push(6);
+        }
+    
+        this.commonGoalStackX.push(8);
+        this.commonGoalStackY.push(8);
         
         this.tileBag = new TileBag();
         this.gameOver = false;
@@ -95,6 +86,10 @@ public class GameModel {
         return commonGoalNumY;
     }
     
+    /**
+     * Get number of participating players
+     * @return number of players
+     */
     public int getNumPlayers() {
         return numPlayers;
     }
