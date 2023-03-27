@@ -1,6 +1,9 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.Board;
+import it.polimi.ingsw.model.GameModel;
+import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.view.VirtualView;
@@ -8,7 +11,6 @@ import it.polimi.ingsw.view.VirtualView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
-import java.util.Random;
 
 
 public class GameController implements PropertyChangeListener {
@@ -50,15 +52,7 @@ public class GameController implements PropertyChangeListener {
     
     //TODO we need to understand how to take the coordinate and column from player
     public void turn(List<Tile> selection, int col) {
-        
-        
-        //check if the current player is the last in the list of players, if it is, set current player to the first in the list
-        if( model.getCurrentPlayerIndex() == model.getNumPlayers() ) {
-            model.setCurrentPlayerIndex(0);
-        }else {
-            model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
-        }
-        
+    
         //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
         
@@ -84,6 +78,15 @@ public class GameController implements PropertyChangeListener {
         }
         
         
+        //check if the current player is the last in the list of players, if it is, set current player to the first in the list
+        if( model.getCurrentPlayerIndex() == model.getNumPlayers() ) {
+            model.setCurrentPlayerIndex(0);
+        }else {
+            model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
+        }
+    
+
+        
     }
     
     
@@ -94,6 +97,8 @@ public class GameController implements PropertyChangeListener {
     
     //TODO once understood how to take coordinates and column, update the turn call accordingly
     public void game() {
+        
+        
         while( !isPaused ) {
             while( !model.isFinalTurn() ) {
                 //turn();
@@ -107,6 +112,8 @@ public class GameController implements PropertyChangeListener {
             endGame();
         }
     }
+    
+
     
     public void endGame() {
         int winnerIndex = 0;

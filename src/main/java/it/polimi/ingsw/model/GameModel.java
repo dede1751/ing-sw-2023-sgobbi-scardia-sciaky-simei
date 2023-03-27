@@ -255,6 +255,9 @@ public class GameModel {
      * @param orderedTiles List of tiles to put on shelf, from first to last
      * @param column       Column of the shelf to insert the tiles at
      */
+    
+    
+    //TODO  fix the parameters
     public void shelveSelection(List<Tile> orderedTiles, int column) {
         this.tileBag.removeSelection(orderedTiles);
         this.getCurrentPlayer().getShelf().addTiles(orderedTiles, column);
