@@ -1,9 +1,14 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * Player representation within model
  */
-public class Player {
+public class Player implements Serializable {
+    
+    static final long serialVersionUID = 1L;
     
     final private String nickname;
     

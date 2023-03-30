@@ -1,23 +1,22 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Board;
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
-import it.polimi.ingsw.view.VirtualView;
+import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.ViewMessage;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 
-public class GameController implements PropertyChangeListener {
+public class GameController {
     
     private final GameModel model;
     
-    private final VirtualView view;
+    private final Client view;
+    
+    private final int viewID;
     
     private int numPlayers;
     
@@ -25,24 +24,11 @@ public class GameController implements PropertyChangeListener {
     
     
     /* constructor tobe used for paused game*/
-    public GameController(GameModel model, VirtualView view) {
+    public GameController(GameModel model, Client view, int viewID) {
         this.model = model;
         this.view = view;
-        
-        model.addPropertyChangeListener(view);
+        this.viewID = viewID;
     }
-    
-    
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        switch( evt.getPropertyName() ) {
-            case "LOGIN" -> {
-                this.model.addPlayer((String) evt.getNewValue(), 0);
-            }
-            default -> System.out.println("Unrecognized property change");
-        }
-    }
-    
     
     //TODO
     public Boolean needRefill() {
@@ -88,7 +74,6 @@ public class GameController implements PropertyChangeListener {
 
         
     }
-    
     
     public void initGame() {
         model.getBoard().refill(model.getTileBag());
@@ -144,5 +129,20 @@ public class GameController implements PropertyChangeListener {
         game();
     }
     
+    public void update(ViewMessage o, View.Action evt) {
+        if ( o.getViewID() != this.viewID ) {
+            System.err.println("Discarding notification from " + o);
+            return;
+        }
+        
+        switch ( evt ) {
+            case LOGIN -> {
+                String nickname = o.getNickname();
+                model.addPlayer(nickname, 0);
+            }
+            default -> System.err.println("Ignoring event from " + view + ": " + evt);
+        }
+        
+    }
     
 }
