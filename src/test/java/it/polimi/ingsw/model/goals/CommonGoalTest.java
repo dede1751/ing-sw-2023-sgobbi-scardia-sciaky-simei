@@ -216,68 +216,52 @@ public class CommonGoalTest {
         
         @Test
         void SixGroupTwoTileGoalTrue1() {
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE)), 4);
-            var goal = new SixGroupTwoTileGoal();
-            assertTrue(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new SixGroupTwoTileGoal();
+                assertTrue(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
         
         @Test
         void SixGroupTwoTileGoalFalse1() {
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE)), 4);
-            var goal = new SixGroupTwoTileGoal();
-            assertFalse(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new SixGroupTwoTileGoal();
+                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
         
         @Test
         void SixGroupTwoTileGoalFalse2() {
             
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE)), 4);
-            var goal = new SixGroupTwoTileGoal();
-            assertFalse(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new SixGroupTwoTileGoal();
+                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
         
         @Test
         void SixGroupTwoTileGoalFalse3() {
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.PLANTS, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE),
-                                   new Tile(Type.FRAMES, Sprite.TWO), new Tile(Type.CATS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.FRAMES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.PLANTS, Sprite.ONE),
-                                   new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.FRAMES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 4);
-            var goal = new SixGroupTwoTileGoal();
-            assertFalse(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new SixGroupTwoTileGoal();
+                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
-        
-        
     }
     
     @Tag("FourGroupFourTileGoal")
@@ -285,62 +269,39 @@ public class CommonGoalTest {
     class FourGroupFourTileGoalTest {
         @Test
         void FourGroupFourTileGoalFalse1() {
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE)), 4);
-            var goal = new FourGroupFourTileGoal();
-            assertFalse(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new FourCornersGoal();
+                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
         
         @Test
         void FourGroupFourTileGoalTrue1() {
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE)), 4);
-            var goal = new FourGroupFourTileGoal();
-            assertTrue(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new FourCornersGoal();
+                assertTrue(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
         
         @Test
         void FourGroupFourTileGoalFalse2() {
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.GAMES, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE)), 4);
-            var goal = new FourGroupFourTileGoal();
-            assertFalse(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new FourCornersGoal();
+                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
-        
-        
     }
     
     @Tag("FourRowFiveTileGoal")
@@ -487,18 +448,15 @@ public class CommonGoalTest {
     @Nested
     class TwoGroupSquareGoalTest {
         @Test
-        public void TwoGroupSquareFalse() {
-            shelf.addTiles(List.of(new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.FRAMES, Sprite.ONE),
-                                   new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.FRAMES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.PLANTS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.GAMES, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
-                                   new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 3);
-            
-            var goal = new TwoGroupSquareGoal();
-            assertFalse(goal.checkShelf(shelf));
+        public void TwoGroupSquareFalse1() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new TwoGroupSquareGoal();
+                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
+            });
         }
         
         @Test

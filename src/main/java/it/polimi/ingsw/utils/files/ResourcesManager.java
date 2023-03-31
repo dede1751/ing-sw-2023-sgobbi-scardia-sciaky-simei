@@ -26,8 +26,7 @@ public final class ResourcesManager {
     /**
      * Utility function to manage Json objects, powered by GSON
      */
-    public class JsonManager {
-        //TODO fixing this comment
+    public static class JsonManager {
         
         /**
          * search for the attribute in the first layer of the json's tree and return the child node
