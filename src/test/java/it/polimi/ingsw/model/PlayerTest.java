@@ -8,7 +8,6 @@ import org.junit.jupiter.api.TestInstance;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * This class tests {@link Player}
@@ -35,7 +34,7 @@ class PlayerTest {
     public void getScoreTest() {
         int startingScore = p.getScore();
         assertEquals(0, startingScore);
-
+        
         p.addScore(10);
         assertEquals(startingScore + 10, p.getScore());
         assertEquals(startingScore + 20, p.addScore(10));
@@ -56,5 +55,5 @@ class PlayerTest {
         assertEquals(Tile.Type.CATS, p.getShelf().getTile(0, 1).type());
         assertEquals(Tile.Type.TROPHIES, p.getShelf().getTile(1, 1).type());
     }
-
+    
 }

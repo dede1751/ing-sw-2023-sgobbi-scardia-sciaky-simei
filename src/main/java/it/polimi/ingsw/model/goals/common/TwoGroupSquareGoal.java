@@ -3,8 +3,7 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
-import java.util.List;
-import java.util.function.Predicate;
+import java.util.*;
 
 public class TwoGroupSquareGoal implements CommonGoalStrategy {
     
@@ -14,43 +13,58 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
     
     public boolean checkShelf(Shelf shelf) {
         
-        record Coord(int r, int c) {
-            Coord sumOffset(Coord offset) {
-                return new Coord(r + offset.r, c + offset.c);
-            }
-        }
-        
+        int totalCount = 0;
+        Tile[][] mat = shelf.getAllShelf();
         boolean[][] checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
         
-        List<Coord> square = List.of(new Coord(0, 0), new Coord(1, 0), new Coord(1, 1), new Coord(0, 1));
+        List<Coord> square = List.of(new Coord(0, 0), new Coord(0, 1), new Coord(1, 0), new Coord(1, 1));
         
-        Predicate<Coord> isValid = (x) -> (
-                x.r >= 0
-                && x.r < Shelf.N_ROW
-                && x.c >= 0
-                && x.c < Shelf.N_COL
-                && shelf.getTile(x.r, x.c) != Tile.NOTILE
-                && !checked[x.r][x.c]);
-        
-        int count = 0;
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
             for( int j = 0; j < Shelf.N_COL; j++ ) {
-                Coord curr = new Coord(i, j);
-                boolean valid = square.stream()
-                        .map(x -> isValid.test(x.sumOffset(curr))
-                                  && shelf.getTile(curr.r, curr.c).type() == shelf.getTile(curr.r + x.r, curr.c + x.c).type())
-                        .reduce(true, (a, b) -> a && b);
+                Tile.Type type = mat[i][j].type();
+                if( checked[i][j] || type == Tile.Type.NOTILE )
+                    continue;
+                int count = 0;
                 
-                if( valid ) {
-                    for( Coord x : square ) {
-                        checked[i + x.r][j + x.c] = true;
-                    }
-                    count++;
+                var current = new Coord(i, j);
+                //select chunck
+                List<Coord> selected = new ArrayList<>();
+                Queue<Coord> visited = new LinkedList<>();
+                visited.add(current);
+                checked[current.r()][current.c()] = true;
+                while( !visited.isEmpty() ) {
+                    current = visited.poll();
+                    selected.add(current);
+                    current.sumDir().stream()
+                            .filter((x) -> x.r() < Shelf.N_ROW &&
+                                           x.r() > -1 &&
+                                           x.c() < Shelf.N_COL &&
+                                           x.c() > -1 &&
+                                           mat[x.r()][x.c()].type() == type &&
+                                           !checked[x.r()][x.c()])
+                            .forEach((x) -> {
+                                visited.add(x);
+                                checked[x.r()][x.c()] = true;
+                            });
+                }
+                if( selected.size() == 4 ) {
+                    //find nearest coord to the origin
+                    var origin = selected.stream().reduce(selected.get(0), (x, y) -> {
+                        if( x.c() > y.c() || (x.c() == y.c() && y.r() < y.c()) )
+                            return y;
+                        else
+                            return x;
+                    });
+                    var form = selected.stream().map((x) -> x.sub(origin)).toList();
+                    //intellij said that it was better to incapsulate all in hashSet, for performance reasons, who am I to contraddict
+                    if( new HashSet<>(form).containsAll(square) )
+                        totalCount++;
                 }
             }
         }
         
-        return count > 1;
+        
+        return totalCount > 1;
     }
     
 }

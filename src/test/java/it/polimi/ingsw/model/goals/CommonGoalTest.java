@@ -5,19 +5,25 @@ import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.Tile.Sprite;
 import it.polimi.ingsw.model.Tile.Type;
 import it.polimi.ingsw.model.goals.common.*;
+import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class tests {@link CommonGoal}
  */
-
+@Tag("Model")
+@Tag("CommonGoal")
 public class CommonGoalTest {
     
     Shelf shelf;
@@ -27,6 +33,21 @@ public class CommonGoalTest {
         this.shelf = new Shelf();
     }
     
+    private String getResource(String className) {
+        String result = null;
+        try {
+            result = Files.readString(
+                    Path.of(ResourcesManager.testRootDir,
+                            "it/polimi/ingsw/model/goals/resources/" + className + ".json"),
+                    StandardCharsets.UTF_8);
+        }
+        catch( IOException e ) {
+            e.printStackTrace(System.err);
+        }
+        return result;
+    }
+    
+    @Tag("CrossGoal")
     @Nested
     class CrossGoalTest {
         @Test
@@ -54,6 +75,7 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("DecreasingColumnGoalTest")
     @Nested
     class DecreasingColumnGoalTest {
         
@@ -87,6 +109,7 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("DiagonalFiveTileGoal")
     @Nested
     class DiagonalFiveTileGoalTest {
         @Test
@@ -119,6 +142,7 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("EightUniqueGoal")
     @Nested
     class EightUniqueGoalTest {
         @Test
@@ -148,6 +172,7 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("FourCornersGoal")
     @Nested
     class FourCornersGoalTest {
         @Test
@@ -185,6 +210,7 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("SixGroupTwoTileGoal")
     @Nested
     class SixGroupTwoTileGoalTest {
         
@@ -254,10 +280,11 @@ public class CommonGoalTest {
         
     }
     
+    @Tag("FourGroupFourTileGoal")
     @Nested
     class FourGroupFourTileGoalTest {
         @Test
-        void FourGroupFourTileGoalTrue1() {
+        void FourGroupFourTileGoalFalse1() {
             shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
                                    new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
                                    new Tile(Type.GAMES, Sprite.ONE)), 0);
@@ -272,11 +299,11 @@ public class CommonGoalTest {
                                    new Tile(Type.GAMES, Sprite.ONE)), 3);
             shelf.addTiles(List.of(new Tile(Type.GAMES, Sprite.ONE)), 4);
             var goal = new FourGroupFourTileGoal();
-            assertTrue(goal.checkShelf(shelf));
+            assertFalse(goal.checkShelf(shelf));
         }
         
         @Test
-        void FourGroupFourTileGoalTrue2() {
+        void FourGroupFourTileGoalTrue1() {
             shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
                                    new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
                                    new Tile(Type.GAMES, Sprite.ONE)), 0);
@@ -295,7 +322,7 @@ public class CommonGoalTest {
         }
         
         @Test
-        void FourGroupFourTileGoalFalse() {
+        void FourGroupFourTileGoalFalse2() {
             shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
                                    new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.BOOKS, Sprite.ONE),
                                    new Tile(Type.GAMES, Sprite.ONE)), 0);
@@ -316,6 +343,7 @@ public class CommonGoalTest {
         
     }
     
+    @Tag("FourRowFiveTileGoal")
     @Nested
     class FourRowFiveTileGoalTest {
         @Test
@@ -354,6 +382,7 @@ public class CommonGoalTest {
         
     }
     
+    @Tag("ThreeColumnSixTileGoal")
     @Nested
     class ThreeColumnSixTileGoalTest {
         @Test
@@ -393,6 +422,7 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("TwoColumnDistinctGoal")
     @Nested
     class TwoColumnDistinctGoalTest {
         @Test
@@ -419,6 +449,7 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("TwoRowDistinctGoal")
     @Nested
     class TwoRowDistinctGoalTest {
         @Test
@@ -452,10 +483,11 @@ public class CommonGoalTest {
         }
     }
     
+    @Tag("TwoGroupSquareGoal")
     @Nested
     class TwoGroupSquareGoalTest {
         @Test
-        public void TwoGroupSquareTrue() {
+        public void TwoGroupSquareFalse() {
             shelf.addTiles(List.of(new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.FRAMES, Sprite.ONE),
                                    new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 0);
             shelf.addTiles(List.of(new Tile(Type.FRAMES, Sprite.ONE), new Tile(Type.FRAMES, Sprite.ONE),
@@ -466,9 +498,20 @@ public class CommonGoalTest {
                                    new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 3);
             
             var goal = new TwoGroupSquareGoal();
-            assertTrue(goal.checkShelf(shelf));
+            assertFalse(goal.checkShelf(shelf));
         }
         
+        @Test
+        public void TwoGroupSquareTrue1() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            assertDoesNotThrow(() -> {
+                var file = getResource(this.getClass().getSimpleName());
+                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
+                
+                var goal = new TwoGroupSquareGoal();
+                assertTrue(goal.checkShelf(Shelf.fromJson(json)));
+            });
+        }
     }
 }
 
