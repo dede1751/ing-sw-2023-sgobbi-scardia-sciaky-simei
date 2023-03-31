@@ -1,6 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Board;
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Tile;
@@ -11,6 +11,7 @@ import it.polimi.ingsw.view.VirtualView;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.Map;
 
 
 public class GameController implements PropertyChangeListener {
@@ -44,15 +45,32 @@ public class GameController implements PropertyChangeListener {
     }
     
     
-    //TODO
     public Boolean needRefill() {
-        Board toBeChecked = model.getBoard();
+        Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
+        
+        for( var entry : toBeChecked.entrySet() ) {
+            if( !(entry.getKey().equals(Tile.NOTILE)) ) {
+                if( !(model.getBoard().getTile(entry.getKey().getDown()) == Tile.NOTILE) ) {
+                    return false;
+                }
+                if( !(model.getBoard().getTile(entry.getKey().getUp()) == Tile.NOTILE) ) {
+                    return false;
+                }
+                if( !(model.getBoard().getTile(entry.getKey().getLeft()) == Tile.NOTILE) ) {
+                    return false;
+                }
+                if( !(model.getBoard().getTile(entry.getKey().getRight()) == Tile.NOTILE) ) {
+                    return false;
+                }
+                
+            }
+        }
         return true;
     }
     
     //TODO we need to understand how to take the coordinate and column from player
     public void turn(List<Tile> selection, int col) {
-    
+        
         //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
         
@@ -84,8 +102,7 @@ public class GameController implements PropertyChangeListener {
         }else {
             model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
         }
-    
-
+        
         
     }
     
@@ -113,7 +130,6 @@ public class GameController implements PropertyChangeListener {
         }
     }
     
-
     
     public void endGame() {
         int winnerIndex = 0;
