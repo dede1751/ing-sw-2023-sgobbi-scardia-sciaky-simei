@@ -61,7 +61,7 @@ public class AppClient {
         Registry registry = LocateRegistry.getRegistry();
         Server server = (Server) registry.lookup("server");
         
-        LocalClient client = new LocalClient(server, askViewType());
+        LocalClient client = new LocalClient(server, view);
         client.connectServer();
     }
     

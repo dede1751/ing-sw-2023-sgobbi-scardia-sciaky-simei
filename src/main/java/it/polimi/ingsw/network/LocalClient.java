@@ -47,7 +47,6 @@ public class LocalClient extends UnicastRemoteObject implements Client {
             System.err.println("Unable to register to server: " + e.getMessage() + ". Exiting...");
             System.exit(1);
         }
-        System.out.println("Connection established. Waiting for the lobby to fill up!");
         
         view.addObserver((o, evt) -> {
             try {
