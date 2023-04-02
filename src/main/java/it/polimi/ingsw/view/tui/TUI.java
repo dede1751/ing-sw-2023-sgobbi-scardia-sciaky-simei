@@ -37,8 +37,7 @@ public class TUI extends View {
     
     private String askNickname(List<String> others) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose a nickname to add to the game: ");
-        System.out.print("The following have already been taken: ");
+        System.out.println("Choose a nickname to add to the game, the following have already been taken:\n");
         
         for (String s: others) {
             System.out.print(s + " ");
@@ -46,6 +45,7 @@ public class TUI extends View {
         System.out.println();
         
         while (true) {
+            System.out.print("\n>>  ");
             String input = scanner.next().trim();
             
             if (!others.contains(input)) {
@@ -59,6 +59,7 @@ public class TUI extends View {
         System.out.println("Choose the amount of players for the match (2-4): ");
         
         while (true) {
+            System.out.print("\n>>  ");
             int input = Integer.parseInt(scanner.next());
             
             if (input >= 2 && input <= 4) {
@@ -72,6 +73,7 @@ public class TUI extends View {
         System.out.println("Write 'PASS' to pass your turn: ");
         
         while (true) {
+            System.out.print("\n>>  ");
             String input = scanner.next().trim();
             
             if ( input.equals("PASS") ) {

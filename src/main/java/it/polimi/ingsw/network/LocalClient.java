@@ -17,21 +17,24 @@ import java.rmi.server.UnicastRemoteObject;
 public class LocalClient extends UnicastRemoteObject implements Client {
     
     private final Server server;
-    private final View view = new TUI();
+    private final View view;
     
-    public LocalClient(Server server) throws RemoteException {
+    public LocalClient(Server server, View view) throws RemoteException {
         super();
         this.server = server;
+        this.view = view;
     }
     
-    public LocalClient(Server server, int port) throws RemoteException {
+    public LocalClient(Server server, View view, int port) throws RemoteException {
         super(port);
         this.server = server;
+        this.view = view;
     }
     
-    public LocalClient(Server server, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {
+    public LocalClient(Server server, View view, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {
         super(port, csf, ssf);
         this.server = server;
+        this.view = view;
     }
     
     public void setViewID(int viewID) throws RemoteException { this.view.setViewID(viewID); }
@@ -44,6 +47,7 @@ public class LocalClient extends UnicastRemoteObject implements Client {
             System.err.println("Unable to register to server: " + e.getMessage() + ". Exiting...");
             System.exit(1);
         }
+        System.out.println("Connection established. Waiting for the lobby to fill up!");
         
         view.addObserver((o, evt) -> {
             try {
