@@ -15,7 +15,8 @@ import java.util.Stack;
 public class GameModel extends Observable<GameModel.Event> {
     
     public enum Event {
-        ADDED_PLAYER,
+        GAME_START,
+        NEW_CURRENT_PLAYER,
         FINISHED_GAME,
     }
     
@@ -79,8 +80,9 @@ public class GameModel extends Observable<GameModel.Event> {
         this.players = new ArrayList<>();
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
-        System.out.println("Initialized game with " + numPlayers + " players");
     }
+    
+    public void startGame() { this.setChangedAndNotifyObservers(Event.GAME_START); }
     
     /**
      * Get id of first common goal
@@ -152,12 +154,7 @@ public class GameModel extends Observable<GameModel.Event> {
      * @param nickname Unique string nickname of the player
      * @param pgID     Integer ID for the player's personal goal
      */
-    public void addPlayer(String nickname, int pgID) {
-        players.add(new Player(nickname, pgID));
-        System.out.println("Player " + nickname + " with id: " + pgID);
-        
-        setChangedAndNotifyObservers(Event.ADDED_PLAYER);
-    }
+    public void addPlayer(String nickname, int pgID) { players.add(new Player(nickname, pgID)); }
     
     /**
      * Returns the entire player list
@@ -177,6 +174,7 @@ public class GameModel extends Observable<GameModel.Event> {
     
     public void setCurrentPlayerIndex(int i) {
         currentPlayerIndex = i;
+        setChangedAndNotifyObservers(Event.NEW_CURRENT_PLAYER);
     }
     
     

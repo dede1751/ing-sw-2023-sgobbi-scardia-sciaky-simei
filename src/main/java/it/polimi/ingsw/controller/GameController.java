@@ -7,6 +7,7 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
+import java.rmi.RemoteException;
 import java.util.List;
 
 
@@ -14,20 +15,16 @@ public class GameController {
     
     private final GameModel model;
     
-    private final Client view;
-    
-    private final int viewID;
-    
-    private int numPlayers;
+    private final List<Client> clients;
     
     private boolean isPaused;
     
-    
     /* constructor tobe used for paused game*/
-    public GameController(GameModel model, Client view, int viewID) {
+    public GameController(GameModel model, List<Client> clients) {
         this.model = model;
-        this.view = view;
-        this.viewID = viewID;
+        this.clients = clients;
+        
+        model.startGame();
     }
     
     //TODO
@@ -91,7 +88,7 @@ public class GameController {
             do {
                 //turn();
             }
-            while( model.getCurrentPlayerIndex() != numPlayers - 1 );
+            while( model.getCurrentPlayerIndex() != clients.size() - 1 );
             
             
             endGame();
@@ -108,7 +105,7 @@ public class GameController {
                             model.getPlayers().get(i).getShelf()));
         }
         
-        for( int i = 0; i < numPlayers - 1; i++ ) {
+        for( int i = 0; i < model.getNumPlayers() - 1; i++ ) {
             if( model.getPlayers().get(i).getScore() > model.getPlayers().get(winnerIndex).getScore() ) {
                 winnerIndex = i;
             }
@@ -130,19 +127,23 @@ public class GameController {
     }
     
     public void update(ViewMessage o, View.Action evt) {
-        if ( o.getViewID() != this.viewID ) {
-            System.err.println("Discarding notification from " + o);
+        int currentPlayerIndex = model.getCurrentPlayerIndex();
+        if ( o.getViewID() != currentPlayerIndex ) {
+            System.err.println("Ignoring event from view:" + o.getViewID() + ": " + evt + ". Not the current Player.");
             return;
         }
         
         switch ( evt ) {
-            case LOGIN -> {
-                String nickname = o.getNickname();
-                model.addPlayer(nickname, 0);
+            case PASS_TURN -> {
+                System.out.println("Player " + currentPlayerIndex + " passed his turn.");
+                
+                int nextPlayer = currentPlayerIndex < model.getNumPlayers() - 1 ? currentPlayerIndex + 1 : 0;
+                model.setCurrentPlayerIndex(nextPlayer);
             }
-            default -> System.err.println("Ignoring event from " + view + ": " + evt);
+            case REMOVE_SELECTION -> {}
+            case INSERT_SELECTION -> {}
+            default -> System.err.println("Ignoring event from View:" + o.getViewID() + ": " + evt);
         }
-        
     }
     
 }

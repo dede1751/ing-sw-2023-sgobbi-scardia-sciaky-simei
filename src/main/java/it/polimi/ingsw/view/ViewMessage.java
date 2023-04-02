@@ -8,15 +8,10 @@ public class ViewMessage implements Serializable {
     
     private final int viewID;
     
-    private final String nickname;
-    
     public ViewMessage(View view) {
         this.viewID = view.getViewID();
-        this.nickname = view.getNickname();
     }
     
     public int getViewID() { return this.viewID; }
-    
-    public String getNickname() { return this.nickname; }
     
 }
