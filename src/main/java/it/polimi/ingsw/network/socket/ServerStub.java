@@ -47,11 +47,32 @@ public class ServerStub implements Server {
             throw new RemoteException("Unable to connect to the server", e);
         }
         
+        try {
+            LobbyController.LobbyInfo info = (LobbyController.LobbyInfo) ois.readObject();
+            client.sendLobbyInfo(info);
+        } catch (IOException e) {
+            throw new RemoteException("Cannot receive lobby info from server", e);
+        } catch (ClassNotFoundException e) {
+            throw new RemoteException("Cannot deserialize lobby info from server", e);
+        }
+        
+        try {
+            Integer viewID = (Integer) ois.readObject();
+            client.setViewID(viewID);
+        } catch (IOException e) {
+            throw new RemoteException("Cannot receive lobby info from server", e);
+        } catch (ClassNotFoundException e) {
+            throw new RemoteException("Cannot deserialize lobby info from server", e);
+        }
     }
     
     @Override
     public void sendLoginInfo(LobbyController.LoginInfo info) throws RemoteException {
-    
+        try {
+            oos.writeObject(info);
+        } catch (IOException e) {
+            throw new RemoteException("Cannot send login info", e);
+        }
     }
     
     @Override
@@ -74,18 +95,18 @@ public class ServerStub implements Server {
         try {
             o = (GameView) ois.readObject();
         } catch (IOException e) {
-            throw new RemoteException("Cannot receive model view from client", e);
+            throw new RemoteException("Cannot receive model view from server", e);
         } catch (ClassNotFoundException e) {
-            throw new RemoteException("Cannot deserialize model view from client", e);
+            throw new RemoteException("Cannot deserialize model view from server", e);
         }
         
         GameModel.Event arg;
         try {
             arg = (GameModel.Event) ois.readObject();
         } catch (IOException e) {
-            throw new RemoteException("Cannot receive event from client", e);
+            throw new RemoteException("Cannot receive event from server", e);
         } catch (ClassNotFoundException e) {
-            throw new RemoteException("Cannot deserialize event from client", e);
+            throw new RemoteException("Cannot deserialize event from server", e);
         }
         
         client.update(o, arg);

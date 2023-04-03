@@ -15,10 +15,13 @@ import java.rmi.RemoteException;
 
 public class ClientSkeleton implements Client {
     
+    private final Server server;
+    
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
     
-    public ClientSkeleton(Socket socket) throws RemoteException {
+    public ClientSkeleton(Server server, Socket socket) throws RemoteException {
+        this.server = server;
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -33,7 +36,11 @@ public class ClientSkeleton implements Client {
     
     @Override
     public void setViewID(int viewID) throws RemoteException {
-    
+        try {
+            oos.writeObject(viewID);
+        } catch (IOException e) {
+            throw new RemoteException("Cannot send view id", e);
+        }
     }
     
     @Override
@@ -42,6 +49,15 @@ public class ClientSkeleton implements Client {
             oos.writeObject(info);
         } catch (IOException e) {
             throw new RemoteException("Cannot send lobby info", e);
+        }
+        
+        try {
+            LobbyController.LoginInfo loginInfo = (LobbyController.LoginInfo) ois.readObject();
+            server.sendLoginInfo(loginInfo);
+        } catch (IOException e) {
+            throw new RemoteException("Cannot receive login info from client", e);
+        } catch (ClassNotFoundException e) {
+            throw new RemoteException("Cannot deserialize login info from client", e);
         }
     }
     

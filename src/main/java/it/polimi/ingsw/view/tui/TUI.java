@@ -21,10 +21,6 @@ public class TUI extends View {
     
     @Override
     public LobbyController.LoginInfo userLogin(LobbyController.LobbyInfo info) {
-        if ( info.lobbyState() == LobbyController.State.FULL_LOBBY) {
-            return null;
-        }
-        
         String nickname = askNickname(info.nicknames());
         int lobbySize = 0;
         

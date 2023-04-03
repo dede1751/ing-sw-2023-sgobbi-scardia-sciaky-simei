@@ -69,8 +69,8 @@ public class AppClient {
         ServerStub serverStub = new ServerStub("localhost", 1234);
         LocalClient client = new LocalClient(serverStub, view);
         
+        client.connectServer();
         new Thread(() -> {
-            client.connectServer();
             while(true) {
                 try {
                     serverStub.receive(client);

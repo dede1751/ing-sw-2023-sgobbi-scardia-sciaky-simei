@@ -1,7 +1,7 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.LocalServer;
+import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.socket.ClientSkeleton;
 
 import java.io.IOException;
@@ -16,24 +16,30 @@ import java.util.concurrent.Executors;
 public class AppServer {
     
     public static void main(String[] args) {
+        Server server;
+        try {
+            server = new LocalServer();
+        } catch( RemoteException e ) {
+            System.err.println("Unable to start server. Shutting down...");
+            return;
+        }
+        
         Thread rmiThread = new Thread(() -> {
             try {
-                startRMI();
+                startRMI(server);
             } catch (RemoteException e) {
                 System.err.println("Cannot start RMI. This protocol will be disabled.");
             }
         });
-        
         rmiThread.start();
         
         Thread socketThread = new Thread(() -> {
             try {
-                startSocket();
+                startSocket(server);
             } catch (RemoteException e) {
                 System.err.println("Cannot start socket. This protocol will be disabled.");
             }
         });
-        
         socketThread.start();
         
         try {
@@ -44,25 +50,25 @@ public class AppServer {
         }
     }
     
-    private static void startRMI() throws RemoteException {
-        LocalServer server = new LocalServer();
-        
+    private static void startRMI(Server server) throws RemoteException {
         LocateRegistry.createRegistry(1099);
         Registry registry = LocateRegistry.getRegistry();
         registry.rebind("server", server);
     }
     
-    public static void startSocket() throws RemoteException {
+    public static void startSocket(Server server) throws RemoteException {
         final ExecutorService executorService = Executors.newCachedThreadPool();
         
         try ( ServerSocket serverSocket = new ServerSocket(1234)) {
+            //noinspection InfiniteLoopStatement
             while (true) {
                 Socket socket = serverSocket.accept();
                 executorService.submit(() -> {
                     try {
-                        ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
-                        Server server = new LocalServer();
+                        ClientSkeleton clientSkeleton = new ClientSkeleton(server, socket);
+
                         server.register(clientSkeleton);
+                        //noinspection InfiniteLoopStatement
                         while (true) {
                             clientSkeleton.receive(server);
                         }

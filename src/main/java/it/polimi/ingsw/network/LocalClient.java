@@ -59,14 +59,15 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     @Override
     public void sendLobbyInfo(LobbyController.LobbyInfo lobbyInfo) throws RemoteException {
-        LobbyController.LoginInfo loginInfo = view.userLogin(lobbyInfo);
+        if ( lobbyInfo.lobbyState() == LobbyController.State.FULL_LOBBY ) {
+            System.err.println("Lobby is full. Exiting...");
+            System.exit(1);
+        }
         
-        if (loginInfo != null) {
-            try {
-                server.sendLoginInfo(loginInfo);
-            } catch( RemoteException e ) {
-                System.err.println("Unable to send login to server: " + e.getMessage() + ". Exiting...");
-            }
+        try {
+            server.sendLoginInfo(view.userLogin(lobbyInfo));
+        } catch( RemoteException e ) {
+            System.err.println("Unable to send login to server: " + e.getMessage() + ". Exiting...");
         }
     }
     
