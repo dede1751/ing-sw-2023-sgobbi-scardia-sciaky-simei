@@ -14,7 +14,7 @@ public class Board {
     
     private final Map<Coordinate, Tile> tileOccupancy;
     
-    /**
+     /**
      * Initialize board for the given number of players
      * The player number cannot change dynamically throughout the game
      *
