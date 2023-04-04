@@ -2,7 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameView;
+import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.utils.observer.Observable;
 
 
@@ -22,7 +22,7 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     
     public abstract LobbyController.LoginInfo userLogin(LobbyController.LobbyInfo info);
     
-    public abstract void update(GameView model, GameModel.Event evt);
+    public abstract void update(GameModelView model, GameModel.Event evt);
     
     protected void setChangedAndNotifyObservers(View.Action evt) {
         setChanged();

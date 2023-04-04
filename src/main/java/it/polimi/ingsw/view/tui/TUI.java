@@ -2,7 +2,7 @@ package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameView;
+import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.view.View;
 
@@ -80,7 +80,7 @@ public class TUI extends View {
     }
     
     @Override
-    public void update(GameView model, GameModel.Event evt) {
+    public void update(GameModelView model, GameModel.Event evt) {
         switch (evt) {
             case GAME_START -> {
                 System.out.println("The game has started!");

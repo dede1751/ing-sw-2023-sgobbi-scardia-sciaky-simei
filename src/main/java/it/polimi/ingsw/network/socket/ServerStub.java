@@ -3,7 +3,7 @@ package it.polimi.ingsw.network.socket;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameView;
+import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.View;
@@ -91,9 +91,9 @@ public class ServerStub implements Server {
     }
     
     public void receive(Client client) throws RemoteException {
-        GameView o;
+        GameModelView o;
         try {
-            o = (GameView) ois.readObject();
+            o = (GameModelView) ois.readObject();
         } catch (IOException e) {
             throw new RemoteException("Cannot receive model view from server", e);
         } catch (ClassNotFoundException e) {

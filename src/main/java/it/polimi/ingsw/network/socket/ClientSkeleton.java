@@ -1,7 +1,7 @@
 package it.polimi.ingsw.network.socket;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameView;
+import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.View;
@@ -62,7 +62,7 @@ public class ClientSkeleton implements Client {
     }
     
     @Override
-    public void update(GameView o, GameModel.Event arg) throws RemoteException {
+    public void update(GameModelView o, GameModel.Event arg) throws RemoteException {
         try {
             oos.writeObject(o);
         } catch (IOException e) {

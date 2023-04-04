@@ -2,10 +2,7 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameView;
-import it.polimi.ingsw.network.Client;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.view.tui.TUI;
+import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
@@ -72,7 +69,7 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     }
     
     @Override
-    public void update(GameView o, GameModel.Event evt) {
+    public void update(GameModelView o, GameModel.Event evt) {
         view.update(o, evt);
     }
     

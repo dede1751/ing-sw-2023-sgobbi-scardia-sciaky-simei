@@ -1,7 +1,7 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameView;
+import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.network.Client;
 
 import java.io.Serializable;
@@ -89,7 +89,7 @@ public class LobbyController {
         for (Client client: clients) {
             model.addObserver((o, evt) -> {
                 try {
-                    client.update(new GameView(model), evt);
+                    client.update(new GameModelView(model), evt);
                 } catch ( RemoteException e) {
                     System.err.println("Unable to update the client: " + e.getMessage() + ". Skipping the update...");
                 }
