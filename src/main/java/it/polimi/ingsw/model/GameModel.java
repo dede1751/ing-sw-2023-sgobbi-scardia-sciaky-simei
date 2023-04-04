@@ -2,9 +2,8 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
+import it.polimi.ingsw.utils.observer.Observable;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,13 @@ import java.util.Stack;
 /**
  * Game model class to be used as a representation of the game's state by the controller
  */
-public class GameModel {
+public class GameModel extends Observable<GameModel.Event> {
+    
+    public enum Event {
+        GAME_START,
+        NEW_CURRENT_PLAYER,
+        FINISHED_GAME,
+    }
     
     private final int commonGoalNumX;
     private final int commonGoalNumY;
@@ -29,8 +34,6 @@ public class GameModel {
     private final Board board;
     
     private final TileBag tileBag;
-    
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     
     /**
      * Initialize an empty model
@@ -67,7 +70,6 @@ public class GameModel {
                 this.commonGoalStackY.push(2);
                 this.commonGoalStackY.push(6);
                 this.commonGoalStackY.push(8);
-            
         }
         
         
@@ -78,12 +80,9 @@ public class GameModel {
         this.players = new ArrayList<>();
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
-        System.out.println("Initialized game with " + numPlayers + " players");
     }
     
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
+    public void startGame() { this.setChangedAndNotifyObservers(Event.GAME_START); }
     
     /**
      * Get id of first common goal
@@ -155,12 +154,7 @@ public class GameModel {
      * @param nickname Unique string nickname of the player
      * @param pgID     Integer ID for the player's personal goal
      */
-    public void addPlayer(String nickname, int pgID) {
-        players.add(new Player(nickname, pgID));
-        System.out.println("Player " + nickname + " with id: " + pgID);
-        
-        this.pcs.firePropertyChange("ADD PLAYER", "", nickname);
-    }
+    public void addPlayer(String nickname, int pgID) { players.add(new Player(nickname, pgID)); }
     
     /**
      * Returns the entire player list
@@ -180,6 +174,7 @@ public class GameModel {
     
     public void setCurrentPlayerIndex(int i) {
         currentPlayerIndex = i;
+        setChangedAndNotifyObservers(Event.NEW_CURRENT_PLAYER);
     }
     
     
@@ -191,7 +186,6 @@ public class GameModel {
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
-    
     
     /**
      * Get tile on the board at the given coordinate
@@ -284,6 +278,11 @@ public class GameModel {
      */
     public int getTileAmount(Tile tile) {
         return this.tileBag.getTileAmount(tile);
+    }
+    
+    private void setChangedAndNotifyObservers(Event evt) {
+        setChanged();
+        notifyObservers(evt);
     }
     
 }

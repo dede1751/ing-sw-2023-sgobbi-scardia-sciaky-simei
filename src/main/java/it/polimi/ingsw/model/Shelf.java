@@ -1,11 +1,14 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Shelf representation within the model
  */
-public class Shelf {
+public class Shelf implements Serializable {
+    
+    static final long serialVersionUID = 1L;
     
     public final static int N_ROW = 6;
     public final static int N_COL = 5;

@@ -4,47 +4,34 @@ import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Tile;
+
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
-import it.polimi.ingsw.view.VirtualView;
+import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.ViewMessage;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 import java.util.Map;
 
 
-public class GameController implements PropertyChangeListener {
+public class GameController {
     
     private final GameModel model;
     
-    private final VirtualView view;
-    
-    private int numPlayers;
+    private final List<Client> clients;
     
     private boolean isPaused;
     
-    
     /* constructor tobe used for paused game*/
-    public GameController(GameModel model, VirtualView view) {
+    public GameController(GameModel model, List<Client> clients) {
         this.model = model;
-        this.view = view;
+        this.clients = clients;
         
-        model.addPropertyChangeListener(view);
+        model.startGame();
     }
     
-    
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        switch( evt.getPropertyName() ) {
-            case "LOGIN" -> {
-                this.model.addPlayer((String) evt.getNewValue(), 0);
-            }
-            default -> System.out.println("Unrecognized property change");
-        }
-    }
-    
-    
+    //TODO
     public Boolean needRefill() {
         Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
         
@@ -106,7 +93,6 @@ public class GameController implements PropertyChangeListener {
         
     }
     
-    
     public void initGame() {
         model.getBoard().refill(model.getTileBag());
         game();
@@ -123,7 +109,7 @@ public class GameController implements PropertyChangeListener {
             do {
                 //turn();
             }
-            while( model.getCurrentPlayerIndex() != numPlayers - 1 );
+            while( model.getCurrentPlayerIndex() != clients.size() - 1 );
             
             
             endGame();
@@ -139,7 +125,7 @@ public class GameController implements PropertyChangeListener {
                             model.getPlayers().get(i).getShelf()));
         }
         
-        for( int i = 0; i < numPlayers - 1; i++ ) {
+        for( int i = 0; i < model.getNumPlayers() - 1; i++ ) {
             if( model.getPlayers().get(i).getScore() > model.getPlayers().get(winnerIndex).getScore() ) {
                 winnerIndex = i;
             }
@@ -160,5 +146,24 @@ public class GameController implements PropertyChangeListener {
         game();
     }
     
+    public void update(ViewMessage o, View.Action evt) {
+        int currentPlayerIndex = model.getCurrentPlayerIndex();
+        if ( o.getViewID() != currentPlayerIndex ) {
+            System.err.println("Ignoring event from view:" + o.getViewID() + ": " + evt + ". Not the current Player.");
+            return;
+        }
+        
+        switch ( evt ) {
+            case PASS_TURN -> {
+                System.out.println("Player " + currentPlayerIndex + " passed his turn.");
+                
+                int nextPlayer = currentPlayerIndex < model.getNumPlayers() - 1 ? currentPlayerIndex + 1 : 0;
+                model.setCurrentPlayerIndex(nextPlayer);
+            }
+            case REMOVE_SELECTION -> {}
+            case INSERT_SELECTION -> {}
+            default -> System.err.println("Ignoring event from View:" + o.getViewID() + ": " + evt);
+        }
+    }
     
 }
