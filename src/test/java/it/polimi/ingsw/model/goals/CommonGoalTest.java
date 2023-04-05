@@ -38,13 +38,32 @@ public class CommonGoalTest {
         try {
             result = Files.readString(
                     Path.of(ResourcesManager.testRootDir,
-                            "it/polimi/ingsw/model/goals/resources/" + className + ".json"),
+                            "it/polimi/ingsw/model/goals/resources/" + className + "Test.json"),
                     StandardCharsets.UTF_8);
         }
         catch( IOException e ) {
             e.printStackTrace(System.err);
         }
         return result;
+    }
+    
+    
+    private void testTrue(String test, CommonGoalStrategy toTest) {
+        assertDoesNotThrow(() -> {
+            var file = getResource(toTest.getClass().getSimpleName());
+            var json = ResourcesManager.JsonManager.getObjectByAttribute(file, test);
+            
+            assertTrue(toTest.checkShelf(Shelf.fromJson(json)));
+        });
+    }
+    
+    private void testFalse(String test, CommonGoalStrategy toTest) {
+        assertDoesNotThrow(() -> {
+            var file = getResource(toTest.getClass().getSimpleName());
+            var json = ResourcesManager.JsonManager.getObjectByAttribute(file, test);
+            
+            assertFalse(toTest.checkShelf(Shelf.fromJson(json)));
+        });
     }
     
     @Tag("CrossGoal")
@@ -214,93 +233,56 @@ public class CommonGoalTest {
     @Nested
     class SixGroupTwoTileGoalTest {
         
+        public CommonGoalStrategy goal = new SixGroupTwoTileGoal();
+        
         @Test
         void SixGroupTwoTileGoalTrue1() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new SixGroupTwoTileGoal();
-                assertTrue(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testTrue(attribute, goal);
         }
         
         @Test
         void SixGroupTwoTileGoalFalse1() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new SixGroupTwoTileGoal();
-                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testFalse(attribute, goal);
         }
         
         @Test
         void SixGroupTwoTileGoalFalse2() {
             
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new SixGroupTwoTileGoal();
-                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testFalse(attribute, goal);
         }
         
         @Test
         void SixGroupTwoTileGoalFalse3() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new SixGroupTwoTileGoal();
-                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testFalse(attribute, goal);
         }
     }
     
     @Tag("FourGroupFourTileGoal")
     @Nested
     class FourGroupFourTileGoalTest {
+        
+        public CommonGoalStrategy goal = new FourGroupFourTileGoal();
+        
         @Test
         void FourGroupFourTileGoalFalse1() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new FourCornersGoal();
-                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testFalse(attribute, goal);
         }
         
         @Test
         void FourGroupFourTileGoalTrue1() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new FourCornersGoal();
-                assertTrue(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testTrue(attribute, goal);
         }
         
         @Test
         void FourGroupFourTileGoalFalse2() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new FourCornersGoal();
-                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testFalse(attribute, goal);
         }
     }
     
@@ -447,28 +429,19 @@ public class CommonGoalTest {
     @Tag("TwoGroupSquareGoal")
     @Nested
     class TwoGroupSquareGoalTest {
+        
+        public CommonGoalStrategy goal = new TwoGroupSquareGoal();
+        
         @Test
         public void TwoGroupSquareFalse1() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new TwoGroupSquareGoal();
-                assertFalse(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testFalse(attribute, goal);
         }
         
         @Test
         public void TwoGroupSquareTrue1() {
             var attribute = ResourcesManager.getCurrentMethod();
-            assertDoesNotThrow(() -> {
-                var file = getResource(this.getClass().getSimpleName());
-                var json = ResourcesManager.JsonManager.getObjectByAttribute(file, attribute);
-                
-                var goal = new TwoGroupSquareGoal();
-                assertTrue(goal.checkShelf(Shelf.fromJson(json)));
-            });
+            testTrue(attribute, goal);
         }
     }
 }

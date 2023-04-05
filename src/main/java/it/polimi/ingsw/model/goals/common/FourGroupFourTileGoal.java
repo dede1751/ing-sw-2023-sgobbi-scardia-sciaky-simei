@@ -52,7 +52,7 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
                 if( selected.size() == 4 ) {
                     //find nearest coord to the origin
                     var origin = selected.stream().reduce(selected.get(0), (x, y) -> {
-                        if( x.c() > y.c() || (x.c() == y.c() && y.r() < y.c()) )
+                        if( x.c() > y.c() || (x.c() == y.c() && y.r() < x.r()) )
                             return y;
                         else
                             return x;
@@ -65,7 +65,7 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
                 }
             }
         }
-        return total_count >= 2;
+        return total_count >= 4;
     }
     
     
