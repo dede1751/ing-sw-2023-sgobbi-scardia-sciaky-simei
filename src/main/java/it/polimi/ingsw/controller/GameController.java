@@ -31,7 +31,7 @@ public class GameController {
         model.startGame();
     }
     
-    //TODO
+    
     public Boolean needRefill() {
         Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
         
@@ -148,20 +148,22 @@ public class GameController {
     
     public void update(ViewMessage o, View.Action evt) {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if ( o.getViewID() != currentPlayerIndex ) {
+        if( o.getViewID() != currentPlayerIndex ) {
             System.err.println("Ignoring event from view:" + o.getViewID() + ": " + evt + ". Not the current Player.");
             return;
         }
         
-        switch ( evt ) {
+        switch( evt ) {
             case PASS_TURN -> {
                 System.out.println("Player " + currentPlayerIndex + " passed his turn.");
                 
                 int nextPlayer = currentPlayerIndex < model.getNumPlayers() - 1 ? currentPlayerIndex + 1 : 0;
                 model.setCurrentPlayerIndex(nextPlayer);
             }
-            case REMOVE_SELECTION -> {}
-            case INSERT_SELECTION -> {}
+            case REMOVE_SELECTION -> {
+            }
+            case INSERT_SELECTION -> {
+            }
             default -> System.err.println("Ignoring event from View:" + o.getViewID() + ": " + evt);
         }
     }
