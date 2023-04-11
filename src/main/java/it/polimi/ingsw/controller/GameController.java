@@ -31,7 +31,7 @@ public class GameController {
         model.startGame();
     }
     
-    //TODO
+    
     public Boolean needRefill() {
         Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
         
