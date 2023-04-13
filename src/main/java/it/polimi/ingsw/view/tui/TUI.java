@@ -98,36 +98,34 @@ public class TUI extends View {
         //le coordinate devono essere da 0 a 8
         
         
-        
-            for( int i = 0; i < numCoordinates; i++ ) {
-                Coordinate coordinate=getCoordinate();
-                Boolean validCoordinate=false;
-                while(!validCoordinate){
-                    if(model.getBoard().getTile(coordinate)==Tile.NOTILE ||model.getBoard().getTile(coordinate)==null){
-                        validCoordinate=true;
-                    }
-                    coordinate=getCoordinate();
+        for( int i = 0; i < numCoordinates; i++ ) {
+            Coordinate coordinate = getCoordinate();
+            Boolean validCoordinate = false;
+            while( !validCoordinate ) {
+                if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
+                    model.getBoard().getTile(coordinate) == null ) {
+                    validCoordinate = true;
                 }
-        
-                selection.add(getCoordinate());
-                scanner.nextLine(); // consume the newline character
-                
+                coordinate = getCoordinate();
             }
-
-        
+            
+            selection.add(getCoordinate());
+            scanner.nextLine(); // consume the newline character
+            
+        }
         
         System.out.println("Entered coordinates: " + selection);
         this.setSelection(selection);
     }
     
-    private Coordinate getCoordinate(){
+    private Coordinate getCoordinate() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter x-coordinate: ");
         int x = scanner.nextInt();
-    
+        
         System.out.print("Enter y-coordinate: ");
         int y = scanner.nextInt();
-        return new Coordinate(x,y);
+        return new Coordinate(x, y);
     }
     
     private void printBoard(Board board) {
@@ -136,9 +134,11 @@ public class TUI extends View {
         }
     }
     
-    public Boolean checkSelection(List<Coordinate> selection){
-    
+    public Boolean checkSelection(List<Coordinate> selection) {
+        /* TODO add function body */
+        return null;
     }
+    
     @Override
     public void update(GameModelView model, GameModel.Event evt) {
         switch( evt ) {
@@ -162,6 +162,4 @@ public class TUI extends View {
             default -> System.err.println("Ignoring event from " + model + ": " + evt);
         }
     }
-    
-    
 }
