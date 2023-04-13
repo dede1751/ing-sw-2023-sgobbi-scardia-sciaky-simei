@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.*;
 import it.polimi.ingsw.utils.exceptions.CommonException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -187,5 +189,33 @@ public class Board {
             System.err.println("there shouldn't be an error in there...");
         }
     }
+    
+    public static class BoardSerializer implements JsonSerializer<Board>{
+        
+        @Override
+        public JsonElement serialize(Board src, Type typeOfSrc, JsonSerializationContext context) {
+            String def = "(-,-)";
+            var mat = new String[9][9];
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    var coord = new Coordinate(i, j);
+                    if(src.tileOccupancy.containsKey(coord)){
+                        mat[i][j] = src.getTile(coord).toString();
+                    }else{
+                        mat[i][j] = def;
+                    }
+                }
+            }
+            Gson gson = new GsonBuilder().create();
+            return gson.toJsonTree(mat);
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
     
 }

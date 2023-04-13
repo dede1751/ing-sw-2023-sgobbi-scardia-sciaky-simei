@@ -2,9 +2,12 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
+import it.polimi.ingsw.utils.files.ResourcesManager;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -172,5 +175,27 @@ public class GameModelTest {
     public void getTileAmountTest() {
         GameModel game = new GameModel(2, 5, 6);
         assertEquals(8, game.getTileAmount(new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)));
+    }
+    
+    @Nested
+    public class SaveTesting {
+        @Test
+        public void testNotThrow() {
+            GameModel game = new GameModel(4, 5, 6);
+            game.addPlayer("Luca", 5);
+            game.addPlayer("Lucrezia", 6);
+            game.addPlayer("Andrea", 7);
+            game.addPlayer("Camilla", 8);
+            assertDoesNotThrow(() -> {
+                var file = ResourcesManager.openFileWrite(
+                        ResourcesManager.testRootDir + "/it/polimi/ingsw/model/TestingResources/Volatile/SaveFile.json");
+                var saveState = game.toJson();
+                ByteBuffer buf = ByteBuffer.allocate(saveState.length());
+                buf.put(saveState.getBytes());
+                buf.flip();
+                file.write(buf);
+                file.close();
+            });
+        }
     }
 }
