@@ -82,6 +82,7 @@ public class TUI extends View {
     public void askSelection(GameModelView model) {
         Scanner scanner = new Scanner(System.in);
         List<Coordinate> selection = new ArrayList<Coordinate>();
+        boolean validSelection= false;
         
         System.out.print("Enter number of coordinates (1-3): ");
         int numCoordinates = scanner.nextInt();
@@ -97,19 +98,25 @@ public class TUI extends View {
         //le coordinate devono essere da 0 a 8
         
         
-        for( int i = 0; i < numCoordinates; i++ ) {
-            System.out.print("Enter x-coordinate: ");
-            int x = scanner.nextInt();
-            
-            System.out.print("Enter y-coordinate: ");
-            int y = scanner.nextInt();
-            
-            selection.add(new Coordinate(x, y));
-            scanner.nextLine(); // consume the newline character
+        while(!validSelection) {
+            for( int i = 0; i < numCoordinates; i++ ) {
+                System.out.print("Enter x-coordinate: ");
+                int x = scanner.nextInt();
+        
+                System.out.print("Enter y-coordinate: ");
+                int y = scanner.nextInt();
+        
+                selection.add(new Coordinate(x, y));
+                scanner.nextLine(); // consume the newline character
+            }
+            validSelection= checkSelection(selection);
+            if (validSelection==false){
+                System.out.println("the selection was not valid, try again");
+            }
         }
         
         System.out.println("Entered coordinates: " + selection);
-        
+        this.setSelection(selection);
     }
     
     private void printBoard(Board board) {
@@ -118,6 +125,9 @@ public class TUI extends View {
         }
     }
     
+    public Boolean checkSelection(List<Coordinate> selection){
+    
+    }
     @Override
     public void update(GameModelView model, GameModel.Event evt) {
         switch( evt ) {
