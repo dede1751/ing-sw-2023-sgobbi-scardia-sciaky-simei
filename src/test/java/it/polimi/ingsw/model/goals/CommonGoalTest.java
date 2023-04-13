@@ -94,12 +94,26 @@ public class CommonGoalTest {
         }
     }
     
-    @Tag("DecreasingColumnGoalTest")
+    @Tag("DecreasingColumnsGoalTest")
     @Nested
-    class DecreasingColumnGoalTest {
+    class DecreasingColumnsGoalTest {
+    
+        public CommonGoalStrategy goal = new DecreasingColumnsGoal();
+    
+        @Test
+        void DecreasingColumnsGoalTrue1() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
+        }
+    
+        @Test
+        void DecreasingColumnsGoalTrue2() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
+        }
         
         @Test
-        public void DecreasingColumnTrue() {
+        public void DecreasingColumnsTrue() {
             shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
                                    new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
                                    new Tile(Type.CATS, Sprite.ONE)), 0);
@@ -114,7 +128,7 @@ public class CommonGoalTest {
         }
         
         @Test
-        public void DecreasingColumnFalse() {
+        public void DecreasingColumnsFalse() {
             shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
                                    new Tile(Type.CATS, Sprite.ONE)), 0);
             shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
