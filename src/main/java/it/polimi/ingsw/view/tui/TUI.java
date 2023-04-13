@@ -80,15 +80,15 @@ public class TUI extends View {
     
     
     public void askSelection(GameModelView model) {
+        
         Scanner scanner = new Scanner(System.in);
         List<Coordinate> selection = new ArrayList<Coordinate>();
-        boolean validSelection= false;
         
         System.out.print("Enter number of coordinates (1-3): ");
         int numCoordinates = scanner.nextInt();
         scanner.nextLine();
         
-        if( numCoordinates > 3 || numCoordinates < 1 ) {//check if the number of coordinates is right
+        while( numCoordinates > 3 || numCoordinates < 1 ) {//check if the number of coordinates is right
             System.out.print("The number must be between 1 and 3, try again: ");
             numCoordinates = scanner.nextInt();
             scanner.nextLine();
@@ -98,25 +98,36 @@ public class TUI extends View {
         //le coordinate devono essere da 0 a 8
         
         
-        while(!validSelection) {
+        
             for( int i = 0; i < numCoordinates; i++ ) {
-                System.out.print("Enter x-coordinate: ");
-                int x = scanner.nextInt();
+                Coordinate coordinate=getCoordinate();
+                Boolean validCoordinate=false;
+                while(!validCoordinate){
+                    if(model.getBoard().getTile(coordinate)==Tile.NOTILE ||model.getBoard().getTile(coordinate)==null){
+                        validCoordinate=true;
+                    }
+                    coordinate=getCoordinate();
+                }
         
-                System.out.print("Enter y-coordinate: ");
-                int y = scanner.nextInt();
-        
-                selection.add(new Coordinate(x, y));
+                selection.add(getCoordinate());
                 scanner.nextLine(); // consume the newline character
+                
             }
-            validSelection= checkSelection(selection);
-            if (validSelection==false){
-                System.out.println("the selection was not valid, try again");
-            }
-        }
+
+        
         
         System.out.println("Entered coordinates: " + selection);
         this.setSelection(selection);
+    }
+    
+    private Coordinate getCoordinate(){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter x-coordinate: ");
+        int x = scanner.nextInt();
+    
+        System.out.print("Enter y-coordinate: ");
+        int y = scanner.nextInt();
+        return new Coordinate(x,y);
     }
     
     private void printBoard(Board board) {
