@@ -129,7 +129,7 @@ public class Shelf {
     }
     
     /**
-     * Private class that contains the gson custom serializer logic for Shelf.
+     * Protected class that contains the gson custom serializer logic for Shelf.
      * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile}
      * Each column is represented as a json Array in objects each named column_i, where i is the index of the column.
      * The json is expected to have the structure {shelf : {
@@ -140,7 +140,7 @@ public class Shelf {
      * }
      * The names of the attributes are irrelevant
      */
-    private static class ShelfSerializer implements JsonSerializer<Shelf> {
+    protected static class ShelfSerializer implements JsonSerializer<Shelf> {
         @Override
         public JsonElement serialize(Shelf shelf, Type typeOfSrc, JsonSerializationContext context) {
             var matrix = shelf.getAllShelf();
@@ -159,7 +159,7 @@ public class Shelf {
     }
     
     /**
-     * Private class that contains the gson custom deserializer logic for Shelf.
+     * Protected class that contains the gson custom deserializer logic for Shelf.
      * The valid Json element tree representing the object has the following structure:
      * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile}
      * Each column is represented as a json Array in objects each named column_i, where i is the index of the column.
@@ -171,7 +171,7 @@ public class Shelf {
      * }
      * The names of the attributes are irrelevant
      */
-    private static class ShelfDeserializer implements JsonDeserializer<Shelf> {
+    protected static class ShelfDeserializer implements JsonDeserializer<Shelf> {
         @Override
         public Shelf deserialize(JsonElement element, Type typeOfDst, JsonDeserializationContext context) throws JsonParseException {
             var result = new Shelf();
