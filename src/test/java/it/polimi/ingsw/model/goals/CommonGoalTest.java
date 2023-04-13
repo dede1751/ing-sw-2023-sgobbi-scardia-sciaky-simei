@@ -69,28 +69,18 @@ public class CommonGoalTest {
     @Tag("CrossGoal")
     @Nested
     class CrossGoalTest {
+        
+        public CommonGoalStrategy goal = new CrossGoal();
         @Test
         public void CrossGoalTrue() {
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.PLANTS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.PLANTS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 2);
-            var goal = new CrossGoal();
-            assertTrue(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
         }
         
         @Test
         public void CrossGoalFalse() {
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.PLANTS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.PLANTS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 2);
-            var goal = new CrossGoal();
-            assertFalse(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            testFalse(attribute, goal);
         }
     }
     
@@ -101,77 +91,45 @@ public class CommonGoalTest {
         public CommonGoalStrategy goal = new DecreasingColumnsGoal();
     
         @Test
-        void DecreasingColumnsGoalTrue1() {
+        public void DecreasingColumnsGoalTrue1() {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
     
         @Test
-        void DecreasingColumnsGoalTrue2() {
+        public void DecreasingColumnsGoalTrue2() {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
         
         @Test
-        public void DecreasingColumnsTrue() {
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE)), 4);
-            var goal = new DecreasingColumnsGoal();
-            assertTrue(goal.checkShelf(shelf));
+        public void DecreasingColumnsGoalTrue3() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
         }
         
         @Test
-        public void DecreasingColumnsFalse() {
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE)), 4);
-            var goal = new DecreasingColumnsGoal();
-            assertFalse(goal.checkShelf(shelf));
+        public void DecreasingColumnsGoalFalse() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testFalse(attribute, goal);
         }
     }
     
     @Tag("DiagonalFiveTileGoal")
     @Nested
     class DiagonalFiveTileGoalTest {
+        
+        public CommonGoalStrategy goal = new DiagonalFiveTileGoal();
         @Test
         public void DiagonalFiveTileTrue() {
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE)), 4);
-            var goal = new DiagonalFiveTileGoal();
-            assertTrue(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
         }
         
         @Test
         public void DiagonalFiveTileFalse() {
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 0);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 1);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.TROPHIES, Sprite.ONE),
-                                   new Tile(Type.CATS, Sprite.ONE)), 2);
-            shelf.addTiles(List.of(new Tile(Type.TROPHIES, Sprite.ONE), new Tile(Type.CATS, Sprite.ONE)), 3);
-            shelf.addTiles(List.of(new Tile(Type.CATS, Sprite.ONE)), 4);
-            var goal = new DiagonalFiveTileGoal();
-            assertFalse(goal.checkShelf(shelf));
+            var attribute = ResourcesManager.getCurrentMethod();
+            testFalse(attribute, goal);
         }
     }
     

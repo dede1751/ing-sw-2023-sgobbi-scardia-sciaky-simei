@@ -70,7 +70,7 @@ public final class ResourcesManager {
                 result.add(attribute, value);
                 return result;
             }else {
-                throw new JsonParseException("Attribute not found");
+                throw new JsonParseException("Attribute not found : " + attribute);
             }
             
         }
