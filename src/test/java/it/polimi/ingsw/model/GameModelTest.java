@@ -99,7 +99,8 @@ public class GameModelTest {
         assertDoesNotThrow(() -> {
             game.insertTile(new Coordinate(3, 4), tile1);
             game.insertTile(new Coordinate(3, 5), tile2);
-            game.insertTile(new Coordinate(3, 6), tile3); });
+            game.insertTile(new Coordinate(3, 6), tile3);
+        });
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 4)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 5)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 6)));
@@ -115,24 +116,24 @@ public class GameModelTest {
     
     @Test
     public void shelveSelectionTest() {
-         GameModel game = new GameModel(2,5, 6);
-         Coordinate coordinate1 = new Coordinate(1, 3);
-         Coordinate coordinate2 = new Coordinate(1, 4);
-         assertDoesNotThrow( () -> game.insertTile(coordinate1, Tile.CATS) );
-         assertDoesNotThrow( () -> game.insertTile(coordinate2, Tile.TROPHIES) );
-         var orderedTiles = List.of(game.getTile(coordinate1), game.getTile(coordinate2));
-         var column = 1;
-         game.addPlayer("Lucrezia", 1);
-         game.addPlayer("Luca", 2);
-         game.setCurrentPlayer(1);
-         game.shelveSelection(orderedTiles, column);
-         assertEquals(Tile.CATS, game.getCurrentPlayer().getShelf().getTile(0,column));
-         assertEquals(Tile.TROPHIES, game.getCurrentPlayer().getShelf().getTile(1,column));
-         var tileAmount1 = game.getTileAmount(Tile.CATS);
-         var tileAmount2 = game.getTileAmount(Tile.TROPHIES);
-         game.removeSelection(List.of(coordinate1, coordinate2));
-         assertEquals(tileAmount1, game.getTileAmount(Tile.CATS));
-         assertEquals(tileAmount2, game.getTileAmount(Tile.TROPHIES));
+        GameModel game = new GameModel(2, 5, 6);
+        Coordinate coordinate1 = new Coordinate(1, 3);
+        Coordinate coordinate2 = new Coordinate(1, 4);
+        assertDoesNotThrow(() -> game.insertTile(coordinate1, Tile.CATS));
+        assertDoesNotThrow(() -> game.insertTile(coordinate2, Tile.TROPHIES));
+        var orderedTiles = List.of(game.getTile(coordinate1), game.getTile(coordinate2));
+        var column = 1;
+        game.addPlayer("Lucrezia", 1);
+        game.addPlayer("Luca", 2);
+        game.setCurrentPlayerIndex(1);
+        game.shelveSelection(orderedTiles, column);
+        assertEquals(Tile.CATS, game.getCurrentPlayer().getShelf().getTile(0, column));
+        assertEquals(Tile.TROPHIES, game.getCurrentPlayer().getShelf().getTile(1, column));
+        var tileAmount1 = game.getTileAmount(Tile.CATS);
+        var tileAmount2 = game.getTileAmount(Tile.TROPHIES);
+        game.removeSelection(List.of(coordinate1, coordinate2));
+        assertEquals(tileAmount1, game.getTileAmount(Tile.CATS));
+        assertEquals(tileAmount2, game.getTileAmount(Tile.TROPHIES));
     }
     
     @Test
