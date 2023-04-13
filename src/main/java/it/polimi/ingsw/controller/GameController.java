@@ -36,7 +36,7 @@ public class GameController {
         Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
         
         for( var entry : toBeChecked.entrySet() ) {
-            if( !(entry.getKey().equals(Tile.NOTILE)) ) {
+            if( !(entry.getValue().equals(Tile.NOTILE)) ) {
                 if( !(model.getBoard().getTile(entry.getKey().getDown()) == Tile.NOTILE) ) {
                     return false;
                 }
@@ -61,15 +61,17 @@ public class GameController {
         //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
         
-        //remove teh selection from the board and add it to the current player shelfe
+        //remove the selection from the board and add it to the current player shelfe
         model.shelveSelection(selection, col);
         
         
         if( CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerScore(model.popStackCGX());
+            model.getCurrentPlayer().setCompletedGoalX(true);
         }
         if( CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerScore(model.popStackCGY());
+            model.getCurrentPlayer().setCompletedGoalY(true);
         }
         
         
@@ -138,7 +140,7 @@ public class GameController {
     
     public void pause() {
         isPaused = true;
-        //TODO save teh model into the server
+        //TODO save the model into the server
     }
     
     public void resume() {

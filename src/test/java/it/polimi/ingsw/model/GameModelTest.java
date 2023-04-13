@@ -124,7 +124,6 @@ public class GameModelTest {
          var column = 1;
          game.addPlayer("Lucrezia", 1);
          game.addPlayer("Luca", 2);
-         game.setCurrentPlayer(1);
          game.shelveSelection(orderedTiles, column);
          assertEquals(Tile.CATS, game.getCurrentPlayer().getShelf().getTile(0,column));
          assertEquals(Tile.TROPHIES, game.getCurrentPlayer().getShelf().getTile(1,column));

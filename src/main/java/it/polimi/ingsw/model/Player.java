@@ -18,6 +18,9 @@ public class Player implements Serializable {
     
     private final Shelf shelf;
     
+    private boolean completedGoalX;
+    private boolean CompletedGoalY;
+    
     /**
      * Initialized player with given nickname and personal goal.
      * Nickname uniqueness within game must be externally checked
@@ -80,4 +83,19 @@ public class Player implements Serializable {
         return this.score;
     }
     
+    public boolean isCompletedGoalX() {
+        return completedGoalX;
+    }
+    
+    public void setCompletedGoalX(boolean completedGoalX) {
+        this.completedGoalX = completedGoalX;
+    }
+    
+    public boolean isCompletedGoalY() {
+        return CompletedGoalY;
+    }
+    
+    public void setCompletedGoalY(boolean completedGoalY) {
+        CompletedGoalY = completedGoalY;
+    }
 }
