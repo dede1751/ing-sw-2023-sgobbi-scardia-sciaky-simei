@@ -165,6 +165,7 @@ public class GameController {
             case REMOVE_SELECTION -> {
             }
             case INSERT_SELECTION -> {
+            
             }
             default -> System.err.println("Ignoring event from View:" + o.getViewID() + ": " + evt);
         }

@@ -6,18 +6,29 @@ import java.util.List;
 public class GameModelView implements Serializable {
     
     static final long serialVersionUID = 1L;
-
+    
     private final List<Player> players;
     
     private final int currentPlayerIndex;
     
+    private final Board board;
+    
     public GameModelView(GameModel model) {
         this.players = model.getPlayers();
         this.currentPlayerIndex = model.getCurrentPlayerIndex();
+        this.board = model.getBoard();
     }
     
-    public List<Player> getPlayers() { return players; }
+    public List<Player> getPlayers() {
+        return players;
+    }
     
-    public int getCurrentPlayerIndex() { return currentPlayerIndex; }
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+    
+    public Board getBoard() {
+        return board;
+    }
     
 }

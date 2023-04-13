@@ -99,7 +99,8 @@ public class GameModelTest {
         assertDoesNotThrow(() -> {
             game.insertTile(new Coordinate(3, 4), tile1);
             game.insertTile(new Coordinate(3, 5), tile2);
-            game.insertTile(new Coordinate(3, 6), tile3); });
+            game.insertTile(new Coordinate(3, 6), tile3);
+        });
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 4)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 5)));
         assertEquals(Tile.TROPHIES, game.getTile(new Coordinate(3, 6)));
