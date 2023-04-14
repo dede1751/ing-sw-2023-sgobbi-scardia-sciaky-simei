@@ -349,6 +349,7 @@ public class GameModel extends Observable<GameModel.Event> {
             Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class, new Shelf.ShelfDeserializer())
                                          .registerTypeAdapter(Player.class, new Player.PlayerDeserializer())
                                          .registerTypeAdapter(Board.class, new Board.BoardDeserializer())
+                                         .registerTypeAdapter(TileBag.class, new TileBag.TileBagDeserializer())
                                          .create();
             var stackToken = new TypeToken<Stack<Integer>>(){}.getType();
             var numPlayer = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "PlayersNumber"), Integer.class);
@@ -358,7 +359,7 @@ public class GameModel extends Observable<GameModel.Event> {
             var yStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGY"), stackToken);
             var board = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "Board"), Board.class);
             var tileBag = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "TileBag"), TileBag.class);
-            var result = new GameModel(numPlayer, CGX, CGY, (Stack<Integer>)xStack, (Stack<Integer>)yStack);
+            var result = new GameModel(numPlayer, CGX, CGY, (Stack<Integer>)xStack, (Stack<Integer>)yStack, board, tileBag);
             
             
             var el = ResourcesManager.JsonManager.getElementByAttribute(js, "PlayersNickname");
