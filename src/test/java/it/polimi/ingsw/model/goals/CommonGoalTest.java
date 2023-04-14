@@ -107,6 +107,12 @@ public class CommonGoalTest {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
+    
+        @Test
+        public void DecreasingColumnsGoalTrue4() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
+        }
         
         @Test
         public void DecreasingColumnsGoalFalse() {
@@ -121,7 +127,19 @@ public class CommonGoalTest {
         
         public CommonGoalStrategy goal = new DiagonalFiveTileGoal();
         @Test
-        public void DiagonalFiveTileTrue() {
+        public void DiagonalFiveTileTrue1() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
+        }
+    
+        @Test
+        public void DiagonalFiveTileTrue2() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
+        }
+    
+        @Test
+        public void DiagonalFiveTileTrue3() {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
