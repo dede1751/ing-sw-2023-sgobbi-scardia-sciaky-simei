@@ -15,7 +15,7 @@ public class PersonalGoal {
     
     private final int goalIndex;
     
-    private final Map<Coordinate, Tile> goal;
+    private final Map<Coordinate, Tile.Type> goal;
     
     private final static PersonalGoal[] goalList = {
             new PersonalGoal(0), new PersonalGoal(1), new PersonalGoal(2),
@@ -29,106 +29,106 @@ public class PersonalGoal {
      * Goals can only be created internally, only pre-initialized ones can actually be used.
      * @param goalIndex Unique integer ID of the goal
      */
-    private PersonalGoal(int goalIndex) {
+    public PersonalGoal(int goalIndex) {
         this.goalIndex = goalIndex;
         this.goal = new HashMap<>();
         
         switch (goalIndex) {
             case 0 -> {
-                this.goal.put(new Coordinate(4, 4), Tile.CATS);
-                this.goal.put(new Coordinate(3, 3), Tile.BOOKS);
-                this.goal.put(new Coordinate(2, 1), Tile.GAMES);
-                this.goal.put(new Coordinate(5, 2), Tile.FRAMES);
-                this.goal.put(new Coordinate(0, 2), Tile.TROPHIES);
-                this.goal.put(new Coordinate(5, 0), Tile.PLANTS);
+                this.goal.put(new Coordinate(4, 4), Tile.Type.CATS);
+                this.goal.put(new Coordinate(3, 3), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(2, 1), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(5, 2), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(0, 2), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(5, 0), Tile.Type.PLANTS);
             }
             case 1 -> {
-                this.goal.put(new Coordinate(3, 0), Tile.CATS);
-                this.goal.put(new Coordinate(4, 2), Tile.BOOKS);
-                this.goal.put(new Coordinate(3, 2), Tile.GAMES);
-                this.goal.put(new Coordinate(0, 4), Tile.FRAMES);
-                this.goal.put(new Coordinate(1, 3), Tile.TROPHIES);
-                this.goal.put(new Coordinate(4, 1), Tile.PLANTS);
+                this.goal.put(new Coordinate(3, 0), Tile.Type.CATS);
+                this.goal.put(new Coordinate(4, 2), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(3, 2), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(0, 4), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(1, 3), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(4, 1), Tile.Type.PLANTS);
             }
             case 2 -> {
-                this.goal.put(new Coordinate(2, 1), Tile.CATS);
-                this.goal.put(new Coordinate(0, 0), Tile.BOOKS);
-                this.goal.put(new Coordinate(4, 3), Tile.GAMES);
-                this.goal.put(new Coordinate(4, 0), Tile.FRAMES);
-                this.goal.put(new Coordinate(2, 4), Tile.TROPHIES);
-                this.goal.put(new Coordinate(3, 2), Tile.PLANTS);
+                this.goal.put(new Coordinate(2, 1), Tile.Type.CATS);
+                this.goal.put(new Coordinate(0, 0), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(4, 3), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(4, 0), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(2, 4), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(3, 2), Tile.Type.PLANTS);
             }
             case 3 -> {
-                this.goal.put(new Coordinate(1, 2), Tile.CATS);
-                this.goal.put(new Coordinate(1, 1), Tile.BOOKS);
-                this.goal.put(new Coordinate(5, 4), Tile.GAMES);
-                this.goal.put(new Coordinate(3, 2), Tile.FRAMES);
-                this.goal.put(new Coordinate(3, 0), Tile.TROPHIES);
-                this.goal.put(new Coordinate(2, 3), Tile.PLANTS);
+                this.goal.put(new Coordinate(1, 2), Tile.Type.CATS);
+                this.goal.put(new Coordinate(1, 1), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(5, 4), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(3, 2), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(3, 0), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(2, 3), Tile.Type.PLANTS);
             }
             case 4 -> {
-                this.goal.put(new Coordinate(0, 3), Tile.CATS);
-                this.goal.put(new Coordinate(2, 2), Tile.BOOKS);
-                this.goal.put(new Coordinate(0, 0), Tile.GAMES);
-                this.goal.put(new Coordinate(3, 1), Tile.FRAMES);
-                this.goal.put(new Coordinate(4, 1), Tile.TROPHIES);
-                this.goal.put(new Coordinate(1, 4), Tile.PLANTS);
+                this.goal.put(new Coordinate(0, 3), Tile.Type.CATS);
+                this.goal.put(new Coordinate(2, 2), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(0, 0), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(3, 1), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(4, 1), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(1, 4), Tile.Type.PLANTS);
             }
             case 5 -> {
-                this.goal.put(new Coordinate(5, 4), Tile.CATS);
-                this.goal.put(new Coordinate(3, 3), Tile.BOOKS);
-                this.goal.put(new Coordinate(1, 1), Tile.GAMES);
-                this.goal.put(new Coordinate(1, 3), Tile.FRAMES);
-                this.goal.put(new Coordinate(5, 2), Tile.TROPHIES);
-                this.goal.put(new Coordinate(0, 0), Tile.PLANTS);
+                this.goal.put(new Coordinate(5, 4), Tile.Type.CATS);
+                this.goal.put(new Coordinate(3, 3), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(1, 1), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(1, 3), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(5, 2), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(0, 0), Tile.Type.PLANTS);
             }
             case 6 -> {
-                this.goal.put(new Coordinate(5, 0), Tile.CATS);
-                this.goal.put(new Coordinate(0, 2), Tile.BOOKS);
-                this.goal.put(new Coordinate(1, 4), Tile.GAMES);
-                this.goal.put(new Coordinate(4, 4), Tile.FRAMES);
-                this.goal.put(new Coordinate(2, 0), Tile.TROPHIES);
-                this.goal.put(new Coordinate(3, 1), Tile.PLANTS);
+                this.goal.put(new Coordinate(5, 0), Tile.Type.CATS);
+                this.goal.put(new Coordinate(0, 2), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(1, 4), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(4, 4), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(2, 0), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(3, 1), Tile.Type.PLANTS);
             }
             case 7 -> {
-                this.goal.put(new Coordinate(4, 1), Tile.CATS);
-                this.goal.put(new Coordinate(1, 3), Tile.BOOKS);
-                this.goal.put(new Coordinate(0, 3), Tile.GAMES);
-                this.goal.put(new Coordinate(5, 4), Tile.FRAMES);
-                this.goal.put(new Coordinate(3, 2), Tile.TROPHIES);
-                this.goal.put(new Coordinate(2, 0), Tile.PLANTS);
+                this.goal.put(new Coordinate(4, 1), Tile.Type.CATS);
+                this.goal.put(new Coordinate(1, 3), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(0, 3), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(5, 4), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(3, 2), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(2, 0), Tile.Type.PLANTS);
             }
             case 8 -> {
-                this.goal.put(new Coordinate(3, 2), Tile.CATS);
-                this.goal.put(new Coordinate(2, 4), Tile.BOOKS);
-                this.goal.put(new Coordinate(5, 2), Tile.GAMES);
-                this.goal.put(new Coordinate(0, 0), Tile.FRAMES);
-                this.goal.put(new Coordinate(1, 1), Tile.TROPHIES);
-                this.goal.put(new Coordinate(1, 4), Tile.PLANTS);
+                this.goal.put(new Coordinate(3, 2), Tile.Type.CATS);
+                this.goal.put(new Coordinate(2, 4), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(5, 2), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(0, 0), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(1, 1), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(1, 4), Tile.Type.PLANTS);
             }
             case 9 -> {
-                this.goal.put(new Coordinate(2, 3), Tile.CATS);
-                this.goal.put(new Coordinate(3, 0), Tile.BOOKS);
-                this.goal.put(new Coordinate(4, 1), Tile.GAMES);
-                this.goal.put(new Coordinate(1, 1), Tile.FRAMES);
-                this.goal.put(new Coordinate(5, 4), Tile.TROPHIES);
-                this.goal.put(new Coordinate(0, 3), Tile.PLANTS);
+                this.goal.put(new Coordinate(2, 3), Tile.Type.CATS);
+                this.goal.put(new Coordinate(3, 0), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(4, 1), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(1, 1), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(5, 4), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(0, 3), Tile.Type.PLANTS);
             }
             case 10 -> {
-                this.goal.put(new Coordinate(1, 4), Tile.CATS);
-                this.goal.put(new Coordinate(4, 1), Tile.BOOKS);
-                this.goal.put(new Coordinate(3, 0), Tile.GAMES);
-                this.goal.put(new Coordinate(2, 2), Tile.FRAMES);
-                this.goal.put(new Coordinate(0, 3), Tile.TROPHIES);
-                this.goal.put(new Coordinate(5, 2), Tile.PLANTS);
+                this.goal.put(new Coordinate(1, 4), Tile.Type.CATS);
+                this.goal.put(new Coordinate(4, 1), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(3, 0), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(2, 2), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(0, 3), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(5, 2), Tile.Type.PLANTS);
             }
             case 11 -> {
-                this.goal.put(new Coordinate(0, 0), Tile.CATS);
-                this.goal.put(new Coordinate(5, 2), Tile.BOOKS);
-                this.goal.put(new Coordinate(1, 4), Tile.GAMES);
-                this.goal.put(new Coordinate(3, 2), Tile.FRAMES);
-                this.goal.put(new Coordinate(2, 3), Tile.TROPHIES);
-                this.goal.put(new Coordinate(4, 1), Tile.PLANTS);
+                this.goal.put(new Coordinate(0, 0), Tile.Type.CATS);
+                this.goal.put(new Coordinate(5, 2), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(1, 4), Tile.Type.GAMES);
+                this.goal.put(new Coordinate(3, 2), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(2, 3), Tile.Type.TROPHIES);
+                this.goal.put(new Coordinate(4, 1), Tile.Type.PLANTS);
             }
             default -> throw new IndexOutOfBoundsException("Goal index must be between 0 and 11, got: " + goalIndex);
         }
@@ -149,9 +149,9 @@ public class PersonalGoal {
     
     /**
      * Get the contents of the goal as a map of coordinates and their contents.
-     * @return Copy of coordinate->tile mapping
+     * @return Copy of coordinate->Tile.Type mapping
      */
-    public Map<Coordinate, Tile> getGoal() { return new HashMap<>(this.goal); }
+    public Map<Coordinate, Tile.Type> getGoal() { return new HashMap<>(this.goal); }
     
     /**
      * Checks the goal against the given shelf and computes the score
@@ -161,12 +161,12 @@ public class PersonalGoal {
     public int checkGoal(Shelf shelf) {
         long count = this.goal.entrySet()
                 .stream()
-                .filter((coordinateTileEntry -> {
+                .filter(coordinateTileEntry -> {
                     Coordinate c = coordinateTileEntry.getKey();
-                    Tile tile = shelf.getTile(c.row(), c.col());
+                    Tile.Type type = shelf.getTile(c.row(), c.col()).type();
                     
-                    return tile == coordinateTileEntry.getValue();
-                }))
+                    return type == coordinateTileEntry.getValue();
+                })
                 .count();
         
         final int[] scores = { 0, 1, 2, 4, 6, 9, 12 };

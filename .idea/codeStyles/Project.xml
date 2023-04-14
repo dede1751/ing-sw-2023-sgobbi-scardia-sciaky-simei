@@ -1,5 +1,8 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <JSON>
+      <option name="ARRAY_WRAPPING" value="0" />
+    </JSON>
     <JavaCodeStyleSettings>
       <option name="JD_ADD_BLANK_AFTER_PARM_COMMENTS" value="true" />
       <option name="JD_ADD_BLANK_AFTER_RETURN" value="true" />
@@ -12,6 +15,7 @@
       <option name="FINALLY_ON_NEW_LINE" value="true" />
       <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
       <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
+      <option name="ALIGN_MULTILINE_PARENTHESIZED_EXPRESSION" value="true" />
       <option name="SPACE_WITHIN_IF_PARENTHESES" value="true" />
       <option name="SPACE_WITHIN_WHILE_PARENTHESES" value="true" />
       <option name="SPACE_WITHIN_FOR_PARENTHESES" value="true" />
@@ -32,6 +36,7 @@
       <option name="SPACE_BEFORE_FINALLY_KEYWORD" value="false" />
       <option name="CALL_PARAMETERS_WRAP" value="1" />
       <option name="BINARY_OPERATION_WRAP" value="1" />
+      <option name="ASSIGNMENT_WRAP" value="1" />
       <option name="DOWHILE_BRACE_FORCE" value="1" />
       <indentOptions>
         <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />
@@ -52,6 +57,9 @@
           </group>
         </groups>
       </arrangement>
+    </codeStyleSettings>
+    <codeStyleSettings language="JSON">
+      <option name="WRAP_ON_TYPING" value="1" />
     </codeStyleSettings>
   </code_scheme>
 </component>

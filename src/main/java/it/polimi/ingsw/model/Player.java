@@ -2,6 +2,10 @@ package it.polimi.ingsw.model;
 
 import java.io.Serial;
 import java.io.Serializable;
+import com.google.gson.*;
+import it.polimi.ingsw.utils.files.ResourcesManager;
+
+import java.lang.reflect.Type;
 
 /**
  * Player representation within model
@@ -16,7 +20,7 @@ public class Player implements Serializable {
     
     final private int pgID;
     
-    private final Shelf shelf;
+    final private Shelf shelf;
     
     private boolean completedGoalX;
     private boolean CompletedGoalY;
@@ -29,10 +33,14 @@ public class Player implements Serializable {
      * @param pgID     Integer id of the player's personal goal (0-11)
      */
     protected Player(String nickname, int pgID) {
+        this(nickname, pgID, 0, new Shelf());
+    }
+    
+    private Player(String nickname, int pgID, int score, Shelf shelf){
         this.nickname = nickname;
         this.pgID = pgID;
-        this.score = 0;
-        this.shelf = new Shelf();
+        this.score = score;
+        this.shelf = shelf;
     }
     
     /**
@@ -97,5 +105,31 @@ public class Player implements Serializable {
     
     public void setCompletedGoalY(boolean completedGoalY) {
         CompletedGoalY = completedGoalY;
+    }
+    protected static class PlayerSerializer implements JsonSerializer<Player> {
+        @Override
+        public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {
+            
+            var result = new JsonObject();
+            result.addProperty("Nickname", player.nickname);
+            result.addProperty("PersonalGoal", player.pgID);
+            result.addProperty("Score", player.score);
+            result.add("Shelf",
+                       ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(), "shelf"));
+            return result;
+        }
+    }
+    
+    protected static class PlayerDeserializer implements JsonDeserializer<Player>{
+        @Override
+        public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            
+            var str = json.toString();
+            var nickname = ResourcesManager.JsonManager.getElementByAttribute(str, "Nickname");
+            var pgID = ResourcesManager.JsonManager.getElementByAttribute(str, "pgID");
+            var score = ResourcesManager.JsonManager.getElementByAttribute(str, "score");
+            var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(str, "shelf"));
+            return new Player( nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf);
+        }
     }
 }

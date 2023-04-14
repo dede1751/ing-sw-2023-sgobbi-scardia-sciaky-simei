@@ -20,7 +20,7 @@ public class BoardTest {
     public void initTwoPlayer() {
         Board board = new Board(2);
         
-        assertNotNull(board.getTile(new Coordinate(1, 3)));
+        assertNotNull(board.getTile(new Coordinate(7, 3)));
         assertNull(board.getTile(new Coordinate(0, 3)));
     }
     
@@ -29,8 +29,8 @@ public class BoardTest {
         Board board = new Board(4);
         
         assertNotNull(board.getTile(new Coordinate(1, 3)));
-        assertNotNull(board.getTile(new Coordinate(3, 8)));
-        assertNotNull(board.getTile(new Coordinate(7, 3)));
+        assertNotNull(board.getTile(new Coordinate(2, 2)));
+        assertNotNull(board.getTile(new Coordinate(3, 1)));
         assertNull(board.getTile(new Coordinate(-1, -1)));
     }
     
@@ -39,15 +39,15 @@ public class BoardTest {
         Board board = new Board(3);
         
         var selection = new ArrayList<Coordinate>();
-        
-        var c = new Coordinate(6, 6);
+        Coordinate c = new Coordinate(6, 6);
+        Tile t = new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE);
         selection.add(c);
-        assertDoesNotThrow(() -> board.insertTile(c, Tile.TROPHIES));
-        assertEquals(board.getTile(c), Tile.TROPHIES);
+        
+        assertDoesNotThrow(() -> board.insertTile(c, t));
+        assertEquals(board.getTile(c), t);
         
         board.removeSelection(selection);
         assertEquals(board.getTile(c), Tile.NOTILE);
-        
     }
     
     @Test
@@ -55,6 +55,7 @@ public class BoardTest {
         Board board = new Board(3);
         TileBag tileBag = new TileBag();
         board.refill(tileBag);
+        
         for( Coordinate x : board.getTiles().keySet().stream().toList() ) {
             assertNotEquals(Tile.NOTILE, board.getTile(x));
         }

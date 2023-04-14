@@ -3,6 +3,8 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
+import java.util.HashSet;
+
 public class TwoRowDistinctGoal implements CommonGoalStrategy {
     
     public String getDescription() {
@@ -10,35 +12,23 @@ public class TwoRowDistinctGoal implements CommonGoalStrategy {
     }
     
     public boolean checkShelf(Shelf shelf) {
-        int counter = 0;
+        int rowCounter = 0;
         for (int i = 0; i < 6; i++) {
-            int[] temp = new int[] {1, 1, 1, 1, 1, 1};
-            int sum = 0;
+            HashSet<Tile.Type> uniqueTiles = new HashSet<>();
+            boolean skipRow = false;
+
             for (int j = 0; j < 5; j++) {
-                if (shelf.getTile(i, j) == Tile.CATS) {
-                    if (temp[0] == 1) temp[0]--;
+                Tile tile = shelf.getTile(i, j);
+    
+                if ( tile == Tile.NOTILE ) {
+                    skipRow = true;
+                    break;
                 }
-                if (shelf.getTile(i, j) == Tile.BOOKS) {
-                    if (temp[1] == 1) temp[1]--;
-                }
-                if (shelf.getTile(i, j) == Tile.GAMES) {
-                    if (temp[2] == 1) temp[2]--;
-                }
-                if (shelf.getTile(i, j) == Tile.FRAMES) {
-                    if (temp[3] == 1) temp[3]--;
-                }
-                if (shelf.getTile(i, j) == Tile.TROPHIES) {
-                    if (temp[4] == 1) temp[4]--;
-                }
-                if (shelf.getTile(i, j) == Tile.PLANTS) {
-                    if (temp[5] == 1) temp[5]--;
-                }
+                uniqueTiles.add(tile.type());
             }
-            for (int j = 0; j < 6; j++) {
-                sum = sum + temp[i];
-            }
-            if (sum == 1) counter++;
+    
+            if ( !skipRow && uniqueTiles.size() == 5 ) rowCounter++;
         }
-        return counter >= 2;
+        return rowCounter >= 2;
     }
 }

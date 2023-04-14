@@ -1,6 +1,10 @@
 package it.polimi.ingsw.model;
 
 import java.io.Serializable;
+import com.google.gson.*;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
+
+import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -20,7 +24,7 @@ public class Shelf implements Serializable {
      */
     private final List<Stack<Tile>> content;
     
-    protected Shelf() {
+    public Shelf() {
         this.content = new ArrayList<>();
         
         for( int i = 0; i < N_COL; i++ ) {
@@ -32,16 +36,16 @@ public class Shelf implements Serializable {
      * Get tile at given x, y coordinates
      *
      * @param row Row of the desired tile
-     * @param col Colum of the desired tile
+     * @param col Column of the desired tile
      *
-     * @return Tile in the position [row, col], null if the coordinates are out of bounds
+     * @return Tile in the position [row, col], NOTILE if out of bounds or empty
      */
     public Tile getTile(int row, int col) {
         try {
             return this.content.get(col).get(row);
         }
         catch( IndexOutOfBoundsException e ) {
-            return null;
+            return Tile.NOTILE;
         }
     }
     
@@ -55,8 +59,7 @@ public class Shelf implements Serializable {
         
         for( int i = 0; i < N_ROW; i++ ) {
             for( int j = 0; j < N_COL; j++ ) {
-                var tile = getTile(i, j);
-                result[i][j] = Objects.requireNonNullElse(tile, Tile.NOTILE);
+                result[i][j] = Objects.requireNonNullElse(getTile(i, j), Tile.NOTILE);
             }
         }
         return result;
@@ -82,8 +85,9 @@ public class Shelf implements Serializable {
         var res = new ArrayList<Integer>();
         
         for( int i = 0; i < N_COL; i++ ) {
-            if( content.get(i).size() <= (N_ROW - selectionLength) )
+            if( content.get(i).size() <= (N_ROW - selectionLength) ) {
                 res.add(i);
+            }
         }
         return res;
     }
@@ -99,14 +103,14 @@ public class Shelf implements Serializable {
         return N_ROW - content.get(column).size();
     }
     
-    ;
-    
-    
-    /*
-     * return all the indexes of the columns that still have space, with the remaining spaces
+    /**
+     * Get the amount of space left in each column.
+     *
+     * @return Map linking each available column to the amount of space it has.
      */
     public Map<Integer, Integer> remainingSpace() {
         var res = new HashMap<Integer, Integer>();
+        
         for( var x : availableColumns(0) ) {
             res.put(x, spaceInColumn(x));
         }
@@ -121,9 +125,134 @@ public class Shelf implements Serializable {
      */
     public void addTiles(List<Tile> tiles, int col) {
         for( var x : tiles ) {
-            if( x != Tile.NOTILE )
+            if( x != Tile.NOTILE ) {
                 content.get(col).push(x);
+            }
         }
     }
     
+    /**
+     * Protected class that contains the gson custom serializer logic for Shelf.
+     * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile}
+     * Each column is represented as a json Array in objects each named column_i, where i is the index of the column.
+     * The json is expected to have the structure {shelf : {
+     * column_0 : [...],
+     * column_1 : [...],
+     * ...
+     * }
+     * }
+     * The names of the attributes are irrelevant
+     */
+    protected static class ShelfSerializer implements JsonSerializer<Shelf> {
+        @Override
+        public JsonElement serialize(Shelf shelf, Type typeOfSrc, JsonSerializationContext context) {
+            var matrix = shelf.getAllShelf();
+            var result = new JsonObject();
+            for( int i = 0; i < N_COL; i++ ) {
+                var currentArray = new JsonArray();
+                for( int j = 0; j < N_ROW; j++ ) {
+                    currentArray.add(matrix[j][i].toString());
+                }
+                result.add("column_" + i, currentArray);
+            }
+            var s = new JsonObject();
+            s.add("shelf", result);
+            return s;
+        }
+    }
+    
+    /**
+     * Protected class that contains the gson custom deserializer logic for Shelf.
+     * The valid Json element tree representing the object has the following structure:
+     * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile}
+     * Each column is represented as a json Array in objects each named column_i, where i is the index of the column.
+     * The json is expected to have the structure {shelf : {
+     * column_0 : [...],
+     * column_1 : [...],
+     * ...
+     * }
+     * }
+     * The names of the attributes are irrelevant
+     */
+    protected static class ShelfDeserializer implements JsonDeserializer<Shelf> {
+        @Override
+        public Shelf deserialize(JsonElement element, Type typeOfDst, JsonDeserializationContext context) throws JsonParseException {
+            var result = new Shelf();
+            if( element.isJsonObject() ) {
+                var columns = element.getAsJsonObject().asMap().values().iterator().next().getAsJsonObject().entrySet();
+                int i = 0;
+                for( var x : columns ) {
+                    if( x.getValue().isJsonArray() ) {
+                        var l = x.getValue().getAsJsonArray().asList();
+                        var tileList = l.stream().map((k) -> {
+                            try {
+                                return Tile.fromString(k.getAsJsonPrimitive().getAsString());
+                            }
+                            catch( InvalidStringException e ) {
+                                throw new JsonParseException("Invalid string");
+                            }
+                        }).filter((k) -> k.type() != Tile.Type.NOTILE).toList();
+                        result.addTiles(tileList, i);
+                        i++;
+                    }else {
+                        throw new JsonParseException("Invalid JsonElement : invalid structure");
+                    }
+                }
+            }else {
+                throw new JsonParseException("Invalid JsonElement : not an  object");
+            }
+            return result;
+        }
+    }
+    
+    /**
+     * Create a Shelf object from a Json string
+     *
+     * @param json a valid json string
+     *
+     * @return Shelf
+     */
+    public static Shelf fromJson(String json) {
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(Shelf.class, new ShelfDeserializer());
+        return gson.create().fromJson(json, Shelf.class);
+    }
+    
+    /**
+     * Serialize the object to a Json string
+     *
+     * @return String
+     */
+    public String toJson() {
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(Shelf.class, new ShelfSerializer());
+        return gson.create().toJson(this, Shelf.class);
+    }
+    
+    /**
+     * Serialize the object to a Json string
+     *
+     * @return String
+     */
+    public static String toJson(Shelf shelf) {
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(Shelf.class, new ShelfSerializer());
+        return gson.create().toJson(shelf, Shelf.class);
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if( o instanceof Shelf ) {
+            for( int i = 0; i < N_ROW; i++ ) {
+                for( int j = 0; j < N_COL; j++ ) {
+                    if( !this.getTile(i, j).equals(((Shelf) o).getTile(i, j)) ) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }else {
+            return false;
+        }
+    }
 }
