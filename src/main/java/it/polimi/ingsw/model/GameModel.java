@@ -16,6 +16,7 @@ public class GameModel extends Observable<GameModel.Event> {
     
     public enum Event {
         GAME_START,
+        LAST_TURN,
         NEW_CURRENT_PLAYER,
         FINISHED_GAME,
     }
@@ -27,6 +28,7 @@ public class GameModel extends Observable<GameModel.Event> {
     
     private final Stack<Integer> commonGoalStackX;
     private final Stack<Integer> commonGoalStackY;
+    private String winner;
     
     private int currentPlayerIndex;
     private boolean gameOver;
@@ -140,12 +142,20 @@ public class GameModel extends Observable<GameModel.Event> {
      */
     public void setGameOver() {
         gameOver = true;
+        setChangedAndNotifyObservers(Event.LAST_TURN);
     }
     
     
     public boolean isFinalTurn() {
         return this.gameOver;
     }
+    
+    public void setWinner(String winner){
+        this.winner=winner;
+        setChangedAndNotifyObservers(Event.FINISHED_GAME);
+    }
+    
+    public String getWinner(){return this.winner;}
     
     /**
      * Adds player with given nickname and personal goal to the player pool

@@ -4,13 +4,13 @@ import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Tile;
-
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,13 +55,14 @@ public class GameController {
         return true;
     }
     
-    //TODO we need to understand how to take the coordinate and column from player
+    
     public void turn(List<Tile> selection, int col) {
         
         //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
         
         //remove the selection from the board and add it to the current player shelfe
+        //TODO wrong function, it needs the coordinates to be removed from the board
         model.shelveSelection(selection, col);
         
         
@@ -85,14 +86,6 @@ public class GameController {
         }
         
         
-        //check if the current player is the last in the list of players, if it is, set current player to the first in the list
-        if( model.getCurrentPlayerIndex() == model.getNumPlayers() ) {
-            model.setCurrentPlayerIndex(0);
-        }else {
-            model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
-        }
-        
-        
     }
     
     public void initGame() {
@@ -100,7 +93,7 @@ public class GameController {
         game();
     }
     
-    //TODO once understood how to take coordinates and column, update the turn call accordingly
+    
     public void game() {
         
         
@@ -133,20 +126,9 @@ public class GameController {
             }
         }
         
-        System.out.println("The winner is" + model.getPlayers().get(winnerIndex) + "!!!");
-        
+        model.setWinner(model.getPlayers().get(winnerIndex).getNickname());
     }
     
-    
-    public void pause() {
-        isPaused = true;
-        //TODO save the model into the server
-    }
-    
-    public void resume() {
-        isPaused = false;
-        game();
-    }
     
     public void update(ViewMessage o, View.Action evt) {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
@@ -155,20 +137,33 @@ public class GameController {
             return;
         }
         
-        switch( evt ) {
+        List<Tile> selectionTiles = new ArrayList<Tile>();
+        for( int i = 0; i < o.getSelection().size(); i++ ) {
+            selectionTiles.add(model.getBoard().getTile(o.getSelection().get(i)));
+        }
+        model.removeSelection(o.getSelection());
+        turn(selectionTiles, o.getColumn());
+        
+        if( model.isFinalTurn() && currentPlayerIndex == 3 ) {
+            endGame();
+            
+            //check if the current player is the last in the list of players, if it is, set current player to the first in the list
+        }else if( model.getCurrentPlayerIndex() == model.getNumPlayers() ) {
+            model.setCurrentPlayerIndex(0);
+        }else {
+            model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
+        }
+        
+       /* switch( evt ) {
             case PASS_TURN -> {
                 System.out.println("Player " + currentPlayerIndex + " passed his turn.");
                 
                 int nextPlayer = currentPlayerIndex < model.getNumPlayers() - 1 ? currentPlayerIndex + 1 : 0;
                 model.setCurrentPlayerIndex(nextPlayer);
             }
-            case REMOVE_SELECTION -> {
-            }
             case INSERT_SELECTION -> {
-            
             }
             default -> System.err.println("Ignoring event from View:" + o.getViewID() + ": " + evt);
-        }
+        }*/
     }
-    
 }
