@@ -85,9 +85,7 @@ public class TUI extends View {
         Scanner scanner = new Scanner(System.in);
         List<Coordinate> selection = new ArrayList<Coordinate>();
         
-        System.out.print("Enter number of coordinates (1-3): ");
-        int numCoordinates = scanner.nextInt();
-        scanner.nextLine();
+    
         
         while( numCoordinates > 3 || numCoordinates < 1 ) {//check if the number of coordinates is right
             System.out.print("The number must be between 1 and 3, try again: ");
@@ -171,7 +169,7 @@ public class TUI extends View {
                 printBoard(model.getBoard());
                 askSelection(model);            //set the asked selection to the view message selection
                 askColumn(model);
-                //TODO change event
+                //TODO change events
                 this.setChangedAndNotifyObservers(Action.INSERT_SELECTION);
                 System.out.println();
                 
