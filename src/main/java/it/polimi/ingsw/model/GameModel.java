@@ -79,15 +79,15 @@ public class GameModel extends Observable<GameModel.Event> {
     }
     
     public void startGame() { this.setChangedAndNotifyObservers(Event.GAME_START); }
-    private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS) {
+    private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
         this.numPlayers = numPlayers;
         this.commonGoalNumX = commonGoalNumX;
         this.commonGoalNumY = commonGoalNumY;
         this.commonGoalStackX = CGXS;
         this.commonGoalStackY = CGYS;
         this.players = new ArrayList<>(numPlayers);
-        this.board = new Board(numPlayers);
-        this.tileBag = new TileBag();
+        this.board = board;
+        this.tileBag = tileBag;
         
     }
     
@@ -347,7 +347,8 @@ public class GameModel extends Observable<GameModel.Event> {
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             String js = json.toString();
             Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class, new Shelf.ShelfDeserializer())
-                                         .registerTypeAdapter(Player.class, new Player.PlayerSerializer())
+                                         .registerTypeAdapter(Player.class, new Player.PlayerDeserializer())
+                                         .registerTypeAdapter(Board.class, new Board.BoardDeserializer())
                                          .create();
             var stackToken = new TypeToken<Stack<Integer>>(){}.getType();
             var numPlayer = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "PlayersNumber"), Integer.class);
@@ -355,7 +356,10 @@ public class GameModel extends Observable<GameModel.Event> {
             var CGY = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CommonGoalY"), Integer.class);
             var xStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGX"), stackToken);
             var yStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGY"), stackToken);
+            var board = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "Board"), Board.class);
+            var tileBag = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "TileBag"), TileBag.class);
             var result = new GameModel(numPlayer, CGX, CGY, (Stack<Integer>)xStack, (Stack<Integer>)yStack);
+            
             
             var el = ResourcesManager.JsonManager.getElementByAttribute(js, "PlayersNickname");
             List<String> playersNicks = context.deserialize(el, new TypeToken<List<String>>() {

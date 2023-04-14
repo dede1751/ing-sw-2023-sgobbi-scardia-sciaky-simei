@@ -2,8 +2,10 @@ package it.polimi.ingsw.model;
 
 import com.google.gson.*;
 import it.polimi.ingsw.utils.exceptions.CommonException;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
+import it.polimi.ingsw.utils.files.ResourcesManager;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -62,6 +64,10 @@ public class Board {
                 this.tileOccupancy.put(coordinate, Tile.NOTILE);
             }
         }
+    }
+    
+    private Board(Map<Coordinate, Tile> map) {
+        tileOccupancy = map;
     }
     
     /**
@@ -211,6 +217,25 @@ public class Board {
         }
     }
     
+    public static class BoardDeserializer implements JsonDeserializer<Board>{
+        
+        @Override
+        public Board deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            Gson gson = new GsonBuilder().create();
+            var hashMap = new HashMap<Coordinate, Tile>();
+            var board = gson.fromJson(json, String[][].class);
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    var coord = new Coordinate(i, j);
+                    try {
+                        var tile = Tile.fromString(board[i][j]);
+                        hashMap.put(coord, tile);
+                    } catch ( InvalidStringException ignored ) { }
+                }
+            }
+            return new Board(hashMap);
+        }
+    }
     
     
     
