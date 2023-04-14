@@ -143,6 +143,12 @@ public class CommonGoalTest {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
+    
+        @Test
+        public void DiagonalFiveTileTrue4() {
+            var attribute = ResourcesManager.getCurrentMethod();
+            testTrue(attribute, goal);
+        }
         
         @Test
         public void DiagonalFiveTileFalse() {
