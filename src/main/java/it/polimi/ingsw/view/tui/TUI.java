@@ -78,6 +78,7 @@ public class TUI extends View {
         }
     }
     
+
     
     public void askSelection(GameModelView model) {
         
@@ -118,8 +119,18 @@ public class TUI extends View {
         
         System.out.println("Entered coordinates: " + selection);
         this.setSelection(selection);
+        
     }
     
+    public void askColumn(GameModelView model){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the column in which you want to place your selection: ");
+        int column = scanner.nextInt();
+        scanner.nextLine();
+        this.setColumn(column);
+        
+        
+    }
     private Coordinate getCoordinate(){
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter x-coordinate: ");
@@ -130,14 +141,17 @@ public class TUI extends View {
         return new Coordinate(x,y);
     }
     
-    private void printBoard(Board board) {
+    
+    //TODO
+        private void printBoard(Board board) {
         for( int i = 0; i < 8; i++ ) {
             
         }
     }
     
+    //TODO
     public Boolean checkSelection(List<Coordinate> selection){
-    
+    return true;
     }
     @Override
     public void update(GameModelView model, GameModel.Event evt) {
@@ -155,10 +169,17 @@ public class TUI extends View {
                 
                 
                 printBoard(model.getBoard());
-                askSelection(model);
+                askSelection(model);            //set the asked selection to the view message selection
+                askColumn(model);
+                //TODO change event
+                this.setChangedAndNotifyObservers(Action.INSERT_SELECTION);
                 System.out.println();
+                
             }
-            case FINISHED_GAME -> System.out.println("GAME OVER");
+            case LAST_TURN -> {
+            
+            }
+            case FINISHED_GAME -> System.out.println("GAME OVER, THE WINNER IS "+model.getWinner());
             default -> System.err.println("Ignoring event from " + model + ": " + evt);
         }
     }

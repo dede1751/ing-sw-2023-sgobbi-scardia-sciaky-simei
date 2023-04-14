@@ -13,7 +13,7 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     
     public enum Action {
         PASS_TURN,
-        REMOVE_SELECTION,
+        LAST_TURN,
         INSERT_SELECTION,
     }
     
@@ -29,13 +29,21 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     }
     
     private List<Coordinate> selection;
-    
+    private int column;
     public void setSelection(List<Coordinate> selection) {
         this.selection = selection;
     }
     
     public List<Coordinate> getSelection() {
         return this.selection;
+    }
+    
+    public int getColumn() {
+        return this.column;
+    }
+    
+    public void setColumn(int column) {
+        this.column = column;
     }
     
     public abstract LobbyController.LoginInfo userLogin(LobbyController.LobbyInfo info);
