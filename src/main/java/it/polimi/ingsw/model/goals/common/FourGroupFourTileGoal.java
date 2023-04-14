@@ -13,15 +13,13 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
     }
     
     public boolean checkShelf(Shelf shelf) {
-        final record coor(int r, int c) {
+        record coor(int r, int c) {
             coor sum_off(coor offset) {
                 return new coor(r + offset.r(), c + offset.c());
             }
         }
         ;
         var square = List.of(new coor(0, 0), new coor(0, 1), new coor(1, 0), new coor(1, 1));
-        var oriz_line = List.of(new coor(0, 0), new coor(0, 1), new coor(0, 2), new coor(0, 3));
-        var ver_line = List.of(new coor(0, 0), new coor(1, 0), new coor(2, 0), new coor(3, 0));
         var mat = shelf.getAllShelf();
         var valid_matrix = new boolean[Shelf.N_ROW][Shelf.N_COL];
         
@@ -50,9 +48,6 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
                 }
             }
         }
-        
         return count >= 6;
     }
-    
-    
 }

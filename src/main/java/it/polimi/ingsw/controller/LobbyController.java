@@ -85,6 +85,7 @@ public class LobbyController {
     public GameController initGame() {
         int[] commonGoalIndices = randDistinctIndices(2);
         GameModel model = new GameModel(lobbySize, commonGoalIndices[0], commonGoalIndices[1]);
+        model.getBoard().refill(model.getTileBag());
         
         for (Client client: clients) {
             model.addObserver((o, evt) -> {

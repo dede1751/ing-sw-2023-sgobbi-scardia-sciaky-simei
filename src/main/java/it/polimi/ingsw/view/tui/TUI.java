@@ -79,7 +79,7 @@ public class TUI extends View {
     }
     
 
-    
+    //TODO add tile order selection
     public void askSelection(GameModelView model) {
         
         Scanner scanner = new Scanner(System.in);
@@ -101,7 +101,7 @@ public class TUI extends View {
         
         for( int i = 0; i < numCoordinates; i++ ) {
             Coordinate coordinate = getCoordinate();
-            Boolean validCoordinate = false;
+            boolean validCoordinate = false;
             while( !validCoordinate ) {
                 if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
                     model.getBoard().getTile(coordinate) == null ) {
@@ -116,13 +116,10 @@ public class TUI extends View {
         }
         
         System.out.println("Entered coordinates: " + selection);
-        this.setSelection(selection);
+        this.setSelectedCoordinates(selection);
         
     }
     
-<<<<<<< HEAD
-    private Coordinate getCoordinate() {
-=======
     public void askColumn(GameModelView model){
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the column in which you want to place your selection: ");
@@ -133,7 +130,6 @@ public class TUI extends View {
         
     }
     private Coordinate getCoordinate(){
->>>>>>> 07558b7db385f72d5301b00106e020fc4f92645a
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter x-coordinate: ");
         int x = scanner.nextInt();
@@ -143,23 +139,16 @@ public class TUI extends View {
         return new Coordinate(x, y);
     }
     
-    
     //TODO
-        private void printBoard(Board board) {
+    private void printBoard(Board board) {
         for( int i = 0; i < 8; i++ ) {
             
         }
     }
     
-<<<<<<< HEAD
-    public Boolean checkSelection(List<Coordinate> selection) {
-        /* TODO add function body */
-        return null;
-=======
     //TODO
     public Boolean checkSelection(List<Coordinate> selection){
-    return true;
->>>>>>> 07558b7db385f72d5301b00106e020fc4f92645a
+        return true;
     }
     
     @Override
@@ -181,7 +170,7 @@ public class TUI extends View {
                 askSelection(model);            //set the asked selection to the view message selection
                 askColumn(model);
                 //TODO change event
-                this.setChangedAndNotifyObservers(Action.INSERT_SELECTION);
+                this.setChangedAndNotifyObservers(Action.MOVE);
                 System.out.println();
                 
             }

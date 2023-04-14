@@ -11,12 +11,12 @@ public interface CommonGoalStrategy {
      * Get a text description of the goal to achieve
      * @return Goal description string
      */
-    public String getDescription();
+    String getDescription();
     
     /**
      * Checks if the given goal has been achieved on the shelf
      * @param shelf Shelf to check for the common goal
      * @return      true if common goal is achieved, else false
      */
-    public boolean checkShelf(Shelf shelf);
+    boolean checkShelf(Shelf shelf);
 }

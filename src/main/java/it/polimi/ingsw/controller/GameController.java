@@ -10,7 +10,6 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,17 +19,16 @@ public class GameController {
     private final GameModel model;
     
     private final List<Client> clients;
+    private Integer currentPlayerIndex;
+    private final Integer playerNumber;
     
-    private boolean isPaused;
     
-    /* constructor tobe used for paused game*/
     public GameController(GameModel model, List<Client> clients) {
         this.model = model;
         this.clients = clients;
-        
-        model.startGame();
+        playerNumber = clients.size();
+        currentPlayerIndex = 0;
     }
-    
     
     public Boolean needRefill() {
         Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
@@ -49,68 +47,48 @@ public class GameController {
                 if( !(model.getBoard().getTile(entry.getKey().getRight()) == Tile.NOTILE) ) {
                     return false;
                 }
-                
             }
         }
         return true;
     }
     
-    
-    public void turn(List<Tile> selection, int col) {
+    public void turnManager(List<Tile> selection, int col) {
         
         //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
         
-        //remove the selection from the board and add it to the current player shelfe
-        //TODO wrong function, it needs the coordinates to be removed from the board
+        //remove the selection from the board and add it to the current player shelf
         model.shelveSelection(selection, col);
         
-        
-        if( CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
+        if( !model.getCurrentPlayer().isCompletedGoalX() &&
+            CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerScore(model.popStackCGX());
             model.getCurrentPlayer().setCompletedGoalX(true);
         }
-        if( CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
+        if( !model.getCurrentPlayer().isCompletedGoalY() &&
+            CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerScore(model.popStackCGY());
             model.getCurrentPlayer().setCompletedGoalY(true);
         }
-        
         
         if( needRefill() ) {
             model.getBoard().refill(model.getTileBag());
         }
         
-        
         if( currentPlayer.getShelf().isFull() ) {
             model.setGameOver();
         }
-        
-        
     }
     
-    public void initGame() {
-        model.getBoard().refill(model.getTileBag());
-        game();
-    }
-    
-    
-    public void game() {
-        
-        
-        while( !isPaused ) {
-            while( !model.isFinalTurn() ) {
-                //turn();
-            }
-            do {
-                //turn();
-            }
-            while( model.getCurrentPlayerIndex() != clients.size() - 1 );
-            
-            
+    public void nextPlayerSetter() {
+        if( model.isFinalTurn() && model.getCurrentPlayerIndex() == 3 ) {
             endGame();
+            //check if the current player is the last in the list of players, if it is, set current player to the first in the list
+        }else {
+            currentPlayerIndex = (++currentPlayerIndex) % playerNumber;
+            model.setCurrentPlayerIndex(currentPlayerIndex);
         }
     }
-    
     
     public void endGame() {
         int winnerIndex = 0;
@@ -129,41 +107,27 @@ public class GameController {
         model.setWinner(model.getPlayers().get(winnerIndex).getNickname());
     }
     
-    
+    //TODO change name to ViewMessage
     public void update(ViewMessage o, View.Action evt) {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
         if( o.getViewID() != currentPlayerIndex ) {
             System.err.println("Ignoring event from view:" + o.getViewID() + ": " + evt + ". Not the current Player.");
             return;
         }
-        
-        List<Tile> selectionTiles = new ArrayList<Tile>();
-        for( int i = 0; i < o.getSelection().size(); i++ ) {
-            selectionTiles.add(model.getBoard().getTile(o.getSelection().get(i)));
-        }
-        model.removeSelection(o.getSelection());
-        turn(selectionTiles, o.getColumn());
-        
-        if( model.isFinalTurn() && currentPlayerIndex == 3 ) {
-            endGame();
-            
-            //check if the current player is the last in the list of players, if it is, set current player to the first in the list
-        }else if( model.getCurrentPlayerIndex() == model.getNumPlayers() ) {
-            model.setCurrentPlayerIndex(0);
-        }else {
-            model.setCurrentPlayerIndex(model.getCurrentPlayerIndex() + 1);
-        }
-        
-       /* switch( evt ) {
+        switch( evt ) {
+            case MOVE -> {
+                model.removeSelection(o.getSelection());
+                turnManager(o.getTiles(), o.getColumn());
+                nextPlayerSetter();
+            }
+            case CHAT -> {
+                //TODO chat functions;
+            }
             case PASS_TURN -> {
+                //FIXME only for debug porpouses, to be removed in final version
                 System.out.println("Player " + currentPlayerIndex + " passed his turn.");
-                
-                int nextPlayer = currentPlayerIndex < model.getNumPlayers() - 1 ? currentPlayerIndex + 1 : 0;
-                model.setCurrentPlayerIndex(nextPlayer);
+                nextPlayerSetter();
             }
-            case INSERT_SELECTION -> {
-            }
-            default -> System.err.println("Ignoring event from View:" + o.getViewID() + ": " + evt);
-        }*/
+        }
     }
 }

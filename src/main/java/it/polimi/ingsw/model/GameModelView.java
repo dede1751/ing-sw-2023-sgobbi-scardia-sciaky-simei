@@ -10,7 +10,7 @@ public class GameModelView implements Serializable {
     private final List<Player> players;
     
     private final int currentPlayerIndex;
-    private String winner;
+    private final String winner;
     
     private final Board board;
     

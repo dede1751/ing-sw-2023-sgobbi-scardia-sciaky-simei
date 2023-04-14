@@ -136,15 +136,12 @@ public class GameModel extends Observable<GameModel.Event> {
     }
     
     /**
-     * Checks if the game is on its final turn
-     *
-     * @return true if the turn is final (although some players might still have to play)
+     * Checks if the game is on its final turn and set gameOver to true if the turn is final (although some players might still have to play)
      */
     public void setGameOver() {
         gameOver = true;
         setChangedAndNotifyObservers(Event.LAST_TURN);
     }
-    
     
     public boolean isFinalTurn() {
         return this.gameOver;
