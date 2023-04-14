@@ -169,7 +169,7 @@ public class TUI extends View {
                 printBoard(model.getBoard());
                 askSelection(model);            //set the asked selection to the view message selection
                 askColumn(model);
-                //TODO change events
+                //TODO change event
                 this.setChangedAndNotifyObservers(Action.INSERT_SELECTION);
                 System.out.println();
                 
