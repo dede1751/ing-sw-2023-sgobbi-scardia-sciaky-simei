@@ -76,7 +76,7 @@ public class GameController {
         }
         
         if( currentPlayer.getShelf().isFull() ) {
-            model.setGameOver();
+            model.setLastTurn();
         }
     }
     

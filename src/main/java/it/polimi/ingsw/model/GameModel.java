@@ -6,6 +6,7 @@ import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.observer.Observable;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ public class GameModel extends Observable<GameModel.Event> {
     private String winner;
     
     private int currentPlayerIndex;
-    private boolean gameOver;
+    private boolean lastTurn;
     private final List<Player> players;
     private final Board board;
     
@@ -53,7 +54,7 @@ public class GameModel extends Observable<GameModel.Event> {
         
         this.commonGoalNumY = commonGoalY;
         this.commonGoalStackY = new Stack<>();
-
+        
         if( numPlayers > 3 ) {
             this.commonGoalStackX.push(2);
             this.commonGoalStackY.push(2);
@@ -70,7 +71,7 @@ public class GameModel extends Observable<GameModel.Event> {
         this.commonGoalStackY.push(8);
         
         this.tileBag = new TileBag();
-        this.gameOver = false;
+        this.lastTurn = false;
         
         this.board = new Board(numPlayers);
         this.players = new ArrayList<>();
@@ -78,7 +79,10 @@ public class GameModel extends Observable<GameModel.Event> {
         this.currentPlayerIndex = 0;
     }
     
-    public void startGame() { this.setChangedAndNotifyObservers(Event.GAME_START); }
+    public void startGame() {
+        this.setChangedAndNotifyObservers(Event.GAME_START);
+    }
+    
     private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS) {
         this.numPlayers = numPlayers;
         this.commonGoalNumX = commonGoalNumX;
@@ -148,21 +152,23 @@ public class GameModel extends Observable<GameModel.Event> {
     /**
      * Checks if the game is on its final turn and set gameOver to true if the turn is final (although some players might still have to play)
      */
-    public void setGameOver() {
-        gameOver = true;
+    public void setLastTurn() {
+        lastTurn = true;
         setChangedAndNotifyObservers(Event.LAST_TURN);
     }
     
     public boolean isFinalTurn() {
-        return this.gameOver;
+        return this.lastTurn;
     }
     
-    public void setWinner(String winner){
-        this.winner=winner;
+    public void setWinner(String winner) {
+        this.winner = winner;
         setChangedAndNotifyObservers(Event.FINISHED_GAME);
     }
     
-    public String getWinner(){return this.winner;}
+    public String getWinner() {
+        return this.winner;
+    }
     
     /**
      * Adds player with given nickname and personal goal to the player pool
@@ -347,20 +353,24 @@ public class GameModel extends Observable<GameModel.Event> {
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             String js = json.toString();
             Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class, new Shelf.ShelfDeserializer())
-                                         .registerTypeAdapter(Player.class, new Player.PlayerSerializer())
-                                         .create();
-            var stackToken = new TypeToken<Stack<Integer>>(){}.getType();
-            var numPlayer = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "PlayersNumber"), Integer.class);
-            var CGX = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CommonGoalX"), Integer.class);
-            var CGY = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CommonGoalY"), Integer.class);
+                    .registerTypeAdapter(Player.class, new Player.PlayerSerializer())
+                    .create();
+            var stackToken = new TypeToken<Stack<Integer>>() {
+            }.getType();
+            var numPlayer = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "PlayersNumber"),
+                                          Integer.class);
+            var CGX = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CommonGoalX"),
+                                    Integer.class);
+            var CGY = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CommonGoalY"),
+                                    Integer.class);
             var xStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGX"), stackToken);
             var yStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGY"), stackToken);
-            var result = new GameModel(numPlayer, CGX, CGY, (Stack<Integer>)xStack, (Stack<Integer>)yStack);
+            var result = new GameModel(numPlayer, CGX, CGY, (Stack<Integer>) xStack, (Stack<Integer>) yStack);
             
             var el = ResourcesManager.JsonManager.getElementByAttribute(js, "PlayersNickname");
             List<String> playersNicks = context.deserialize(el, new TypeToken<List<String>>() {
             }.getType());
-            for(var x : playersNicks){
+            for( var x : playersNicks ) {
                 var player = ResourcesManager.JsonManager.getObjectByAttribute(js, x);
                 
             }
