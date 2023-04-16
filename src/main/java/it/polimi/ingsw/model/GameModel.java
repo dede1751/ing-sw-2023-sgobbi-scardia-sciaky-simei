@@ -176,6 +176,10 @@ public class GameModel extends Observable<GameModel.Event> {
         System.out.println("Player " + nickname + " with id: " + pgID);
     }
     
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+    
     /**
      * Returns the entire player list
      * Internal player indices are guaranteed to be consistent with the ones from this list.
@@ -359,16 +363,13 @@ public class GameModel extends Observable<GameModel.Event> {
             var yStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGY"), stackToken);
             var board = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "Board"), Board.class);
             var tileBag = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "TileBag"), TileBag.class);
+            var players = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "PlayersNickname"), String[].class);
             var result = new GameModel(numPlayer, CGX, CGY, (Stack<Integer>)xStack, (Stack<Integer>)yStack, board, tileBag);
-            
-            
-            var el = ResourcesManager.JsonManager.getElementByAttribute(js, "PlayersNickname");
-            List<String> playersNicks = context.deserialize(el, new TypeToken<List<String>>() {
-            }.getType());
-            for(var x : playersNicks){
-                var player = ResourcesManager.JsonManager.getObjectByAttribute(js, x);
-                
+            for(var p : players) {
+                var player = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, p), Player.class);
+                result.addPlayer(player);
             }
+            
             return result;
         }
     }
