@@ -1,5 +1,7 @@
 package it.polimi.ingsw.view.tui;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.View;
@@ -15,7 +17,18 @@ public class TUI extends View {
     public void run() {
         //noinspection InfiniteLoopStatement
         while( true ) {
-            this.askPassTurn();
+            //FIXME getviewid nonè ciò che è inteso nel seguente codice
+            if(this.getViewID()==model.getCurrentPlayerIndex()){
+                Player currentPlayer = model.getPlayers().get(model.getCurrentPlayerIndex());
+                System.out.println("my score is "+ currentPlayer.getScore());
+                printBoard(model.getBoard());
+                printShelf(currentPlayer.getShelf());
+                askSelection(model);            //set the asked selection to the view message selection
+                askColumn(model);
+                this.setChangedAndNotifyObservers(Action.MOVE);
+            }
+            
+            
             
         }
     }
@@ -143,10 +156,12 @@ public class TUI extends View {
     }
     
     
-    //TODO
+    //TODO check
     private void printBoard(Board board) {
-        for( int i = 0; i < 8; i++ ) {
-            
+        Gson gson =new GsonBuilder().registerTypeAdapter(Board.class,new Board.BoardSerializer()).create();
+        var x=gson.toJson(board);
+        for(var y : x.replace("\"Board\": [", "").split("],")){
+            System.out.println(y);
         }
     }
     
@@ -181,17 +196,9 @@ public class TUI extends View {
                 System.out.println("Current player has changed to " + model.getCurrentPlayerIndex() + ". Players: ");
                 
                 for( Player player : model.getPlayers() ) {
-                    System.out.print(player.getNickname() + " " + player.getScore());
+                    System.out.println(player.getNickname() + " " + player.getScore());
                 }
                 setModel(model);
-                //TODO move to run
-                System.out.println(currentPlayer.getScore());
-                printBoard(model.getBoard());
-                printShelf(currentPlayer.getShelf());
-                askSelection(model);            //set the asked selection to the view message selection
-                askColumn(model);
-                //TODO change event
-                this.setChangedAndNotifyObservers(Action.MOVE);
                 System.out.println();
                 
             }
