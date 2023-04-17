@@ -103,5 +103,27 @@ class GameControllerTest {
                 fail();
             }
         }
+        
+        @Test
+        public void turnManagerRefillFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                var boardPrev = model.getBoard();
+                assertFalse(controller.needRefill());
+                controller.turnManager();
+                var boardNext = model.getBoard();
+                assertEquals(boardPrev, boardNext);
+            }
+            catch( IOException e) {
+                e.printStackTrace();
+                fail();
+            }
+        }
     }
 }
