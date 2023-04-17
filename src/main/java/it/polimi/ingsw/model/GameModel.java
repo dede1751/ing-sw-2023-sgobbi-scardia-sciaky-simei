@@ -25,18 +25,20 @@ public class GameModel extends Observable<GameModel.Event> {
         FINISHED_GAME,
     }
     
+    private final int numPlayers;
+    
     private final int commonGoalNumX;
     private final int commonGoalNumY;
     
-    private final int numPlayers;
-    
     private final Stack<Integer> commonGoalStackX;
     private final Stack<Integer> commonGoalStackY;
+    
+    private boolean lastTurn;
     private String winner;
     
     private int currentPlayerIndex;
-    private boolean lastTurn;
     private final List<Player> players;
+    
     private final Board board;
     
     private final TileBag tileBag;
@@ -150,14 +152,15 @@ public class GameModel extends Observable<GameModel.Event> {
     }
     
     /**
-     * Checks if the game is on its final turn and set gameOver to true if the turn is final (although some players might still have to play)
+     * Checks if the game is on its final turn and set gameOver to true if the turn is final
+     * (although some players might still have to play)
      */
     public void setLastTurn() {
         lastTurn = true;
         setChangedAndNotifyObservers(Event.LAST_TURN);
     }
     
-    public boolean isFinalTurn() {
+    public boolean isLastTurn() {
         return this.lastTurn;
     }
     

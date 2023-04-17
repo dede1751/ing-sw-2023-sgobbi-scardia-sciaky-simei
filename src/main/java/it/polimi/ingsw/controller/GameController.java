@@ -18,16 +18,21 @@ public class GameController {
     
     private final GameModel model;
     
-    private final List<Client> clients;
+    // Needed to close the lobby when the game ends
+    private final int lobbyID;
+    
     private Integer currentPlayerIndex;
+    
     private final Integer playerNumber;
     
     
-    public GameController(GameModel model, List<Client> clients) {
+    public GameController(GameModel model, int lobbyID) {
         this.model = model;
-        this.clients = clients;
-        playerNumber = clients.size();
+        this.lobbyID = lobbyID;
+        this.playerNumber = model.getPlayers().size();
         currentPlayerIndex = 0;
+        
+        model.startGame();
     }
     
     public Boolean needRefill() {
@@ -60,15 +65,15 @@ public class GameController {
         //remove the selection from the board and add it to the current player shelf
         model.shelveSelection(selection, col);
         
-        if( !model.getCurrentPlayer().isCompletedGoalX() &&
+        if( !currentPlayer.isCompletedGoalX() &&
             CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerScore(model.popStackCGX());
-            model.getCurrentPlayer().setCompletedGoalX(true);
+            currentPlayer.setCompletedGoalX(true);
         }
-        if( !model.getCurrentPlayer().isCompletedGoalY() &&
+        if( !currentPlayer.isCompletedGoalY() &&
             CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerScore(model.popStackCGY());
-            model.getCurrentPlayer().setCompletedGoalY(true);
+            currentPlayer.setCompletedGoalY(true);
         }
         
         if( needRefill() ) {
@@ -80,10 +85,12 @@ public class GameController {
         }
     }
     
+    /**
+     * Update the current player, handling game termination
+     */
     public void nextPlayerSetter() {
-        if( model.isFinalTurn() && model.getCurrentPlayerIndex() == 3 ) {
+        if( model.isLastTurn() && model.getCurrentPlayerIndex() == 3 ) {
             endGame();
-            //check if the current player is the last in the list of players, if it is, set current player to the first in the list
         }else {
             currentPlayerIndex = (++currentPlayerIndex) % playerNumber;
             model.setCurrentPlayerIndex(currentPlayerIndex);
@@ -98,7 +105,7 @@ public class GameController {
                             model.getPlayers().get(i).getShelf()));
         }
         
-        for( int i = 0; i < model.getNumPlayers() - 1; i++ ) {
+        for ( int i = 0; i < model.getNumPlayers() - 1; i++ ) {
             if( model.getPlayers().get(i).getScore() > model.getPlayers().get(winnerIndex).getScore() ) {
                 winnerIndex = i;
             }
@@ -109,11 +116,12 @@ public class GameController {
     
     //TODO change name to ViewMessage
     public void update(ViewMessage o, View.Action evt) {
-        int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if( o.getViewID() != currentPlayerIndex ) {
-            System.err.println("Ignoring event from view:" + o.getViewID() + ": " + evt + ". Not the current Player.");
+        String currentPlayerNick = model.getCurrentPlayer().getNickname();
+        if( !o.getNickname().equals(currentPlayerNick) ) {
+            System.err.println("Ignoring event from player '" + o.getNickname() + "': " + evt + ". Not the current Player.");
             return;
         }
+        
         switch( evt ) {
             case MOVE -> {
                 model.removeSelection(o.getSelection());

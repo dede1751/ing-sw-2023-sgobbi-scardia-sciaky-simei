@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view.tui;
 
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.View;
 
@@ -12,53 +11,58 @@ public class TUI extends View {
     
     @Override
     public void run() {
+        userLogin();
+        System.out.println("Succesfully logged in to server. Awaiting game start... ");
+        
         //noinspection InfiniteLoopStatement
         while( true ) {
             this.askPassTurn();
         }
     }
     
-    @Override
-    public LobbyController.LoginInfo userLogin(LobbyController.LobbyInfo info) {
-        String nickname = askNickname(info.nicknames());
-        int lobbySize = 0;
-        
-        if( info.lobbyState() == LobbyController.State.INITIALIZE_LOBBY ) {
-            lobbySize = askLobbySize();
-        }
-        
-        return new LobbyController.LoginInfo(nickname, lobbySize);
-    }
-    
-    private String askNickname(List<String> others) {
+    private void userLogin() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose a nickname to add to the game, the following have already been taken:\n");
         
-        for( String s : others ) {
-            System.out.print(s + " ");
-        }
-        System.out.println();
-        
+        System.out.println("Choose the nickname you'll be using in game:");
         while( true ) {
             System.out.print("\n>>  ");
-            String input = scanner.next().trim();
+            String nickname = scanner.next().trim();
             
-            if( !others.contains(input) ) {
-                return input;
+            if( !nickname.equals("") ) {
+                this.setNickname(nickname);
+                break;
             }
         }
-    }
-    
-    private int askLobbySize() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose the amount of players for the match (2-4): ");
         
+        // ask the user to create or join a lobby
+        System.out.println("Do you want to create your own lobby or join an existing one? [CREATE/JOIN]");
         while( true ) {
             System.out.print("\n>>  ");
-            int input = Integer.parseInt(scanner.next());
+            String choice = scanner.next().trim();
             
-            if( input >= 2 && input <= 4 ) {
-                return input;
+            if( choice.equals("CREATE") ) {
+                // ask the user for the number of players in the lobby.
+                System.out.println("Choose the amount of players for the match (2-4): ");
+                while( true ) {
+                    System.out.print("\n>>  ");
+                    try {
+                        int lobbySize = Integer.parseInt(scanner.next());
+                        
+                        if( lobbySize >= 2 && lobbySize <= 4 ) {
+                            this.setSelectedPlayerCount(lobbySize);
+                            break;
+                        }
+                    } catch( NumberFormatException e ) {
+                        System.out.println("Please write a number");
+                    }
+                }
+                this.setChangedAndNotifyObservers(Action.CREATE_LOBBY);
+                return;
+            } else if ( choice.equals("JOIN") ) {
+                this.setChangedAndNotifyObservers(Action.JOIN_LOBBY);
+                return;
+            } else {
+                System.out.println("Please choose one of [CREATE/JOIN]");
             }
         }
     }
@@ -156,7 +160,6 @@ public class TUI extends View {
         switch( evt ) {
             case GAME_START -> {
                 System.out.println("The game has started!");
-                new Thread(this).start();
             }
             case NEW_CURRENT_PLAYER -> {
                 System.out.println("Current player has changed to " + model.getCurrentPlayerIndex() + ". Players: ");
@@ -165,13 +168,12 @@ public class TUI extends View {
                     System.out.print(player.getNickname() + " ");
                 }
                 
-                
-                printBoard(model.getBoard());
+                /*printBoard(model.getBoard());
                 askSelection(model);            //set the asked selection to the view message selection
                 askColumn(model);
                 //TODO change event
                 this.setChangedAndNotifyObservers(Action.MOVE);
-                System.out.println();
+                System.out.println();*/
                 
             }
             case LAST_TURN -> {

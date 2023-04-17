@@ -16,43 +16,34 @@ import java.util.Scanner;
 public class AppClient {
     
     public static void main( String[] args ) throws RemoteException, NotBoundException {
-        View view = askViewType();
-        
-        if ( askUseRMI() ) {
-            runRMI(view);
-        } else {
-            runSocket(view);
-        }
-    }
-    
-    private static View askViewType() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose the type of user interface: [GUI/TUI]");
+        View view;
         
+        System.out.println("Choose the type of user interface: [GUI/TUI]");
         while (true) {
             System.out.print("\n>>  ");
             String input = scanner.next().trim();
             
             if ( input.equals("GUI") ) {
-                return new GUI();
+                view = new GUI();
+                break;
             } else if ( input.equals("TUI") ) {
-                return new TUI();
+                view = new TUI();
+                break;
             }
         }
-    }
-    
-    private static boolean askUseRMI() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose the type of network protocol: [RMI/SOCKET]");
         
+        System.out.println("Choose the type of network protocol: [RMI/SOCKET]");
         while (true) {
             System.out.print("\n>>  ");
             String input = scanner.next().trim();
             
             if ( input.equals("RMI") ) {
-                return true;
+                runRMI(view);
+                break;
             } else if ( input.equals("SOCKET") ) {
-                return false;
+                runSocket(view);
+                break;
             }
         }
     }
@@ -63,6 +54,7 @@ public class AppClient {
         
         LocalClient client = new LocalClient(server, view);
         client.connectServer();
+        view.run();
     }
     
     public static void runSocket(View view) throws RemoteException {
@@ -85,6 +77,7 @@ public class AppClient {
                 }
             }
         }).start();
+        view.run();
     }
     
 }

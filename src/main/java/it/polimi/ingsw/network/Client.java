@@ -9,7 +9,7 @@ import java.rmi.RemoteException;
 
 public interface Client extends Remote {
     
-    void setViewID(int viewID) throws RemoteException;
+    void setClientID(int clientID) throws RemoteException;
     
     /**
      * Notify the client of a model change
@@ -17,7 +17,5 @@ public interface Client extends Remote {
      * @param evt   The causing event
      */
     void update(GameModelView o, GameModel.Event evt) throws RemoteException;
-    
-    void sendLobbyInfo(LobbyController.LobbyInfo info) throws RemoteException;
     
 }

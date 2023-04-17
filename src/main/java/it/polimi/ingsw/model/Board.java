@@ -5,6 +5,7 @@ import it.polimi.ingsw.utils.exceptions.CommonException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
@@ -12,7 +13,7 @@ import java.util.function.Predicate;
 /**
  * Board representation for the model
  */
-public class Board {
+public class Board implements Serializable {
     
     private final Map<Coordinate, Tile> tileOccupancy;
     

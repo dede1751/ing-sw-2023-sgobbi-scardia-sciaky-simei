@@ -1,12 +1,14 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
+
 /**
  * Coordinate class to index locations on the board.
  * Bottom row is 0 and top is 8.
  * Leftmost col is 0 and rightmost is 8.
  * This class is immutable.
  */
-public record Coordinate(int row, int col) {
+public record Coordinate(int row, int col) implements Serializable {
     
     /**
      * Get coordinate row id

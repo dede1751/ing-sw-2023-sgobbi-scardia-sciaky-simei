@@ -1,108 +1,78 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameModelView;
-import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.view.ViewMessage;
 
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class LobbyController {
     
-    public enum State {
-        INITIALIZE_LOBBY,
-        JOIN_LOBBY,
-        FULL_LOBBY,
+    private static LobbyController INSTANCE;
+    
+    public record Lobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID) {};
+    
+    private final HashMap<Integer, Lobby> lobbies;
+    
+    private int lobbyIDCounter;
+    
+    private LobbyController() {
+        this.lobbies = new HashMap<>();
+        this.lobbyIDCounter = 0;
     }
     
-    public record LobbyInfo(List<String> nicknames, State lobbyState) implements Serializable {};
-    
-    public record LoginInfo(String nickname, int lobbySize) implements Serializable {};
-    
-    private State state;
-    
-    private final List<String> nicknames;
-    
-    private final List<Client> clients;
-    
-    private Client servedClient;
-    
-    private int lobbySize = 0;
-    
-    public LobbyController() {
-        state = State.INITIALIZE_LOBBY;
-        nicknames = new ArrayList<>();
-        clients = new ArrayList<>();
-    }
-    
-    public void addClient(Client client) {
-        try {
-            servedClient = client;
-            client.sendLobbyInfo(new LobbyInfo(new ArrayList<>(nicknames), state));
-        } catch( RemoteException e ) {
-            System.err.println("Unable to update the client: " + e.getMessage() + ". Skipping the update...");
-        }
-    }
-    
-    public boolean login(LoginInfo info) {
-        if ( state != State.FULL_LOBBY ) {
-            try {
-                servedClient.setViewID(clients.size());
-                nicknames.add(info.nickname());
-                clients.add(servedClient);
-            } catch( RemoteException e ) {
-                System.err.println("Unable to set the client's ID: " + e.getMessage() + ". Skipping the login...");
-                return false;
-            }
+    public static LobbyController getInstance() {
+        if ( INSTANCE == null ) {
+            INSTANCE = new LobbyController();
         }
         
-        switch ( state ) {
-            case INITIALIZE_LOBBY -> {
-                lobbySize = info.lobbySize();
-                state = State.JOIN_LOBBY;
-                return true;
-            }
-            case JOIN_LOBBY -> {
-                state = lobbySize > clients.size() ? State.JOIN_LOBBY : State.FULL_LOBBY;
-                return true;
-            }
-            default -> { return false; }
-        }
+        return INSTANCE;
     }
     
-    public boolean isFull() { return state == State.FULL_LOBBY; }
+    public Lobby getLobby(int lobbyID) { return this.lobbies.get(lobbyID); }
     
-    private int[] randDistinctIndices(int count) {
-        return new Random().ints(0, 12)
-                .distinct()
-                .limit(count)
-                .toArray();
+    public boolean availableNickname(String nickname) {
+        return lobbies.values()
+                .stream()
+                .noneMatch((l) -> l.nicknames.contains(nickname));
     }
     
-    public GameController initGame() {
-        int[] commonGoalIndices = randDistinctIndices(2);
-        GameModel model = new GameModel(lobbySize, commonGoalIndices[0], commonGoalIndices[1]);
-        model.getBoard().refill(model.getTileBag());
+    public boolean availableLobby() {
+        return lobbies.values()
+                .stream()
+                .anyMatch((l) -> l.nicknames.size() < l.lobbySize);
+    }
+    
+    public boolean isFull(int lobbyID) {
+        Lobby lobby = lobbies.get(lobbyID);
+        return lobby.nicknames.size() >= lobby.lobbySize;
+    }
+    
+    public void endGame(int lobbyID) {
+        this.lobbies.remove(lobbyID);
+    }
+    
+    public int createLobby(ViewMessage msg) {
+        Lobby newLobby = new Lobby(
+                new ArrayList<>(List.of(msg.getNickname())),
+                new ArrayList<>(List.of(msg.getClientID())),
+                msg.getLobbySize(),
+                lobbyIDCounter
+        );
+        lobbies.put(lobbyIDCounter, newLobby);
+        lobbyIDCounter++;
         
-        for (Client client: clients) {
-            model.addObserver((o, evt) -> {
-                try {
-                    client.update(new GameModelView(model), evt);
-                } catch ( RemoteException e) {
-                    System.err.println("Unable to update the client: " + e.getMessage() + ". Skipping the update...");
-                }
-            });
-        }
+        return newLobby.lobbyID;
+    }
+    
+    public int joinLobby(ViewMessage msg) {
+        Lobby lobby = this.lobbies.values()
+                .stream()
+                .filter((l) -> l.nicknames.size() < l.lobbySize)
+                .findFirst()
+                .orElseThrow();
         
-        int[] personalGoalIndices = randDistinctIndices(4);
-        for (int i = 0; i < lobbySize; i++) {
-            model.addPlayer(nicknames.get(i), personalGoalIndices[i]);
-        }
-        
-        return new GameController(model, clients);
+        lobby.nicknames.add(msg.getNickname());
+        lobby.clientIDs.add(msg.getClientID());
+        return lobby.lobbyID;
     }
     
 }

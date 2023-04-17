@@ -2,10 +2,11 @@ package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public record Tile(Type type, Sprite sprite) {
+public record Tile(Type type, Sprite sprite) implements Serializable {
     
     public static final Tile NOTILE = new Tile(Type.NOTILE, Sprite.NOSPRITE);
     

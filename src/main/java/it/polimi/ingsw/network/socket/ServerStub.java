@@ -48,30 +48,12 @@ public class ServerStub implements Server {
         }
         
         try {
-            LobbyController.LobbyInfo info = (LobbyController.LobbyInfo) ois.readObject();
-            client.sendLobbyInfo(info);
+            Integer clientID = (Integer) ois.readObject();
+            client.setClientID(clientID);
         } catch (IOException e) {
             throw new RemoteException("Cannot receive lobby info from server", e);
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize lobby info from server", e);
-        }
-        
-        try {
-            Integer viewID = (Integer) ois.readObject();
-            client.setViewID(viewID);
-        } catch (IOException e) {
-            throw new RemoteException("Cannot receive lobby info from server", e);
-        } catch (ClassNotFoundException e) {
-            throw new RemoteException("Cannot deserialize lobby info from server", e);
-        }
-    }
-    
-    @Override
-    public void sendLoginInfo(LobbyController.LoginInfo info) throws RemoteException {
-        try {
-            oos.writeObject(info);
-        } catch (IOException e) {
-            throw new RemoteException("Cannot send login info", e);
         }
     }
     
