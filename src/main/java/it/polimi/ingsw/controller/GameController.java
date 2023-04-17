@@ -7,8 +7,7 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class GameController {
@@ -49,13 +48,74 @@ public class GameController {
         return true;
     }
     
-    public int checkAdjacency(Shelf shelf){
-        var shelfTiles=shelf.getAllShelf();
-        for(int i=0;i<Shelf.N_ROW;i++){
-            for (int j=0;j<Shelf.N_COL;j++){
+    public int calculateAdjacency(Shelf shelf) {
+        
+        record Coord(int r, int c) {
+            Coord sum(Coord offset) {
+                return new Coord(r + offset.r, c + offset.c);
+            }
             
+            Coord sub(Coord offset) {
+                return new Coord(r - offset.r, c - offset.c);
+            }
+            
+            List<Coord> sumList(List<Coord> offset) {
+                return offset.stream().map((x) -> x.sum(this)).toList();
+            }
+            
+            List<Coord> sumDir() {
+                return this.sumList(List.of(new Coord(-1, 0), new Coord(1, 0), new Coord(0, -1), new Coord(0, 1)));
+            }
+            
+        }
+        
+        var mat = shelf.getAllShelf();
+        var checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
+        int adjacentScore = 0;
+        for( int i = 0; i < Shelf.N_ROW; i++ ) {
+            for( int j = 0; j < Shelf.N_COL; j++ ) {
+                Tile.Type type = mat[i][j].type();
+                if( checked[i][j] || type == Tile.Type.NOTILE )
+                    continue;
+                
+                var current = new Coord(i, j);
+                
+                //select chunck
+                List<Coord> selected = new ArrayList<>();
+                Queue<Coord> visited = new LinkedList<>();
+                visited.add(current);
+                checked[current.r()][current.c()] = true;
+                while( !visited.isEmpty() ) {
+                    current = visited.poll();
+                    selected.add(current);
+                    current.sumDir().stream()
+                            .filter((x) -> x.r() < Shelf.N_ROW &&
+                                           x.r() > -1 &&
+                                           x.c() < Shelf.N_COL &&
+                                           x.c() > -1 &&
+                                           mat[x.r()][x.c()].type() == type &&
+                                           !checked[x.r()][x.c()])
+                            .forEach((x) -> {
+                                visited.add(x);
+                                checked[x.r()][x.c()] = true;
+                            });
+                }
+                
+                
+                if( selected.size() == 3 ) {
+                    adjacentScore += 2;
+                }else if( selected.size() == 4 ) {
+                    adjacentScore += 3;
+                }else if( selected.size() == 5 ) {
+                    adjacentScore += 5;
+                }else if( selected.size() > 6 ) {
+                    adjacentScore += 8;
+                }
+                
+                
             }
         }
+        return adjacentScore;
     }
     
     
@@ -78,17 +138,21 @@ public class GameController {
             model.getCurrentPlayer().setCompletedGoalY(true);
         }
         
-       
+        //calculate and set in every turn the personalGoalScore
         currentPlayer.setPersonalGoalScore(
                 PersonalGoal.getPersonalGoal(currentPlayer.getPg()).checkGoal(currentPlayer.getShelf()));
-        currentPlayer.setAdjacentScore( checkAdjacency(currentPlayer.getShelf()));
+        
+        //calculate and set in every turn the adjacentTiles and score
+        currentPlayer.setAdjacentScore(calculateAdjacency(currentPlayer.getShelf()));
         
         if( needRefill() ) {
             model.getBoard().refill(model.getTileBag());
         }
         
-        if( currentPlayer.getShelf().isFull() ) {
+        if( currentPlayer.getShelf().isFull() || model.isFinalTurn() == false ) {
             model.setLastTurn();
+            
+            
         }
     }
     

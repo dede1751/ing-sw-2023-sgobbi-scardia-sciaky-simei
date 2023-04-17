@@ -154,7 +154,8 @@ public class GameModel extends Observable<GameModel.Event> {
      */
     public void setLastTurn() {
         lastTurn = true;
-        setChangedAndNotifyObservers(Event.LAST_TURN);
+        players.get(getCurrentPlayerIndex()).setBonusScore(1);//add the bonus point to the first who finishes the shelf
+        
     }
     
     public boolean isFinalTurn() {

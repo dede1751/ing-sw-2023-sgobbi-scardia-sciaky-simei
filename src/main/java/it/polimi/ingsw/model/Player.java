@@ -23,12 +23,14 @@ public class Player implements Serializable {
     
     private int adjacentScore;
     
+    private int bonusScore = 0;//is the 1 point given to the first who finishes the shelf
+    
     final private int pgID;
     
     final private Shelf shelf;
     
     private boolean completedGoalX;
-    private boolean CompletedGoalY;
+    private boolean completedGoalY;
     
     /**
      * Initialized player with given nickname and personal goal.
@@ -64,7 +66,7 @@ public class Player implements Serializable {
      * @return Integer player score
      */
     public int getScore() {
-        return this.commonGoalScore + this.personalGoalScore + this.adjacentScore;
+        return this.commonGoalScore + this.personalGoalScore + this.adjacentScore + this.bonusScore;
     }
     
     
@@ -119,11 +121,19 @@ public class Player implements Serializable {
     }
     
     public boolean isCompletedGoalY() {
-        return CompletedGoalY;
+        return completedGoalY;
     }
     
     public void setCompletedGoalY(boolean completedGoalY) {
-        CompletedGoalY = completedGoalY;
+        this.completedGoalY = completedGoalY;
+    }
+    
+    public int getBonusScore() {
+        return bonusScore;
+    }
+    
+    public void setBonusScore(int bonusScore) {
+        this.bonusScore = bonusScore;
     }
     
     protected static class PlayerSerializer implements JsonSerializer<Player> {
@@ -137,6 +147,8 @@ public class Player implements Serializable {
             result.add("Shelf",
                        ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(), "shelf"));
             result.addProperty("CommonGoalScore", player.commonGoalScore);
+            result.addProperty("CGXCompleted", player.completedGoalX);
+            result.addProperty("CGYCompleted", player.completedGoalY);
             return result;
         }
     }
@@ -151,8 +163,13 @@ public class Player implements Serializable {
             var score = ResourcesManager.JsonManager.getElementByAttribute(str, "score");
             var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(str, "shelf"));
             var commonGoalScore = ResourcesManager.JsonManager.getElementByAttribute(str, "CommonGoalScore");
-            return new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf,
-                              commonGoalScore.getAsInt());
+            var GCXcompleted = ResourcesManager.JsonManager.getElementByAttribute(str, "GCXcompleted");
+            var GCYcompleted = ResourcesManager.JsonManager.getElementByAttribute(str, "GCYcompleted");
+            var result = new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf,
+                                    commonGoalScore.getAsInt());
+            result.setCompletedGoalX(GCXcompleted.getAsBoolean());
+            result.setCompletedGoalY(GCYcompleted.getAsBoolean());
+            return result;
         }
     }
 }
