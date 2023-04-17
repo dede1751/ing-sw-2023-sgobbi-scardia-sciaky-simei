@@ -35,7 +35,7 @@ public class GameModel extends Observable<GameModel.Event> {
     private String winner;
     
     private int currentPlayerIndex;
-    private boolean gameOver;
+    private boolean lastTurn;
     private final List<Player> players;
     private final Board board;
     
@@ -71,7 +71,7 @@ public class GameModel extends Observable<GameModel.Event> {
         this.commonGoalStackY.push(8);
         
         this.tileBag = new TileBag();
-        this.gameOver = false;
+        this.lastTurn = false;
         
         this.board = new Board(numPlayers);
         this.players = new ArrayList<>();
@@ -152,13 +152,14 @@ public class GameModel extends Observable<GameModel.Event> {
     /**
      * Checks if the game is on its final turn and set gameOver to true if the turn is final (although some players might still have to play)
      */
-    public void setGameOver() {
-        gameOver = true;
-        setChangedAndNotifyObservers(Event.LAST_TURN);
+    public void setLastTurn() {
+        lastTurn = true;
+        players.get(getCurrentPlayerIndex()).setBonusScore(1);//add the bonus point to the first who finishes the shelf
+        
     }
     
     public boolean isFinalTurn() {
-        return this.gameOver;
+        return this.lastTurn;
     }
     
     public void setWinner(String winner) {
@@ -290,9 +291,18 @@ public class GameModel extends Observable<GameModel.Event> {
      *
      * @return Total score for current player
      */
-    public int addCurrentPlayerScore(int score) {
-        return this.getCurrentPlayer().addScore(score);
+    public int addCurrentPlayerCommongGoalScore(int score) {
+        return this.getCurrentPlayer().addCommonGoalScore(score);
     }
+    
+    public int setCurrentPlayerPersonalGoalScore(int score){
+        return this.getCurrentPlayer().setPersonalGoalScore(score);
+    }
+    
+    public int setCurrentPlayerAdjency(int score){
+        return this.getCurrentPlayer().setAdjacentScore(score);
+    }
+    
     
     /**
      * Gets the amount of tiles left in play for the given type of tile
@@ -377,6 +387,7 @@ public class GameModel extends Observable<GameModel.Event> {
             for( var p : players ) {
                 var player = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, p), Player.class);
                 result.addPlayer(player);
+
             }
             var currentPlayer = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CurrentPlayer"), int.class);
             result.setCurrentPlayerIndex(currentPlayer);

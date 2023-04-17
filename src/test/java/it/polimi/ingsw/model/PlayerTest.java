@@ -35,9 +35,9 @@ class PlayerTest {
         int startingScore = p.getScore();
         assertEquals(0, startingScore);
         
-        p.addScore(10);
+        p.addCommonGoalScore(10);
         assertEquals(startingScore + 10, p.getScore());
-        assertEquals(startingScore + 20, p.addScore(10));
+        assertEquals(startingScore + 20, p.addCommonGoalScore(10));
     }
     
     @Test
