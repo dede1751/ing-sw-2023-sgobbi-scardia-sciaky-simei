@@ -175,7 +175,108 @@ class GameControllerTest {
         
         @Test
         public void turnManagerGameOverFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                controller.turnManager();
+                var gameOver = model.isFinalTurn();
+                assertFalse(gameOver);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
         
+        @Test
+        public void turnManagerGoalXTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
+                assertFalse(completedGoalX);
+                var score = model.getCurrentPlayer().getScore();
+                var goalScore = model.getStackCGX().peek();
+                var expectedScore = score + goalScore;
+                controller.turnManager();
+                var newScore = model.getCurrentPlayer().getScore();
+                assertEquals(expectedScore, newScore);
+                completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
+                assertTrue(completedGoalX);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        @Test
+        public void turnManagerGoalXFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+            
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        @Test
+        public void turnManagerGoalYTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+            
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        @Test
+        public void turnManagerGoalYFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+            
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
         }
     }
 }

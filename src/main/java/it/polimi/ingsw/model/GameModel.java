@@ -113,6 +113,10 @@ public class GameModel extends Observable<GameModel.Event> {
         return commonGoalNumY;
     }
     
+    public Stack<Integer> getStackCGX() { return commonGoalStackX; }
+    
+    public Stack<Integer> getStackCGY() { return commonGoalStackX; }
+    
     /**
      * Get number of participating players
      *
