@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.google.gson.*;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 
 /**
@@ -18,12 +19,20 @@ public class Player implements Serializable {
     
     private int score;
     
+    private int commonGoalScore;
+    
+    private int personalGoalScore;
+    
+    private int adjacentScore;
+    
+    private int bonusScore = 0;//is the 1 point given to the first who finishes the shelf
+    
     final private int pgID;
     
     final private Shelf shelf;
     
     private boolean completedGoalX;
-    private boolean CompletedGoalY;
+    private boolean completedGoalY;
     
     /**
      * Initialized player with given nickname and personal goal.
@@ -33,14 +42,15 @@ public class Player implements Serializable {
      * @param pgID     Integer id of the player's personal goal (0-11)
      */
     protected Player(String nickname, int pgID) {
-        this(nickname, pgID, 0, new Shelf());
+        this(nickname, pgID, 0, new Shelf(), 0);
     }
     
-    private Player(String nickname, int pgID, int score, Shelf shelf) {
+    private Player(String nickname, int pgID, int score, Shelf shelf, int commonGoalScore) {
         this.nickname = nickname;
         this.pgID = pgID;
         this.score = score;
         this.shelf = shelf;
+        this.commonGoalScore = commonGoalScore;
     }
     
     /**
@@ -58,8 +68,9 @@ public class Player implements Serializable {
      * @return Integer player score
      */
     public int getScore() {
-        return score;
+        return this.commonGoalScore + this.personalGoalScore + this.adjacentScore + this.bonusScore;
     }
+    
     
     /**
      * Get the player's personal goal id
@@ -86,10 +97,22 @@ public class Player implements Serializable {
      *
      * @return Updated integer score
      */
-    public int addScore(int score) {
-        this.score += score;
-        return this.score;
+    public int addCommonGoalScore(int score) {
+        this.commonGoalScore += score;
+        return this.commonGoalScore;
     }
+    
+    public int setPersonalGoalScore(int score) {
+        this.personalGoalScore = score;
+        
+        return this.personalGoalScore;
+    }
+    
+    public int setAdjacentScore(int score) {
+        this.adjacentScore = score;
+        return this.adjacentScore;
+    }
+    
     
     public boolean isCompletedGoalX() {
         return completedGoalX;
@@ -100,11 +123,19 @@ public class Player implements Serializable {
     }
     
     public boolean isCompletedGoalY() {
-        return CompletedGoalY;
+        return completedGoalY;
     }
     
     public void setCompletedGoalY(boolean completedGoalY) {
-        CompletedGoalY = completedGoalY;
+        this.completedGoalY = completedGoalY;
+    }
+    
+    public int getBonusScore() {
+        return bonusScore;
+    }
+    
+    public void setBonusScore(int bonusScore) {
+        this.bonusScore = bonusScore;
     }
     
     protected static class PlayerSerializer implements JsonSerializer<Player> {
@@ -115,9 +146,12 @@ public class Player implements Serializable {
             result.addProperty("Nickname", player.nickname);
             result.addProperty("PersonalGoal", player.pgID);
             result.addProperty("Score", player.score);
-            result.add("Shelf",
-                       ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(),
-                                                                          "shelf").getAsJsonObject().get("shelf"));
+            result.add("Shelf", ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(),
+                                                                                   "shelf").getAsJsonObject().get(
+                    "shelf"));
+            result.addProperty("CommonGoalScore", player.commonGoalScore);
+            result.addProperty("CGXCompleted", player.completedGoalX);
+            result.addProperty("CGYCompleted", player.completedGoalY);
             return result;
         }
     }
@@ -126,11 +160,19 @@ public class Player implements Serializable {
         @Override
         public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             
+            var str = json.toString();
             var nickname = ResourcesManager.JsonManager.getElementByAttribute(json, "Nickname");
             var pgID = ResourcesManager.JsonManager.getElementByAttribute(json, "PersonalGoal");
             var score = ResourcesManager.JsonManager.getElementByAttribute(json, "Score");
             var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(json.toString(), "Shelf"));
-            return new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf);
+            var commonGoalScore = ResourcesManager.JsonManager.getElementByAttribute(str, "CommonGoalScore");
+            var GCXcompleted = ResourcesManager.JsonManager.getElementByAttribute(str, "GCXcompleted");
+            var GCYcompleted = ResourcesManager.JsonManager.getElementByAttribute(str, "GCYcompleted");
+            var result = new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf,
+                                    commonGoalScore.getAsInt());
+            result.setCompletedGoalX(GCXcompleted.getAsBoolean());
+            result.setCompletedGoalY(GCYcompleted.getAsBoolean());
+            return result;
         }
     }
 }
