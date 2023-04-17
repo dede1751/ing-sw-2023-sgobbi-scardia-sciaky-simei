@@ -27,23 +27,46 @@ class GameControllerTest {
                 StandardCharsets.UTF_8);
     }
     
-    @Test
-    public void needRefillTrue() {
-        var name = ResourcesManager.getCurrentMethod();
-        String json;
-        try {
-            json = getResource(name);
-            Gson gson =
-                    new GsonBuilder().registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer()).create();
-            var model = gson.fromJson(json, GameModel.class);
-            var controller = new GameController(model, new ArrayList<>());
-            assertTrue(controller.needRefill());
-        }
-        catch( IOException e ) {
-            e.printStackTrace();
-            fail();
+    @Tag("needRefill")
+    @Nested
+    class needRefillTest {
+        @Test
+        public void needRefillTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                assertTrue(controller.needRefill());
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
         }
         
+        @Test
+        public void needRefillFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                assertFalse(controller.needRefill());
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
     }
     
     @Tag("turnManager")
@@ -58,7 +81,8 @@ class GameControllerTest {
             try {
                 json = getResource(name);
                 Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer()).create();
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
                 assertTrue(controller.needRefill());
@@ -85,16 +109,17 @@ class GameControllerTest {
             try {
                 json = getResource(name);
                 Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer()).create();
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
                 assertTrue(controller.needRefill());
                 controller.turnManager();
                 var tiles = model.getBoard().getTiles();
                 var tilesOnBoard = tiles.values()
-                                              .stream()
-                                              .filter((tile) -> !tile.equals(Tile.NOTILE))
-                                              .count();
+                        .stream()
+                        .filter((tile) -> !tile.equals(Tile.NOTILE))
+                        .count();
                 var tilesInTileBag = model.getTileBag().currentTileNumber();
                 assertEquals(tilesInTileBag, tilesOnBoard);
             }
@@ -111,7 +136,8 @@ class GameControllerTest {
             try {
                 json = getResource(name);
                 Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer()).create();
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
                 var boardPrev = model.getBoard();
@@ -120,10 +146,36 @@ class GameControllerTest {
                 var boardNext = model.getBoard();
                 assertEquals(boardPrev, boardNext);
             }
-            catch( IOException e) {
+            catch( IOException e ) {
                 e.printStackTrace();
                 fail();
             }
+        }
+        
+        @Test
+        public void turnManagerGameOverTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                controller.turnManager();
+                var gameOver = model.isFinalTurn();
+                assertTrue(gameOver);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+        
+        @Test
+        public void turnManagerGameOverFalse() {
+        
         }
     }
 }
