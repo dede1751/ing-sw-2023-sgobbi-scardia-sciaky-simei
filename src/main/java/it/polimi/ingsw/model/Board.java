@@ -5,7 +5,6 @@ import it.polimi.ingsw.utils.exceptions.CommonException;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
-import it.polimi.ingsw.utils.files.ResourcesManager;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -141,7 +140,7 @@ public class Board {
                 this.tileOccupancy.containsKey(x)
                 && !visited[x.row()][x.col()];
         
-        ArrayList<Coordinate> selected = new ArrayList<Coordinate>();
+        ArrayList<Coordinate> selected = new ArrayList<>();
         Queue<Coordinate> coordGraph = new LinkedList<>();
         Coordinate initial = coordList.get(engine.nextInt(0, coordList.size()));
         coordGraph.add(initial);

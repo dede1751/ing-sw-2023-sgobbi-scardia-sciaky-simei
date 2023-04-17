@@ -1,13 +1,12 @@
 package it.polimi.ingsw.model;
 
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 public class TileBag {
     
@@ -81,11 +80,18 @@ public class TileBag {
         
         @Override
         public TileBag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            Gson gson = new GsonBuilder().create();
-            var token = new TypeToken<Map<Tile, Integer>>() {
-            }.getType();
-            var hashMap = (Map<Tile, Integer>) gson.fromJson(json, token);
-            return new TileBag(hashMap);
+            var result = new HashMap<Tile, Integer>();
+            if( json.isJsonObject() ){
+                for(var x : json.getAsJsonObject().entrySet()){
+                    try {
+                        result.put(Tile.fromString(x.getKey()), x.getValue().getAsInt());
+                    }
+                    catch( InvalidStringException e ) {
+                        throw new JsonParseException("Invalid Json : Invalid TileBag Section");
+                    }
+                }
+            }
+            return new TileBag(result);
         }
     }
 }

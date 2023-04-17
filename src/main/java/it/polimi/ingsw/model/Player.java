@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
-import java.io.Serial;
 import java.io.Serializable;
+
 import com.google.gson.*;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 
@@ -36,7 +36,7 @@ public class Player implements Serializable {
         this(nickname, pgID, 0, new Shelf());
     }
     
-    private Player(String nickname, int pgID, int score, Shelf shelf){
+    private Player(String nickname, int pgID, int score, Shelf shelf) {
         this.nickname = nickname;
         this.pgID = pgID;
         this.score = score;
@@ -106,6 +106,7 @@ public class Player implements Serializable {
     public void setCompletedGoalY(boolean completedGoalY) {
         CompletedGoalY = completedGoalY;
     }
+    
     protected static class PlayerSerializer implements JsonSerializer<Player> {
         @Override
         public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {
@@ -115,21 +116,21 @@ public class Player implements Serializable {
             result.addProperty("PersonalGoal", player.pgID);
             result.addProperty("Score", player.score);
             result.add("Shelf",
-                       ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(), "shelf"));
+                       ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(),
+                                                                          "shelf").getAsJsonObject().get("shelf"));
             return result;
         }
     }
     
-    protected static class PlayerDeserializer implements JsonDeserializer<Player>{
+    protected static class PlayerDeserializer implements JsonDeserializer<Player> {
         @Override
         public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             
-            var str = json.toString();
-            var nickname = ResourcesManager.JsonManager.getElementByAttribute(str, "Nickname");
-            var pgID = ResourcesManager.JsonManager.getElementByAttribute(str, "pgID");
-            var score = ResourcesManager.JsonManager.getElementByAttribute(str, "score");
-            var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(str, "shelf"));
-            return new Player( nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf);
+            var nickname = ResourcesManager.JsonManager.getElementByAttribute(json, "Nickname");
+            var pgID = ResourcesManager.JsonManager.getElementByAttribute(json, "PersonalGoal");
+            var score = ResourcesManager.JsonManager.getElementByAttribute(json, "Score");
+            var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(json.toString(), "Shelf"));
+            return new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf);
         }
     }
 }

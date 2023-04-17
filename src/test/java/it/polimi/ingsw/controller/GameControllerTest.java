@@ -33,11 +33,11 @@ class GameControllerTest {
     
     @Test
     void needRefillTrue() {
-    var name = ResourcesManager.getCurrentMethod();
-    var json = getResource(name);
-    Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer()).create();
-    var model = gson.fromJson(json, GameModel.class);
-    var controller = new GameController(model, new ArrayList<>());
-    assertTrue(controller.needRefill());
+        var name = ResourcesManager.getCurrentMethod();
+        var json = getResource(name);
+        Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer()).create();
+        var model = gson.fromJson(json, GameModel.class);
+        var controller = new GameController(model, new ArrayList<>());
+        assertTrue(controller.needRefill());
     }
 }

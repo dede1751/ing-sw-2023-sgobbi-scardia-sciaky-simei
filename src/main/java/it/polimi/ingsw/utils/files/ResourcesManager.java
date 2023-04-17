@@ -8,10 +8,8 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 import static java.nio.file.StandardOpenOption.*;
 
@@ -72,7 +70,13 @@ public final class ResourcesManager {
             }else {
                 throw new JsonParseException("Attribute not found : " + attribute);
             }
-            
+        }
+        public static JsonElement getElementByAttribute(JsonElement json, String attribute) throws JsonParseException{
+            if( json.isJsonObject() ){
+                if(json.getAsJsonObject().has(attribute)){
+                    return json.getAsJsonObject().get(attribute);
+                }else throw new JsonParseException("Json object doesn't have this attribute : " + attribute);
+            }else throw new JsonParseException("Json element is not an object");
         }
     }
     

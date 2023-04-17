@@ -6,6 +6,7 @@ import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.observer.Observable;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public class GameModel extends Observable<GameModel.Event> {
         
         this.commonGoalNumY = commonGoalY;
         this.commonGoalStackY = new Stack<>();
-
+        
         if( numPlayers > 3 ) {
             this.commonGoalStackX.push(2);
             this.commonGoalStackY.push(2);
@@ -78,7 +79,10 @@ public class GameModel extends Observable<GameModel.Event> {
         this.currentPlayerIndex = 0;
     }
     
-    public void startGame() { this.setChangedAndNotifyObservers(Event.GAME_START); }
+    public void startGame() {
+        this.setChangedAndNotifyObservers(Event.GAME_START);
+    }
+    
     private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
         this.numPlayers = numPlayers;
         this.commonGoalNumX = commonGoalNumX;
@@ -157,12 +161,14 @@ public class GameModel extends Observable<GameModel.Event> {
         return this.gameOver;
     }
     
-    public void setWinner(String winner){
-        this.winner=winner;
+    public void setWinner(String winner) {
+        this.winner = winner;
         setChangedAndNotifyObservers(Event.FINISHED_GAME);
     }
     
-    public String getWinner(){return this.winner;}
+    public String getWinner() {
+        return this.winner;
+    }
     
     /**
      * Adds player with given nickname and personal goal to the player pool
@@ -349,27 +355,29 @@ public class GameModel extends Observable<GameModel.Event> {
     static public class ModelDeserializer implements JsonDeserializer<GameModel> {
         @Override
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            String js = json.toString();
             Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class, new Shelf.ShelfDeserializer())
-                                         .registerTypeAdapter(Player.class, new Player.PlayerDeserializer())
-                                         .registerTypeAdapter(Board.class, new Board.BoardDeserializer())
-                                         .registerTypeAdapter(TileBag.class, new TileBag.TileBagDeserializer())
-                                         .create();
-            var stackToken = new TypeToken<Stack<Integer>>(){}.getType();
-            var numPlayer = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "PlayersNumber"), Integer.class);
-            var CGX = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CommonGoalX"), Integer.class);
-            var CGY = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CommonGoalY"), Integer.class);
-            var xStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGX"), stackToken);
-            var yStack = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "CGY"), stackToken);
-            var board = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "Board"), Board.class);
-            var tileBag = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "TileBag"), TileBag.class);
-            var players = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, "PlayersNickname"), String[].class);
-            var result = new GameModel(numPlayer, CGX, CGY, (Stack<Integer>)xStack, (Stack<Integer>)yStack, board, tileBag);
-            for(var p : players) {
-                var player = gson.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(js, p), Player.class);
+                    .registerTypeAdapter(Player.class, new Player.PlayerDeserializer())
+                    .registerTypeAdapter(Board.class, new Board.BoardDeserializer())
+                    .registerTypeAdapter(TileBag.class, new TileBag.TileBagDeserializer())
+                    .create();
+            var stackToken = new TypeToken<Stack<Integer>>() {}.getType();
+            var numPlayer = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "PlayersNumber"), int.class);
+            var CGX =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalX"), int.class);
+            var CGY =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalY"), int.class);
+            Stack<Integer> xStack = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGX"), stackToken);
+            Stack<Integer> yStack = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGY"), stackToken);
+            var board = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "Board"), Board.class);
+            var tileBag =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "TileBag"), TileBag.class);
+            var players = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "PlayersNickname"),
+                                        String[].class);
+            var result = new GameModel(numPlayer, CGX, CGY, xStack, yStack, board, tileBag);
+            for( var p : players ) {
+                var player = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, p), Player.class);
                 result.addPlayer(player);
             }
-            
             return result;
         }
     }
