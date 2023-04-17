@@ -211,7 +211,7 @@ class GameControllerTest {
                 var goalScore = model.getStackCGX().peek();
                 var expectedScore = score + goalScore;
                 controller.turnManager();
-                var newScore = model.getCurrentPlayer().getScore();
+                var newScore = model.getCurrentPlayer().getCommonGoalScore();
                 assertEquals(expectedScore, newScore);
                 completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertTrue(completedGoalX);
@@ -252,7 +252,7 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
-            
+                
             }
             catch( IOException e ) {
                 e.printStackTrace();

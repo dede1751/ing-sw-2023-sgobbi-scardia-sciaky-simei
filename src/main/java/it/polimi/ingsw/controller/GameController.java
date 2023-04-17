@@ -146,7 +146,7 @@ public class GameController {
             model.getBoard().refill(model.getTileBag());
         }
         
-        if( currentPlayer.getShelf().isFull() || model.isFinalTurn() == false ) {
+        if( currentPlayer.getShelf().isFull() && !model.isFinalTurn() ) {
             model.setLastTurn();
         }
     }

@@ -101,7 +101,9 @@ public class Player implements Serializable {
         this.commonGoalScore += score;
         return this.commonGoalScore;
     }
-    
+    public int getCommonGoalScore(){
+        return this.commonGoalScore;
+    }
     public int setPersonalGoalScore(int score) {
         this.personalGoalScore = score;
         
@@ -160,14 +162,13 @@ public class Player implements Serializable {
         @Override
         public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             
-            var str = json.toString();
             var nickname = ResourcesManager.JsonManager.getElementByAttribute(json, "Nickname");
             var pgID = ResourcesManager.JsonManager.getElementByAttribute(json, "PersonalGoal");
             var score = ResourcesManager.JsonManager.getElementByAttribute(json, "Score");
             var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(json.toString(), "Shelf"));
-            var commonGoalScore = ResourcesManager.JsonManager.getElementByAttribute(str, "CommonGoalScore");
-            var GCXcompleted = ResourcesManager.JsonManager.getElementByAttribute(str, "GCXcompleted");
-            var GCYcompleted = ResourcesManager.JsonManager.getElementByAttribute(str, "GCYcompleted");
+            var commonGoalScore = ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalScore");
+            var GCXcompleted = ResourcesManager.JsonManager.getElementByAttribute(json, "CGXCompleted");
+            var GCYcompleted = ResourcesManager.JsonManager.getElementByAttribute(json, "CGYCompleted");
             var result = new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf,
                                     commonGoalScore.getAsInt());
             result.setCompletedGoalX(GCXcompleted.getAsBoolean());

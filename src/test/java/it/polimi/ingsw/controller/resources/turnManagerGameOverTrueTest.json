@@ -46,7 +46,10 @@
       "column_2": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
       "column_3": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
       "column_4": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"]
-    }
+    },
+    "CommonGoalScore": 0,
+    "CGXCompleted": false,
+    "CGYCompleted": false
   },
   "Lucrezia": {
     "Nickname": "Lucrezia",
@@ -58,7 +61,10 @@
       "column_2": ["(F,3)", "(F,3)", "(F,3)", "(F,3)", "(F,3)", "(F,3)"],
       "column_3": ["(F,1)", "(F,1)", "(F,1)", "(F,1)", "(F,1)", "(F,1)"],
       "column_4": ["(T,1)", "(T,1)", "(T,1)", "(T,1)", "(T,1)", "(T,1)"]
-    }
+    },
+    "CommonGoalScore": 0,
+    "CGXCompleted": false,
+    "CGYCompleted": false
   },
   "Andrea": {
     "Nickname": "Andrea",
@@ -70,7 +76,10 @@
       "column_2": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
       "column_3": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
       "column_4": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"]
-    }
+    },
+    "CommonGoalScore": 0,
+    "CGXCompleted": false,
+    "CGYCompleted": false
   },
   "Camilla": {
     "Nickname": "Camilla",
@@ -82,6 +91,9 @@
       "column_2": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
       "column_3": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
       "column_4": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"]
-    }
+    },
+    "CommonGoalScore": 0,
+    "CGXCompleted": false,
+    "CGYCompleted": false
   }
 }
