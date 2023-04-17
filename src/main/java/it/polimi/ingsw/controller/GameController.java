@@ -56,8 +56,6 @@ public class GameController {
             
             }
         }
-        
-        
     }
     
     
@@ -83,7 +81,7 @@ public class GameController {
        
         currentPlayer.setPersonalGoalScore(
                 PersonalGoal.getPersonalGoal(currentPlayer.getPg()).checkGoal(currentPlayer.getShelf()));
-        currentPlayer.setAdjacentScore( checkAdjacency(currentPlayer.getShelf()))
+        currentPlayer.setAdjacentScore( checkAdjacency(currentPlayer.getShelf()));
         
         if( needRefill() ) {
             model.getBoard().refill(model.getTileBag());

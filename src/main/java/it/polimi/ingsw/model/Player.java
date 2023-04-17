@@ -38,14 +38,15 @@ public class Player implements Serializable {
      * @param pgID     Integer id of the player's personal goal (0-11)
      */
     protected Player(String nickname, int pgID) {
-        this(nickname, pgID, 0, new Shelf());
+        this(nickname, pgID, 0, new Shelf(), 0);
     }
     
-    private Player(String nickname, int pgID, int score, Shelf shelf){
+    private Player(String nickname, int pgID, int score, Shelf shelf, int commonGoalScore) {
         this.nickname = nickname;
         this.pgID = pgID;
         this.score = score;
         this.shelf = shelf;
+        this.commonGoalScore = commonGoalScore;
     }
     
     /**
@@ -62,8 +63,8 @@ public class Player implements Serializable {
      *
      * @return Integer player score
      */
-    public int getScore(){
-        return this.commonGoalScore+this.personalGoalScore+this.adjacentScore;
+    public int getScore() {
+        return this.commonGoalScore + this.personalGoalScore + this.adjacentScore;
     }
     
     
@@ -124,6 +125,7 @@ public class Player implements Serializable {
     public void setCompletedGoalY(boolean completedGoalY) {
         CompletedGoalY = completedGoalY;
     }
+    
     protected static class PlayerSerializer implements JsonSerializer<Player> {
         @Override
         public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {
@@ -134,11 +136,12 @@ public class Player implements Serializable {
             result.addProperty("Score", player.score);
             result.add("Shelf",
                        ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(), "shelf"));
+            result.addProperty("CommonGoalScore", player.commonGoalScore);
             return result;
         }
     }
     
-    protected static class PlayerDeserializer implements JsonDeserializer<Player>{
+    protected static class PlayerDeserializer implements JsonDeserializer<Player> {
         @Override
         public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             
@@ -147,7 +150,9 @@ public class Player implements Serializable {
             var pgID = ResourcesManager.JsonManager.getElementByAttribute(str, "pgID");
             var score = ResourcesManager.JsonManager.getElementByAttribute(str, "score");
             var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(str, "shelf"));
-            return new Player( nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf);
+            var commonGoalScore = ResourcesManager.JsonManager.getElementByAttribute(str, "CommonGoalScore");
+            return new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf,
+                              commonGoalScore.getAsInt());
         }
     }
 }
