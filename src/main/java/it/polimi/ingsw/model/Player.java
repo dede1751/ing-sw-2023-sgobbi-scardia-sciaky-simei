@@ -1,10 +1,9 @@
 package it.polimi.ingsw.model;
 
-import java.io.Serial;
-import java.io.Serializable;
 import com.google.gson.*;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 
 /**
@@ -17,6 +16,12 @@ public class Player implements Serializable {
     final private String nickname;
     
     private int score;
+    
+    private int commonGoalScore;
+    
+    private int personalGoalScore;
+    
+    private int adjacentScore;
     
     final private int pgID;
     
@@ -57,9 +62,10 @@ public class Player implements Serializable {
      *
      * @return Integer player score
      */
-    public int getScore() {
-        return score;
+    public int getScore(){
+        return this.commonGoalScore+this.personalGoalScore+this.adjacentScore;
     }
+    
     
     /**
      * Get the player's personal goal id
@@ -86,10 +92,22 @@ public class Player implements Serializable {
      *
      * @return Updated integer score
      */
-    public int addScore(int score) {
-        this.score += score;
-        return this.score;
+    public int addCommonGoalScore(int score) {
+        this.commonGoalScore += score;
+        return this.commonGoalScore;
     }
+    
+    public int setPersonalGoalScore(int score) {
+        this.personalGoalScore = score;
+        
+        return this.personalGoalScore;
+    }
+    
+    public int setAdjacentScore(int score) {
+        this.adjacentScore = score;
+        return this.adjacentScore;
+    }
+    
     
     public boolean isCompletedGoalX() {
         return completedGoalX;

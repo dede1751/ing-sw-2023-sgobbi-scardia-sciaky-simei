@@ -286,9 +286,18 @@ public class GameModel extends Observable<GameModel.Event> {
      *
      * @return Total score for current player
      */
-    public int addCurrentPlayerScore(int score) {
-        return this.getCurrentPlayer().addScore(score);
+    public int addCurrentPlayerCommongGoalScore(int score) {
+        return this.getCurrentPlayer().addCommonGoalScore(score);
     }
+    
+    public int setCurrentPlayerPersonalGoalScore(int score){
+        return this.getCurrentPlayer().setPersonalGoalScore(score);
+    }
+    
+    public int setCurrentPlayerAdjency(int score){
+        return this.getCurrentPlayer().setAdjacentScore(score);
+    }
+    
     
     /**
      * Gets the amount of tiles left in play for the given type of tile

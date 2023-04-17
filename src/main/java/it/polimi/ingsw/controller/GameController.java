@@ -1,9 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.model.Coordinate;
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Client;
@@ -52,6 +49,18 @@ public class GameController {
         return true;
     }
     
+    public int checkAdjacency(Shelf shelf){
+        var shelfTiles=shelf.getAllShelf();
+        for(int i=0;i<Shelf.N_ROW;i++){
+            for (int j=0;j<Shelf.N_COL;j++){
+            
+            }
+        }
+        
+        
+    }
+    
+    
     public void turnManager(List<Tile> selection, int col) {
         
         //reference to the current player
@@ -62,14 +71,19 @@ public class GameController {
         
         if( !model.getCurrentPlayer().isCompletedGoalX() &&
             CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
-            model.addCurrentPlayerScore(model.popStackCGX());
+            model.addCurrentPlayerCommongGoalScore(model.popStackCGX());
             model.getCurrentPlayer().setCompletedGoalX(true);
         }
         if( !model.getCurrentPlayer().isCompletedGoalY() &&
             CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
-            model.addCurrentPlayerScore(model.popStackCGY());
+            model.addCurrentPlayerCommongGoalScore(model.popStackCGY());
             model.getCurrentPlayer().setCompletedGoalY(true);
         }
+        
+       
+        currentPlayer.setPersonalGoalScore(
+                PersonalGoal.getPersonalGoal(currentPlayer.getPg()).checkGoal(currentPlayer.getShelf()));
+        currentPlayer.setAdjacentScore( checkAdjacency(currentPlayer.getShelf()))
         
         if( needRefill() ) {
             model.getBoard().refill(model.getTileBag());
@@ -92,11 +106,6 @@ public class GameController {
     
     public void endGame() {
         int winnerIndex = 0;
-        for( int i = 0; i < model.getNumPlayers(); i++ ) {
-            model.getPlayers().get(i).addScore(
-                    PersonalGoal.getPersonalGoal(model.getPlayers().get(i).getPg()).checkGoal(
-                            model.getPlayers().get(i).getShelf()));
-        }
         
         for( int i = 0; i < model.getNumPlayers() - 1; i++ ) {
             if( model.getPlayers().get(i).getScore() > model.getPlayers().get(winnerIndex).getScore() ) {
