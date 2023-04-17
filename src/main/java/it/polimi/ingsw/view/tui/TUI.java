@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TUI extends View {
+    private GameModelView model;
     
     @Override
     public void run() {
         //noinspection InfiniteLoopStatement
         while( true ) {
             this.askPassTurn();
+            
         }
     }
     
@@ -78,7 +80,7 @@ public class TUI extends View {
         }
     }
     
-
+    
     //TODO add tile order selection
     public void askSelection(GameModelView model) {
         
@@ -87,7 +89,7 @@ public class TUI extends View {
         System.out.print("Enter number of coordinates (1-3): ");
         int numCoordinates = scanner.nextInt();
         scanner.nextLine();
-    
+        
         
         while( numCoordinates > 3 || numCoordinates < 1 ) {//check if the number of coordinates is right
             System.out.print("The number must be between 1 and 3, try again: ");
@@ -120,7 +122,7 @@ public class TUI extends View {
         
     }
     
-    public void askColumn(GameModelView model){
+    public void askColumn(GameModelView model) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the column in which you want to place your selection: ");
         int column = scanner.nextInt();
@@ -129,7 +131,8 @@ public class TUI extends View {
         
         
     }
-    private Coordinate getCoordinate(){
+    
+    private Coordinate getCoordinate() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter x-coordinate: ");
         int x = scanner.nextInt();
@@ -139,6 +142,7 @@ public class TUI extends View {
         return new Coordinate(x, y);
     }
     
+    
     //TODO
     private void printBoard(Board board) {
         for( int i = 0; i < 8; i++ ) {
@@ -147,12 +151,27 @@ public class TUI extends View {
     }
     
     //TODO
-    public Boolean checkSelection(List<Coordinate> selection){
+    private void printShelf(Shelf shelf) {
+    
+    }
+    
+    //TODO
+    public Boolean checkSelection(List<Coordinate> selection) {
         return true;
+    }
+    
+    
+    public GameModelView getModel() {
+        return model;
+    }
+    
+    public void setModel(GameModelView model) {
+        this.model = model;
     }
     
     @Override
     public void update(GameModelView model, GameModel.Event evt) {
+        Player currentPlayer = model.getPlayers().get(model.getCurrentPlayerIndex());
         switch( evt ) {
             case GAME_START -> {
                 System.out.println("The game has started!");
@@ -162,11 +181,13 @@ public class TUI extends View {
                 System.out.println("Current player has changed to " + model.getCurrentPlayerIndex() + ". Players: ");
                 
                 for( Player player : model.getPlayers() ) {
-                    System.out.print(player.getNickname() + " ");
+                    System.out.print(player.getNickname() + " " + player.getScore());
                 }
-                
-                
+                setModel(model);
+                //TODO move to run
+                System.out.println(currentPlayer.getScore());
                 printBoard(model.getBoard());
+                printShelf(currentPlayer.getShelf());
                 askSelection(model);            //set the asked selection to the view message selection
                 askColumn(model);
                 //TODO change event
@@ -177,8 +198,10 @@ public class TUI extends View {
             case LAST_TURN -> {
             
             }
-            case FINISHED_GAME -> System.out.println("GAME OVER, THE WINNER IS "+model.getWinner());
+            case FINISHED_GAME -> System.out.println("GAME OVER, THE WINNER IS " + model.getWinner());
             default -> System.err.println("Ignoring event from " + model + ": " + evt);
         }
     }
+    
+
 }

@@ -48,7 +48,7 @@ public class GameController {
         return true;
     }
     
-    public int checkAdjacency(Shelf shelf){
+    public int calculateAdjacency(Shelf shelf){
     
         record Coord(int r, int c) {
             Coord sum(Coord offset) {
@@ -141,17 +141,20 @@ public class GameController {
             model.getCurrentPlayer().setCompletedGoalY(true);
         }
         
-       
+       //calculate and set in every turn the personalGoalScore
         currentPlayer.setPersonalGoalScore(
                 PersonalGoal.getPersonalGoal(currentPlayer.getPg()).checkGoal(currentPlayer.getShelf()));
-        currentPlayer.setAdjacentScore( checkAdjacency(currentPlayer.getShelf()));
+        //calculate and set in every turn the adjacentTiles and score
+        currentPlayer.setAdjacentScore(calculateAdjacency(currentPlayer.getShelf()));
         
         if( needRefill() ) {
             model.getBoard().refill(model.getTileBag());
         }
         
-        if( currentPlayer.getShelf().isFull() ) {
+        if( currentPlayer.getShelf().isFull() || model.isFinalTurn()==false) {
             model.setLastTurn();
+            
+            
         }
     }
     
