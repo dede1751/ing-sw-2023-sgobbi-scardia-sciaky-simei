@@ -378,6 +378,8 @@ public class GameModel extends Observable<GameModel.Event> {
                 var player = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, p), Player.class);
                 result.addPlayer(player);
             }
+            var currentPlayer = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CurrentPlayer"), int.class);
+            result.setCurrentPlayerIndex(currentPlayer);
             return result;
         }
     }
