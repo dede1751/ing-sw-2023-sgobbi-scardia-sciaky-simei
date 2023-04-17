@@ -52,13 +52,10 @@ public class GameController {
         return true;
     }
     
-    public void turnManager(List<Tile> selection, int col) {
+    public void turnManager() {
         
         //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
-        
-        //remove the selection from the board and add it to the current player shelf
-        model.shelveSelection(selection, col);
         
         if( !model.getCurrentPlayer().isCompletedGoalX() &&
             CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
@@ -117,7 +114,8 @@ public class GameController {
         switch( evt ) {
             case MOVE -> {
                 model.removeSelection(o.getSelection());
-                turnManager(o.getTiles(), o.getColumn());
+                model.shelveSelection(o.getTiles(), o.getColumn());
+                turnManager();
                 nextPlayerSetter();
             }
             case CHAT -> {
