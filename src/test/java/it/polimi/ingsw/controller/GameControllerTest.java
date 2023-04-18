@@ -4,6 +4,7 @@ import com.google.gson.*;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -194,6 +195,7 @@ class GameControllerTest {
             }
         }
         
+        @DisplayName("Common goal X achieved by the current player")
         @Test
         public void turnManagerGoalXTrue() {
             var name = ResourcesManager.getCurrentMethod();
@@ -205,14 +207,20 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
+                
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
-                var score = model.getCurrentPlayer().getScore();
-                var goalScore = model.getStackCGX().peek();
-                var expectedScore = score + goalScore;
+                
+                var commonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
+                var goalPeek = model.getStackCGX().peek();
+                
                 controller.turnManager();
-                var newScore = model.getCurrentPlayer().getCommonGoalScore();
-                assertEquals(expectedScore, newScore);
+                
+                var newCommonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
+                var expectedCommonGoalScore = commonGoalScore + goalPeek;
+                
+                assertEquals(expectedCommonGoalScore, newCommonGoalScore);
+                
                 completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertTrue(completedGoalX);
             }
@@ -222,8 +230,45 @@ class GameControllerTest {
             }
         }
     
+        @DisplayName("Common goal X already achieved by the current player")
         @Test
-        public void turnManagerGoalXFalse() {
+        public void turnManagerGoalXFalse1() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                
+                var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
+                assertTrue(completedGoalX);
+                
+                var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var goalPeek = model.getStackCGX().peek();
+                
+                controller.turnManager();
+                
+                var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var newGoalPeek = model.getStackCGX().peek();
+                
+                assertEquals(commonGoaLScore, newCommonGoaLScore);
+                assertEquals(goalPeek, newGoalPeek);
+                
+                completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
+                assertTrue(completedGoalX);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        @DisplayName("Common goal X not achieved by the current player")
+        @Test
+        public void turnManagerGoalXFalse2() {
             var name = ResourcesManager.getCurrentMethod();
             String json;
             try {
@@ -234,6 +279,22 @@ class GameControllerTest {
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
             
+                var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
+                assertFalse(completedGoalX);
+            
+                var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var goalPeek = model.getStackCGX().peek();
+            
+                controller.turnManager();
+            
+                var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var newGoalPeek = model.getStackCGX().peek();
+            
+                assertEquals(commonGoaLScore, newCommonGoaLScore);
+                assertEquals(goalPeek, newGoalPeek);
+            
+                completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
+                assertFalse(completedGoalX);
             }
             catch( IOException e ) {
                 e.printStackTrace();
@@ -241,6 +302,7 @@ class GameControllerTest {
             }
         }
     
+        @DisplayName("Common goal Y achieved by the current player")
         @Test
         public void turnManagerGoalYTrue() {
             var name = ResourcesManager.getCurrentMethod();
@@ -253,6 +315,21 @@ class GameControllerTest {
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
                 
+                var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
+                assertFalse(completedGoalY);
+    
+                var commonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
+                var goalPeek = model.getStackCGY().peek();
+                var expectedCommonGoalScore = commonGoalScore + goalPeek;
+    
+                controller.turnManager();
+    
+                var newCommonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
+    
+                assertEquals(expectedCommonGoalScore, newCommonGoalScore);
+    
+                completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
+                assertTrue(completedGoalY);
             }
             catch( IOException e ) {
                 e.printStackTrace();
@@ -260,8 +337,45 @@ class GameControllerTest {
             }
         }
     
+        @DisplayName("Common goal Y already achieved by the current player")
         @Test
-        public void turnManagerGoalYFalse() {
+        public void turnManagerGoalYFalse1() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                
+                var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
+                assertTrue(completedGoalY);
+    
+                var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var goalPeek = model.getStackCGY().peek();
+    
+                controller.turnManager();
+    
+                var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var newGoalPeek = model.getStackCGY().peek();
+    
+                assertEquals(commonGoaLScore, newCommonGoaLScore);
+                assertEquals(goalPeek, newGoalPeek);
+    
+                completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
+                assertTrue(completedGoalY);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        @DisplayName("Common goal Y not achieved by the current player")
+        @Test
+        public void turnManagerGoalYFalse2() {
             var name = ResourcesManager.getCurrentMethod();
             String json;
             try {
@@ -272,6 +386,22 @@ class GameControllerTest {
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, new ArrayList<>());
             
+                var completedGoalY = model.getCurrentPlayer().isCompletedGoalX();
+                assertFalse(completedGoalY);
+            
+                var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var goalPeek = model.getStackCGY().peek();
+            
+                controller.turnManager();
+            
+                var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
+                var newGoalPeek = model.getStackCGY().peek();
+            
+                assertEquals(commonGoaLScore, newCommonGoaLScore);
+                assertEquals(goalPeek, newGoalPeek);
+            
+                completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
+                assertFalse(completedGoalY);
             }
             catch( IOException e ) {
                 e.printStackTrace();
