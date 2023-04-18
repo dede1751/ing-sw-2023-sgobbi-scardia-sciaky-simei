@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import com.google.gson.*;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -408,5 +409,65 @@ class GameControllerTest {
                 fail();
             }
         }
+        
+        @Test
+        public void turnManagerPersonalGoalTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+                
+                var shelf = model.getCurrentPlayer().getShelf();
+                var pgID = model.getCurrentPlayer().getPg();
+                var personalGoal = new PersonalGoal(pgID);
+                var personalScore = personalGoal.checkGoal(shelf);
+                
+                controller.turnManager();
+                
+                var newPersonalScore = model.getCurrentPlayer().getPersonalGoalScore();
+                
+                assertEquals(personalScore, newPersonalScore);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        @Test
+        public void turnManagerPersonalGoalFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model, new ArrayList<>());
+            
+                var shelf = model.getCurrentPlayer().getShelf();
+                var pgID = model.getCurrentPlayer().getPg();
+                var personalGoal = new PersonalGoal(pgID);
+                var personalScore = personalGoal.checkGoal(shelf);
+            
+                controller.turnManager();
+            
+                var newPersonalScore = model.getCurrentPlayer().getPersonalGoalScore();
+            
+                assertEquals(personalScore, newPersonalScore);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        //TODO setAdjacentScore testing
     }
 }

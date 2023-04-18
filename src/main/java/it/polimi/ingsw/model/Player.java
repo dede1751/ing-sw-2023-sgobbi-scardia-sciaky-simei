@@ -110,6 +110,10 @@ public class Player implements Serializable {
         return this.personalGoalScore;
     }
     
+    public int getPersonalGoalScore() {
+        return this.personalGoalScore;
+    }
+    
     public int setAdjacentScore(int score) {
         this.adjacentScore = score;
         return this.adjacentScore;
@@ -139,6 +143,7 @@ public class Player implements Serializable {
     public void setBonusScore(int bonusScore) {
         this.bonusScore = bonusScore;
     }
+    
     
     protected static class PlayerSerializer implements JsonSerializer<Player> {
         @Override
