@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.goals.common;
 
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
@@ -17,7 +18,10 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
         Tile[][] mat = shelf.getAllShelf();
         boolean[][] checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
         
-        List<Coord> square = List.of(new Coord(0, 0), new Coord(0, 1), new Coord(1, 0), new Coord(1, 1));
+        List<Coordinate> square = List.of(new Coordinate(0, 0),
+                                          new Coordinate(0, 1),
+                                          new Coordinate(1, 0),
+                                          new Coordinate(1, 1));
         
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
             for( int j = 0; j < Shelf.N_COL; j++ ) {
@@ -26,31 +30,31 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
                     continue;
                 int count = 0;
                 
-                var current = new Coord(i, j);
+                var current = new Coordinate(i, j);
                 //select chunck
-                List<Coord> selected = new ArrayList<>();
-                Queue<Coord> visited = new LinkedList<>();
+                List<Coordinate> selected = new ArrayList<>();
+                Queue<Coordinate> visited = new LinkedList<>();
                 visited.add(current);
-                checked[current.r()][current.c()] = true;
+                checked[current.row()][current.col()] = true;
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
                     current.sumDir().stream()
-                            .filter((x) -> x.r() < Shelf.N_ROW &&
-                                           x.r() > -1 &&
-                                           x.c() < Shelf.N_COL &&
-                                           x.c() > -1 &&
-                                           mat[x.r()][x.c()].type() == type &&
-                                           !checked[x.r()][x.c()])
+                            .filter((x) -> x.row() < Shelf.N_ROW &&
+                                           x.row() > -1 &&
+                                           x.col() < Shelf.N_COL &&
+                                           x.col() > -1 &&
+                                           mat[x.row()][x.col()].type() == type &&
+                                           !checked[x.row()][x.col()])
                             .forEach((x) -> {
                                 visited.add(x);
-                                checked[x.r()][x.c()] = true;
+                                checked[x.row()][x.col()] = true;
                             });
                 }
                 if( selected.size() == 4 ) {
                     //find nearest coord to the origin
                     var origin = selected.stream().reduce(selected.get(0), (x, y) -> {
-                        if( x.c() > y.c() || (x.c() == y.c() && y.r() < x.r()) )
+                        if( x.col() > y.col() || (x.col() == y.col() && y.row() < x.row()) )
                             return y;
                         else
                             return x;
@@ -62,8 +66,6 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
                 }
             }
         }
-        
-        
         return totalCount > 1;
     }
     

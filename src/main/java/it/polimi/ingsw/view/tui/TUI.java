@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 
 import java.util.ArrayList;
@@ -118,23 +119,23 @@ public class TUI extends View {
         
         //le coordinate devono essere da 0 a 8
         
-        
-        for( int i = 0; i < numCoordinates; i++ ) {
-            Coordinate coordinate = getCoordinate();
-            boolean validCoordinate = false;
-            while( !validCoordinate ) {
-                if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
-                    model.getBoard().getTile(coordinate) == null ) {
-                    validCoordinate = true;
+        do {
+            for( int i = 0; i < numCoordinates; i++ ) {
+                Coordinate coordinate = getCoordinate();
+                boolean validCoordinate = false;
+                while( !validCoordinate ) {
+                    if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
+                        model.getBoard().getTile(coordinate) == null ) {
+                        validCoordinate = true;
+                    }
+                    coordinate = getCoordinate();
                 }
-                coordinate = getCoordinate();
+                
+                selection.add(getCoordinate());
+                scanner.nextLine(); // consume the newline character
+                
             }
-            
-            selection.add(getCoordinate());
-            scanner.nextLine(); // consume the newline character
-            
-        }
-        
+        }while ( IntegrityChecks.checkSelection(selection) );
         System.out.println("Entered coordinates: " + selection);
         this.setSelectedCoordinates(selection);
         
@@ -163,10 +164,17 @@ public class TUI extends View {
     
     //TODO check
     private void printBoard(Board board) {
-        Gson gson =new GsonBuilder().registerTypeAdapter(Board.class,new Board.BoardSerializer()).create();
-        var x=gson.toJson(board);
-        for(var y : x.replace("\"Board\": [", "").split("],")){
-            System.out.println(y);
+        var def = "C-,-)";
+        var matrix = board.getAsMatrix();
+        for(int i = 8; i >= 0; i-- ){
+            for(int j = 0; j < 9; j++){
+                if(matrix[i][j] == null) {
+                    System.out.print(def + ",");
+                }else{
+                    System.out.print(matrix[i][j].toString() + "," );
+                }
+                System.out.print("\n");
+            }
         }
     }
     

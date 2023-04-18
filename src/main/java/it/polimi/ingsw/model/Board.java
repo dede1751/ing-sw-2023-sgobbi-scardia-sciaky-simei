@@ -196,6 +196,24 @@ public class Board implements Serializable {
         }
     }
     
+    
+    /**
+     * Get the matrix representation of the board as a 9*9 tiles Matrix
+     * @return Tile[][] The matrix rapresentation of the board.
+     *         Invalid positions in the board are represented with null values
+     */
+    
+    public Tile[][] getAsMatrix(){
+        var result = new Tile[9][9];
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                var coord = new Coordinate(i, j);
+                result[i][j] = this.tileOccupancy.getOrDefault(coord, null);
+            }
+        }
+        return result;
+    }
+    
     public static class BoardSerializer implements JsonSerializer<Board>{
         
         @Override
@@ -236,11 +254,4 @@ public class Board implements Serializable {
             return new Board(hashMap);
         }
     }
-    
-    
-    
-    
-    
-    
-    
 }

@@ -80,4 +80,3 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # Volatile test files
-src/test/java/it/polimi/ingsw/model/TestingResources/Volatile/

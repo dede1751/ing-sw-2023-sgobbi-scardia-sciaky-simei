@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.utils.observer.Observable;
 
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -60,6 +61,7 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     public void setColumn(int column) {
         this.column = column;
     }
+    
     
     public abstract void update(GameModelView model, GameModel.Event evt);
     

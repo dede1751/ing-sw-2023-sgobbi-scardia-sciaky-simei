@@ -25,29 +25,4 @@ public interface CommonGoalStrategy {
      */
     boolean checkShelf(Shelf shelf);
 
-    /**
-     * Utility inner record representing a coordinate (r, c)
-     *
-     * @param r row of the coordinate
-     * @param c column of the coordinate
-     */
-    record Coord(int r, int c) {
-        Coord sum(Coord offset) {
-            return new Coord(r + offset.r, c + offset.c);
-        }
-        
-        Coord sub(Coord offset) {
-            return new Coord(r - offset.r, c - offset.c);
-        }
-        
-        List<Coord> sumList(List<Coord> offset) {
-            return offset.stream().map((x) -> x.sum(this)).toList();
-        }
-        
-        List<Coord> sumDir() {
-            return this.sumList(List.of(new Coord(-1, 0), new Coord(1, 0), new Coord(0, -1), new Coord(0, 1)));
-        }
-        
-    }
-
 }

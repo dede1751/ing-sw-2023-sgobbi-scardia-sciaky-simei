@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
+import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
@@ -61,21 +62,6 @@ public class GameController {
      */
     public int calculateAdjacency(Shelf shelf) {
         
-        record Coord(int r, int c) {
-            Coord sum(Coord offset) {
-                return new Coord(r + offset.r, c + offset.c);
-            }
-            
-            List<Coord> sumList(List<Coord> offset) {
-                return offset.stream().map((x) -> x.sum(this)).toList();
-            }
-            
-            List<Coord> sumDir() {
-                return this.sumList(List.of(new Coord(-1, 0), new Coord(1, 0), new Coord(0, -1), new Coord(0, 1)));
-            }
-            
-        }
-        
         var mat = shelf.getAllShelf();
         var checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
         int adjacentScore = 0;
@@ -85,26 +71,26 @@ public class GameController {
                 if( checked[i][j] || type == Tile.Type.NOTILE )
                     continue;
                 
-                var current = new Coord(i, j);
+                var current = new Coordinate(i, j);
                 
                 //select chunck
-                List<Coord> selected = new ArrayList<>();
-                Queue<Coord> visited = new LinkedList<>();
+                List<Coordinate> selected = new ArrayList<>();
+                Queue<Coordinate> visited = new LinkedList<>();
                 visited.add(current);
-                checked[current.r()][current.c()] = true;
+                checked[current.row()][current.col()] = true;
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
                     current.sumDir().stream()
-                            .filter((x) -> x.r() < Shelf.N_ROW &&
-                                           x.r() > -1 &&
-                                           x.c() < Shelf.N_COL &&
-                                           x.c() > -1 &&
-                                           mat[x.r()][x.c()].type() == type &&
-                                           !checked[x.r()][x.c()])
+                            .filter((x) -> x.row() < Shelf.N_ROW &&
+                                           x.row() > -1 &&
+                                           x.col() < Shelf.N_COL &&
+                                           x.col() > -1 &&
+                                           mat[x.row()][x.col()].type() == type &&
+                                           !checked[x.row()][x.col()])
                             .forEach((x) -> {
                                 visited.add(x);
-                                checked[x.r()][x.c()] = true;
+                                checked[x.row()][x.col()] = true;
                             });
                 }
                 
@@ -195,10 +181,14 @@ public class GameController {
         
         switch( evt ) {
             case MOVE -> {
-                model.removeSelection(o.getSelection());
-                model.shelveSelection(o.getTiles(), o.getColumn());
-                turnManager();
-                nextPlayerSetter();
+                if( IntegrityChecks.checkSelection(o.getSelection()) ) {
+                    model.removeSelection(o.getSelection());
+                    model.shelveSelection(o.getTiles(), o.getColumn());
+                    turnManager();
+                    nextPlayerSetter();
+                }else{
+                    System.err.println("Invalid move -> ignoring event from player '" + o.getNickname());
+                }
             }
             case CHAT -> {
                 //TODO chat functions;

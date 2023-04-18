@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.goals.common.CommonGoalStrategy;
+
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Coordinate class to index locations on the board.
@@ -71,4 +74,43 @@ public record Coordinate(int row, int col) implements Serializable {
         return "(" + row + "," + col + ")";
     }
     
+    /**
+     * Get the sum of the current coordinate with the indicated offset
+     * @param offset Offset to be summed
+     * @return The sum of this and offset
+     */
+    public Coordinate sum(Coordinate offset) {
+        return new Coordinate(row + offset.row, col + offset.col);
+    }
+    
+    /**
+     * Subtract the offset to the current object and return the result of the operation as a new Coordinate
+     * @param offset The offset to be subtracted
+     * @return This - offset
+     */
+    public Coordinate sub(Coordinate offset) {
+        return new Coordinate(row - offset.row, col - offset.col);
+    }
+    
+    /**
+     * Sum the current coordinate to a list of offset
+     * @param offset The list of offset to be summed
+     * @return the list of all the offset + this
+     */
+    
+    public List<Coordinate> sumList(List<Coordinate> offset) {
+        return offset.stream().map((x) -> x.sum(this)).toList();
+    }
+    
+    /**
+     * Return the list of all the adiajent coordinate
+     * @return List<Coordinate> of all the adiajent coordinate
+     */
+    
+    public List<Coordinate> sumDir() {
+        return this.sumList(List.of(new Coordinate(-1, 0),
+                                    new Coordinate(1, 0),
+                                    new Coordinate(0, -1),
+                                    new Coordinate(0, 1)));
+    }
 }

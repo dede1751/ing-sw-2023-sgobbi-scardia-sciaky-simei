@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model.goals.common;
 
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
@@ -26,26 +27,26 @@ public class SixGroupTwoTileGoal implements CommonGoalStrategy {
                 if( checked[i][j] || type == Tile.Type.NOTILE )
                     continue;
                 
-                var current = new Coord(i, j);
+                var current = new Coordinate(i, j);
                 
                 //select chunck
-                List<Coord> selected = new ArrayList<>();
-                Queue<Coord> visited = new LinkedList<>();
+                List<Coordinate> selected = new ArrayList<>();
+                Queue<Coordinate> visited = new LinkedList<>();
                 visited.add(current);
-                checked[current.r()][current.c()] = true;
+                checked[current.row()][current.col()] = true;
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
                     current.sumDir().stream()
-                            .filter((x) -> x.r() < Shelf.N_ROW &&
-                                           x.r() > -1 &&
-                                           x.c() < Shelf.N_COL &&
-                                           x.c() > -1 &&
-                                           mat[x.r()][x.c()].type() == type &&
-                                           !checked[x.r()][x.c()])
+                            .filter((x) -> x.row() < Shelf.N_ROW &&
+                                           x.row() > -1 &&
+                                           x.col() < Shelf.N_COL &&
+                                           x.col() > -1 &&
+                                           mat[x.row()][x.col()].type() == type &&
+                                           !checked[x.row()][x.col()])
                             .forEach((x) -> {
                                 visited.add(x);
-                                checked[x.r()][x.c()] = true;
+                                checked[x.row()][x.col()] = true;
                             });
                 }
                 
