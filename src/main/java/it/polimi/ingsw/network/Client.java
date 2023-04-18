@@ -6,10 +6,13 @@ import it.polimi.ingsw.model.GameModelView;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public interface Client extends Remote {
     
     void setClientID(int clientID) throws RemoteException;
+    
+    void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) throws RemoteException;
     
     /**
      * Notify the client of a model change

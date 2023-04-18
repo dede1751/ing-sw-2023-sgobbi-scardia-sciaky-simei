@@ -1,5 +1,6 @@
 package it.polimi.ingsw.network;
 
+import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.utils.exceptions.LoginException;
@@ -10,6 +11,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 public class LocalClient extends UnicastRemoteObject implements Client {
     
@@ -37,9 +39,11 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     @Override
     public void setClientID(int clientID) throws RemoteException { this.view.setClientID(clientID); }
     
+    @Override
+    public void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) { this.view.setAvailableLobbies(lobbies); }
+    
     public void connectServer() {
         try {
-            System.out.println("Connecting to server . . .");
             server.register(this);
         } catch( RemoteException e ) {
             System.err.println("Unable to register to server: " + e.getMessage() + ". Exiting...");

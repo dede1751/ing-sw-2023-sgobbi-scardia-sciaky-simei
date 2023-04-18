@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
@@ -33,6 +34,8 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     private int column;
     
     public void setClientID(int clientID) { this.clientID = clientID; }
+    
+    public abstract void setAvailableLobbies(List<LobbyController.LobbyView> lobbies);
     
     public int getClientID() { return this.clientID; }
     

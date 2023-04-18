@@ -12,6 +12,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class ClientSkeleton implements Client {
     
@@ -35,8 +36,21 @@ public class ClientSkeleton implements Client {
     public void setClientID(int clientID) throws RemoteException {
         try {
             oos.writeObject(clientID);
+            oos.reset();
+            oos.flush();
         } catch (IOException e) {
             throw new RemoteException("Cannot send client id", e);
+        }
+    }
+    
+    @Override
+    public void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) throws RemoteException {
+        try {
+            oos.writeObject(lobbies);
+            oos.reset();
+            oos.flush();
+        } catch (IOException e) {
+            throw new RemoteException("Cannot send lobby list", e);
         }
     }
     
@@ -44,11 +58,15 @@ public class ClientSkeleton implements Client {
     public void update(GameModelView o, GameModel.Event arg) throws RemoteException {
         try {
             oos.writeObject(o);
+            oos.reset();
+            oos.flush();
         } catch (IOException e) {
             throw new RemoteException("Cannot send model view", e);
         }
         try {
             oos.writeObject(arg);
+            oos.reset();
+            oos.flush();
         } catch (IOException e) {
             throw new RemoteException("Cannot send event", e);
         }
