@@ -1,8 +1,5 @@
 package it.polimi.ingsw.view.tui;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
