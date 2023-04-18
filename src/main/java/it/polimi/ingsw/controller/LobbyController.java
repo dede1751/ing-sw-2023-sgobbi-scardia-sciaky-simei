@@ -6,6 +6,7 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.ViewMessage;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -18,7 +19,10 @@ public class LobbyController {
     private static LobbyController INSTANCE;
     
     // lobbies must include mapping clientID->nickname to be able to "connect" the correct clients to the model
-    public record Lobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID) {}
+    public record Lobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID) {
+        public boolean isEmpty() { return nicknames.size() < lobbySize(); }
+    }
+    public record LobbyView(List<String> nicknames, int lobbySize, int lobbyID) implements Serializable {}
     
     // Lobbies are mapped by their unique lobbyID
     private final HashMap<Integer, Lobby> lobbies = new HashMap<>();
@@ -47,6 +51,13 @@ public class LobbyController {
         client.setClientID(clientIDCounter);
         this.clientMapping.put(clientIDCounter, client);
         clientIDCounter++;
+        
+        List<LobbyView> availableLobbies = this.lobbies.values()
+                .stream()
+                .filter(Lobby::isEmpty)
+                .map((l) -> new LobbyView(l.nicknames, l.lobbySize, l.lobbyID))
+                .toList();
+        client.setAvailableLobbies(availableLobbies);
     }
     
     /**
@@ -101,7 +112,7 @@ public class LobbyController {
         // find a lobby that isn't full
         Lobby lobby = this.lobbies.values()
                 .stream()
-                .filter((l) -> l.nicknames.size() < l.lobbySize)
+                .filter(Lobby::isEmpty)
                 .findFirst()
                 .orElseThrow();
         
@@ -109,7 +120,7 @@ public class LobbyController {
         lobby.clientIDs.add(msg.getClientID());
         
         // check if the game needs to be started
-        if ( lobby.nicknames.size() >= lobby.lobbySize ) {
+        if ( !lobby.isEmpty() ) {
             return initGame(lobby);
         } else {
             return null;

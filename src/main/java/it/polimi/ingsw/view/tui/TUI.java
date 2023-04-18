@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.tui;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.View;
 
@@ -17,7 +18,6 @@ public class TUI extends View {
     @Override
     public void run() {
         userLogin();
-        System.out.println("\nSuccesfully logged in to server. Awaiting game start... ");
         
         //noinspection InfiniteLoopStatement
         while( true ) {
@@ -36,10 +36,27 @@ public class TUI extends View {
         }
     }
     
+    @Override
+    public void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) {
+        if (lobbies.isEmpty()) {
+            System.out.println("No lobbies are currently available! Please create one... ");
+            return;
+        }
+        
+        for ( LobbyController.LobbyView lobby: lobbies ) {
+            System.out.println("\n------LOBBY: " + lobby.lobbyID() + "------");
+            System.out.println("Occupancy: [" + lobby.nicknames().size() + "/" + lobby.lobbySize() + "]");
+            for ( String nickname: lobby.nicknames() ) {
+                System.out.println("\t" + nickname);
+            }
+        }
+        System.out.println("\nRemember to choose a unique Nickname!");
+    }
+    
     private void userLogin() {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("Choose the nickname you'll be using in game:");
+        System.out.println("\nChoose the nickname you'll be using in game:");
         while( true ) {
             System.out.print("\n>>  ");
             String nickname = scanner.next().trim();
@@ -51,14 +68,14 @@ public class TUI extends View {
         }
         
         // ask the user to create or join a lobby
-        System.out.println("Do you want to create your own lobby or join an existing one? [CREATE/JOIN]");
+        System.out.println("\nDo you want to create your own lobby or join an existing one? [CREATE/JOIN]");
         while( true ) {
             System.out.print("\n>>  ");
             String choice = scanner.next().trim();
             
             if( choice.equals("CREATE") ) {
                 // ask the user for the number of players in the lobby.
-                System.out.println("Choose the amount of players for the match (2-4): ");
+                System.out.println("\nChoose the amount of players for the match (2-4): ");
                 while( true ) {
                     System.out.print("\n>>  ");
                     try {
@@ -73,19 +90,21 @@ public class TUI extends View {
                     }
                 }
                 this.setChangedAndNotifyObservers(Action.CREATE_LOBBY);
-                return;
+                break;
             } else if ( choice.equals("JOIN") ) {
                 this.setChangedAndNotifyObservers(Action.JOIN_LOBBY);
-                return;
+                break;
             } else {
                 System.out.println("Please choose one of [CREATE/JOIN]");
             }
         }
+        
+        System.out.println("\nSuccesfully logged in to server. Awaiting game start... ");
     }
     
     private void askPassTurn() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Write 'PASS' to pass your turn: ");
+        System.out.println("\nWrite 'PASS' to pass your turn: ");
         
         while( true ) {
             System.out.print("\n>>  ");

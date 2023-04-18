@@ -14,6 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class ServerStub implements Server {
     
@@ -55,18 +56,31 @@ public class ServerStub implements Server {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize lobby info from server", e);
         }
+        
+        try {
+            List<LobbyController.LobbyView> lobbies = (List<LobbyController.LobbyView>) ois.readObject();
+            client.setAvailableLobbies(lobbies);
+        } catch (IOException e) {
+            throw new RemoteException("Cannot receive lobby info from server", e);
+        } catch (ClassNotFoundException e) {
+            throw new RemoteException("Cannot deserialize lobby info from server", e);
+        }
     }
     
     @Override
     public void update(ViewMessage o, View.Action arg) throws RemoteException {
         try {
             oos.writeObject(o);
+            oos.reset();
+            oos.flush();
         } catch (IOException e) {
             throw new RemoteException("Cannot send message", e);
         }
         
         try {
             oos.writeObject(arg);
+            oos.reset();
+            oos.flush();
         } catch (IOException e) {
             throw new RemoteException("Cannot send action", e);
         }
