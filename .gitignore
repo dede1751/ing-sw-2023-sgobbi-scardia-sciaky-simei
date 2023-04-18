@@ -78,6 +78,3 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
-
-# Volatile test files
-src/test/java/it/polimi/ingsw/model/TestingResources/Volatile/
