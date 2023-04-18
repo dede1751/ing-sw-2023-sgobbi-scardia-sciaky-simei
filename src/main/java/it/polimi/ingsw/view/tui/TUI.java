@@ -2,7 +2,7 @@ package it.polimi.ingsw.view.tui;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.controller.LobbyController;
+
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.View;
 
@@ -11,14 +11,20 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TUI extends View {
+    
     private GameModelView model;
     
     @Override
     public void run() {
+        userLogin();
+        System.out.println("\nSuccesfully logged in to server. Awaiting game start... ");
+        
         //noinspection InfiniteLoopStatement
         while( true ) {
+            askPassTurn();
+            
             //FIXME getviewid nonè ciò che è inteso nel seguente codice
-            if(this.getViewID()==model.getCurrentPlayerIndex()){
+            /*if(this.getViewID()==model.getCurrentPlayerIndex()){
                 Player currentPlayer = model.getPlayers().get(model.getCurrentPlayerIndex());
                 System.out.println("my score is "+ currentPlayer.getScore());
                 printBoard(model.getBoard());
@@ -26,54 +32,53 @@ public class TUI extends View {
                 askSelection(model);            //set the asked selection to the view message selection
                 askColumn(model);
                 this.setChangedAndNotifyObservers(Action.MOVE);
-            }
-            
-            
-            
+            }*/
         }
     }
     
-    @Override
-    public LobbyController.LoginInfo userLogin(LobbyController.LobbyInfo info) {
-        String nickname = askNickname(info.nicknames());
-        int lobbySize = 0;
-        
-        if( info.lobbyState() == LobbyController.State.INITIALIZE_LOBBY ) {
-            lobbySize = askLobbySize();
-        }
-        
-        return new LobbyController.LoginInfo(nickname, lobbySize);
-    }
-    
-    private String askNickname(List<String> others) {
+    private void userLogin() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose a nickname to add to the game, the following have already been taken:\n");
         
-        for( String s : others ) {
-            System.out.print(s + " ");
-        }
-        System.out.println();
-        
+        System.out.println("Choose the nickname you'll be using in game:");
         while( true ) {
             System.out.print("\n>>  ");
-            String input = scanner.next().trim();
+            String nickname = scanner.next().trim();
             
-            if( !others.contains(input) ) {
-                return input;
+            if( !nickname.equals("") ) {
+                this.setNickname(nickname);
+                break;
             }
         }
-    }
-    
-    private int askLobbySize() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose the amount of players for the match (2-4): ");
         
+        // ask the user to create or join a lobby
+        System.out.println("Do you want to create your own lobby or join an existing one? [CREATE/JOIN]");
         while( true ) {
             System.out.print("\n>>  ");
-            int input = Integer.parseInt(scanner.next());
+            String choice = scanner.next().trim();
             
-            if( input >= 2 && input <= 4 ) {
-                return input;
+            if( choice.equals("CREATE") ) {
+                // ask the user for the number of players in the lobby.
+                System.out.println("Choose the amount of players for the match (2-4): ");
+                while( true ) {
+                    System.out.print("\n>>  ");
+                    try {
+                        int lobbySize = Integer.parseInt(scanner.next());
+                        
+                        if( lobbySize >= 2 && lobbySize <= 4 ) {
+                            this.setSelectedPlayerCount(lobbySize);
+                            break;
+                        }
+                    } catch( NumberFormatException e ) {
+                        System.out.println("Please write a number");
+                    }
+                }
+                this.setChangedAndNotifyObservers(Action.CREATE_LOBBY);
+                return;
+            } else if ( choice.equals("JOIN") ) {
+                this.setChangedAndNotifyObservers(Action.JOIN_LOBBY);
+                return;
+            } else {
+                System.out.println("Please choose one of [CREATE/JOIN]");
             }
         }
     }
@@ -98,7 +103,7 @@ public class TUI extends View {
     public void askSelection(GameModelView model) {
         
         Scanner scanner = new Scanner(System.in);
-        List<Coordinate> selection = new ArrayList<Coordinate>();
+        List<Coordinate> selection = new ArrayList<>();
         System.out.print("Enter number of coordinates (1-3): ");
         int numCoordinates = scanner.nextInt();
         scanner.nextLine();
@@ -186,20 +191,25 @@ public class TUI extends View {
     
     @Override
     public void update(GameModelView model, GameModel.Event evt) {
-        Player currentPlayer = model.getPlayers().get(model.getCurrentPlayerIndex());
         switch( evt ) {
-            case GAME_START -> {
-                System.out.println("The game has started!");
-                new Thread(this).start();
-            }
+            case GAME_START -> System.out.println("The game has started!");
+            
             case NEW_CURRENT_PLAYER -> {
                 System.out.println("Current player has changed to " + model.getCurrentPlayerIndex() + ". Players: ");
                 
                 for( Player player : model.getPlayers() ) {
                     System.out.println(player.getNickname() + " " + player.getScore());
                 }
-                setModel(model);
+                
+                /*setModel(model);
                 System.out.println();
+                
+                printBoard(model.getBoard());
+                askSelection(model);            //set the asked selection to the view message selection
+                askColumn(model);
+                //TODO change event
+                this.setChangedAndNotifyObservers(Action.MOVE);
+                System.out.println();*/
                 
             }
             case LAST_TURN -> {

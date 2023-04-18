@@ -21,6 +21,4 @@ public interface Server extends Remote {
      */
     void update(ViewMessage msg, View.Action evt) throws RemoteException;
     
-    void sendLoginInfo(LobbyController.LoginInfo info) throws RemoteException;
-
 }

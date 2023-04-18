@@ -3,44 +3,50 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
-import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
 import java.util.*;
 
 
+/**
+ * GameController, responsible for modifying the model according to the input from the player views
+ */
 public class GameController {
     
     private final GameModel model;
     
-    private final List<Client> clients;
-    private Integer currentPlayerIndex;
+    // Needed to close the lobby when the game ends
+    private final int lobbyID;
+    
     private final Integer playerNumber;
     
-    
-    public GameController(GameModel model, List<Client> clients) {
+    /**
+     * Initialize the controller with the given model and start the game
+     * @param model   Model instance to run
+     * @param lobbyID Lobby identifier, used to close lobby on exit
+     */
+    public GameController(GameModel model, int lobbyID) {
         this.model = model;
-        this.clients = clients;
-        playerNumber = clients.size();
-        currentPlayerIndex = 0;
+        this.lobbyID = lobbyID;
+        this.playerNumber = model.getPlayers().size();
+        
+        model.startGame();
     }
     
+    /**
+     * Check if the board needs to be refilled according to the rules (either empty or all tiles isolated)
+     * @return True if a refill is needed, false otherwise
+     */
     public Boolean needRefill() {
         Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
         
         for( var entry : toBeChecked.entrySet() ) {
             if( !(entry.getValue().equals(Tile.NOTILE)) ) {
-                if( !(model.getBoard().getTile(entry.getKey().getDown()) == Tile.NOTILE) ) {
-                    return false;
-                }
-                if( !(model.getBoard().getTile(entry.getKey().getUp()) == Tile.NOTILE) ) {
-                    return false;
-                }
-                if( !(model.getBoard().getTile(entry.getKey().getLeft()) == Tile.NOTILE) ) {
-                    return false;
-                }
-                if( !(model.getBoard().getTile(entry.getKey().getRight()) == Tile.NOTILE) ) {
+                if ( !(model.getBoard().getTile(entry.getKey().getDown()) == Tile.NOTILE)
+                        || !(model.getBoard().getTile(entry.getKey().getUp()) == Tile.NOTILE)
+                        || !(model.getBoard().getTile(entry.getKey().getLeft()) == Tile.NOTILE)
+                        || !(model.getBoard().getTile(entry.getKey().getRight()) == Tile.NOTILE)) {
                     return false;
                 }
             }
@@ -48,15 +54,16 @@ public class GameController {
         return true;
     }
     
+    /**
+     * Compute adjacency score for final scores
+     * @param shelf Shelf to check for the score
+     * @return      Integer score assigned for adjacent similar tiles in the given shelf
+     */
     public int calculateAdjacency(Shelf shelf) {
         
         record Coord(int r, int c) {
             Coord sum(Coord offset) {
                 return new Coord(r + offset.r, c + offset.c);
-            }
-            
-            Coord sub(Coord offset) {
-                return new Coord(r - offset.r, c - offset.c);
             }
             
             List<Coord> sumList(List<Coord> offset) {
@@ -101,38 +108,34 @@ public class GameController {
                             });
                 }
                 
-                
-                if( selected.size() == 3 ) {
-                    adjacentScore += 2;
-                }else if( selected.size() == 4 ) {
-                    adjacentScore += 3;
-                }else if( selected.size() == 5 ) {
-                    adjacentScore += 5;
-                }else if( selected.size() > 6 ) {
-                    adjacentScore += 8;
-                }
-                
-                
+                final int[] scores = { 0, 0, 0, 2, 3, 5, 8 };
+                adjacentScore += scores[Math.min(selected.size(), 6)];
             }
         }
         return adjacentScore;
     }
     
     
+    /**
+     * Turn bookkeeping:
+     *  - checks common/personal/adjacency scores and updates them accordingly.
+     *  - refills the board if needed
+     *  - checks if the game is on its last turn
+     */
     public void turnManager() {
         
         //reference to the current player
         Player currentPlayer = model.getCurrentPlayer();
         
-        if( !model.getCurrentPlayer().isCompletedGoalX() &&
+        if( !currentPlayer.isCompletedGoalX() &&
             CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerCommongGoalScore(model.popStackCGX());
-            model.getCurrentPlayer().setCompletedGoalX(true);
+            currentPlayer.setCompletedGoalX(true);
         }
-        if( !model.getCurrentPlayer().isCompletedGoalY() &&
+        if( !currentPlayer.isCompletedGoalY() &&
             CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
             model.addCurrentPlayerCommongGoalScore(model.popStackCGY());
-            model.getCurrentPlayer().setCompletedGoalY(true);
+            currentPlayer.setCompletedGoalY(true);
         }
         
         //calculate and set in every turn the personalGoalScore
@@ -146,40 +149,50 @@ public class GameController {
             model.getBoard().refill(model.getTileBag());
         }
         
-        if( currentPlayer.getShelf().isFull() && !model.isFinalTurn() ) {
+        if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
             model.setLastTurn();
         }
     }
     
+    /**
+     * Update the current player, handling game termination
+     */
     public void nextPlayerSetter() {
-        if( model.isFinalTurn() && model.getCurrentPlayerIndex() == 3 ) {
+        int currentPlayerIndex = model.getCurrentPlayerIndex();
+        if( model.isLastTurn() && currentPlayerIndex == 3 ) {
             endGame();
-            //check if the current player is the last in the list of players, if it is, set current player to the first in the list
         }else {
-            currentPlayerIndex = (++currentPlayerIndex) % playerNumber;
+            currentPlayerIndex = (currentPlayerIndex + 1) % playerNumber;
             model.setCurrentPlayerIndex(currentPlayerIndex);
         }
     }
     
+    /**
+     * Notify the views of the winner and close the lobby
+     */
     public void endGame() {
-        int winnerIndex = 0;
+        Player winner = model.getPlayers()
+                .stream()
+                .max(Comparator.comparingInt(Player::getScore))
+                .orElseThrow();
         
-        for( int i = 0; i < model.getNumPlayers() - 1; i++ ) {
-            if( model.getPlayers().get(i).getScore() > model.getPlayers().get(winnerIndex).getScore() ) {
-                winnerIndex = i;
-            }
-        }
-        
-        model.setWinner(model.getPlayers().get(winnerIndex).getNickname());
+        model.setWinner(winner.getNickname());
+        LobbyController.getInstance().endGame(this.lobbyID);
     }
     
+    /**
+     * Callback from view
+     * @param o     ViewMessage containing all relevant view information
+     * @param evt   Type of user action that caused the view state change
+     */
     //TODO change name to ViewMessage
     public void update(ViewMessage o, View.Action evt) {
-        int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if( o.getViewID() != currentPlayerIndex ) {
-            System.err.println("Ignoring event from view:" + o.getViewID() + ": " + evt + ". Not the current Player.");
+        String currentPlayerNick = model.getCurrentPlayer().getNickname();
+        if( !o.getNickname().equals(currentPlayerNick) ) {
+            System.err.println("Ignoring event from player '" + o.getNickname() + "': " + evt + ". Not the current Player.");
             return;
         }
+        
         switch( evt ) {
             case MOVE -> {
                 model.removeSelection(o.getSelection());
@@ -192,7 +205,7 @@ public class GameController {
             }
             case PASS_TURN -> {
                 //FIXME only for debug porpouses, to be removed in final version
-                System.out.println("Player " + currentPlayerIndex + " passed his turn.");
+                System.out.println("Player '" + currentPlayerNick + "' passed his turn.");
                 nextPlayerSetter();
             }
         }

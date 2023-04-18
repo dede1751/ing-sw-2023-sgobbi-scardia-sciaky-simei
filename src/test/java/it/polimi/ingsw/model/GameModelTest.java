@@ -26,13 +26,13 @@ public class GameModelTest {
         assertEquals(6, game.getCommonGoalX());
         assertEquals(5, game.getCommonGoalY());
         assertEquals(4, game.getNumPlayers());
-        assertFalse(game.isFinalTurn());
+        assertFalse(game.isLastTurn());
     }
     
     @Test
-    public void isFinalTurn() {
+    public void isLastTurn() {
         GameModel game = new GameModel(4, 0, 0);
-        assertFalse(game.isFinalTurn());
+        assertFalse(game.isLastTurn());
     }
     
     @Test

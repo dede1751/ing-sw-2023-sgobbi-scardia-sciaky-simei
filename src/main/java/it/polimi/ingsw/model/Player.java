@@ -17,7 +17,7 @@ public class Player implements Serializable {
     
     final private String nickname;
     
-    private int score;
+    private final int score;
     
     private int commonGoalScore;
     

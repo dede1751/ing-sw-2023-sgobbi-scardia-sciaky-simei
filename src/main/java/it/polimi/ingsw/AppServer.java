@@ -65,7 +65,7 @@ public class AppServer {
                 Socket socket = serverSocket.accept();
                 executorService.submit(() -> {
                     try {
-                        ClientSkeleton clientSkeleton = new ClientSkeleton(server, socket);
+                        ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
 
                         server.register(clientSkeleton);
                         //noinspection InfiniteLoopStatement

@@ -25,18 +25,20 @@ public class GameModel extends Observable<GameModel.Event> {
         FINISHED_GAME,
     }
     
+    private final int numPlayers;
+    
     private final int commonGoalNumX;
     private final int commonGoalNumY;
     
-    private final int numPlayers;
-    
     private final Stack<Integer> commonGoalStackX;
     private final Stack<Integer> commonGoalStackY;
+    
+    private boolean lastTurn;
     private String winner;
     
     private int currentPlayerIndex;
-    private boolean lastTurn;
     private final List<Player> players;
+    
     private final Board board;
     
     private final TileBag tileBag;
@@ -154,7 +156,8 @@ public class GameModel extends Observable<GameModel.Event> {
     }
     
     /**
-     * Checks if the game is on its final turn and set gameOver to true if the turn is final (although some players might still have to play)
+     * Checks if the game is on its final turn and set gameOver to true if the turn is final
+     * (although some players might still have to play)
      */
     public void setLastTurn() {
         lastTurn = true;
@@ -162,7 +165,7 @@ public class GameModel extends Observable<GameModel.Event> {
         
     }
     
-    public boolean isFinalTurn() {
+    public boolean isLastTurn() {
         return this.lastTurn;
     }
     
@@ -182,14 +185,9 @@ public class GameModel extends Observable<GameModel.Event> {
      * @param nickname Unique string nickname of the player
      * @param pgID     Integer ID for the player's personal goal
      */
-    public void addPlayer(String nickname, int pgID) {
-        players.add(new Player(nickname, pgID));
-        System.out.println("Player " + nickname + " with id: " + pgID);
-    }
+    public void addPlayer(String nickname, int pgID) { players.add(new Player(nickname, pgID)); }
     
-    public void addPlayer(Player player) {
-        players.add(player);
-    }
+    private void addPlayer(Player player) { players.add(player); }
     
     /**
      * Returns the entire player list
@@ -197,13 +195,10 @@ public class GameModel extends Observable<GameModel.Event> {
      *
      * @return Full list of players
      */
-    public List<Player> getPlayers() {
-        return players;
-    }
+    public List<Player> getPlayers() { return players; }
     
     
-    public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
+    public int getCurrentPlayerIndex() { return currentPlayerIndex;
     }
     
     
@@ -218,9 +213,7 @@ public class GameModel extends Observable<GameModel.Event> {
      *
      * @return The current player
      */
-    public Player getCurrentPlayer() {
-        return players.get(currentPlayerIndex);
-    }
+    public Player getCurrentPlayer() { return players.get(currentPlayerIndex); }
     
     /**
      * Get tile on the board at the given coordinate
@@ -391,7 +384,6 @@ public class GameModel extends Observable<GameModel.Event> {
             for( var p : players ) {
                 var player = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, p), Player.class);
                 result.addPlayer(player);
-
             }
             var currentPlayer = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CurrentPlayer"), int.class);
             result.setCurrentPlayerIndex(currentPlayer);

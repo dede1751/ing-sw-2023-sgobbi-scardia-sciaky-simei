@@ -1,8 +1,8 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
+import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 
@@ -34,11 +34,12 @@ public class LocalClient extends UnicastRemoteObject implements Client {
         this.view = view;
     }
     
-    public void setViewID(int viewID) throws RemoteException { this.view.setViewID(viewID); }
+    @Override
+    public void setClientID(int clientID) throws RemoteException { this.view.setClientID(clientID); }
     
     public void connectServer() {
         try {
-            System.out.println("Connecting to server. This may take a while... ");
+            System.out.println("Connecting to server . . .");
             server.register(this);
         } catch( RemoteException e ) {
             System.err.println("Unable to register to server: " + e.getMessage() + ". Exiting...");
@@ -49,23 +50,18 @@ public class LocalClient extends UnicastRemoteObject implements Client {
             try {
                 server.update(new ViewMessage(view), evt);
             } catch (RemoteException e) {
-                System.err.println("Unable to update the server: " + e.getMessage() + ". Skipping the update...");
+                Throwable nestedException = e.getCause();
+                
+                if (nestedException == null ){
+                    System.err.println("Server update failed. Skipping the update...");
+                } else if ( nestedException.getCause() instanceof LoginException ) {
+                    System.err.println("Unable to properly sign up to server: " + nestedException.getMessage() + ". Exiting...");
+                    System.exit(1);
+                } else {
+                    System.err.println("Unable to update the server: " + nestedException.getMessage() + ". Skipping the update...");
+                }
             }
         });
-    }
-    
-    @Override
-    public void sendLobbyInfo(LobbyController.LobbyInfo lobbyInfo) throws RemoteException {
-        if ( lobbyInfo.lobbyState() == LobbyController.State.FULL_LOBBY ) {
-            System.err.println("Lobby is full. Exiting...");
-            System.exit(1);
-        }
-        
-        try {
-            server.sendLoginInfo(view.userLogin(lobbyInfo));
-        } catch( RemoteException e ) {
-            System.err.println("Unable to send login to server: " + e.getMessage() + ". Exiting...");
-        }
     }
     
     @Override
