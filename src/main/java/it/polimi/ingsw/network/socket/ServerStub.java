@@ -1,6 +1,7 @@
 package it.polimi.ingsw.network.socket;
 
 
+import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
@@ -8,6 +9,7 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
+import it.polimi.ingsw.view.messages.ViewMsg;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -84,6 +86,11 @@ public class ServerStub implements Server {
         } catch (IOException e) {
             throw new RemoteException("Cannot send action", e);
         }
+    }
+    //TODO to be completed
+    @Override
+    public GameController.Response update(ViewMsg<?> message) throws RemoteException {
+        return null;
     }
     
     public void receive(Client client) throws RemoteException {

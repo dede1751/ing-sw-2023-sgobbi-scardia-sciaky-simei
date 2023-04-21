@@ -1,12 +1,16 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.utils.observer.Observable;
+import it.polimi.ingsw.view.messages.MoveMessage;
 
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.List;
 
@@ -21,6 +25,9 @@ public abstract class View extends Observable<View.Action> implements Runnable {
         CHAT
     }
     
+    Server server;
+    
+
     private int clientID;
     
     String nickname;
@@ -72,5 +79,12 @@ public abstract class View extends Observable<View.Action> implements Runnable {
         setChanged();
         notifyObservers(evt);
     }
+    
+    protected GameController.Response notifyMoveListerners(MoveMessage msg) throws RemoteException {
+        return server.update(msg);
+    };
+    
+    
+    
     
 }

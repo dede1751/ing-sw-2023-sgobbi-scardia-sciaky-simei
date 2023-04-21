@@ -1,0 +1,24 @@
+package it.polimi.ingsw.view.messages;
+
+public class ChatMessage extends ViewMsg<String>{
+    
+    private final String dest;
+    
+    public ChatMessage(String s, String playerNick, int clientId) {
+        super(s, playerNick, clientId);
+        dest = "BROADCAST";
+    }
+    
+    @Override
+    public Class<?> getMessageType() {
+        return this.getClass();
+    }
+    
+    public ChatMessage(String s, String PlayerNick, String playerDestination, int clientId){
+        super(s, PlayerNick, clientId);
+        dest = playerDestination;
+    }
+    public String getDestination(){
+        return this.dest;
+    }
+}

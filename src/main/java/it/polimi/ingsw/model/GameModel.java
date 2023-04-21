@@ -275,7 +275,6 @@ public class GameModel extends Observable<GameModel.Event> {
      */
     
     
-    //TODO  fix the parameters
     public void shelveSelection(List<Tile> orderedTiles, int column) {
         this.tileBag.removeSelection(orderedTiles);
         this.getCurrentPlayer().getShelf().addTiles(orderedTiles, column);

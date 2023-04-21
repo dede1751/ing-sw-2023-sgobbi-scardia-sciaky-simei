@@ -151,7 +151,7 @@ public class TUI extends View {
                 scanner.nextLine(); // consume the newline character
                 
             }
-        }while ( IntegrityChecks.checkSelection(selection) );
+        }while ( IntegrityChecks.checkSelectionForm(selection) );
         System.out.println("Entered coordinates: " + selection);
         this.setSelectedCoordinates(selection);
         
@@ -198,13 +198,6 @@ public class TUI extends View {
     private void printShelf(Shelf shelf) {
     
     }
-    
-    //TODO
-    public Boolean checkSelection(List<Coordinate> selection) {
-        return true;
-    }
-    
-    
     public GameModelView getModel() {
         return model;
     }

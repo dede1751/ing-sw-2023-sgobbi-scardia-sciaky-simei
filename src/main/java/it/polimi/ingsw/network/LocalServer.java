@@ -2,19 +2,22 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
+import it.polimi.ingsw.view.messages.CreateLobbyMessage;
+import it.polimi.ingsw.view.messages.JoinLobby;
+import it.polimi.ingsw.view.messages.JoinLobbyMessage;
+import it.polimi.ingsw.view.messages.ViewMsg;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 public class LocalServer extends UnicastRemoteObject implements Server {
     
@@ -42,17 +45,17 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     @Override
     public synchronized void update(ViewMessage msg, View.Action evt) throws RemoteException {
         int clientID = msg.getClientID();
-        if ( !lobbyController.checkRegistration(clientID) ) {
+        if( !lobbyController.checkRegistration(clientID) ) {
             throw new RemoteException("View is not registered to the server", new LoginException());
         }
         
-        switch (evt) {
+        switch( evt ) {
             case CREATE_LOBBY -> lobbyController.createLobby(msg);
             
             case JOIN_LOBBY -> {
                 Map<Integer, GameController> mapping = lobbyController.joinLobby(msg);
                 
-                if ( mapping != null) {
+                if( mapping != null ) {
                     this.gameControllers.putAll(mapping);
                 }
             }
@@ -60,13 +63,53 @@ public class LocalServer extends UnicastRemoteObject implements Server {
             default -> {
                 GameController controller = gameControllers.get(clientID);
                 
-                if ( controller != null ) {
+                if( controller != null ) {
                     controller.update(msg, evt);
-                } else {
+                }else {
                     throw new RemoteException("Ignoring View Events until game is started!");
                 }
             }
         }
     }
+    
+    @Override
+    public GameController.Response update(ViewMsg<?> message) throws RemoteException {
+        int clientID = message.getClientId();
+        if( !lobbyController.checkRegistration(clientID) ) {
+            throw new RemoteException("View is not registered to the server", new LoginException());
+        }
+        try {
+            Method m = this.getClass().getMethod("onMessage", message.getMessageType());
+            return (GameController.Response) m.invoke(this, message);
+        }catch( NoSuchMethodException e){
+            GameController controller = gameControllers.get(clientID);
+            if(controller != null){
+                return controller.update(message);
+            }else{
+                throw new RemoteException("Ingoring view Events until game is started!");
+            }
+        }
+        catch( InvocationTargetException | IllegalAccessException e ) {
+            return new GameController.Response(128, "Server is acting up, please be patient...");
+        }
+    }
+    
+    public GameController.Response onMessage(CreateLobbyMessage message) {
+        int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
+        return new GameController.Response(0,
+                                           "Created new Lobby with name : " + message.getPayload().name() +
+                                           "and id : " + id);
+    }
+    
+    public GameController.Response onMessage(JoinLobbyMessage message) throws RemoteException {
+        Map<Integer, GameController> mapping = lobbyController.joinLobby(message);
+        if( mapping != null){
+            this.gameControllers.putAll(mapping);
+            return GameController.Response.Ok();
+        }
+        //TODO proper message
+        else return new GameController.Response(-1, "proper message");
+    }
+    
     
 }
