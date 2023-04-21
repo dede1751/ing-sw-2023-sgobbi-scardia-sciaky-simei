@@ -89,16 +89,21 @@ public class LocalServer extends UnicastRemoteObject implements Server {
                 throw new RemoteException("Ingoring view Events until game is started!");
             }
         }
-        catch( InvocationTargetException | IllegalAccessException e ) {
+        catch( IllegalAccessException e ) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
             return new GameController.Response(128, "Server is acting up, please be patient...");
+        }catch( InvocationTargetException e ){
+            e.printStackTrace();
+            return new GameController.Response(127, e.getMessage());
         }
     }
     
     public GameController.Response onMessage(CreateLobbyMessage message) {
         int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
-        return new GameController.Response(0,
+        return new GameController.Response(id,
                                            "Created new Lobby with name : " + message.getPayload().name() +
-                                           "and id : " + id);
+                                           " and id : " + id);
     }
     
     public GameController.Response onMessage(JoinLobbyMessage message) throws RemoteException {
@@ -110,6 +115,4 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         //TODO proper message
         else return new GameController.Response(-1, "proper message");
     }
-    
-    
 }

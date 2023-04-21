@@ -1,4 +1,6 @@
 package it.polimi.ingsw.network.socket;
+
+import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
@@ -6,6 +8,7 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
+import it.polimi.ingsw.view.messages.ViewMsg;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -22,12 +25,14 @@ public class ClientSkeleton implements Client {
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot create output stream", e);
         }
         try {
             this.ois = new ObjectInputStream(socket.getInputStream());
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot create input stream", e);
         }
     }
@@ -38,7 +43,8 @@ public class ClientSkeleton implements Client {
             oos.writeObject(clientID);
             oos.reset();
             oos.flush();
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send client id", e);
         }
     }
@@ -49,7 +55,8 @@ public class ClientSkeleton implements Client {
             oos.writeObject(lobbies);
             oos.reset();
             oos.flush();
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send lobby list", e);
         }
     }
@@ -60,18 +67,21 @@ public class ClientSkeleton implements Client {
             oos.writeObject(o);
             oos.reset();
             oos.flush();
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send model view", e);
         }
         try {
             oos.writeObject(arg);
             oos.reset();
             oos.flush();
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send event", e);
         }
     }
     
+    /*
     public void receive(Server server) throws RemoteException {
         ViewMessage o;
         try {
@@ -92,5 +102,29 @@ public class ClientSkeleton implements Client {
         }
         
         server.update(o, arg);
+    }*/
+    public void receive(Server server) throws RemoteException {
+        ViewMsg<?> message;
+        GameController.Response response;
+        try {
+            message = (ViewMsg<?>) ois.readObject();
+            response = server.update(message);
+        }
+        catch( IOException e ) {
+            throw new RemoteException("Cannot receive message from client", e);
+        }
+        catch( ClassNotFoundException e ) {
+            throw new RemoteException("Sent message doesn't have the correct type", e);
+        }
+        try {
+            oos.writeObject(response);
+            oos.reset();
+            oos.flush();
+        }
+        catch( IOException e ) {
+            throw new RemoteException("Cannot send response", e);
+        }
     }
+    
+    
 }

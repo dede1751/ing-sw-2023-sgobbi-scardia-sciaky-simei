@@ -87,10 +87,25 @@ public class ServerStub implements Server {
             throw new RemoteException("Cannot send action", e);
         }
     }
-    //TODO to be completed
+    //FIXME to be tried
     @Override
     public GameController.Response update(ViewMsg<?> message) throws RemoteException {
-        return null;
+        try {
+            oos.writeObject(message);
+            oos.reset();
+            oos.flush();
+        } catch (IOException e) {
+            throw new RemoteException("Cannot send message", e);
+        }
+        try{
+            return (GameController.Response) ois.readObject();
+        }
+        catch( IOException e ) {
+            return new GameController.Response(1, "Cannot receive response");
+        }
+        catch( ClassNotFoundException e ) {
+            return new GameController.Response(128, "Server Responded with an invalid object");
+        }
     }
     
     public void receive(Client client) throws RemoteException {

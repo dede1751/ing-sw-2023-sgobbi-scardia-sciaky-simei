@@ -246,11 +246,11 @@ public class GameController {
     }
     
     public Response onMessage(ChatMessage chat){
-        return null;
+        return new Response(1, "Not implemented yet");
     }
     
     public Response onMessage(DebugMessage message){
-        System.out.println("debug message just arrived urray! It says : " + message.getPayload());
+        System.out.println("Debug message just arrived urray! It says : " + message.getPayload());
         return new Response(0, message.getPayload());
     }
     

@@ -66,6 +66,7 @@ public class AppClient {
         
         LocalClient client = new LocalClient(server, view);
         client.connectServer();
+        view.setServer(server);
         view.run();
     }
     
@@ -89,6 +90,7 @@ public class AppClient {
                 }
             }
         }).start();
+        view.setServer(serverStub);
         view.run();
     }
     

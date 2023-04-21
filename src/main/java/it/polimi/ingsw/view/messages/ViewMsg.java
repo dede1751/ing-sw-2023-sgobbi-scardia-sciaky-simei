@@ -1,6 +1,8 @@
 package it.polimi.ingsw.view.messages;
 
-public abstract class ViewMsg<Payload> {
+import java.io.Serializable;
+
+public abstract class ViewMsg<Payload extends Serializable> implements Serializable {
     
     private final Payload payload;
     private final String nickname;

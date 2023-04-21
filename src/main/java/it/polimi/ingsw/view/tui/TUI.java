@@ -109,7 +109,8 @@ public class TUI extends View {
             String input = scanner.next().trim();
             
             if( input.equals("PASS") ) {
-                this.setChangedAndNotifyObservers(Action.PASS_TURN);
+                //this.setChangedAndNotifyObservers(Action.PASS_TURN);
+                this.notifyDebugMessage("Turn Passed");
                 break;
             }
         }

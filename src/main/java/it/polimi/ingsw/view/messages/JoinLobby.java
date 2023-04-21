@@ -1,3 +1,5 @@
 package it.polimi.ingsw.view.messages;
 
-public record JoinLobby(String name, int id) {}
+import java.io.Serializable;
+
+public record JoinLobby(String name, int id) implements Serializable {}
