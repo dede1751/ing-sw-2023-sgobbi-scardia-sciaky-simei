@@ -4,14 +4,19 @@ import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.messages.JoinLobby;
+import it.polimi.ingsw.view.messages.LobbyInformation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class TUI extends View {
     
     private GameModelView model;
+    
+    List<LobbyController.LobbyView> lobbies;
     
     @Override
     public void run() {
@@ -36,17 +41,11 @@ public class TUI extends View {
     
     @Override
     public void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) {
-        if (lobbies.isEmpty()) {
+        
+        this.lobbies = lobbies;
+        if( lobbies.isEmpty() ) {
             System.out.println("No lobbies are currently available! Please create one... ");
             return;
-        }
-        
-        for ( LobbyController.LobbyView lobby: lobbies ) {
-            System.out.println("\n------LOBBY: " + lobby.lobbyID() + "------");
-            System.out.println("Occupancy: [" + lobby.nicknames().size() + "/" + lobby.lobbySize() + "]");
-            for ( String nickname: lobby.nicknames() ) {
-                System.out.println("\t" + nickname);
-            }
         }
         System.out.println("\nRemember to choose a unique Nickname!");
     }
@@ -74,25 +73,60 @@ public class TUI extends View {
             if( choice.equals("CREATE") ) {
                 // ask the user for the number of players in the lobby.
                 System.out.println("\nChoose the amount of players for the match (2-4): ");
+                int lobbySize;
                 while( true ) {
                     System.out.print("\n>>  ");
                     try {
-                        int lobbySize = Integer.parseInt(scanner.next());
+                        lobbySize = Integer.parseInt(scanner.next());
                         
                         if( lobbySize >= 2 && lobbySize <= 4 ) {
                             this.setSelectedPlayerCount(lobbySize);
                             break;
                         }
-                    } catch( NumberFormatException e ) {
+                    }
+                    catch( NumberFormatException e ) {
                         System.out.println("Please write a number");
                     }
                 }
-                this.setChangedAndNotifyObservers(Action.CREATE_LOBBY);
+                this.notifyCreateLobby(new LobbyInformation(lobbySize, this.getNickname()));
                 break;
-            } else if ( choice.equals("JOIN") ) {
-                this.setChangedAndNotifyObservers(Action.JOIN_LOBBY);
-                break;
-            } else {
+            }else if( choice.equals("JOIN") ) {
+                if( lobbies.isEmpty() ) {
+                    System.out.println("No lobbies are currently available, please create a new one");
+                }else {
+                    
+                    while( true ) {
+                        try {
+                            
+                            for( LobbyController.LobbyView lobby : lobbies ) {
+                                System.out.println("\n------LOBBY: " + lobby.lobbyID() + "------");
+                                System.out.println(
+                                        "Occupancy: [" + lobby.nicknames().size() + "/" + lobby.lobbySize() + "]");
+                                for( String nickname : lobby.nicknames() ) {
+                                    System.out.println("\t" + nickname);
+                                }
+                            }
+                            System.out.println("\nChose the lobby identifier");
+                            System.out.print("\n>>  ");
+                            int lobbyId = Integer.parseInt(scanner.next());
+                            //TODO to fix to incorporate lobby name
+                            Optional<LobbyController.LobbyView> name =
+                                    lobbies.stream().filter((x) -> x.lobbyID() == lobbyId).findFirst();
+                            if( name.isPresent() ) {
+                                this.notifyJoinLobby(new JoinLobby("", lobbyId));
+                                break;
+                            }else {
+                                System.out.println("Please select a valid lobby identifier");
+                            }
+                        }
+                        catch( NumberFormatException e ) {
+                            System.out.println("Please write a number");
+                        }
+                        
+                    }
+                    break;
+                }
+            }else {
                 System.out.println("Please choose one of [CREATE/JOIN]");
             }
         }
@@ -107,11 +141,12 @@ public class TUI extends View {
         while( true ) {
             System.out.print("\n>>  ");
             String input = scanner.next().trim();
-            
             if( input.equals("PASS") ) {
                 //this.setChangedAndNotifyObservers(Action.PASS_TURN);
-                this.notifyDebugMessage("Turn Passed");
+                var message = this.notifyDebugMessage("Turn Passed");
+                
                 break;
+                
             }
         }
     }
@@ -152,7 +187,8 @@ public class TUI extends View {
                 scanner.nextLine(); // consume the newline character
                 
             }
-        }while ( IntegrityChecks.checkSelectionForm(selection) );
+        }
+        while( IntegrityChecks.checkSelectionForm(selection) );
         System.out.println("Entered coordinates: " + selection);
         this.setSelectedCoordinates(selection);
         
@@ -183,12 +219,12 @@ public class TUI extends View {
     private void printBoard(Board board) {
         var def = "C-,-)";
         var matrix = board.getAsMatrix();
-        for(int i = 8; i >= 0; i-- ){
-            for(int j = 0; j < 9; j++){
-                if(matrix[i][j] == null) {
+        for( int i = 8; i >= 0; i-- ) {
+            for( int j = 0; j < 9; j++ ) {
+                if( matrix[i][j] == null ) {
                     System.out.print(def + ",");
-                }else{
-                    System.out.print(matrix[i][j].toString() + "," );
+                }else {
+                    System.out.print(matrix[i][j].toString() + ",");
                 }
                 System.out.print("\n");
             }
@@ -199,6 +235,7 @@ public class TUI extends View {
     private void printShelf(Shelf shelf) {
     
     }
+    
     public GameModelView getModel() {
         return model;
     }
@@ -238,5 +275,5 @@ public class TUI extends View {
         }
     }
     
-
+    
 }

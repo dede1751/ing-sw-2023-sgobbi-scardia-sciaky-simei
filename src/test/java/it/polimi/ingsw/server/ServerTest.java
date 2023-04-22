@@ -1,8 +1,8 @@
 package it.polimi.ingsw.server;
 
-import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.network.LocalServer;
+import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.*;
 import it.polimi.ingsw.view.tui.TUI;
@@ -28,14 +28,14 @@ public class ServerTest {
 
                 client1.connectServer();
 
-                GameController.Response t = server.update(new CreateLobbyMessage(new LobbyInformation(2, "Paolo"), "Roberto", tui1.getClientID()));
+                Response t = server.update(new CreateLobbyMessage(new LobbyInformation(2, "Paolo"), "Roberto", tui1.getClientID()));
                 System.out.println(t.msg());
                 LocalClient client2 = new LocalClient(server, tui2);
                 client2.connectServer();
-                GameController.Response m = server.update(new JoinLobbyMessage(new JoinLobby("Paolo", t.status()), "Luca",
-                                                                               tui2.getClientID() ));
+                Response m = server.update(new JoinLobbyMessage(new JoinLobby("Paolo", t.status()), "Luca",
+                                                                tui2.getClientID() ));
                 
-                GameController.Response r = server.update(new DebugMessage("Paolo", "Roberto", tui1.getClientID()));
+                Response r = server.update(new DebugMessage("Paolo", "Roberto", tui1.getClientID()));
                 System.out.println(r.msg());
                 assertEquals(0, r.status());
             }

@@ -3,12 +3,12 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
+import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 import it.polimi.ingsw.view.messages.*;
 
-import java.awt.desktop.SystemEventListener;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -253,26 +253,6 @@ public class GameController {
         System.out.println("Debug message just arrived urray! It says : " + message.getPayload());
         return new Response(0, message.getPayload());
     }
-    
-    public record Response(int status, String msg) {
-        public static Response Ok() {
-            return new Response(0, "OK");
-        }
-        
-        public static Response IllegalMove(String playerNick) {
-            System.err.println("Illegal move by player : " + playerNick + " will be ignored");
-            return new Response(-1, "Illegal Move : ignoring player action");
-        }
-        public static Response NotCurrentPlayer(String playerNick){
-            System.err.println(playerNick + " is not the current player, this event will be ignored");
-            return new Response(-1, "Not the current player : event will be ignored");
-        }
-        
-        
-        
-    }
-
-
     
     
 }

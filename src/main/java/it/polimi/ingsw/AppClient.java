@@ -13,6 +13,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
+
+
+
+/*FIXME know bugs
+    -if the user insert pass before the beginning of the game bad things will happen
+    -the game lets the user insert commands before the beginning of the game, big no no
+*/
+
 public class AppClient {
     
     public static void main( String[] args ) throws RemoteException, NotBoundException {
@@ -78,9 +86,11 @@ public class AppClient {
         new Thread(() -> {
             while(true) {
                 try {
-                    serverStub.receive(client);
-                } catch (RemoteException e) {
-                    System.err.println("Cannot receive from server. Stopping...");
+                    serverStub.receive();
+                } catch (RemoteException e){
+                    
+                    e.printStackTrace(System.err);
+                    System.err.println(e.getMessage() + "\n" + "Cannot receive from server. Stopping...");
                     try {
                         serverStub.close();
                     } catch (RemoteException ex) {
@@ -93,5 +103,4 @@ public class AppClient {
         view.setServer(serverStub);
         view.run();
     }
-    
 }

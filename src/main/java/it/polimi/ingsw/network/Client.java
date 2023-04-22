@@ -21,4 +21,5 @@ public interface Client extends Remote {
      */
     void update(GameModelView o, GameModel.Event evt) throws RemoteException;
     
+    
 }

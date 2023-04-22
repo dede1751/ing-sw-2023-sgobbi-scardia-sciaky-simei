@@ -1,13 +1,11 @@
 package it.polimi.ingsw.network.socket;
 
-import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewMessage;
 import it.polimi.ingsw.view.messages.ViewMsg;
 
 import java.io.IOException;
@@ -16,11 +14,13 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Optional;
 
 public class ClientSkeleton implements Client {
     
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
+    
     
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
@@ -105,7 +105,7 @@ public class ClientSkeleton implements Client {
     }*/
     public void receive(Server server) throws RemoteException {
         ViewMsg<?> message;
-        GameController.Response response;
+        Response response;
         try {
             message = (ViewMsg<?>) ois.readObject();
             response = server.update(message);

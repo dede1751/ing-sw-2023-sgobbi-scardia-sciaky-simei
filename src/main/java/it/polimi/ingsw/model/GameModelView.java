@@ -1,9 +1,11 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.network.Message;
+
 import java.io.Serializable;
 import java.util.List;
 
-public class GameModelView implements Serializable {
+public class GameModelView implements Serializable, Message {
     
     static final long serialVersionUID = 1L;
     

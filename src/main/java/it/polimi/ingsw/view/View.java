@@ -1,11 +1,11 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.utils.observer.Observable;
 import it.polimi.ingsw.view.messages.*;
@@ -82,31 +82,31 @@ public abstract class View extends Observable<View.Action> implements Runnable {
         notifyObservers(evt);
     }
     
-    protected <T extends ViewMsg<?>> GameController.Response notifyServer( T msg){
+    protected <T extends ViewMsg<?>> Response notifyServer(T msg){
         try{
             return server.update(msg);
         }catch( RemoteException e ){
-            e.printStackTrace();
-            return new GameController.Response(1, e.getMessage());
+            e.printStackTrace(System.err);
+            return new Response(1, e.getMessage());
         }
     }
     //FIXME proper error and response messages handling
-    protected GameController.Response notifyMove(Move move){
+    protected Response notifyMove(Move move){
         return notifyServer(new MoveMessage(move, this.nickname, this.clientID));
     }
-    protected GameController.Response notifyCreateLobby(LobbyInformation info){
+    protected Response notifyCreateLobby(LobbyInformation info){
         return notifyServer(new CreateLobbyMessage(info, this.nickname, this.clientID));
     }
-    protected GameController.Response notifyJoinLobby(JoinLobby info){
+    protected Response notifyJoinLobby(JoinLobby info){
         return notifyServer(new JoinLobbyMessage(info, this.nickname, this.clientID));
     }
-    protected GameController.Response notifyChatMessage(String message){
+    protected Response notifyChatMessage(String message){
         return notifyServer(new ChatMessage(message, this.nickname, this.clientID));
     }
-    protected GameController.Response notifyChatMessage(String message, String dst){
+    protected Response notifyChatMessage(String message, String dst){
         return notifyServer(new ChatMessage(message, dst, this.nickname, this.clientID));
     }
-    protected GameController.Response notifyDebugMessage(String info){
+    protected Response notifyDebugMessage(String info){
         return notifyServer(new DebugMessage(info, this.nickname, this.clientID));
     }
     

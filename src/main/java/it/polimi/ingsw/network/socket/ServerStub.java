@@ -1,11 +1,12 @@
 package it.polimi.ingsw.network.socket;
 
 
-import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.network.Message;
+import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
@@ -14,6 +15,9 @@ import it.polimi.ingsw.view.messages.ViewMsg;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.net.Socket;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -25,7 +29,11 @@ public class ServerStub implements Server {
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     
+    private ObjectInputStream responseOIS;
+    
     private Socket socket;
+    
+    private Client clientContext;
     
     public ServerStub(String ip, int port) {
         this.ip = ip;
@@ -67,6 +75,7 @@ public class ServerStub implements Server {
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize lobby info from server", e);
         }
+        this.clientContext = client;
     }
     
     @Override
@@ -89,7 +98,7 @@ public class ServerStub implements Server {
     }
     //FIXME to be tried
     @Override
-    public GameController.Response update(ViewMsg<?> message) throws RemoteException {
+    public Response update(ViewMsg<?> message) throws RemoteException {
         try {
             oos.writeObject(message);
             oos.reset();
@@ -97,27 +106,37 @@ public class ServerStub implements Server {
         } catch (IOException e) {
             throw new RemoteException("Cannot send message", e);
         }
-        try{
-            return (GameController.Response) ois.readObject();
-        }
-        catch( IOException e ) {
-            return new GameController.Response(1, "Cannot receive response");
-        }
-        catch( ClassNotFoundException e ) {
-            return new GameController.Response(128, "Server Responded with an invalid object");
-        }
+        return new Response(0, "Attend server Response...");
     }
     
-    public void receive(Client client) throws RemoteException {
-        GameModelView o;
+    public void receive() throws RemoteException {
+        
+        Object o;
         try {
-            o = (GameModelView) ois.readObject();
+            o = ois.readObject();
         } catch (IOException e) {
             throw new RemoteException("Cannot receive model view from server", e);
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize model view from server", e);
         }
+        try {
+            Method m = this.getClass().getMethod("onMessageReceived", o.getClass());
+            m.invoke(this, o);
+        }catch( NoSuchMethodException e ){
+            throw new RemoteException("Server responded with illformed object", e);
+        }
+        catch( InvocationTargetException | IllegalAccessException e ) {
+            throw new RemoteException("Something that shouldn't happen did indeed happen, tough luck", e);
+        }
         
+    }
+    
+    public void onMessageReceived(Response response){
+        
+        System.out.println(response.msg());
+    }
+    
+    public void onMessageReceived(GameModelView gmv) throws RemoteException{
         GameModel.Event arg;
         try {
             arg = (GameModel.Event) ois.readObject();
@@ -127,8 +146,10 @@ public class ServerStub implements Server {
             throw new RemoteException("Cannot deserialize event from server", e);
         }
         
-        client.update(o, arg);
+        this.clientContext.update(gmv, arg);
     }
+    
+    
     
     public void close() throws RemoteException {
         try {

@@ -1,7 +1,5 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
 import it.polimi.ingsw.view.messages.ViewMsg;
@@ -23,6 +21,6 @@ public interface Server extends Remote {
      */
     void update(ViewMessage msg, View.Action evt) throws RemoteException;
     
-    GameController.Response update(ViewMsg<?> message) throws RemoteException;
+    Response update(ViewMsg<?> message) throws RemoteException;
     
 }
