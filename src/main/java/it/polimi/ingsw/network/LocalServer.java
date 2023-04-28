@@ -41,36 +41,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         lobbyController.register(client);
     }
     
-    @Override
-    public synchronized void update(ViewMessage msg, View.Action evt) throws RemoteException {
-        int clientID = msg.getClientID();
-        if( !lobbyController.checkRegistration(clientID) ) {
-            throw new RemoteException("View is not registered to the server", new LoginException());
-        }
-        
-        switch( evt ) {
-            case CREATE_LOBBY -> lobbyController.createLobby(msg);
-            
-            case JOIN_LOBBY -> {
-                Map<Integer, GameController> mapping = lobbyController.joinLobby(msg);
-                
-                if( mapping != null ) {
-                    this.gameControllers.putAll(mapping);
-                }
-            }
-            
-            default -> {
-                GameController controller = gameControllers.get(clientID);
-                
-                if( controller != null ) {
-                    controller.update(msg, evt);
-                }else {
-                    throw new RemoteException("Ignoring View Events until game is started!");
-                }
-            }
-        }
-    }
-    
+    //TODO change RemoteException to responses;
     @Override
     public Response update(ViewMsg<?> message) throws RemoteException {
         int clientID = message.getClientId();
@@ -83,9 +54,13 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         }catch( NoSuchMethodException e){
             GameController controller = gameControllers.get(clientID);
             if(controller != null){
-                return controller.update(message);
+                try {
+                    return controller.update(message);
+                }catch( NoSuchMethodException f ){
+                    throw new RemoteException("Illegal message, no operation defined. Refere to the network manual");
+                }
             }else{
-                throw new RemoteException("Ingoring view Events until game is started!");
+                throw new RemoteException("Ignoring view Events until game is started!");
             }
         }
         catch( IllegalAccessException e ) {

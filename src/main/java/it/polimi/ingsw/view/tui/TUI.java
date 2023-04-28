@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.JoinLobby;
@@ -275,5 +276,9 @@ public class TUI extends View {
         }
     }
     
+    @Override
+    public void update(ModelMessage<?> msg){
+        //TODO
+    }
     
 }

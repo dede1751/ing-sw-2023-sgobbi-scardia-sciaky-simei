@@ -3,6 +3,7 @@ package it.polimi.ingsw.network.socket;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
+import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
@@ -80,29 +81,7 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send event", e);
         }
     }
-    
-    /*
-    public void receive(Server server) throws RemoteException {
-        ViewMessage o;
-        try {
-            o = (ViewMessage) ois.readObject();
-        } catch (IOException e) {
-            throw new RemoteException("Cannot receive message from client", e);
-        } catch (ClassNotFoundException e) {
-            throw new RemoteException("Cannot deserialize message from client", e);
-        }
-        
-        View.Action arg;
-        try {
-            arg = (View.Action) ois.readObject();
-        } catch (IOException e) {
-            throw new RemoteException("Cannot receive action from client", e);
-        } catch (ClassNotFoundException e) {
-            throw new RemoteException("Cannot deserialize action from client", e);
-        }
-        
-        server.update(o, arg);
-    }*/
+
     public void receive(Server server) throws RemoteException {
         ViewMsg<?> message;
         Response response;
@@ -125,6 +104,9 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send response", e);
         }
     }
-    
+    @Override
+    public void update(ModelMessage<?> msg){
+        //TODO
+    }
     
 }

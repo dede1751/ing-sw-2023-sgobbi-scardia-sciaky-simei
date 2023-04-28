@@ -183,46 +183,15 @@ public class GameController {
      * @param evt Type of user action that caused the view state change
      */
     //TODO change name to ViewMessage
-    public void update(ViewMessage o, View.Action evt) {
-        String currentPlayerNick = model.getCurrentPlayer().getNickname();
-        if( !o.getNickname().equals(currentPlayerNick) ) {
-            System.err.println(
-                    "Ignoring event from player '" + o.getNickname() + "': " + evt + ". Not the current Player.");
-            return;
-        }
-        
-        switch( evt ) {
-            case MOVE -> {
-                if( IntegrityChecks.checkSelectionForm(o.getSelection()) ) {
-                    model.removeSelection(o.getSelection());
-                    model.shelveSelection(o.getTiles(), o.getColumn());
-                    turnManager();
-                    nextPlayerSetter();
-                }
-            }
-            case CHAT -> {
-                //TODO chat functions;
-            }
-            case PASS_TURN -> {
-                //FIXME only for debug porpouses, to be removed in final version
-                System.out.println("Player '" + currentPlayerNick + "' passed his turn.");
-                nextPlayerSetter();
-            }
-        }
-    }
-    
-    public <T extends ViewMsg<?>> Response update(T message ){
+    public <T extends ViewMsg<?>> Response update(T message ) throws NoSuchMethodException{
         try {
             Method m = this.getClass().getMethod("onMessage", message.getMessageType());
             return (Response) m.invoke(this, message);
-        }catch( NoSuchMethodException e){
-            return new Response(-128, "Illegal message, no operation defined. Refere to the network manual");
         }
         catch( InvocationTargetException | IllegalAccessException e ) {
             return new Response(128, "Server is acting up, please be patient...");
         }
     }
-    
     
     
     public Response onMessage(MoveMessage msg){
@@ -254,5 +223,5 @@ public class GameController {
         return new Response(0, message.getPayload());
     }
     
-    
+
 }

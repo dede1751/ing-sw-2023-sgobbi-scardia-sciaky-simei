@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.utils.observer.Observable;
@@ -76,6 +77,7 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     }
     
     public abstract void update(GameModelView model, GameModel.Event evt);
+    public abstract void update(ModelMessage<?> msg);
     
     protected void setChangedAndNotifyObservers(View.Action evt) {
         setChanged();

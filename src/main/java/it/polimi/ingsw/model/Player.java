@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import java.io.Serializable;
 
 import com.google.gson.*;
+import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 
 import java.io.Serializable;

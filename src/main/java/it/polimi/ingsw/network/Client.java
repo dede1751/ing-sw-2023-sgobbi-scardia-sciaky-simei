@@ -3,6 +3,7 @@ package it.polimi.ingsw.network;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
+import it.polimi.ingsw.model.messages.ModelMessage;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -21,5 +22,6 @@ public interface Client extends Remote {
      */
     void update(GameModelView o, GameModel.Event evt) throws RemoteException;
     
+    void update(ModelMessage<?> msg) throws RemoteException;
     
 }

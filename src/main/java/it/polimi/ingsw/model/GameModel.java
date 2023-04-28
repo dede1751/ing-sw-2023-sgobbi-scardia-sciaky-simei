@@ -2,16 +2,18 @@ package it.polimi.ingsw.model;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.model.messages.ModelMessage;
+import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
+import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.observer.Observable;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.rmi.RemoteException;
+import java.util.*;
 
 /**
  * Game model class to be used as a representation of the game's state by the controller
@@ -38,6 +40,8 @@ public class GameModel extends Observable<GameModel.Event> {
     
     private int currentPlayerIndex;
     private final List<Player> players;
+    
+    private final Map<String, Client> clientMap;
     
     private final Board board;
     
@@ -79,6 +83,8 @@ public class GameModel extends Observable<GameModel.Event> {
         this.players = new ArrayList<>();
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
+        
+        this.clientMap = new HashMap<>(numPlayers);
     }
     
     public void startGame() {
@@ -94,7 +100,7 @@ public class GameModel extends Observable<GameModel.Event> {
         this.players = new ArrayList<>(numPlayers);
         this.board = board;
         this.tileBag = tileBag;
-        
+        this.clientMap = new HashMap<>(numPlayers);
     }
     
     /**
@@ -188,6 +194,29 @@ public class GameModel extends Observable<GameModel.Event> {
     public void addPlayer(String nickname, int pgID) { players.add(new Player(nickname, pgID)); }
     
     private void addPlayer(Player player) { players.add(player); }
+    
+    
+    /**
+     * Add client reference to model
+     * @param nickname
+     * @param client
+     * @throws DuplicateNickname
+     * @throws NoPlayerWithNickname
+     */
+    
+    
+    public void addClient(String nickname, Client client) throws DuplicateNickname, NoPlayerWithNickname {
+        if(this.clientMap.containsKey(nickname)) {
+            throw new DuplicateNickname(nickname);
+        }else if(
+                this.players.stream().filter((x) -> x.getNickname().equals(nickname)).count() != 1
+        ){
+            throw new NoPlayerWithNickname(nickname);
+        }else{
+            this.clientMap.put(nickname, client);
+        }
+    }
+    
     
     /**
      * Returns the entire player list
@@ -316,6 +345,20 @@ public class GameModel extends Observable<GameModel.Event> {
         setChanged();
         notifyObservers(evt);
     }
+    
+    
+    private <T extends ModelMessage<?>> void notifyClient(T msg, String playerNick){
+        Client c = this.clientMap.get(playerNick);
+        try{
+            c.update(msg);
+        }catch( RemoteException e ){
+            System.err.println(e.getMessage());
+        }
+    }
+    
+    
+    
+    
     
     protected static class ModelSerializer implements JsonSerializer<GameModel> {
         @Override

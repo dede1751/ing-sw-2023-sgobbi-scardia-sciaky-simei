@@ -3,6 +3,7 @@ package it.polimi.ingsw.network;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
+import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.ViewMessage;
@@ -49,7 +50,7 @@ public class LocalClient extends UnicastRemoteObject implements Client {
             System.err.println("Unable to register to server: " + e.getMessage() + ". Exiting...");
             System.exit(1);
         }
-        
+        /*
         view.addObserver((o, evt) -> {
             try {
                 server.update(new ViewMessage(view), evt);
@@ -66,11 +67,17 @@ public class LocalClient extends UnicastRemoteObject implements Client {
                 }
             }
         });
+        */
     }
     
     @Override
     public void update(GameModelView o, GameModel.Event evt) {
         view.update(o, evt);
+    }
+    
+    @Override
+    public void update(ModelMessage<?> msg){
+        view.update(msg);
     }
     
 }

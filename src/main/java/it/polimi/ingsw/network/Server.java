@@ -16,10 +16,8 @@ public interface Server extends Remote {
     
     /**
      * Notify the server that a client has made a choice
-     * @param msg  the message sent by the client
-     * @param evt  the action performed by the client
+     * @param message the message sent by the view
      */
-    void update(ViewMessage msg, View.Action evt) throws RemoteException;
     
     Response update(ViewMsg<?> message) throws RemoteException;
     

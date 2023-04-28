@@ -91,25 +91,14 @@ public class LobbyController {
     }
     
     /**
-     * Create a lobby from an appropriate ViewMessage
-     * Only call when msg is associated with a CREATE_LOBBY action
+     * Create a new lobby
      *
-     * @param msg Message received from view
-     *
-     * @return Created lobby ID
+     * @param info the initial information about the lobby: its name and size
+     * @param firstPlayer the nickname of the first player
+     * @param fpId the id of the first player
+     * @return the id of the lobby
      */
-    public void createLobby(ViewMessage msg) {
-        Lobby newLobby = new Lobby(
-                new ArrayList<>(List.of(msg.getNickname())),
-                new ArrayList<>(List.of(msg.getClientID())),
-                msg.getLobbySize(),
-                lobbyIDCounter,
-                "Old Lobby Creation"
-        );
-        lobbies.put(lobbyIDCounter, newLobby);
-        lobbyIDCounter++;
-    }
-    
+
     public int createLobby(LobbyInformation info, String firstPlayer, int fpId) {
         Lobby newLobby = new Lobby(
                 new ArrayList<>(List.of(firstPlayer)),
@@ -132,34 +121,6 @@ public class LobbyController {
      *
      * @return Map between clientIDs and the same gamecontroller, null if no game started
      */
-    public Map<Integer, GameController> joinLobby(ViewMessage msg) throws RemoteException {
-        if( this.noLobbyAvailable() ) {
-            this.clientMapping.remove(msg.getClientID());
-            throw new RemoteException("No available lobby to join, please create one yourself!", new LoginException());
-        }
-        if( this.nicknameTaken(msg.getNickname()) ) {
-            this.clientMapping.remove(msg.getClientID());
-            throw new RemoteException("Nickname '" + msg.getNickname() + "' is already taken!", new LoginException());
-        }
-        
-        // find a lobby that isn't full
-        Lobby lobby = this.lobbies.values()
-                .stream()
-                .filter(Lobby::isEmpty)
-                .findFirst()
-                .orElseThrow();
-        
-        lobby.nicknames.add(msg.getNickname());
-        lobby.clientIDs.add(msg.getClientID());
-        
-        // check if the game needs to be started
-        if( !lobby.isEmpty() ) {
-            return initGame(lobby);
-        }else {
-            return null;
-        }
-    }
-    
     
     public Map<Integer, GameController> joinLobby(JoinLobbyMessage msg) throws RemoteException {
         
@@ -190,15 +151,6 @@ public class LobbyController {
             return null;
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     private boolean noLobbyAvailable() {
         return lobbies.values()

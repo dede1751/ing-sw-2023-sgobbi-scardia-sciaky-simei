@@ -77,26 +77,6 @@ public class ServerStub implements Server {
         }
         this.clientContext = client;
     }
-    
-    @Override
-    public void update(ViewMessage o, View.Action arg) throws RemoteException {
-        try {
-            oos.writeObject(o);
-            oos.reset();
-            oos.flush();
-        } catch (IOException e) {
-            throw new RemoteException("Cannot send message", e);
-        }
-        
-        try {
-            oos.writeObject(arg);
-            oos.reset();
-            oos.flush();
-        } catch (IOException e) {
-            throw new RemoteException("Cannot send action", e);
-        }
-    }
-    //FIXME to be tried
     @Override
     public Response update(ViewMsg<?> message) throws RemoteException {
         try {
