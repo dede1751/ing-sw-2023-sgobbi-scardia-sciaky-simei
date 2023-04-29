@@ -1,6 +1,6 @@
 package it.polimi.ingsw.view.messages;
 
-public class JoinLobbyMessage extends ViewMsg<JoinLobby>{
+public class JoinLobbyMessage extends ViewMessage<JoinLobby> {
     
     
     public JoinLobbyMessage(JoinLobby joinLobby, String playerNick, int clientId) {

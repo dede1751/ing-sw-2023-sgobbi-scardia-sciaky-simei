@@ -1,13 +1,11 @@
 package it.polimi.ingsw.network.socket;
 
-import it.polimi.ingsw.controller.LobbyController;
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.view.messages.ViewMsg;
+import it.polimi.ingsw.utils.ReflectionUtility;
+import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.util.List;
 
 public class ServerStub implements Server {
     
@@ -64,7 +61,7 @@ public class ServerStub implements Server {
         this.clientContext = client;
     }
     @Override
-    public Response update(ViewMsg<?> message) throws RemoteException {
+    public Response update(ViewMessage<?> message) throws RemoteException {
         try {
             oos.writeObject(message);
             oos.reset();
@@ -86,7 +83,7 @@ public class ServerStub implements Server {
             throw new RemoteException("Cannot deserialize model view from server", e);
         }
         try {
-            Method m = this.getClass().getMethod("onMessageReceived", o.getClass());
+            Method m = ReflectionUtility.GetMethod(this.getClass(), "onMessageReceived", o.getClass());
             m.invoke(this, o);
         }catch( NoSuchMethodException e ){
             throw new RemoteException("Server responded with illformed object", e);
@@ -102,31 +99,8 @@ public class ServerStub implements Server {
         System.out.println(response.msg());
     }
     
-    public void onMessageReceived(GameModelView gmv) throws RemoteException{
-        GameModel.Event arg;
-        try {
-            arg = (GameModel.Event) ois.readObject();
-        } catch (IOException e) {
-            throw new RemoteException("Cannot receive event from server", e);
-        } catch (ClassNotFoundException e) {
-            throw new RemoteException("Cannot deserialize event from server", e);
-        }
-        
-        this.clientContext.update(gmv, arg);
-    }
-    
-    public void onMessageReceived(ModelMessage<?> mgs) throws RemoteException{
-        ModelMessage<?> message;
-        try {
-            message = (ModelMessage<?>) ois.readObject();
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot receive message (ModelMessage)");
-        }
-        catch( ClassNotFoundException e ) {
-            throw new RemoteException("Cannot deserialize message (ModelMessage)");
-        }
-        this.clientContext.update(message);
+    public <T extends ModelMessage<?>> void onMessageReceived(T mgs) throws RemoteException{
+        this.clientContext.update(mgs);
     }
     
     

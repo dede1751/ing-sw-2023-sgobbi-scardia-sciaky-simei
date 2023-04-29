@@ -1,16 +1,13 @@
 package it.polimi.ingsw.network;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.utils.exceptions.LoginException;
-import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.RequestLobby;
-import it.polimi.ingsw.view.messages.ViewMsg;
+import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -46,7 +43,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     
     //TODO change RemoteException to responses;
     @Override
-    public Response update(ViewMsg<?> message) throws RemoteException {
+    public Response update(ViewMessage<?> message) throws RemoteException {
         int clientID = message.getClientId();
         if( !lobbyController.checkRegistration(clientID) ) {
             throw new RemoteException("Client is not registered to the server", new LoginException());
@@ -60,10 +57,10 @@ public class LocalServer extends UnicastRemoteObject implements Server {
                 try {
                     return controller.update(message);
                 }catch( NoSuchMethodException f ){
-                    throw new RemoteException("Illegal message, no operation defined. Refere to the network manual");
+                    return new Response(-1, "Illegal message, no operation defined. Refere to the network manual");
                 }
             }else{
-                throw new RemoteException("Ignoring view Events until game is started!");
+                return new Response(-1, "Ignoring view Events until game is started!");
             }
         }
         catch( IllegalAccessException e ) {

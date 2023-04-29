@@ -1,7 +1,6 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.messages.ViewMsg;
+import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -18,6 +17,6 @@ public interface Server extends Remote {
      * @param message the message sent by the view
      */
     
-    Response update(ViewMsg<?> message) throws RemoteException;
+    Response update(ViewMessage<?> message) throws RemoteException;
     
 }

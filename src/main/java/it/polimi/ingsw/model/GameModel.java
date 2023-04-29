@@ -8,7 +8,6 @@ import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
 import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
-import it.polimi.ingsw.utils.observer.Observable;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 
 import java.lang.reflect.Type;
@@ -19,12 +18,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Game model class to be used as a representation of the game's state by the controller
  */
-public class GameModel extends Observable<GameModel.Event> {
+public class GameModel {
     
-    
-    public enum Event {
-        GAME_START, LAST_TURN, NEW_CURRENT_PLAYER, FINISHED_GAME,
-    }
     
     private final int numPlayers;
     
@@ -355,11 +350,6 @@ public class GameModel extends Observable<GameModel.Event> {
      */
     public int getTileAmount(Tile tile) {
         return this.tileBag.getTileAmount(tile);
-    }
-    
-    private void setChangedAndNotifyObservers(Event evt) {
-        setChanged();
-        notifyObservers(evt);
     }
     
     

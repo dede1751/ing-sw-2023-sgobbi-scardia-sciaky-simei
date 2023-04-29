@@ -1,6 +1,6 @@
 package it.polimi.ingsw.view.messages;
 
-public class ChatMessage extends ViewMsg<String>{
+public class ChatMessage extends ViewMessage<String> {
     
     private final String dest;
     

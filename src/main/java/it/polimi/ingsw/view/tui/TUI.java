@@ -2,10 +2,7 @@ package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
-import it.polimi.ingsw.model.messages.BoardMessage;
-import it.polimi.ingsw.model.messages.EndGameMessage;
-import it.polimi.ingsw.model.messages.ModelMessage;
+import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.JoinLobby;
@@ -17,7 +14,7 @@ import java.util.*;
 
 public class TUI extends View {
     
-    private GameModelView modelView;
+    private final Object LobbyRequestLock = new Object();
     
     List<LobbyController.LobbyView> lobbies;
     
@@ -40,17 +37,6 @@ public class TUI extends View {
                 this.setChangedAndNotifyObservers(Action.MOVE);
             }*/
         }
-    }
-    
-    @Override
-    public void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) {
-        
-        this.lobbies = lobbies;
-        if( lobbies.isEmpty() ) {
-            System.out.println("No lobbies are currently available! Please create one... ");
-            return;
-        }
-        System.out.println("\nRemember to choose a unique Nickname!");
     }
     
     private void userLogin() {
@@ -96,24 +82,22 @@ public class TUI extends View {
             }else if( choice.equals("JOIN") ) {
                 
                 //FIXME SUPER SKETCHY!!!
-                notifyRequestLobby(new LobbyInformation(null, null));
-                try{
-                    this.wait();
-                }catch( InterruptedException ignored ) {}
+                synchronized(LobbyRequestLock) {
+                    notifyRequestLobby(new LobbyInformation(null, null));
+                    try {
+                        LobbyRequestLock.wait();
+                    }
+                    catch( InterruptedException ignored ) {
+                    }
+                }
                 if( lobbies.isEmpty() ) {
                     System.out.println("No lobbies are currently available, please create a new one");
                 }else {
                     
                     while( true ) {
                         try {
-                            
                             for( LobbyController.LobbyView lobby : lobbies ) {
-                                System.out.println("\n------LOBBY: " + lobby.lobbyID() + "------");
-                                System.out.println(
-                                        "Occupancy: [" + lobby.nicknames().size() + "/" + lobby.lobbySize() + "]");
-                                for( String nickname : lobby.nicknames() ) {
-                                    System.out.println("\t" + nickname);
-                                }
+                                System.out.print(lobby);
                             }
                             System.out.println("\nChose the lobby identifier");
                             System.out.print("\n>>  ");
@@ -162,7 +146,7 @@ public class TUI extends View {
     
     
     //TODO add tile order selection
-    public void askSelection(GameModelView model) {
+    public void askSelection() {
         
         Scanner scanner = new Scanner(System.in);
         List<Coordinate> selection = new ArrayList<>();
@@ -203,14 +187,12 @@ public class TUI extends View {
         
     }
     
-    public void askColumn(GameModelView model) {
+    public void askColumn() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the column in which you want to place your selection: ");
         int column = scanner.nextInt();
         scanner.nextLine();
         this.setColumn(column);
-        
-        
     }
     
     private Coordinate getCoordinate() {
@@ -254,44 +236,6 @@ public class TUI extends View {
     
     }
     
-    public GameModelView getModelView() {
-        return modelView;
-    }
-    
-    public void setModelView(GameModelView modelView) {
-        this.modelView = modelView;
-    }
-    
-    @Override
-    public void update(GameModelView model, GameModel.Event evt) {
-        switch( evt ) {
-            case GAME_START -> System.out.println("The game has started!");
-            
-            case NEW_CURRENT_PLAYER -> {
-                System.out.println("Current player has changed to " + model.getCurrentPlayerIndex() + ". Players: ");
-                
-                for( Player player : model.getPlayers() ) {
-                    System.out.println(player.getNickname() + " " + player.getScore());
-                }
-                
-                /*setModelView(modelView);
-                System.out.println();
-                
-                printBoard(modelView.getBoard());
-                askSelection(modelView);            //set the asked selection to the view message selection
-                askColumn(modelView);
-                //TODO change event
-                this.setChangedAndNotifyObservers(Action.MOVE);
-                System.out.println();*/
-                
-            }
-            case LAST_TURN -> {
-            
-            }
-            case FINISHED_GAME -> System.out.println("GAME OVER, THE WINNER IS ");
-            default -> System.err.println("Ignoring event from " + model + ": " + evt);
-        }
-    }
     
     @Override
     public void update(ModelMessage<?> msg) {
@@ -311,18 +255,23 @@ public class TUI extends View {
     }
     
     //FIXME
-    private void onMessage(BoardMessage msg){
+    @SuppressWarnings("unused")
+    public void onMessage(BoardMessage msg){
         this.model.setBoard(msg.getPayload());
         printBoard(this.model.getBoard());
     }
     
     //FIXME sketchy part 3
-    private void onMessage(AvailableLobbyMessage msg){
-        this.lobbies = msg.getPayload();
-        this.notifyAll();
+    @SuppressWarnings("unused")
+    public void onMessage(AvailableLobbyMessage msg){
+        this.lobbies = msg.getPayload().lobbyViewList();
+        synchronized(LobbyRequestLock) {
+            LobbyRequestLock.notifyAll();
+        }
     }
     
-    private void onMessage(EndGameMessage msg){
+    @SuppressWarnings("unused")
+    public void onMessage(EndGameMessage msg){
         var p = msg.getPayload();
         System.out.println("GAME FINISHED, THE WINNER IS " + p.winner() );
         System.out.println("LEADERBOARD : ");
@@ -331,6 +280,12 @@ public class TUI extends View {
         }
     }
     
-    
+    @SuppressWarnings("unused")
+    public void onMessage(StartGameMessage msg){
+        model.setPlayersNicknames(msg.getPayload().nicknames());
+        System.out.println("GAME START!");
+        System.out.println("Players name:");
+        msg.getPayload().nicknames().forEach(System.out::println);
+    }
     
 }

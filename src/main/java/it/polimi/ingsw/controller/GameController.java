@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
-import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -177,7 +176,7 @@ public class GameController {
      * @param message ViewMessage containing all relevant view information
      */
     //TODO change name to ViewMessage
-    public <T extends ViewMsg<?>> Response update(T message ) throws NoSuchMethodException{
+    public <T extends ViewMessage<?>> Response update(T message ) throws NoSuchMethodException{
         try {
             Method m = this.getClass().getMethod("onMessage", message.getMessageType());
             return (Response) m.invoke(this, message);

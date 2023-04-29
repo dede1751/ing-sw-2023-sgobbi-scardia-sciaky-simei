@@ -1,7 +1,6 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
@@ -34,6 +33,16 @@ public class LobbyController {
     }
     
     public record LobbyView(List<String> nicknames, int lobbySize, int lobbyID) implements Serializable {
+        @Override
+        public String toString() {
+            StringBuilder nickames = new StringBuilder();
+            for( String nickname : this.nicknames() ) {
+                nickames.append("\t").append(nickname).append("\n");
+            }
+            return ("\n------LOBBY: " + this.lobbyID() + "------\n") +
+                   ("Occupancy: [" + this.nicknames().size() + "/" + this.lobbySize() + "]\n")
+                   + nickames;
+        }
     }
     
     // Lobbies are mapped by their unique lobbyID
@@ -210,15 +219,6 @@ public class LobbyController {
             int clientID = lobby.clientIDs().get(i);
             
             Client client = clientMapping.get(clientID);
-            model.addObserver((o, evt) -> {
-                try {
-                    client.update(new GameModelView((GameModel) o), evt);
-                }
-                catch( RemoteException e ) {
-                    System.err.println("Unable to update the client: " + e.getMessage() + ". Skipping the update...");
-                }
-            });
-            
             model.addPlayer(lobby.nicknames().get(i), personalGoalIndices[i]);
             try {
                 model.addClient(lobby.nicknames().get(i), client);

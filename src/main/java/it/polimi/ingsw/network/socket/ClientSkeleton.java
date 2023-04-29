@@ -1,21 +1,16 @@
 package it.polimi.ingsw.network.socket;
 
-import it.polimi.ingsw.controller.LobbyController;
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.view.messages.ViewMsg;
+import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Optional;
 
 public class ClientSkeleton implements Client {
     
@@ -61,31 +56,11 @@ public class ClientSkeleton implements Client {
     }
     
     
-    @Override
-    public void update(GameModelView o, GameModel.Event arg) throws RemoteException {
-        try {
-            oos.writeObject(o);
-            oos.reset();
-            oos.flush();
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot send model view", e);
-        }
-        try {
-            oos.writeObject(arg);
-            oos.reset();
-            oos.flush();
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot send event", e);
-        }
-    }
-    
     public void receive(Server server) throws RemoteException {
-        ViewMsg<?> message;
+        ViewMessage<?> message;
         Response response;
         try {
-            message = (ViewMsg<?>) ois.readObject();
+            message = (ViewMessage<?>) ois.readObject();
             response = server.update(message);
         }
         catch( IOException e ) {

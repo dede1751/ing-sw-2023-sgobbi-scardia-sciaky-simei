@@ -4,8 +4,8 @@ import it.polimi.ingsw.controller.LobbyController;
 
 import java.util.List;
 
-public class AvailableLobbyMessage extends ModelMessage<List<LobbyController.LobbyView>> {
+public class AvailableLobbyMessage extends ModelMessage<LobbyPayload>{
     public AvailableLobbyMessage(List<LobbyController.LobbyView> p) {
-        super(p);
+        super(new LobbyPayload(p));
     }
 }

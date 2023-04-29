@@ -2,7 +2,7 @@ package it.polimi.ingsw.model.messages;
 
 import java.io.Serializable;
 
-abstract public class ModelMessage<Payload> implements Serializable {
+abstract public class ModelMessage<Payload extends Serializable> implements Serializable {
     
     final private Payload payload;
     public Payload getPayload(){
