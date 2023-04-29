@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
 import com.google.gson.*;
-import it.polimi.ingsw.model.messages.ModelComponent;
 import it.polimi.ingsw.utils.exceptions.CommonException;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
@@ -15,7 +14,7 @@ import java.util.function.Predicate;
 /**
  * Board representation for the model
  */
-public class Board implements Serializable, ModelComponent {
+public class Board implements Serializable{
     
     private final Map<Coordinate, Tile> tileOccupancy;
     

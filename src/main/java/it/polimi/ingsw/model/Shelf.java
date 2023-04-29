@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Shelf representation within the model
  */
-public class Shelf implements Serializable {
+public class Shelf implements Serializable{
     
     static final long serialVersionUID = 1L;
     

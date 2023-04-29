@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewMessage;
 import it.polimi.ingsw.view.messages.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -167,20 +166,15 @@ public class GameController {
      * Notify the views of the winner and close the lobby
      */
     public void endGame() {
-        Player winner = model.getPlayers()
-                .stream()
-                .max(Comparator.comparingInt(Player::getScore))
-                .orElseThrow();
         
-        model.setWinner(winner.getNickname());
+        model.notifyWinner();
         LobbyController.getInstance().endGame(this.lobbyID);
     }
     
     /**
      * Callback from view
      *
-     * @param o   ViewMessage containing all relevant view information
-     * @param evt Type of user action that caused the view state change
+     * @param message ViewMessage containing all relevant view information
      */
     //TODO change name to ViewMessage
     public <T extends ViewMsg<?>> Response update(T message ) throws NoSuchMethodException{
@@ -223,5 +217,4 @@ public class GameController {
         return new Response(0, message.getPayload());
     }
     
-
 }

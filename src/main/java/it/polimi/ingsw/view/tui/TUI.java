@@ -2,20 +2,22 @@ package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
+import it.polimi.ingsw.model.messages.BoardMessage;
+import it.polimi.ingsw.model.messages.EndGameMessage;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.JoinLobby;
 import it.polimi.ingsw.view.messages.LobbyInformation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class TUI extends View {
     
-    private GameModelView model;
+    private GameModelView modelView;
     
     List<LobbyController.LobbyView> lobbies;
     
@@ -28,13 +30,13 @@ public class TUI extends View {
             askPassTurn();
             
             //FIXME getviewid nonè ciò che è inteso nel seguente codice
-            /*if(this.getViewID()==model.getCurrentPlayerIndex()){
-                Player currentPlayer = model.getPlayers().get(model.getCurrentPlayerIndex());
+            /*if(this.getViewID()==modelView.getCurrentPlayerIndex()){
+                Player currentPlayer = modelView.getPlayers().get(modelView.getCurrentPlayerIndex());
                 System.out.println("my score is "+ currentPlayer.getScore());
-                printBoard(model.getBoard());
+                printBoard(modelView.getBoard());
                 printShelf(currentPlayer.getShelf());
-                askSelection(model);            //set the asked selection to the view message selection
-                askColumn(model);
+                askSelection(modelView);            //set the asked selection to the view message selection
+                askColumn(modelView);
                 this.setChangedAndNotifyObservers(Action.MOVE);
             }*/
         }
@@ -92,6 +94,12 @@ public class TUI extends View {
                 this.notifyCreateLobby(new LobbyInformation(lobbySize, this.getNickname()));
                 break;
             }else if( choice.equals("JOIN") ) {
+                
+                //FIXME SUPER SKETCHY!!!
+                notifyRequestLobby(new LobbyInformation(null, null));
+                try{
+                    this.wait();
+                }catch( InterruptedException ignored ) {}
                 if( lobbies.isEmpty() ) {
                     System.out.println("No lobbies are currently available, please create a new one");
                 }else {
@@ -215,17 +223,26 @@ public class TUI extends View {
         return new Coordinate(x, y);
     }
     
-    
-    //TODO check
     private void printBoard(Board board) {
+        
         var def = "C-,-)";
-        var matrix = board.getAsMatrix();
-        for( int i = 8; i >= 0; i-- ) {
-            for( int j = 0; j < 9; j++ ) {
-                if( matrix[i][j] == null ) {
+        if( board == null ) {
+            System.out.println("Board Still not initialized!");
+            for( int i = 8; i >= 0; i-- ) {
+                for( int j = 0; j < 9; j++ ) {
                     System.out.print(def + ",");
-                }else {
-                    System.out.print(matrix[i][j].toString() + ",");
+                }
+                System.out.print("\n");
+            }
+        }else {
+            var matrix = board.getAsMatrix();
+            for( int i = 8; i >= 0; i-- ) {
+                for( int j = 0; j < 9; j++ ) {
+                    if( matrix[i][j] == null ) {
+                        System.out.print(def + ",");
+                    }else {
+                        System.out.print(matrix[i][j].toString() + ",");
+                    }
                 }
                 System.out.print("\n");
             }
@@ -237,12 +254,12 @@ public class TUI extends View {
     
     }
     
-    public GameModelView getModel() {
-        return model;
+    public GameModelView getModelView() {
+        return modelView;
     }
     
-    public void setModel(GameModelView model) {
-        this.model = model;
+    public void setModelView(GameModelView modelView) {
+        this.modelView = modelView;
     }
     
     @Override
@@ -257,12 +274,12 @@ public class TUI extends View {
                     System.out.println(player.getNickname() + " " + player.getScore());
                 }
                 
-                /*setModel(model);
+                /*setModelView(modelView);
                 System.out.println();
                 
-                printBoard(model.getBoard());
-                askSelection(model);            //set the asked selection to the view message selection
-                askColumn(model);
+                printBoard(modelView.getBoard());
+                askSelection(modelView);            //set the asked selection to the view message selection
+                askColumn(modelView);
                 //TODO change event
                 this.setChangedAndNotifyObservers(Action.MOVE);
                 System.out.println();*/
@@ -271,14 +288,49 @@ public class TUI extends View {
             case LAST_TURN -> {
             
             }
-            case FINISHED_GAME -> System.out.println("GAME OVER, THE WINNER IS " + model.getWinner());
+            case FINISHED_GAME -> System.out.println("GAME OVER, THE WINNER IS ");
             default -> System.err.println("Ignoring event from " + model + ": " + evt);
         }
     }
     
     @Override
-    public void update(ModelMessage<?> msg){
-        //TODO
+    public void update(ModelMessage<?> msg) {
+        try{
+            Method m = this.getClass().getMethod("onMessage", msg.getClass());
+            m.invoke(this, msg);
+        }
+        catch( NoSuchMethodException e ) {
+            System.out.println("There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
+        }
+        catch( InvocationTargetException e ) {
+            e.printStackTrace(System.err);
+        }
+        catch( IllegalAccessException e ) {
+            System.err.println("Illegal access exception in update, controll code");
+        }
     }
+    
+    //FIXME
+    private void onMessage(BoardMessage msg){
+        this.model.setBoard(msg.getPayload());
+        printBoard(this.model.getBoard());
+    }
+    
+    //FIXME sketchy part 3
+    private void onMessage(AvailableLobbyMessage msg){
+        this.lobbies = msg.getPayload();
+        this.notifyAll();
+    }
+    
+    private void onMessage(EndGameMessage msg){
+        var p = msg.getPayload();
+        System.out.println("GAME FINISHED, THE WINNER IS " + p.winner() );
+        System.out.println("LEADERBOARD : ");
+        for(var x : p.points().entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList()){
+            System.out.println(x.getKey() + " : " + x.getValue());
+        }
+    }
+    
+    
     
 }

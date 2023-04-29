@@ -2,9 +2,11 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
+import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
 import it.polimi.ingsw.utils.exceptions.LoginException;
-import it.polimi.ingsw.view.ViewMessage;
+import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.view.messages.JoinLobby;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.LobbyInformation;
@@ -26,6 +28,9 @@ public class LobbyController {
         public boolean isEmpty() {
             return nicknames.size() < lobbySize();
         }
+        public LobbyView getLobbyView(){
+            return new LobbyView(nicknames, lobbySize, lobbyID);
+        }
     }
     
     public record LobbyView(List<String> nicknames, int lobbySize, int lobbyID) implements Serializable {
@@ -39,8 +44,7 @@ public class LobbyController {
     private final HashMap<Integer, Client> clientMapping = new HashMap<>();
     private int clientIDCounter = 0;
     
-    private LobbyController() {
-    }
+    private LobbyController() {}
     
     public static LobbyController getInstance() {
         if( INSTANCE == null ) {
@@ -58,16 +62,11 @@ public class LobbyController {
      * @throws RemoteException Unable to set the client's id
      */
     public void register(Client client) throws RemoteException {
+        
         client.setClientID(clientIDCounter);
         this.clientMapping.put(clientIDCounter, client);
         clientIDCounter++;
-        
-        List<LobbyView> availableLobbies = this.lobbies.values()
-                .stream()
-                .filter(Lobby::isEmpty)
-                .map((l) -> new LobbyView(l.nicknames, l.lobbySize, l.lobbyID))
-                .toList();
-        client.setAvailableLobbies(availableLobbies);
+        client.update(new AvailableLobbyMessage(searchForLobbies(new LobbyInformation(null, null))));
     }
     
     /**
@@ -80,6 +79,35 @@ public class LobbyController {
     public boolean checkRegistration(int clientID) {
         return this.clientMapping.get(clientID) != null;
     }
+    
+    
+    /**
+     * Return the reference to the client object corrisponding to the supplied id
+     * @param clientID clientID to be returned
+     * @return Client object corrisponding to the supplied id
+     */
+    
+    public Client getClient(int clientID){
+        return clientMapping.get(clientID);
+    }
+    
+    
+    /**
+     * Search for available lobbies with the information given in info.
+     * Any null parameters in info is ignored in the search.
+     * @param info information on the lobbies
+     * @return a list of lobbyView of all the available lobbies that match info parameters
+     */
+    public List<LobbyView> searchForLobbies(LobbyInformation info){
+        return this.lobbies.values()
+                .stream()
+                .filter(Lobby::isEmpty)
+                .filter((x) -> info.size() == null || (info.size().equals(x.lobbySize())))
+                .filter((x) -> info.name() == null || (x.lobbyName().equals(info.name())))
+                .map(Lobby::getLobbyView)
+                .toList();
+    }
+    
     
     /**
      * End a game, removing the lobby from the tracked list of lobbies
@@ -192,8 +220,12 @@ public class LobbyController {
             });
             
             model.addPlayer(lobby.nicknames().get(i), personalGoalIndices[i]);
+            try {
+                model.addClient(lobby.nicknames().get(i), client);
+            }
+            catch( DuplicateNickname | NoPlayerWithNickname ignored ) {
+            }
         }
-        
         Map<Integer, GameController> gameMapping = new HashMap<>();
         GameController controller = new GameController(model, lobby.lobbyID);
         

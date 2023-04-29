@@ -13,8 +13,7 @@ public interface Client extends Remote {
     
     void setClientID(int clientID) throws RemoteException;
     
-    void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) throws RemoteException;
-    
+    int getClientID() throws RemoteException;
     /**
      * Notify the client of a model change
      * @param o     The resulting model view

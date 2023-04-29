@@ -1,12 +1,15 @@
 package it.polimi.ingsw.network;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
+import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewMessage;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
+import it.polimi.ingsw.view.messages.RequestLobby;
 import it.polimi.ingsw.view.messages.ViewMsg;
 
 import java.lang.reflect.InvocationTargetException;
@@ -46,7 +49,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     public Response update(ViewMsg<?> message) throws RemoteException {
         int clientID = message.getClientId();
         if( !lobbyController.checkRegistration(clientID) ) {
-            throw new RemoteException("View is not registered to the server", new LoginException());
+            throw new RemoteException("Client is not registered to the server", new LoginException());
         }
         try {
             Method m = this.getClass().getMethod("onMessage", message.getMessageType());
@@ -89,4 +92,20 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         //TODO proper message
         else return new Response(-1, "proper message");
     }
+    
+    //FIXME sketchy
+    public Response onMessage(RequestLobby requestLobby) throws RemoteException{
+        if( lobbyController.checkRegistration(requestLobby.getClientId()) ){
+            Client c = lobbyController.getClient(requestLobby.getClientId());
+            c.update(new AvailableLobbyMessage(lobbyController.searchForLobbies(requestLobby.getPayload())));
+            return Response.Ok();
+        } else{
+            throw new RemoteException("Client is not registered to the server");
+        }
+    
+    }
+    
+    
+    
+    
 }

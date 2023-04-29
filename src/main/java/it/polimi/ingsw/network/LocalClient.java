@@ -1,18 +1,14 @@
 package it.polimi.ingsw.network;
 
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.GameModelView;
 import it.polimi.ingsw.model.messages.ModelMessage;
-import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewMessage;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 
 public class LocalClient extends UnicastRemoteObject implements Client {
     
@@ -41,7 +37,9 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     public void setClientID(int clientID) throws RemoteException { this.view.setClientID(clientID); }
     
     @Override
-    public void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) { this.view.setAvailableLobbies(lobbies); }
+    public int getClientID() throws RemoteException {
+        return this.view.getClientID();
+    }
     
     public void connectServer() {
         try {

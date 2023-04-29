@@ -1,7 +1,6 @@
 package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.ViewMessage;
 import it.polimi.ingsw.view.messages.ViewMsg;
 
 import java.rmi.Remote;

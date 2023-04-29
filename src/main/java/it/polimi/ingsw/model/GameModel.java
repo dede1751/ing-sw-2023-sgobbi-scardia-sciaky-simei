@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import it.polimi.ingsw.model.messages.ModelMessage;
+import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
 import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
@@ -14,17 +14,16 @@ import it.polimi.ingsw.utils.files.ResourcesManager;
 import java.lang.reflect.Type;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Game model class to be used as a representation of the game's state by the controller
  */
 public class GameModel extends Observable<GameModel.Event> {
     
+    
     public enum Event {
-        GAME_START,
-        LAST_TURN,
-        NEW_CURRENT_PLAYER,
-        FINISHED_GAME,
+        GAME_START, LAST_TURN, NEW_CURRENT_PLAYER, FINISHED_GAME,
     }
     
     private final int numPlayers;
@@ -36,7 +35,6 @@ public class GameModel extends Observable<GameModel.Event> {
     private final Stack<Integer> commonGoalStackY;
     
     private boolean lastTurn;
-    private String winner;
     
     private int currentPlayerIndex;
     private final List<Player> players;
@@ -88,7 +86,7 @@ public class GameModel extends Observable<GameModel.Event> {
     }
     
     public void startGame() {
-        this.setChangedAndNotifyObservers(Event.GAME_START);
+        this.notifyStartGame();
     }
     
     private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
@@ -121,9 +119,13 @@ public class GameModel extends Observable<GameModel.Event> {
         return commonGoalNumY;
     }
     
-    public Stack<Integer> getStackCGX() { return commonGoalStackX; }
+    public Stack<Integer> getStackCGX() {
+        return commonGoalStackX;
+    }
     
-    public Stack<Integer> getStackCGY() { return commonGoalStackX; }
+    public Stack<Integer> getStackCGY() {
+        return commonGoalStackX;
+    }
     
     /**
      * Get number of participating players
@@ -175,14 +177,6 @@ public class GameModel extends Observable<GameModel.Event> {
         return this.lastTurn;
     }
     
-    public void setWinner(String winner) {
-        this.winner = winner;
-        setChangedAndNotifyObservers(Event.FINISHED_GAME);
-    }
-    
-    public String getWinner() {
-        return this.winner;
-    }
     
     /**
      * Adds player with given nickname and personal goal to the player pool
@@ -191,28 +185,34 @@ public class GameModel extends Observable<GameModel.Event> {
      * @param nickname Unique string nickname of the player
      * @param pgID     Integer ID for the player's personal goal
      */
-    public void addPlayer(String nickname, int pgID) { players.add(new Player(nickname, pgID)); }
+    public void addPlayer(String nickname, int pgID) {
+        players.add(new Player(nickname, pgID));
+    }
     
-    private void addPlayer(Player player) { players.add(player); }
+    private void addPlayer(Player player) {
+        players.add(player);
+    }
     
     
     /**
-     * Add client reference to model
-     * @param nickname
-     * @param client
-     * @throws DuplicateNickname
-     * @throws NoPlayerWithNickname
+     * Add client reference to model.
+     * This method should be called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int)}.
+     * It is necessary for the correct functioning of the networking communication.
+     *
+     * @param nickname nickname of the client
+     * @param client   reference to the client object
+     *
+     * @throws DuplicateNickname    if it exists a client linked to the same nickname
+     * @throws NoPlayerWithNickname if a player with the same nickname doesn't exist. This method should be
+     *                              called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int) addPlayer}
      */
     
-    
     public void addClient(String nickname, Client client) throws DuplicateNickname, NoPlayerWithNickname {
-        if(this.clientMap.containsKey(nickname)) {
+        if( this.clientMap.containsKey(nickname) ) {
             throw new DuplicateNickname(nickname);
-        }else if(
-                this.players.stream().filter((x) -> x.getNickname().equals(nickname)).count() != 1
-        ){
+        }else if( this.players.stream().filter((x) -> x.getNickname().equals(nickname)).count() != 1 ) {
             throw new NoPlayerWithNickname(nickname);
-        }else{
+        }else {
             this.clientMap.put(nickname, client);
         }
     }
@@ -224,16 +224,25 @@ public class GameModel extends Observable<GameModel.Event> {
      *
      * @return Full list of players
      */
-    public List<Player> getPlayers() { return players; }
+    public List<Player> getPlayers() {
+        return players;
+    }
     
     
-    public int getCurrentPlayerIndex() { return currentPlayerIndex;
+    /**
+     * Return the index of the current player in the list returned by {@link #getPlayers() getPlayers}
+     *
+     * @return The index of the current player
+     */
+    
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
     }
     
     
     public void setCurrentPlayerIndex(int i) {
         currentPlayerIndex = i;
-        setChangedAndNotifyObservers(Event.NEW_CURRENT_PLAYER);
+        notifyCurrentPlayerChange();
     }
     
     
@@ -242,7 +251,9 @@ public class GameModel extends Observable<GameModel.Event> {
      *
      * @return The current player
      */
-    public Player getCurrentPlayer() { return players.get(currentPlayerIndex); }
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
+    }
     
     /**
      * Get tile on the board at the given coordinate
@@ -293,6 +304,7 @@ public class GameModel extends Observable<GameModel.Event> {
      */
     public void removeSelection(List<Coordinate> selection) {
         this.board.removeSelection(selection);
+        notifyBoardChange();
     }
     
     /**
@@ -307,6 +319,7 @@ public class GameModel extends Observable<GameModel.Event> {
     public void shelveSelection(List<Tile> orderedTiles, int column) {
         this.tileBag.removeSelection(orderedTiles);
         this.getCurrentPlayer().getShelf().addTiles(orderedTiles, column);
+        notifyShelfChange();
     }
     
     /**
@@ -320,12 +333,15 @@ public class GameModel extends Observable<GameModel.Event> {
         return this.getCurrentPlayer().addCommonGoalScore(score);
     }
     
-    public int setCurrentPlayerPersonalGoalScore(int score){
-        return this.getCurrentPlayer().setPersonalGoalScore(score);
-    }
     
-    public int setCurrentPlayerAdjency(int score){
-        return this.getCurrentPlayer().setAdjacentScore(score);
+    public void notifyWinner() {
+        String winner =
+                this.players.stream().max(Comparator.comparingInt(Player::getScore)).orElseThrow().getNickname();
+        Map<String, Integer> leaderboard = new HashMap<>();
+        for(var x : this.getPlayers()){
+            leaderboard.put(x.getNickname(), x.getScore());
+        }
+        notifyAllClient(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
     }
     
     
@@ -347,25 +363,54 @@ public class GameModel extends Observable<GameModel.Event> {
     }
     
     
-    private <T extends ModelMessage<?>> void notifyClient(T msg, String playerNick){
-        Client c = this.clientMap.get(playerNick);
-        try{
-            c.update(msg);
-        }catch( RemoteException e ){
+    private <T extends ModelMessage<?>> void notifyClient(T msg, Client player) {
+        try {
+            player.update(msg);
+        }
+        catch( RemoteException e ) {
+            AtomicReference<String> nick = new AtomicReference<>();
+            clientMap.entrySet().stream().filter((x) -> x.getValue() == player).findFirst().ifPresent((x) -> nick.set(
+                    x.getKey()));
+            System.err.println("Unable to update player " + nick);
             System.err.println(e.getMessage());
         }
     }
     
+    private <T extends ModelMessage<?>> void notifyAllClient(T msg) {
+        for( var n : this.clientMap.entrySet() ) {
+            notifyClient(msg, n.getValue());
+        }
+    }
     
     
+    private void notifyBoardChange() {
+        var boardMessage = new BoardMessage(this);
+        notifyAllClient(boardMessage);
+    }
+    
+    private void notifyCurrentPlayerChange() {
+        var pMessage = new CurrentPlayerMessage(this.getCurrentPlayer().getNickname());
+        notifyAllClient(pMessage);
+    }
+    
+    private void notifyShelfChange() {
+        var shelfMessage = new ShelfMessage(this.getCurrentPlayer().getShelf(), this.getCurrentPlayer().getNickname());
+        notifyAllClient(shelfMessage);
+    }
+    
+    private void notifyStartGame() {
+        var startGame = new StartGameMessage(this.players.stream().map(Player::getNickname).toList());
+        notifyAllClient(startGame);
+    }
     
     
     protected static class ModelSerializer implements JsonSerializer<GameModel> {
         @Override
         public JsonElement serialize(GameModel model, Type typeOfSrc, JsonSerializationContext context) {
             var result = new JsonObject();
-            Gson gson = new GsonBuilder().registerTypeAdapter(Player.class, new Player.PlayerSerializer()).
-                    registerTypeAdapter(Board.class, new Board.BoardSerializer()).create();
+            Gson gson = new GsonBuilder().registerTypeAdapter(Player.class,
+                                                              new Player.PlayerSerializer()).registerTypeAdapter(
+                    Board.class, new Board.BoardSerializer()).create();
             //Common goal properties
             result.addProperty("CommonGoalX", model.commonGoalNumX);
             result.addProperty("CommonGoalY", model.commonGoalNumY);
@@ -404,19 +449,21 @@ public class GameModel extends Observable<GameModel.Event> {
     static public class ModelDeserializer implements JsonDeserializer<GameModel> {
         @Override
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class, new Shelf.ShelfDeserializer())
-                    .registerTypeAdapter(Player.class, new Player.PlayerDeserializer())
-                    .registerTypeAdapter(Board.class, new Board.BoardDeserializer())
-                    .registerTypeAdapter(TileBag.class, new TileBag.TileBagDeserializer())
-                    .create();
-            var stackToken = new TypeToken<Stack<Integer>>() {}.getType();
-            var numPlayer = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "PlayersNumber"), int.class);
-            var CGX =
-                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalX"), int.class);
-            var CGY =
-                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalY"), int.class);
-            Stack<Integer> xStack = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGX"), stackToken);
-            Stack<Integer> yStack = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGY"), stackToken);
+            Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class,
+                                                              new Shelf.ShelfDeserializer()).registerTypeAdapter(
+                    Player.class, new Player.PlayerDeserializer()).registerTypeAdapter(Board.class,
+                                                                                       new Board.BoardDeserializer()).registerTypeAdapter(
+                    TileBag.class, new TileBag.TileBagDeserializer()).create();
+            var stackToken = new TypeToken<Stack<Integer>>() {
+            }.getType();
+            var numPlayer =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "PlayersNumber"), int.class);
+            var CGX = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalX"), int.class);
+            var CGY = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalY"), int.class);
+            Stack<Integer> xStack =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGX"), stackToken);
+            Stack<Integer> yStack =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGY"), stackToken);
             var board = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "Board"), Board.class);
             var tileBag =
                     gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "TileBag"), TileBag.class);
@@ -427,7 +474,8 @@ public class GameModel extends Observable<GameModel.Event> {
                 var player = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, p), Player.class);
                 result.addPlayer(player);
             }
-            var currentPlayer = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CurrentPlayer"), int.class);
+            var currentPlayer =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CurrentPlayer"), int.class);
             result.setCurrentPlayerIndex(currentPlayer);
             return result;
         }

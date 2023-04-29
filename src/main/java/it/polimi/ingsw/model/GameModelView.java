@@ -13,8 +13,6 @@ public class GameModelView implements Serializable, Message {
     
     private final int currentPlayerIndex;
     
-    private final String winner;
-    
     
     private final Board board;
     
@@ -22,14 +20,11 @@ public class GameModelView implements Serializable, Message {
         this.players = model.getPlayers();
         this.currentPlayerIndex = model.getCurrentPlayerIndex();
         this.board = model.getBoard();
-        this.winner=model.getWinner();
     }
     
     public List<Player> getPlayers() {
         return players;
     }
-    
-    public String getWinner(){return this.winner;}
     
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;

@@ -25,20 +25,21 @@ public abstract class View extends Observable<View.Action> implements Runnable {
         CHAT
     }
     
-    Server server;
+    protected Server server;
     
-
-    private int clientID;
+    protected final LocalModel model = LocalModel.INSTANCE;
     
-    String nickname;
+    protected int clientID;
     
-    int selectedPlayerCount;
+    protected String nickname;
     
-    private List<Coordinate> selectedCoordinates;
+    protected int selectedPlayerCount;
     
-    private List<Tile> selectedTiles;
+    protected List<Coordinate> selectedCoordinates;
     
-    private int column;
+    protected List<Tile> selectedTiles;
+    
+    protected int column;
     
     public void setClientID(int clientID) { this.clientID = clientID; }
     
@@ -79,10 +80,6 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     public abstract void update(GameModelView model, GameModel.Event evt);
     public abstract void update(ModelMessage<?> msg);
     
-    protected void setChangedAndNotifyObservers(View.Action evt) {
-        setChanged();
-        notifyObservers(evt);
-    }
     
     protected <T extends ViewMsg<?>> Response notifyServer(T msg){
         try{
@@ -111,5 +108,7 @@ public abstract class View extends Observable<View.Action> implements Runnable {
     protected Response notifyDebugMessage(String info){
         return notifyServer(new DebugMessage(info, this.nickname, this.clientID));
     }
-    
+    protected Response notifyRequestLobby(LobbyInformation info){
+        return notifyServer(new RequestLobby(info, this.nickname, this.clientID));
+    }
 }

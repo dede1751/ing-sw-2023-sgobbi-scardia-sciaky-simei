@@ -22,6 +22,7 @@ public class ClientSkeleton implements Client {
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
     
+    private int clientID = -1;
     
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
@@ -41,9 +42,13 @@ public class ClientSkeleton implements Client {
     @Override
     public void setClientID(int clientID) throws RemoteException {
         try {
-            oos.writeObject(clientID);
-            oos.reset();
-            oos.flush();
+            if( this.clientID == -1 ) {
+                oos.writeObject(clientID);
+                oos.reset();
+                oos.flush();
+                this.clientID = clientID;
+            }else
+                throw new RemoteException("ID already setted for this client");
         }
         catch( IOException e ) {
             throw new RemoteException("Cannot send client id", e);
@@ -51,16 +56,10 @@ public class ClientSkeleton implements Client {
     }
     
     @Override
-    public void setAvailableLobbies(List<LobbyController.LobbyView> lobbies) throws RemoteException {
-        try {
-            oos.writeObject(lobbies);
-            oos.reset();
-            oos.flush();
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot send lobby list", e);
-        }
+    public int getClientID() throws RemoteException {
+        return this.clientID;
     }
+    
     
     @Override
     public void update(GameModelView o, GameModel.Event arg) throws RemoteException {
@@ -81,7 +80,7 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send event", e);
         }
     }
-
+    
     public void receive(Server server) throws RemoteException {
         ViewMsg<?> message;
         Response response;
@@ -104,9 +103,15 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send response", e);
         }
     }
+    
     @Override
-    public void update(ModelMessage<?> msg){
-        //TODO
+    public void update(ModelMessage<?> msg) throws RemoteException {
+        try {
+            oos.writeObject(msg);
+        }
+        catch( IOException e ) {
+            throw new RemoteException("Cannot send message", e);
+        }
     }
     
 }
