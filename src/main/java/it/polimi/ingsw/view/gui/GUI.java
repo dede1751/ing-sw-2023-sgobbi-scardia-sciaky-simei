@@ -7,11 +7,6 @@ import it.polimi.ingsw.view.View;
 public class GUI extends View {
     
     @Override
-    public void update(ModelMessage<?> msg){
-        //TODO
-    }
-    
-    @Override
     public void onMessage(BoardMessage msg) {
     
     }

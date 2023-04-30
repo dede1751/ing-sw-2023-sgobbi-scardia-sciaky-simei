@@ -7,7 +7,7 @@ import it.polimi.ingsw.model.Shelf;
  * Class representing the game's common goals
  * This class is immutable
  */
-public class CommonGoal extends GameModel {
+public class CommonGoal {
     
     private final int goalIndex;
     

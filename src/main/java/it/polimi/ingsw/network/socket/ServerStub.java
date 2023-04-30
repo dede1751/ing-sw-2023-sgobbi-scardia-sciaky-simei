@@ -41,31 +41,28 @@ public class ServerStub implements Server {
     public void register(Client client) throws RemoteException {
         try {
             this.socket = new Socket(ip, port);
+            
             try {
                 this.oos = new ObjectOutputStream(socket.getOutputStream());
-            }
-            catch( IOException e ) {
+            } catch( IOException e ) {
                 throw new RemoteException("Cannot create output stream", e);
             }
+            
             try {
                 this.ois = new ObjectInputStream(socket.getInputStream());
-            }
-            catch( IOException e ) {
+            } catch( IOException e ) {
                 throw new RemoteException("Cannot create input stream", e);
             }
-        }
-        catch( IOException e ) {
+        } catch( IOException e ) {
             throw new RemoteException("Unable to connect to the server", e);
         }
         
         try {
             Integer clientID = (Integer) ois.readObject();
             client.setClientID(clientID);
-        }
-        catch( IOException e ) {
+        } catch( IOException e ) {
             throw new RemoteException("Cannot receive lobby info from server", e);
-        }
-        catch( ClassNotFoundException e ) {
+        } catch( ClassNotFoundException e ) {
             throw new RemoteException("Cannot deserialize lobby info from server", e);
         }
         
@@ -78,18 +75,16 @@ public class ServerStub implements Server {
             oos.writeObject(message);
             oos.reset();
             oos.flush();
-        }
-        catch( IOException e ) {
+        } catch( IOException e ) {
             throw new RemoteException("Cannot send message", e);
         }
+        
         synchronized(queueLock) {
             while( responseQueue.peek() == null ||
                    !responseQueue.peek().Action().equals(message.getClass().getSimpleName()) ) {
                 try {
                     queueLock.wait();
-                }
-                catch( InterruptedException ignored ) {
-                }
+                } catch( InterruptedException ignored ) {}
             }
             return responseQueue.poll();
         }
@@ -100,21 +95,18 @@ public class ServerStub implements Server {
         Object o;
         try {
             o = ois.readObject();
-        }
-        catch( IOException e ) {
+        } catch( IOException e ) {
             throw new RemoteException("Cannot receive model view from server", e);
-        }
-        catch( ClassNotFoundException e ) {
+        } catch( ClassNotFoundException e ) {
             throw new RemoteException("Cannot deserialize model view from server", e);
         }
+        
         try {
             Method m = ReflectionUtility.GetMethod(this.getClass(), "onMessageReceived", o.getClass());
             m.invoke(this, o);
-        }
-        catch( NoSuchMethodException e ) {
+        } catch( NoSuchMethodException e ) {
             throw new RemoteException("Server responded with illformed object", e);
-        }
-        catch( InvocationTargetException | IllegalAccessException e ) {
+        } catch( InvocationTargetException | IllegalAccessException e ) {
             throw new RemoteException("Something that shouldn't happen did indeed happen, tough luck", e);
         }
         
@@ -137,8 +129,7 @@ public class ServerStub implements Server {
     public void close() throws RemoteException {
         try {
             socket.close();
-        }
-        catch( IOException e ) {
+        } catch( IOException e ) {
             throw new RemoteException("Cannot close socket", e);
         }
     }

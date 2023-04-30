@@ -10,4 +10,5 @@ public class RequestLobby extends ViewMessage<LobbyInformation> {
     public Class<?> getMessageType() {
         return this.getClass();
     }
+    
 }

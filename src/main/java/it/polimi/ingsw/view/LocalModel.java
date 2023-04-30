@@ -24,8 +24,6 @@ public class LocalModel {
     private int topCGYscore = 0;
     private Board board;
     
-    private boolean hasChangedLobby = false;
-    
     private LocalModel() {}
     
     public void setBoard(Board board) {
@@ -100,11 +98,4 @@ public class LocalModel {
         this.playersNicknames = playersNicknames;
     }
     
-    public boolean isChangedLobby() {
-        return hasChangedLobby;
-    }
-    
-    public void toggleHasChangedLobby() {
-        this.hasChangedLobby = !this.hasChangedLobby;
-    }
 }

@@ -1,10 +1,8 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
-import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.view.messages.JoinLobby;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
@@ -23,7 +21,7 @@ public class LobbyController {
     private static LobbyController INSTANCE;
     
     // lobbies must include mapping clientID->nickname to be able to "connect" the correct clients to the model
-    public record Lobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID, String lobbyName) {
+    public record Lobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID) {
         public boolean isEmpty() {
             return nicknames.size() < lobbySize();
         }
@@ -71,7 +69,6 @@ public class LobbyController {
      * @throws RemoteException Unable to set the client's id
      */
     public void register(Client client) throws RemoteException {
-        
         client.setClientID(clientIDCounter);
         this.clientMapping.put(clientIDCounter, client);
         clientIDCounter++;
@@ -88,36 +85,31 @@ public class LobbyController {
         return this.clientMapping.get(clientID) != null;
     }
     
-    
     /**
      * Return the reference to the client object corrisponding to the supplied id
      * @param clientID clientID to be returned
      * @return Client object corrisponding to the supplied id
      */
-    
     public Client getClient(int clientID){
         return clientMapping.get(clientID);
     }
     
-    
     /**
-     * Search for available lobbies with the information given in info.
+     * Search for all lobbies with the information given in info.
      * Any null parameters in info is ignored in the search.
      * @param info information on the lobbies
-     * @return a list of lobbyView of all the available lobbies that match info parameters
+     * @return a list of lobbyView of all the lobbies that match info parameters
      */
     public List<LobbyView> searchForLobbies(LobbyInformation info){
         return this.lobbies.values()
                 .stream()
-                .filter(Lobby::isEmpty)
                 .filter((x) -> info.size() == null || (info.size().equals(x.lobbySize())))
-                .filter((x) -> info.name() == null || (x.lobbyName().equals(info.name())))
                 .map(Lobby::getLobbyView)
                 .toList();
     }
     
-    
     /**
+     * TODO: remove clients from mapping
      * End a game, removing the lobby from the tracked list of lobbies
      *
      * @param lobbyID Lobby to stop tracking
@@ -134,14 +126,16 @@ public class LobbyController {
      * @param fpId the id of the first player
      * @return the id of the lobby
      */
-
-    public int createLobby(LobbyInformation info, String firstPlayer, int fpId) {
+    public int createLobby(LobbyInformation info, String firstPlayer, int fpId) throws RemoteException {
+        if( this.nicknameTaken(firstPlayer) ) {
+            throw new RemoteException("NicknameTaken");
+        }
+        
         Lobby newLobby = new Lobby(
                 new ArrayList<>(List.of(firstPlayer)),
                 new ArrayList<>(List.of(fpId)),
                 info.size(),
-                lobbyIDCounter,
-                info.name()
+                lobbyIDCounter
         );
         lobbies.put(lobbyIDCounter, newLobby);
         lobbyIDCounter++;
@@ -149,33 +143,23 @@ public class LobbyController {
     }
     
     /**
-     * Join a lobby from an appropriate ViewMessage
-     * Only call when msg is associated with a JOIN_LOBBY action
+     * Join a lobby from a JoinLobbyMessage
+     * Lobby ID must be specified.
      * If a game needs to start, instantiate a controller and return the mapping to the server
      *
      * @param msg Message received from view
-     *
      * @return Map between clientIDs and the same gamecontroller, null if no game started
      */
-    
     public Map<Integer, GameController> joinLobby(JoinLobbyMessage msg) throws RemoteException {
         
         JoinLobby info = msg.getPayload();
-        if( this.noLobbyAvailable() ) {
-            this.clientMapping.remove(msg.getClientId());
-            throw new RemoteException("No available lobby to join, please create one yourself!", new LoginException());
+        Lobby lobby = lobbies.get(info.id());
+        if( lobby == null || !lobby.isEmpty() ) {
+            throw new RemoteException("LobbyUnavailable");
         }
         if( this.nicknameTaken(msg.getPlayerNickname()) ) {
-            this.clientMapping.remove(msg.getClientId());
-            throw new RemoteException("Nickname '" + msg.getPlayerNickname() + "' is already taken!", new LoginException());
+            throw new RemoteException("NicknameTaken");
         }
-        
-        // find a lobby that isn't full
-        Lobby lobby = this.lobbies.values()
-                .stream()
-                .filter(Lobby::isEmpty)
-                .findFirst()
-                .orElseThrow();
         
         lobby.nicknames.add(msg.getPlayerNickname());
         lobby.clientIDs.add(msg.getClientId());
@@ -186,12 +170,6 @@ public class LobbyController {
         }else {
             return null;
         }
-    }
-    
-    private boolean noLobbyAvailable() {
-        return lobbies.values()
-                .stream()
-                .noneMatch((l) -> l.nicknames.size() < l.lobbySize);
     }
     
     private boolean nicknameTaken(String nickname) {
