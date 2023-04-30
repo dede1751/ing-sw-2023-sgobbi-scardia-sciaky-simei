@@ -209,7 +209,11 @@ public class GameController {
     
     @SuppressWarnings("unused")
     public Response onMessage(ChatMessage chat){
-        return new Response(1, "Not implemented yet", chat.getClass().getSimpleName());
+        
+        if(chat.getDestination().equals("BROADCAST")){
+            model.chatBroker(chat);
+        }
+        return Response.Ok(chat.getClass().getSimpleName());
     }
     
     @SuppressWarnings("unused")

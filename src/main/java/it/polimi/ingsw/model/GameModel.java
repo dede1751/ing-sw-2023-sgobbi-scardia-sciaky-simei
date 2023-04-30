@@ -9,6 +9,7 @@ import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.view.messages.ChatMessage;
 
 import java.lang.reflect.Type;
 import java.rmi.RemoteException;
@@ -353,6 +354,20 @@ public class GameModel {
     }
     
     
+    public void chatBroker(ChatMessage chat){
+        
+        IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
+        if(chat.getDestination().equals("BROADCAST")){
+            notifyAllClient(message);
+        }else{
+            Client player = this.clientMap.get(chat.getPlayerNickname());
+            notifyClient(message, player);
+        }
+    }
+    
+    
+    
+    
     private <T extends ModelMessage<?>> void notifyClient(T msg, Client player) {
         try {
             player.update(msg);
@@ -392,6 +407,11 @@ public class GameModel {
         var startGame = new StartGameMessage(this.players.stream().map(Player::getNickname).toList());
         notifyAllClient(startGame);
     }
+    
+    
+    
+    
+    
     
     
     protected static class ModelSerializer implements JsonSerializer<GameModel> {
