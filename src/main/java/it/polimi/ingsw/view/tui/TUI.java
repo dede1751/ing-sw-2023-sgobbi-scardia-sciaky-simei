@@ -74,7 +74,7 @@ public class TUI extends View {
                         System.out.println("Please write a number");
                     }
                 }
-                Response r = this.notifyCreateLobby(new LobbyInformation(lobbySize, this.getNickname()));
+                Response r = notifyCreateLobby(new LobbyInformation(lobbySize, this.getNickname()));
                 System.out.println(r);
                 break;
             }else if( choice.equals("JOIN") ) {
@@ -242,27 +242,9 @@ public class TUI extends View {
     
     }
     
-    
-    @Override
-    public void update(ModelMessage<?> msg) {
-        try {
-            Method m = this.getClass().getMethod("onMessage", msg.getClass());
-            m.invoke(this, msg);
-        }
-        catch( NoSuchMethodException e ) {
-            System.out.println(
-                    "There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
-        }
-        catch( InvocationTargetException e ) {
-            e.printStackTrace(System.err);
-        }
-        catch( IllegalAccessException e ) {
-            System.err.println("Illegal access exception in update, controll code");
-        }
-    }
-    
     //FIXME
     @SuppressWarnings("unused")
+    @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
         printBoard(this.model.getBoard());
@@ -270,6 +252,7 @@ public class TUI extends View {
     
     //FIXME sketchy part 3
     @SuppressWarnings("unused")
+    @Override
     public void onMessage(AvailableLobbyMessage msg) {
         this.lobbies = msg.getPayload().lobbyViewList();
         synchronized(LobbyRequestLock) {
@@ -279,6 +262,7 @@ public class TUI extends View {
     }
     
     @SuppressWarnings("unused")
+    @Override
     public void onMessage(EndGameMessage msg) {
         var p = msg.getPayload();
         System.out.println("GAME FINISHED, THE WINNER IS " + p.winner());
@@ -289,6 +273,7 @@ public class TUI extends View {
     }
     
     @SuppressWarnings("unused")
+    @Override
     public void onMessage(StartGameMessage msg) {
         model.setPlayersNicknames(msg.getPayload().nicknames());
         System.out.println("GAME START!");

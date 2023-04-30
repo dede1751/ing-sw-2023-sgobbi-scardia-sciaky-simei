@@ -175,7 +175,6 @@ public class GameController {
      *
      * @param message ViewMessage containing all relevant view information
      */
-    //TODO change name to ViewMessage
     public <T extends ViewMessage<?>> Response update(T message ) throws NoSuchMethodException{
         try {
             Method m = this.getClass().getMethod("onMessage", message.getMessageType());
@@ -185,7 +184,6 @@ public class GameController {
             return new Response(128, "Server is acting up, please be patient...", message.getClass().getSimpleName());
         }
     }
-    
     
     public Response onMessage(MoveMessage msg){
         
@@ -210,9 +208,7 @@ public class GameController {
     @SuppressWarnings("unused")
     public Response onMessage(ChatMessage chat){
         
-        if(chat.getDestination().equals("BROADCAST")){
-            model.chatBroker(chat);
-        }
+        model.chatBroker(chat);
         return Response.Ok(chat.getClass().getSimpleName());
     }
     

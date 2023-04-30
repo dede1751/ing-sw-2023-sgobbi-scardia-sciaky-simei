@@ -46,7 +46,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     public Response update(ViewMessage<?> message) throws RemoteException {
         int clientID = message.getClientId();
         if( !lobbyController.checkRegistration(clientID) ) {
-            throw new RemoteException("Client is not registered to the server", new LoginException());
+            return new Response(1, "Client is not registered to the server", message.getClass().getSimpleName());
         }
         try {
             Method m = this.getClass().getMethod("onMessage", message.getMessageType());
@@ -73,6 +73,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         }
     }
     
+    @SuppressWarnings("unused")
     public Response onMessage(CreateLobbyMessage message) {
         int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
         return new Response(id,
@@ -80,6 +81,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
                                            " and id : " + id, message.getClass().getSimpleName());
     }
     
+    @SuppressWarnings("unused")
     public Response onMessage(JoinLobbyMessage message) throws RemoteException {
         Map<Integer, GameController> mapping = lobbyController.joinLobby(message);
         if( mapping != null){
@@ -91,6 +93,8 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     }
     
     //FIXME sketchy
+    
+    @SuppressWarnings("unused")
     public Response onMessage(RequestLobby requestLobby) throws RemoteException{
         if( lobbyController.checkRegistration(requestLobby.getClientId()) ){
             Client c = lobbyController.getClient(requestLobby.getClientId());

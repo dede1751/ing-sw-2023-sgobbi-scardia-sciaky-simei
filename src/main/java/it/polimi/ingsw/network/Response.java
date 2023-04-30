@@ -19,7 +19,7 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     @Override
     public String toString(){
-        return status + "," + msg;
+        return status + ", " + msg;
     }
     
 }

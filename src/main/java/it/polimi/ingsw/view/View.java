@@ -1,11 +1,15 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.model.messages.ModelMessage;
+import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
+import java.util.Comparator;
+import java.util.Map;
 
 
 public abstract class View implements Runnable {
@@ -37,8 +41,31 @@ public abstract class View implements Runnable {
         this.server = server;
     }
     
-    public abstract void update(ModelMessage<?> msg);
+    public void update(ModelMessage<?> msg) {
+        try {
+            Method m = this.getClass().getMethod("onMessage", msg.getClass());
+            m.invoke(this, msg);
+        }
+        catch( NoSuchMethodException e ) {
+            System.out.println(
+                    "There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
+        }
+        catch( InvocationTargetException e ) {
+            e.printStackTrace(System.err);
+        }
+        catch( IllegalAccessException e ) {
+            System.err.println("Illegal access exception in update, controll code");
+        }
+    }
     
+    @SuppressWarnings("unused")
+    public abstract void onMessage(BoardMessage msg);
+    @SuppressWarnings("unused")
+    public abstract void onMessage(AvailableLobbyMessage msg);
+    @SuppressWarnings("unused")
+    public abstract void onMessage(EndGameMessage msg);
+    @SuppressWarnings("unused")
+    public abstract void onMessage(StartGameMessage msg);
     
     protected <T extends ViewMessage<?>> Response notifyServer(T msg){
         try{
@@ -62,7 +89,7 @@ public abstract class View implements Runnable {
         return notifyServer(new ChatMessage(message, this.nickname, this.clientID));
     }
     protected Response notifyChatMessage(String message, String dst){
-        return notifyServer(new ChatMessage(message, dst, this.nickname, this.clientID));
+        return notifyServer(new ChatMessage(message, this.nickname, dst, this.clientID));
     }
     protected Response notifyDebugMessage(String info){
         return notifyServer(new DebugMessage(info, this.nickname, this.clientID));

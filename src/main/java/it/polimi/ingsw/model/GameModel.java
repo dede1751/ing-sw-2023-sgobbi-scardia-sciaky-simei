@@ -365,9 +365,6 @@ public class GameModel {
         }
     }
     
-    
-    
-    
     private <T extends ModelMessage<?>> void notifyClient(T msg, Client player) {
         try {
             player.update(msg);
@@ -407,12 +404,6 @@ public class GameModel {
         var startGame = new StartGameMessage(this.players.stream().map(Player::getNickname).toList());
         notifyAllClient(startGame);
     }
-    
-    
-    
-    
-    
-    
     
     protected static class ModelSerializer implements JsonSerializer<GameModel> {
         @Override
