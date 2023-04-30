@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>/home/roberto/project/ing-sw-2023-sgobbi-scardia-sciaky-simei/src/main/java/it/polimi/ingsw</OriginalElement>
+  <nodes>
+    <node x="591.1678134556576" y="903.0">it.polimi.ingsw.model.GameModel</node>
+    <node x="1816.3547400611624" y="-299.0">it.polimi.ingsw.model.goals.common.CommonGoal</node>
+    <node x="92.35474006116215" y="2485.0">it.polimi.ingsw.controller.LobbyController.LobbyView</node>
+    <node x="130.60474006116215" y="2116.0">it.polimi.ingsw.controller.LobbyController</node>
+    <node x="1830.3547400611624" y="-423.0">it.polimi.ingsw.model.goals.common.CommonGoalStrategy</node>
+    <node x="-13.957186544342449" y="1823.5">it.polimi.ingsw.controller.LobbyController.Lobby</node>
+    <node x="1013.125" y="500.0">it.polimi.ingsw.model.Player</node>
+    <node x="1301.6047400611621" y="210.5">it.polimi.ingsw.model.Tile.Sprite</node>
+    <node x="-262.0" y="610.5">it.polimi.ingsw.view.messages.Move</node>
+    <node x="840.9178134556576" y="1901.5">it.polimi.ingsw.utils.exceptions.LoginException</node>
+    <node x="967.6047400611621" y="111.0">it.polimi.ingsw.model.Shelf</node>
+    <node x="680.1250000000001" y="566.0">it.polimi.ingsw.model.Board</node>
+    <node x="426.04281345565755" y="1802.0">it.polimi.ingsw.controller.GameController</node>
+    <node x="29.000000000000114" y="1222.5">it.polimi.ingsw.network.Response</node>
+    <node x="1530.3547400611621" y="233.0">it.polimi.ingsw.utils.exceptions.OccupiedTileException</node>
+    <node x="389.1250000000001" y="588.0">it.polimi.ingsw.model.TileBag</node>
+    <node x="917.875" y="-423.0">it.polimi.ingsw.utils.exceptions.CommonException</node>
+    <node x="676.5932721712538" y="-115.0">it.polimi.ingsw.model.Tile</node>
+    <node x="7.074541284403722" y="111.0">it.polimi.ingsw.model.Coordinate</node>
+    <node x="675.6250000000001" y="-264.0">it.polimi.ingsw.utils.exceptions.InvalidStringException</node>
+    <node x="86.00000000000011" y="599.0">it.polimi.ingsw.model.goals.personal.PersonalGoal</node>
+    <node x="292.0000000000001" y="-275.0">it.polimi.ingsw.model.Tile.Type</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="it.polimi.ingsw.model.Player" target="it.polimi.ingsw.model.Shelf" relationship="TO_ONE">
+      <point x="76.75" y="-169.5" />
+      <point x="1243.375" y="478.0" />
+      <point x="1203.1047400611621" y="478.0" />
+      <point x="78.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.TileBag" target="it.polimi.ingsw.model.Tile" relationship="TO_MANY">
+      <point x="0.0" y="-81.5" />
+      <point x="524.6250000000001" y="89.0" />
+      <point x="623.2182721712538" y="89.0" />
+      <point x="623.2182721712538" y="79.0" />
+      <point x="711.0932721712538" y="79.0" />
+      <point x="-69.0" y="81.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.goals.common.CommonGoalStrategy" target="it.polimi.ingsw.model.goals.common.CommonGoal" relationship="LINK_IN_DOCS">
+      <point x="-55.25" y="37.0" />
+      <point x="1885.6047400611624" y="-324.0" />
+      <point x="1878.6047400611624" y="-324.0" />
+      <point x="-62.25" y="-70.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Board" target="it.polimi.ingsw.model.Tile" relationship="TO_MANY">
+      <point x="-78.25" y="-103.5" />
+      <point x="758.3750000000001" y="478.0" />
+      <point x="789.1047400611621" y="478.0" />
+      <point x="789.1047400611621" y="89.0" />
+      <point x="623.2182721712538" y="89.0" />
+      <point x="623.2182721712538" y="79.0" />
+      <point x="711.0932721712538" y="79.0" />
+      <point x="-69.0" y="81.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.GameModel" target="it.polimi.ingsw.model.TileBag" relationship="CREATE">
+      <point x="0.0" y="-422.5" />
+      <point x="825.1678134556576" y="861.0" />
+      <point x="592.3750000000001" y="861.0" />
+      <point x="67.75" y="81.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController" target="it.polimi.ingsw.controller.GameController" relationship="CREATE">
+      <point x="146.66666666666663" y="-158.5" />
+      <point x="497.2714067278288" y="2094.0" />
+      <point x="633.7928134556576" y="2094.0" />
+      <point x="633.7928134556576" y="2074.0" />
+      <point x="561.0428134556576" y="2074.0" />
+      <point x="0.0" y="125.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.GameModel" target="it.polimi.ingsw.model.Board" relationship="CREATE">
+      <point x="0.0" y="-422.5" />
+      <point x="825.1678134556576" y="861.0" />
+      <point x="914.875" y="861.0" />
+      <point x="78.25" y="103.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Shelf" target="it.polimi.ingsw.model.Tile" relationship="CREATE">
+      <point x="0.0" y="-147.5" />
+      <point x="1124.6047400611621" y="89.0" />
+      <point x="867.9682721712538" y="89.0" />
+      <point x="867.9682721712538" y="69.0" />
+      <point x="780.0932721712538" y="69.0" />
+      <point x="0.0" y="81.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Tile" target="it.polimi.ingsw.model.Tile.Type" relationship="TO_ONE">
+      <point x="0.0" y="-81.0" />
+      <point x="780.0932721712538" y="-137.0" />
+      <point x="390.2500000000001" y="-137.0" />
+      <point x="390.2500000000001" y="-157.0" />
+      <point x="431.5000000000001" y="-157.0" />
+      <point x="46.5" y="48.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.goals.personal.PersonalGoal" target="it.polimi.ingsw.model.Coordinate" relationship="CREATE">
+      <point x="69.25" y="-70.5" />
+      <point x="293.7500000000001" y="478.0" />
+      <point x="364.3130733944955" y="478.0" />
+      <point x="364.3130733944955" y="428.0" />
+      <point x="263.5745412844037" y="428.0" />
+      <point x="85.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Board" target="it.polimi.ingsw.utils.exceptions.OccupiedTileException" relationship="CREATE">
+      <point x="78.25" y="-103.5" />
+      <point x="914.875" y="478.0" />
+      <point x="842.125" y="478.0" />
+      <point x="842.125" y="428.0" />
+      <point x="1590.6047400611621" y="428.0" />
+      <point x="-60.25" y="25.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController" target="it.polimi.ingsw.model.GameModel" relationship="CREATE">
+      <point x="146.66666666666663" y="-158.5" />
+      <point x="497.2714067278288" y="2094.0" />
+      <point x="633.7928134556576" y="2094.0" />
+      <point x="633.7928134556576" y="2074.0" />
+      <point x="830.4178134556576" y="2074.0" />
+      <point x="830.4178134556576" y="1780.0" />
+      <point x="942.1678134556576" y="1780.0" />
+      <point x="117.0" y="422.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.GameController" target="it.polimi.ingsw.model.Coordinate" relationship="CREATE">
+      <point x="-67.5" y="-125.0" />
+      <point x="493.54281345565755" y="1780.0" />
+      <point x="284.7500000000001" y="1780.0" />
+      <point x="284.7500000000001" y="1770.0" />
+      <point x="373.5000000000001" y="1770.0" />
+      <point x="373.5000000000001" y="478.0" />
+      <point x="364.3130733944955" y="478.0" />
+      <point x="364.3130733944955" y="428.0" />
+      <point x="263.5745412844037" y="428.0" />
+      <point x="85.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.utils.exceptions.InvalidStringException" target="it.polimi.ingsw.utils.exceptions.CommonException" relationship="GENERALIZATION">
+      <point x="0.0" y="-37.0" />
+      <point x="800.625" y="-301.0" />
+      <point x="1024.875" y="-301.0" />
+      <point x="0.0" y="48.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.GameModel" target="it.polimi.ingsw.model.Player" relationship="TO_MANY">
+      <point x="-156.0" y="-422.5" />
+      <point x="669.1678134556576" y="881.0" />
+      <point x="815.1678134556576" y="881.0" />
+      <point x="815.1678134556576" y="871.0" />
+      <point x="1089.875" y="871.0" />
+      <point x="-76.75" y="169.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController" target="it.polimi.ingsw.utils.exceptions.LoginException" relationship="CREATE">
+      <point x="146.66666666666663" y="-158.5" />
+      <point x="497.2714067278288" y="2094.0" />
+      <point x="633.7928134556576" y="2094.0" />
+      <point x="633.7928134556576" y="2074.0" />
+      <point x="929.9178134556576" y="2074.0" />
+      <point x="0.0" y="25.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.GameController" target="it.polimi.ingsw.model.GameModel" relationship="TO_ONE">
+      <point x="67.5" y="-125.0" />
+      <point x="628.5428134556576" y="1780.0" />
+      <point x="708.1678134556576" y="1780.0" />
+      <point x="-117.0" y="422.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Tile.Type" target="it.polimi.ingsw.model.Tile" relationship="INNER_CLASS">
+      <point x="-46.5" y="48.0" />
+      <point x="338.5000000000001" y="-147.0" />
+      <point x="711.0932721712538" y="-147.0" />
+      <point x="-69.0" y="-81.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Board" target="it.polimi.ingsw.model.Tile" relationship="CREATE">
+      <point x="78.25" y="-103.5" />
+      <point x="914.875" y="478.0" />
+      <point x="842.125" y="478.0" />
+      <point x="842.125" y="428.0" />
+      <point x="800.1047400611621" y="428.0" />
+      <point x="800.1047400611621" y="89.0" />
+      <point x="867.9682721712538" y="89.0" />
+      <point x="867.9682721712538" y="69.0" />
+      <point x="780.0932721712538" y="69.0" />
+      <point x="0.0" y="81.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Tile" target="it.polimi.ingsw.utils.exceptions.InvalidStringException" relationship="CREATE">
+      <point x="69.0" y="-81.0" />
+      <point x="849.0932721712538" y="-137.0" />
+      <point x="800.625" y="-137.0" />
+      <point x="0.0" y="37.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Board" target="it.polimi.ingsw.model.Coordinate" relationship="CREATE">
+      <point x="78.25" y="-103.5" />
+      <point x="914.875" y="478.0" />
+      <point x="842.125" y="478.0" />
+      <point x="842.125" y="438.0" />
+      <point x="364.3130733944955" y="438.0" />
+      <point x="364.3130733944955" y="428.0" />
+      <point x="263.5745412844037" y="428.0" />
+      <point x="85.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.goals.common.CommonGoal" target="it.polimi.ingsw.model.goals.common.CommonGoalStrategy" relationship="TO_ONE">
+      <point x="62.25" y="-70.5" />
+      <point x="2003.1047400611624" y="-324.0" />
+      <point x="1996.1047400611624" y="-324.0" />
+      <point x="55.25" y="37.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.utils.exceptions.OccupiedTileException" target="it.polimi.ingsw.utils.exceptions.CommonException" relationship="GENERALIZATION">
+      <point x="0.0" y="-25.5" />
+      <point x="1650.8547400611621" y="-301.0" />
+      <point x="1024.875" y="-301.0" />
+      <point x="0.0" y="48.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController.Lobby" target="it.polimi.ingsw.controller.LobbyController.LobbyView" relationship="CREATE">
+      <point x="0.0" y="103.5" />
+      <point x="196.04281345565755" y="2074.0" />
+      <point x="120.10474006116215" y="2074.0" />
+      <point x="120.10474006116215" y="2459.0" />
+      <point x="163.85474006116215" y="2459.0" />
+      <point x="-71.5" y="-70.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.GameModel" target="it.polimi.ingsw.model.Board" relationship="TO_ONE">
+      <point x="-156.0" y="-422.5" />
+      <point x="669.1678134556576" y="881.0" />
+      <point x="815.1678134556576" y="881.0" />
+      <point x="815.1678134556576" y="871.0" />
+      <point x="758.3750000000001" y="871.0" />
+      <point x="-78.25" y="103.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.GameController" target="it.polimi.ingsw.network.Response" relationship="CREATE">
+      <point x="-67.5" y="-125.0" />
+      <point x="493.54281345565755" y="1780.0" />
+      <point x="284.7500000000001" y="1780.0" />
+      <point x="284.7500000000001" y="1770.0" />
+      <point x="196.0000000000001" y="1770.0" />
+      <point x="0.0" y="103.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController" target="it.polimi.ingsw.controller.LobbyController.Lobby" relationship="TO_MANY">
+      <point x="0.0" y="-158.5" />
+      <point x="350.60474006116215" y="2094.0" />
+      <point x="336.04281345565755" y="2094.0" />
+      <point x="140.0" y="103.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController.LobbyView" target="it.polimi.ingsw.controller.LobbyController" relationship="INNER_CLASS">
+      <point x="71.5" y="-70.0" />
+      <point x="306.85474006116215" y="2459.0" />
+      <point x="350.60474006116215" y="2459.0" />
+      <point x="0.0" y="158.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController.Lobby" target="it.polimi.ingsw.controller.LobbyController" relationship="INNER_CLASS">
+      <point x="-140.0" y="103.5" />
+      <point x="56.04281345565755" y="2094.0" />
+      <point x="203.93807339449552" y="2094.0" />
+      <point x="-146.66666666666663" y="-158.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Player" target="it.polimi.ingsw.model.Shelf" relationship="CREATE">
+      <point x="-76.75" y="-169.5" />
+      <point x="1089.875" y="478.0" />
+      <point x="1046.1047400611621" y="478.0" />
+      <point x="-78.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Tile.Sprite" target="it.polimi.ingsw.model.Tile" relationship="INNER_CLASS">
+      <point x="0.0" y="-48.0" />
+      <point x="1401.6047400611621" y="79.0" />
+      <point x="849.0932721712538" y="79.0" />
+      <point x="69.0" y="81.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.goals.personal.PersonalGoal" target="it.polimi.ingsw.model.Tile.Type" relationship="TO_MANY">
+      <point x="-69.25" y="-70.5" />
+      <point x="155.2500000000001" y="478.0" />
+      <point x="-120.5619266055046" y="478.0" />
+      <point x="-120.5619266055046" y="-137.0" />
+      <point x="390.2500000000001" y="-137.0" />
+      <point x="390.2500000000001" y="-157.0" />
+      <point x="431.5000000000001" y="-157.0" />
+      <point x="46.5" y="48.0" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.goals.personal.PersonalGoal" target="it.polimi.ingsw.model.Coordinate" relationship="TO_MANY">
+      <point x="-69.25" y="-70.5" />
+      <point x="155.2500000000001" y="478.0" />
+      <point x="-120.5619266055046" y="478.0" />
+      <point x="-120.5619266055046" y="458.0" />
+      <point x="-67.3119266055046" y="458.0" />
+      <point x="-67.3119266055046" y="438.0" />
+      <point x="92.57454128440372" y="438.0" />
+      <point x="-85.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.view.messages.Move" target="it.polimi.ingsw.model.Coordinate" relationship="TO_MANY">
+      <point x="0.0" y="-59.0" />
+      <point x="-98.0" y="468.0" />
+      <point x="-67.3119266055046" y="468.0" />
+      <point x="-67.3119266055046" y="438.0" />
+      <point x="92.57454128440372" y="438.0" />
+      <point x="-85.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.GameModel" target="it.polimi.ingsw.utils.exceptions.OccupiedTileException" relationship="LINK_IN_DOCS">
+      <point x="156.0" y="-422.5" />
+      <point x="981.1678134556576" y="881.0" />
+      <point x="1655.8547400611621" y="881.0" />
+      <point x="1655.8547400611621" y="478.0" />
+      <point x="1711.1047400611621" y="478.0" />
+      <point x="60.25" y="25.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.controller.LobbyController" target="it.polimi.ingsw.controller.LobbyController.Lobby" relationship="CREATE">
+      <point x="146.66666666666663" y="-158.5" />
+      <point x="497.2714067278288" y="2094.0" />
+      <point x="633.7928134556576" y="2094.0" />
+      <point x="633.7928134556576" y="2084.0" />
+      <point x="120.10474006116215" y="2084.0" />
+      <point x="120.10474006116215" y="2074.0" />
+      <point x="196.04281345565755" y="2074.0" />
+      <point x="0.0" y="103.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.Board" target="it.polimi.ingsw.model.Coordinate" relationship="TO_MANY">
+      <point x="-78.25" y="-103.5" />
+      <point x="758.3750000000001" y="478.0" />
+      <point x="789.1047400611621" y="478.0" />
+      <point x="789.1047400611621" y="448.0" />
+      <point x="-67.3119266055046" y="448.0" />
+      <point x="-67.3119266055046" y="438.0" />
+      <point x="92.57454128440372" y="438.0" />
+      <point x="-85.5" y="147.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.GameModel" target="it.polimi.ingsw.model.TileBag" relationship="TO_ONE">
+      <point x="-156.0" y="-422.5" />
+      <point x="669.1678134556576" y="881.0" />
+      <point x="815.1678134556576" y="881.0" />
+      <point x="815.1678134556576" y="871.0" />
+      <point x="456.8750000000001" y="871.0" />
+      <point x="-67.75" y="81.5" />
+    </edge>
+    <edge source="it.polimi.ingsw.model.GameModel" target="it.polimi.ingsw.model.Player" relationship="CREATE">
+      <point x="0.0" y="-422.5" />
+      <point x="825.1678134556576" y="861.0" />
+      <point x="1243.375" y="861.0" />
+      <point x="76.75" y="169.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.5392101939374184" showDependencies="true" x="911.9999999999999" y="1110.3510271546636" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
