@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.goals.common.CommonGoalStrategy;
-
 import java.io.Serializable;
 import java.util.List;
 

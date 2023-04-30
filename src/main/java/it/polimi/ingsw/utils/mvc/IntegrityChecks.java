@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
-import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.Move;
 
 import java.util.ArrayList;

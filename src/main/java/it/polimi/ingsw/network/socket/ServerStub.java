@@ -14,17 +14,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ServerStub implements Server {
     
-    String ip;
-    int port;
+    final String ip;
+    final int port;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     
     private Socket socket;
     
     private Client clientContext;
+    
+    
+    private final Object queueLock = new Object();
+    private final Queue<Response> responseQueue = new LinkedList<>();
     
     public ServerStub(String ip, int port) {
         this.ip = ip;
@@ -37,39 +43,56 @@ public class ServerStub implements Server {
             this.socket = new Socket(ip, port);
             try {
                 this.oos = new ObjectOutputStream(socket.getOutputStream());
-            } catch (IOException e) {
+            }
+            catch( IOException e ) {
                 throw new RemoteException("Cannot create output stream", e);
             }
             try {
                 this.ois = new ObjectInputStream(socket.getInputStream());
-            } catch (IOException e) {
+            }
+            catch( IOException e ) {
                 throw new RemoteException("Cannot create input stream", e);
             }
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Unable to connect to the server", e);
         }
         
         try {
             Integer clientID = (Integer) ois.readObject();
             client.setClientID(clientID);
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot receive lobby info from server", e);
-        } catch (ClassNotFoundException e) {
+        }
+        catch( ClassNotFoundException e ) {
             throw new RemoteException("Cannot deserialize lobby info from server", e);
         }
         
         this.clientContext = client;
     }
+    
     @Override
     public Response update(ViewMessage<?> message) throws RemoteException {
         try {
             oos.writeObject(message);
             oos.reset();
             oos.flush();
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send message", e);
         }
-        return new Response(0, "Attend server Response...");
+        synchronized(queueLock) {
+            while( responseQueue.peek() == null ||
+                   !responseQueue.peek().Action().equals(message.getClass().getSimpleName()) ) {
+                try {
+                    queueLock.wait();
+                }
+                catch( InterruptedException ignored ) {
+                }
+            }
+            return responseQueue.poll();
+        }
     }
     
     public void receive() throws RemoteException {
@@ -77,15 +100,18 @@ public class ServerStub implements Server {
         Object o;
         try {
             o = ois.readObject();
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot receive model view from server", e);
-        } catch (ClassNotFoundException e) {
+        }
+        catch( ClassNotFoundException e ) {
             throw new RemoteException("Cannot deserialize model view from server", e);
         }
         try {
             Method m = ReflectionUtility.GetMethod(this.getClass(), "onMessageReceived", o.getClass());
             m.invoke(this, o);
-        }catch( NoSuchMethodException e ){
+        }
+        catch( NoSuchMethodException e ) {
             throw new RemoteException("Server responded with illformed object", e);
         }
         catch( InvocationTargetException | IllegalAccessException e ) {
@@ -94,12 +120,16 @@ public class ServerStub implements Server {
         
     }
     
-    public void onMessageReceived(Response response){
-        
-        System.out.println(response.msg());
+    @SuppressWarnings("unused")
+    public void onMessageReceived(Response response) {
+        synchronized(queueLock) {
+            responseQueue.add(response);
+            queueLock.notifyAll();
+        }
     }
     
-    public <T extends ModelMessage<?>> void onMessageReceived(T mgs) throws RemoteException{
+    @SuppressWarnings("unused")
+    public <T extends ModelMessage<?>> void onMessageReceived(T mgs) throws RemoteException {
         this.clientContext.update(mgs);
     }
     
@@ -107,7 +137,8 @@ public class ServerStub implements Server {
     public void close() throws RemoteException {
         try {
             socket.close();
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot close socket", e);
         }
     }

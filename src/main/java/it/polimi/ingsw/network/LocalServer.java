@@ -57,19 +57,19 @@ public class LocalServer extends UnicastRemoteObject implements Server {
                 try {
                     return controller.update(message);
                 }catch( NoSuchMethodException f ){
-                    return new Response(-1, "Illegal message, no operation defined. Refere to the network manual");
+                    return new Response(-1, "Illegal message, no operation defined. Refere to the network manual", message.getClass().getSimpleName());
                 }
             }else{
-                return new Response(-1, "Ignoring view Events until game is started!");
+                return new Response(-1, "Ignoring view Events until game is started!", message.getClass().getSimpleName());
             }
         }
         catch( IllegalAccessException e ) {
             System.err.println(e.getMessage());
             e.printStackTrace();
-            return new Response(128, "Server is acting up, please be patient...");
+            return new Response(128, "Server is acting up, please be patient...", message.getClass().getSimpleName());
         }catch( InvocationTargetException e ){
             e.printStackTrace();
-            return new Response(127, e.getMessage());
+            return new Response(127, e.getMessage(), message.getClass().getSimpleName());
         }
     }
     
@@ -77,17 +77,17 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
         return new Response(id,
                                            "Created new Lobby with name : " + message.getPayload().name() +
-                                           " and id : " + id);
+                                           " and id : " + id, message.getClass().getSimpleName());
     }
     
     public Response onMessage(JoinLobbyMessage message) throws RemoteException {
         Map<Integer, GameController> mapping = lobbyController.joinLobby(message);
         if( mapping != null){
             this.gameControllers.putAll(mapping);
-            return Response.Ok();
+            return Response.Ok(message.getClass().getSimpleName());
         }
         //TODO proper message
-        else return new Response(-1, "proper message");
+        else return new Response(-1, "proper message", message.getClass().getSimpleName());
     }
     
     //FIXME sketchy
@@ -95,7 +95,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         if( lobbyController.checkRegistration(requestLobby.getClientId()) ){
             Client c = lobbyController.getClient(requestLobby.getClientId());
             c.update(new AvailableLobbyMessage(lobbyController.searchForLobbies(requestLobby.getPayload())));
-            return Response.Ok();
+            return Response.Ok(RequestLobby.class.getSimpleName());
         } else{
             throw new RemoteException("Client is not registered to the server");
         }

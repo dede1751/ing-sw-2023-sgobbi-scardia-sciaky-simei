@@ -182,7 +182,7 @@ public class GameController {
             return (Response) m.invoke(this, message);
         }
         catch( InvocationTargetException | IllegalAccessException e ) {
-            return new Response(128, "Server is acting up, please be patient...");
+            return new Response(128, "Server is acting up, please be patient...", message.getClass().getSimpleName());
         }
     }
     
@@ -193,7 +193,7 @@ public class GameController {
         if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
             System.err.println(
                 "Ignoring event from player '" + msg.getPlayerNickname() + "': " + msg.getMessageType().getTypeName() + ". Not the current Player.");
-            return Response.NotCurrentPlayer(currentPlayerNick);
+            return Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName());
         }else {
             Move move = msg.getPayload();
             if( IntegrityChecks.checkMove(move, this.model.getBoard(), this.model.getCurrentPlayer().getShelf()) ) {
@@ -201,19 +201,21 @@ public class GameController {
                 model.shelveSelection(move.tiles(), move.column());
                 turnManager();
                 nextPlayerSetter();
-                return Response.Ok();
+                return Response.Ok(msg.getClass().getSimpleName());
             }
-            return Response.IllegalMove(currentPlayerNick);
+            return Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName());
         }
     }
     
+    @SuppressWarnings("unused")
     public Response onMessage(ChatMessage chat){
-        return new Response(1, "Not implemented yet");
+        return new Response(1, "Not implemented yet", chat.getClass().getSimpleName());
     }
     
+    @SuppressWarnings("unused")
     public Response onMessage(DebugMessage message){
         System.out.println("Debug message just arrived urray! It says : " + message.getPayload());
-        return new Response(0, message.getPayload());
+        return new Response(0, message.getPayload(), message.getClass().getSimpleName());
     }
     
 }

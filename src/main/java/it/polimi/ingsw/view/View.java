@@ -1,13 +1,11 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.*;
 
 import java.rmi.RemoteException;
-import java.util.List;
 
 
 public abstract class View implements Runnable {
@@ -21,10 +19,6 @@ public abstract class View implements Runnable {
     
     protected String nickname;
     
-    protected int selectedPlayerCount;
-    
-    protected List<Coordinate> selectedCoordinates;
-    
     
     protected int column;
     
@@ -36,15 +30,8 @@ public abstract class View implements Runnable {
     
     public String getNickname() { return nickname; }
     
-    public void setSelectedPlayerCount(int selectedPlayerCount) { this.selectedPlayerCount = selectedPlayerCount; }
-    
-    public void setSelectedCoordinates(List<Coordinate> selection) {
-        this.selectedCoordinates = selection;
-    }
-    
-    public void setColumn(int column) {
-        this.column = column;
-    }
+    //True for socket, false for rmi
+    protected boolean service;
     
     public void setServer(Server server){
         this.server = server;
@@ -58,7 +45,7 @@ public abstract class View implements Runnable {
             return server.update(msg);
         }catch( RemoteException e ){
             e.printStackTrace(System.err);
-            return new Response(1, e.getMessage());
+            return new Response(1, e.getMessage(), msg.getClass().getSimpleName());
         }
     }
     //FIXME proper error and response messages handling
@@ -82,5 +69,9 @@ public abstract class View implements Runnable {
     }
     protected Response notifyRequestLobby(LobbyInformation info){
         return notifyServer(new RequestLobby(info, this.nickname, this.clientID));
+    }
+    
+    public void setService(boolean service) {
+        this.service = service;
     }
 }

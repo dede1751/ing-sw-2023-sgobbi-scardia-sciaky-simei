@@ -70,7 +70,7 @@ public class CommonGoalTest {
     @Nested
     class CrossGoalTest {
         
-        public CommonGoalStrategy goal = new CrossGoal();
+        public final CommonGoalStrategy goal = new CrossGoal();
         @Test
         public void CrossGoalTrue() {
             var attribute = ResourcesManager.getCurrentMethod();
@@ -88,7 +88,7 @@ public class CommonGoalTest {
     @Nested
     class DecreasingColumnsGoalTest {
     
-        public CommonGoalStrategy goal = new DecreasingColumnsGoal();
+        public final CommonGoalStrategy goal = new DecreasingColumnsGoal();
     
         @Test
         public void DecreasingColumnsGoalTrue1() {
@@ -125,7 +125,7 @@ public class CommonGoalTest {
     @Nested
     class DiagonalFiveTileGoalTest {
         
-        public CommonGoalStrategy goal = new DiagonalFiveTileGoal();
+        public final CommonGoalStrategy goal = new DiagonalFiveTileGoal();
         @Test
         public void DiagonalFiveTileTrue1() {
             var attribute = ResourcesManager.getCurrentMethod();
@@ -229,7 +229,7 @@ public class CommonGoalTest {
     @Nested
     class SixGroupTwoTileGoalTest {
         
-        public CommonGoalStrategy goal = new SixGroupTwoTileGoal();
+        public final CommonGoalStrategy goal = new SixGroupTwoTileGoal();
         
         @Test
         void SixGroupTwoTileGoalTrue1() {
@@ -261,7 +261,7 @@ public class CommonGoalTest {
     @Nested
     class FourGroupFourTileGoalTest {
         
-        public CommonGoalStrategy goal = new FourGroupFourTileGoal();
+        public final CommonGoalStrategy goal = new FourGroupFourTileGoal();
         
         @Test
         void FourGroupFourTileGoalFalse1() {
@@ -426,7 +426,7 @@ public class CommonGoalTest {
     @Nested
     class TwoGroupSquareGoalTest {
         
-        public CommonGoalStrategy goal = new TwoGroupSquareGoal();
+        public final CommonGoalStrategy goal = new TwoGroupSquareGoal();
         
         @Test
         public void TwoGroupSquareFalse1() {

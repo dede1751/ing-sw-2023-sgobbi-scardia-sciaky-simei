@@ -75,7 +75,6 @@ public class LobbyController {
         client.setClientID(clientIDCounter);
         this.clientMapping.put(clientIDCounter, client);
         clientIDCounter++;
-        client.update(new AvailableLobbyMessage(searchForLobbies(new LobbyInformation(null, null))));
     }
     
     /**

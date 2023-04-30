@@ -2,8 +2,6 @@ package it.polimi.ingsw.model.goals.common;
 
 import it.polimi.ingsw.model.Shelf;
 
-import java.util.List;
-
 /**
  * Interface implemented by each specific type of {@link CommonGoal}
  */

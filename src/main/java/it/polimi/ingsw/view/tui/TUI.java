@@ -3,10 +3,12 @@ package it.polimi.ingsw.view.tui;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.messages.*;
+import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.JoinLobby;
 import it.polimi.ingsw.view.messages.LobbyInformation;
+import it.polimi.ingsw.view.messages.Move;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -62,33 +64,38 @@ public class TUI extends View {
             if( choice.equals("CREATE") ) {
                 // ask the user for the number of players in the lobby.
                 System.out.println("\nChoose the amount of players for the match (2-4): ");
-                int lobbySize;
-                while( true ) {
+                int lobbySize = -1;
+                while( !(lobbySize >= 2 && lobbySize <= 4) ) {
                     System.out.print("\n>>  ");
                     try {
                         lobbySize = Integer.parseInt(scanner.next());
-                        
-                        if( lobbySize >= 2 && lobbySize <= 4 ) {
-                            this.setSelectedPlayerCount(lobbySize);
-                            break;
-                        }
                     }
                     catch( NumberFormatException e ) {
                         System.out.println("Please write a number");
                     }
                 }
-                this.notifyCreateLobby(new LobbyInformation(lobbySize, this.getNickname()));
+                Response r = this.notifyCreateLobby(new LobbyInformation(lobbySize, this.getNickname()));
+                System.out.println(r);
                 break;
             }else if( choice.equals("JOIN") ) {
                 
                 //FIXME SUPER SKETCHY!!!
-                synchronized(LobbyRequestLock) {
-                    notifyRequestLobby(new LobbyInformation(null, null));
-                    try {
-                        LobbyRequestLock.wait();
+                if( this.service ) {
+                    Response r = notifyRequestLobby(new LobbyInformation(null, null));
+                    System.out.println(r);
+                    synchronized(LobbyRequestLock) {
+                        while( !model.isChangedLobby() ) {
+                            try {
+                                LobbyRequestLock.wait();
+                            }
+                            catch( InterruptedException ignored ) {
+                            }
+                        }
+                        model.toggleHasChangedLobby();
                     }
-                    catch( InterruptedException ignored ) {
-                    }
+                }else {
+                    Response r = notifyRequestLobby(new LobbyInformation(null, null));
+                    System.out.println(r);
                 }
                 if( lobbies.isEmpty() ) {
                     System.out.println("No lobbies are currently available, please create a new one");
@@ -135,9 +142,8 @@ public class TUI extends View {
             System.out.print("\n>>  ");
             String input = scanner.next().trim();
             if( input.equals("PASS") ) {
-                //this.setChangedAndNotifyObservers(Action.PASS_TURN);
                 var message = this.notifyDebugMessage("Turn Passed");
-                
+                System.out.println(message);
                 break;
                 
             }
@@ -146,7 +152,7 @@ public class TUI extends View {
     
     
     //TODO add tile order selection
-    public void askSelection() {
+    public List<Coordinate> askSelection(Move move) {
         
         Scanner scanner = new Scanner(System.in);
         List<Coordinate> selection = new ArrayList<>();
@@ -183,16 +189,16 @@ public class TUI extends View {
         }
         while( IntegrityChecks.checkSelectionForm(selection) );
         System.out.println("Entered coordinates: " + selection);
-        this.setSelectedCoordinates(selection);
+        return selection;
         
     }
     
-    public void askColumn() {
+    public int askColumn() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the column in which you want to place your selection: ");
         int column = scanner.nextInt();
         scanner.nextLine();
-        this.setColumn(column);
+        return column;
     }
     
     private Coordinate getCoordinate() {
@@ -239,12 +245,13 @@ public class TUI extends View {
     
     @Override
     public void update(ModelMessage<?> msg) {
-        try{
+        try {
             Method m = this.getClass().getMethod("onMessage", msg.getClass());
             m.invoke(this, msg);
         }
         catch( NoSuchMethodException e ) {
-            System.out.println("There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
+            System.out.println(
+                    "There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
         }
         catch( InvocationTargetException e ) {
             e.printStackTrace(System.err);
@@ -256,32 +263,33 @@ public class TUI extends View {
     
     //FIXME
     @SuppressWarnings("unused")
-    public void onMessage(BoardMessage msg){
+    public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
         printBoard(this.model.getBoard());
     }
     
     //FIXME sketchy part 3
     @SuppressWarnings("unused")
-    public void onMessage(AvailableLobbyMessage msg){
+    public void onMessage(AvailableLobbyMessage msg) {
         this.lobbies = msg.getPayload().lobbyViewList();
         synchronized(LobbyRequestLock) {
+            model.toggleHasChangedLobby();
             LobbyRequestLock.notifyAll();
         }
     }
     
     @SuppressWarnings("unused")
-    public void onMessage(EndGameMessage msg){
+    public void onMessage(EndGameMessage msg) {
         var p = msg.getPayload();
-        System.out.println("GAME FINISHED, THE WINNER IS " + p.winner() );
+        System.out.println("GAME FINISHED, THE WINNER IS " + p.winner());
         System.out.println("LEADERBOARD : ");
-        for(var x : p.points().entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList()){
+        for( var x : p.points().entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList() ) {
             System.out.println(x.getKey() + " : " + x.getValue());
         }
     }
     
     @SuppressWarnings("unused")
-    public void onMessage(StartGameMessage msg){
+    public void onMessage(StartGameMessage msg) {
         model.setPlayersNicknames(msg.getPayload().nicknames());
         System.out.println("GAME START!");
         System.out.println("Players name:");
