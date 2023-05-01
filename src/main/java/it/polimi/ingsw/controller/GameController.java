@@ -40,7 +40,7 @@ public class GameController {
      *
      * @return True if a refill is needed, false otherwise
      */
-    public Boolean needRefill() {
+    public boolean needRefill() {
         Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
         
         for( var entry : toBeChecked.entrySet() ) {
@@ -60,7 +60,6 @@ public class GameController {
      * Compute adjacency score for final scores
      *
      * @param shelf Shelf to check for the score
-     *
      * @return Integer score assigned for adjacent similar tiles in the given shelf
      */
     public int calculateAdjacency(Shelf shelf) {
@@ -103,7 +102,6 @@ public class GameController {
         }
         return adjacentScore;
     }
-    
     
     /**
      * Turn bookkeeping:
@@ -160,11 +158,27 @@ public class GameController {
      * Notify the views of the winner and close the lobby
      */
     public void endGame() {
-        
         model.notifyWinner();
         LobbyController.getInstance().endGame(this.lobbyID);
     }
     
+    /**
+     * Respond to a chat message received from a client
+     * @param chat Message contents
+     * @return Response to the client
+     */
+    @SuppressWarnings("unused")
+    public Response onMessage(ChatMessage chat){
+        model.chatBroker(chat);
+        return Response.Ok(chat.getClass().getSimpleName());
+    }
+    
+    /**
+     * Respond to a move message received from a client
+     * @param msg Move received
+     * @return Response to the client
+     */
+    @SuppressWarnings("unused")
     public Response onMessage(MoveMessage msg){
         
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
@@ -183,12 +197,6 @@ public class GameController {
             }
             return Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName());
         }
-    }
-    
-    @SuppressWarnings("unused")
-    public Response onMessage(ChatMessage chat){
-        model.chatBroker(chat);
-        return Response.Ok(chat.getClass().getSimpleName());
     }
     
     @SuppressWarnings("unused")

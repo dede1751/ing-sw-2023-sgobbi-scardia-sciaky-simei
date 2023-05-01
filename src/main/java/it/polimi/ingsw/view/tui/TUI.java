@@ -132,7 +132,6 @@ public class TUI extends View {
         }
     }
     
-    
     //TODO add tile order selection
     public List<Coordinate> askSelection(Move move) {
         
@@ -142,16 +141,13 @@ public class TUI extends View {
         int numCoordinates = scanner.nextInt();
         scanner.nextLine();
         
-        
         while( numCoordinates > 3 || numCoordinates < 1 ) {//check if the number of coordinates is right
             System.out.print("The number must be between 1 and 3, try again: ");
             numCoordinates = scanner.nextInt();
             scanner.nextLine();
         }
         
-        
         //le coordinate devono essere da 0 a 8
-        
         do {
             for( int i = 0; i < numCoordinates; i++ ) {
                 Coordinate coordinate = getCoordinate();
@@ -194,7 +190,6 @@ public class TUI extends View {
     }
     
     private void printBoard(Board board) {
-        
         var def = "C-,-)";
         if( board == null ) {
             System.out.println("Board Still not initialized!");
@@ -231,6 +226,7 @@ public class TUI extends View {
         printBoard(this.model.getBoard());
     }
     
+    @SuppressWarnings("unused")
     @Override
     public void onMessage(AvailableLobbyMessage msg) {
         this.lobbies = msg.getPayload().lobbyViewList();

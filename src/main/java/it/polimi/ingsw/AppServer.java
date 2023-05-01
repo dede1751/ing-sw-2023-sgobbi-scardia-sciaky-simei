@@ -57,9 +57,8 @@ public class AppServer {
     }
     
     public static void startSocket(Server server) throws RemoteException {
-        final ExecutorService executorService = Executors.newCachedThreadPool();
-        
-        try ( ServerSocket serverSocket = new ServerSocket(1234)) {
+        try ( ExecutorService executorService = Executors.newCachedThreadPool();
+              ServerSocket serverSocket = new ServerSocket(1234)) {
             //noinspection InfiniteLoopStatement
             while (true) {
                 Socket socket = serverSocket.accept();

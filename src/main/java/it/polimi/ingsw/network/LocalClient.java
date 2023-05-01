@@ -10,6 +10,10 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * Class LocalClient is the main network interface for the client application.
+ * It communicates to either a LocalServer via RMI or a ServerStub via Socket.
+ */
 public class LocalClient extends UnicastRemoteObject implements Client {
     
     private final Server server;
@@ -36,6 +40,9 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     @Override
     public void setClientID(int clientID) throws RemoteException { this.view.setClientID(clientID); }
     
+    /**
+     * Connect this client to the server
+     */
     public void connectServer() {
         try {
             server.register(this);
@@ -51,15 +58,11 @@ public class LocalClient extends UnicastRemoteObject implements Client {
         try {
             Method m = view.getClass().getMethod("onMessage", msg.getClass());
             m.invoke(view, msg);
-        }
-        catch( NoSuchMethodException e ) {
-            System.out.println(
-                    "There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
-        }
-        catch( InvocationTargetException e ) {
+        } catch( NoSuchMethodException e ) {
+            System.out.println("There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
+        } catch( InvocationTargetException e ) {
             e.printStackTrace(System.err);
-        }
-        catch( IllegalAccessException e ) {
+        } catch( IllegalAccessException e ) {
             System.err.println("Illegal access exception in update, controll code");
         }
     }

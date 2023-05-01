@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Local model representation used by the running view.
+ * Updated when a message is received from the server.
+ */
 public class LocalModel {
     
     public static final LocalModel INSTANCE = new LocalModel();

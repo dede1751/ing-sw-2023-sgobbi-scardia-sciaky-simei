@@ -10,4 +10,5 @@ public class DebugMessage extends ViewMessage<String> {
     public Class<?> getMessageType() {
         return this.getClass();
     }
+    
 }

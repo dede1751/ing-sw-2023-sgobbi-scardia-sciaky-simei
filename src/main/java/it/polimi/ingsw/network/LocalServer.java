@@ -3,6 +3,7 @@ package it.polimi.ingsw.network;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
+import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.RequestLobby;
@@ -61,7 +62,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
             if ( controller != null ){
                 try {
                     Method m = controller.getClass().getMethod("onMessage", message.getMessageType());
-                    return (Response) m.invoke(this, message);
+                    return (Response) m.invoke(controller, message);
                 } catch( NoSuchMethodException f ){
                     return new Response(-1, "Illegal message, no operation defined. Refere to the network manual", message.getClass().getSimpleName());
                 } catch( InvocationTargetException | IllegalAccessException f ) {
@@ -94,7 +95,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         try {
             int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
             return Response.Ok(CreateLobbyMessage.class.getSimpleName());
-        } catch( RemoteException e ) {
+        } catch( LoginException e ) {
             return new Response(-1, e.getMessage(), CreateLobbyMessage.class.getSimpleName());
         }
     }
@@ -107,7 +108,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
                 this.gameControllers.putAll(mapping);
             }
             return Response.Ok(message.getClass().getSimpleName());
-        } catch (RemoteException e) {
+        } catch (LoginException e) {
             return new Response(-1, e.getMessage(), message.getClass().getSimpleName());
         }
     }

@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class GameModel {
     
-    
     private final int numPlayers;
     
     private final int commonGoalNumX;
@@ -115,14 +114,6 @@ public class GameModel {
         return commonGoalNumY;
     }
     
-    public Stack<Integer> getStackCGX() {
-        return commonGoalStackX;
-    }
-    
-    public Stack<Integer> getStackCGY() {
-        return commonGoalStackX;
-    }
-    
     /**
      * Get number of participating players
      *
@@ -150,15 +141,6 @@ public class GameModel {
         return commonGoalStackY.pop();
     }
     
-    
-    public Board getBoard() {
-        return this.board;
-    }
-    
-    public TileBag getTileBag() {
-        return this.tileBag;
-    }
-    
     /**
      * Checks if the game is on its final turn and set gameOver to true if the turn is final
      * (although some players might still have to play)
@@ -169,10 +151,13 @@ public class GameModel {
         
     }
     
+    /**
+     * Check if it's the last turn
+     * @return true if it's the last turn, false otherwise
+     */
     public boolean isLastTurn() {
         return this.lastTurn;
     }
-    
     
     /**
      * Adds player with given nickname and personal goal to the player pool
@@ -185,35 +170,6 @@ public class GameModel {
         players.add(new Player(nickname, pgID));
     }
     
-    private void addPlayer(Player player) {
-        players.add(player);
-    }
-    
-    
-    /**
-     * Add client reference to model.
-     * This method should be called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int)}.
-     * It is necessary for the correct functioning of the networking communication.
-     *
-     * @param nickname nickname of the client
-     * @param client   reference to the client object
-     *
-     * @throws DuplicateNickname    if it exists a client linked to the same nickname
-     * @throws NoPlayerWithNickname if a player with the same nickname doesn't exist. This method should be
-     *                              called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int) addPlayer}
-     */
-    
-    public void addClient(String nickname, Client client) throws DuplicateNickname, NoPlayerWithNickname {
-        if( this.clientMap.containsKey(nickname) ) {
-            throw new DuplicateNickname(nickname);
-        }else if( this.players.stream().filter((x) -> x.getNickname().equals(nickname)).count() != 1 ) {
-            throw new NoPlayerWithNickname(nickname);
-        }else {
-            this.clientMap.put(nickname, client);
-        }
-    }
-    
-    
     /**
      * Returns the entire player list
      * Internal player indices are guaranteed to be consistent with the ones from this list.
@@ -224,23 +180,14 @@ public class GameModel {
         return players;
     }
     
-    
     /**
      * Return the index of the current player in the list returned by {@link #getPlayers() getPlayers}
      *
      * @return The index of the current player
      */
-    
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
     }
-    
-    
-    public void setCurrentPlayerIndex(int i) {
-        currentPlayerIndex = i;
-        notifyCurrentPlayerChange();
-    }
-    
     
     /**
      * Return the current player
@@ -249,6 +196,35 @@ public class GameModel {
      */
     public Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
+    }
+    
+    /**
+     * Set the current player index
+     * @param currentPlayerIndex new index of the current player
+     */
+    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+        this.currentPlayerIndex = currentPlayerIndex;
+        notifyCurrentPlayerChange();
+    }
+    
+    /**
+     * Adds given score to the current player's score
+     *
+     * @param score Integer score to give the current player
+     * @return Total score for current player
+     */
+    public int addCurrentPlayerCommongGoalScore(int score) { return this.getCurrentPlayer().addCommonGoalScore(score); }
+    
+    
+    /**
+     * Gets the amount of tiles left in play for the given type of tile
+     * Will throw a class cast exception if being used with Tile.NOTILE
+     *
+     * @param tile Type of tile to check
+     * @return Amount of tile left (counts both bag and board)
+     */
+    public int getTileAmount(Tile tile) {
+        return this.tileBag.getTileAmount(tile);
     }
     
     /**
@@ -310,8 +286,6 @@ public class GameModel {
      * @param orderedTiles List of tiles to put on shelf, from first to last
      * @param column       Column of the shelf to insert the tiles at
      */
-    
-    
     public void shelveSelection(List<Tile> orderedTiles, int column) {
         this.tileBag.removeSelection(orderedTiles);
         this.getCurrentPlayer().getShelf().addTiles(orderedTiles, column);
@@ -319,49 +293,24 @@ public class GameModel {
     }
     
     /**
-     * Adds given score to the current player's score
+     * Add client reference to model.
+     * This method should be called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int)}.
+     * It is necessary for the correct functioning of the networking communication.
      *
-     * @param score Integer score to give the current player
+     * @param nickname nickname of the client
+     * @param client   reference to the client object
      *
-     * @return Total score for current player
+     * @throws DuplicateNickname    if it exists a client linked to the same nickname
+     * @throws NoPlayerWithNickname if a player with the same nickname doesn't exist. This method should be
+     *                              called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int) addPlayer}
      */
-    public int addCurrentPlayerCommongGoalScore(int score) {
-        return this.getCurrentPlayer().addCommonGoalScore(score);
-    }
-    
-    
-    public void notifyWinner() {
-        String winner =
-                this.players.stream().max(Comparator.comparingInt(Player::getScore)).orElseThrow().getNickname();
-        Map<String, Integer> leaderboard = new HashMap<>();
-        for(var x : this.getPlayers()){
-            leaderboard.put(x.getNickname(), x.getScore());
-        }
-        notifyAllClient(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
-    }
-    
-    
-    /**
-     * Gets the amount of tiles left in play for the given type of tile
-     * Will throw a class cast exception if being used with Tile.NOTILE
-     *
-     * @param tile Type of tile to check
-     *
-     * @return Amount of tile left (counts both bag and board)
-     */
-    public int getTileAmount(Tile tile) {
-        return this.tileBag.getTileAmount(tile);
-    }
-    
-    
-    public void chatBroker(ChatMessage chat){
-        
-        IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
-        if(chat.getDestination().equals("BROADCAST")){
-            notifyAllClient(message);
-        }else{
-            Client player = this.clientMap.get(chat.getPlayerNickname());
-            notifyClient(message, player);
+    public void addClient(String nickname, Client client) throws DuplicateNickname, NoPlayerWithNickname {
+        if( this.clientMap.containsKey(nickname) ) {
+            throw new DuplicateNickname(nickname);
+        }else if( this.players.stream().filter((x) -> x.getNickname().equals(nickname)).count() != 1 ) {
+            throw new NoPlayerWithNickname(nickname);
+        }else {
+            this.clientMap.put(nickname, client);
         }
     }
     
@@ -371,8 +320,10 @@ public class GameModel {
         }
         catch( RemoteException e ) {
             AtomicReference<String> nick = new AtomicReference<>();
-            clientMap.entrySet().stream().filter((x) -> x.getValue() == player).findFirst().ifPresent((x) -> nick.set(
-                    x.getKey()));
+            clientMap.entrySet()
+                    .stream()
+                    .filter((x) -> x.getValue() == player).findFirst()
+                    .ifPresent((x) -> nick.set(x.getKey()));
             System.err.println("Unable to update player " + nick);
             System.err.println(e.getMessage());
         }
@@ -384,6 +335,20 @@ public class GameModel {
         }
     }
     
+    /**
+     * Broker a chat message to the correct client
+     * @param chat Message to be sent
+     */
+    public void chatBroker(ChatMessage chat){
+        
+        IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
+        if(chat.getDestination().equals("BROADCAST")){
+            notifyAllClient(message);
+        }else{
+            Client player = this.clientMap.get(chat.getPlayerNickname());
+            notifyClient(message, player);
+        }
+    }
     
     private void notifyBoardChange() {
         var boardMessage = new BoardMessage(this);
@@ -403,6 +368,42 @@ public class GameModel {
     private void notifyStartGame() {
         var startGame = new StartGameMessage(this.players.stream().map(Player::getNickname).toList());
         notifyAllClient(startGame);
+    }
+    
+    /**
+     * Notify the clients that the game is ended by sending a leaderboard.
+     */
+    public void notifyWinner() {
+        String winner = this.players.stream()
+                .max(Comparator.comparingInt(Player::getScore))
+                .orElseThrow()
+                .getNickname();
+        Map<String, Integer> leaderboard = new HashMap<>();
+        for (Player x : this.getPlayers()){
+            leaderboard.put(x.getNickname(), x.getScore());
+        }
+        notifyAllClient(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
+    }
+    
+    // Testing methods
+    public int peekStackCGX() {
+        return commonGoalStackX.peek();
+    }
+    
+    public int peekStackCGY() {
+        return commonGoalStackY.peek();
+    }
+    
+    public Board getBoard() {
+        return this.board;
+    }
+    
+    public TileBag getTileBag() {
+        return this.tileBag;
+    }
+    
+    private void addPlayer(Player player) {
+        players.add(player);
     }
     
     protected static class ModelSerializer implements JsonSerializer<GameModel> {

@@ -212,7 +212,7 @@ class GameControllerTest {
                 assertFalse(completedGoalX);
                 
                 var commonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
-                var goalPeek = model.getStackCGX().peek();
+                var goalPeek = model.peekStackCGX();
                 
                 controller.turnManager();
                 
@@ -247,12 +247,12 @@ class GameControllerTest {
                 assertTrue(completedGoalX);
                 
                 var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var goalPeek = model.getStackCGX().peek();
+                var goalPeek = model.peekStackCGX();
                 
                 controller.turnManager();
                 
                 var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var newGoalPeek = model.getStackCGX().peek();
+                var newGoalPeek = model.peekStackCGX();
                 
                 assertEquals(commonGoaLScore, newCommonGoaLScore);
                 assertEquals(goalPeek, newGoalPeek);
@@ -283,12 +283,12 @@ class GameControllerTest {
                 assertFalse(completedGoalX);
             
                 var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var goalPeek = model.getStackCGX().peek();
+                var goalPeek = model.peekStackCGX();
             
                 controller.turnManager();
             
                 var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var newGoalPeek = model.getStackCGX().peek();
+                var newGoalPeek = model.peekStackCGX();
             
                 assertEquals(commonGoaLScore, newCommonGoaLScore);
                 assertEquals(goalPeek, newGoalPeek);
@@ -319,7 +319,7 @@ class GameControllerTest {
                 assertFalse(completedGoalY);
     
                 var commonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
-                var goalPeek = model.getStackCGY().peek();
+                var goalPeek = model.peekStackCGY();
                 var expectedCommonGoalScore = commonGoalScore + goalPeek;
     
                 controller.turnManager();
@@ -354,12 +354,12 @@ class GameControllerTest {
                 assertTrue(completedGoalY);
     
                 var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var goalPeek = model.getStackCGY().peek();
+                var goalPeek = model.peekStackCGY();
     
                 controller.turnManager();
     
                 var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var newGoalPeek = model.getStackCGY().peek();
+                var newGoalPeek = model.peekStackCGY();
     
                 assertEquals(commonGoaLScore, newCommonGoaLScore);
                 assertEquals(goalPeek, newGoalPeek);
@@ -390,12 +390,12 @@ class GameControllerTest {
                 assertFalse(completedGoalY);
             
                 var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var goalPeek = model.getStackCGY().peek();
+                var goalPeek = model.peekStackCGY();
             
                 controller.turnManager();
             
                 var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
-                var newGoalPeek = model.getStackCGY().peek();
+                var newGoalPeek = model.peekStackCGY();
             
                 assertEquals(commonGoaLScore, newCommonGoaLScore);
                 assertEquals(goalPeek, newGoalPeek);

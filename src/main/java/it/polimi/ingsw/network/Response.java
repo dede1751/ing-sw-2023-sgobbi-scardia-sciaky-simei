@@ -2,6 +2,12 @@ package it.polimi.ingsw.network;
 
 import java.io.Serializable;
 
+/**
+ * Generic response returned to each client request
+ * @param status 0 if OK, -1 if error
+ * @param msg Message to be displayed to the client
+ * @param Action The type of action that generated this response
+ */
 public record Response(int status, String msg, String Action) implements Serializable {
     
     public static Response Ok(String Action) {
@@ -19,9 +25,12 @@ public record Response(int status, String msg, String Action) implements Seriali
     }
     
     public static Response ServerError(String Action) {
-        return new Response(127, "Server is acting up, please be patient...", Action);
+        return new Response(-2, "Server is acting up, please be patient...", Action);
     }
     
+    /**
+     * @return true if the response is OK, false otherwise
+     */
     public boolean isOk() { return status == 0; }
     
     @Override

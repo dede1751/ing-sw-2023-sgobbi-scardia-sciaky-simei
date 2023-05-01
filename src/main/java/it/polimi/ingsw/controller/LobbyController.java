@@ -3,6 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
+import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.view.messages.JoinLobby;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
@@ -30,6 +31,7 @@ public class LobbyController {
         }
     }
     
+    // LobbyView is a serializable version of Lobby to be sent to the client for information
     public record LobbyView(List<String> nicknames, int lobbySize, int lobbyID) implements Serializable {
         @Override
         public String toString() {
@@ -126,9 +128,13 @@ public class LobbyController {
      * @param fpId the id of the first player
      * @return the id of the lobby
      */
-    public int createLobby(LobbyInformation info, String firstPlayer, int fpId) throws RemoteException {
+    public int createLobby(LobbyInformation info, String firstPlayer, int fpId) throws LoginException {
         if( this.nicknameTaken(firstPlayer) ) {
-            throw new RemoteException("NicknameTaken");
+            throw new LoginException("NicknameTaken");
+        }
+        int lobbySize = info.size();
+        if ( lobbySize < 2 || lobbySize > 4  ) {
+            throw new LoginException("InvalidLobbySize");
         }
         
         Lobby newLobby = new Lobby(
@@ -150,15 +156,15 @@ public class LobbyController {
      * @param msg Message received from view
      * @return Map between clientIDs and the same gamecontroller, null if no game started
      */
-    public Map<Integer, GameController> joinLobby(JoinLobbyMessage msg) throws RemoteException {
+    public Map<Integer, GameController> joinLobby(JoinLobbyMessage msg) throws LoginException {
         
         JoinLobby info = msg.getPayload();
         Lobby lobby = lobbies.get(info.id());
         if( lobby == null || !lobby.isEmpty() ) {
-            throw new RemoteException("LobbyUnavailable");
+            throw new LoginException("LobbyUnavailable");
         }
         if( this.nicknameTaken(msg.getPlayerNickname()) ) {
-            throw new RemoteException("NicknameTaken");
+            throw new LoginException("NicknameTaken");
         }
         
         lobby.nicknames.add(msg.getPlayerNickname());
@@ -199,8 +205,7 @@ public class LobbyController {
             model.addPlayer(lobby.nicknames().get(i), personalGoalIndices[i]);
             try {
                 model.addClient(lobby.nicknames().get(i), client);
-            }
-            catch( DuplicateNickname | NoPlayerWithNickname ignored ) {
+            } catch( DuplicateNickname | NoPlayerWithNickname ignored ) {
             }
         }
         Map<Integer, GameController> gameMapping = new HashMap<>();

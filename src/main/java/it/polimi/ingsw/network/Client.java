@@ -5,6 +5,10 @@ import it.polimi.ingsw.model.messages.ModelMessage;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
+/**
+ * Interface Client defines the methods that must be implemented by each client.
+ * Each client must override the update method to handle the model changes received from the server
+ */
 public interface Client extends Remote {
     
     /**
@@ -19,4 +23,5 @@ public interface Client extends Remote {
      * @param msg   The object that contains the model changes information
      */
     void update(ModelMessage<?> msg) throws RemoteException;
+    
 }

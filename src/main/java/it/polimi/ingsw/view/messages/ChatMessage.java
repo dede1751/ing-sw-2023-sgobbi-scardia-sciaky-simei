@@ -21,4 +21,5 @@ public class ChatMessage extends ViewMessage<String> {
     public String getDestination(){
         return this.dest;
     }
+    
 }

@@ -10,4 +10,5 @@ public class MoveMessage extends ViewMessage<Move> {
     public Class<?> getMessageType() {
         return this.getClass();
     }
+    
 }

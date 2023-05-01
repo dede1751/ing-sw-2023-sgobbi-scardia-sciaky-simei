@@ -9,4 +9,5 @@ public class CreateLobbyMessage extends ViewMessage<LobbyInformation> {
     public Class<?> getMessageType() {
         return this.getClass();
     }
+    
 }
