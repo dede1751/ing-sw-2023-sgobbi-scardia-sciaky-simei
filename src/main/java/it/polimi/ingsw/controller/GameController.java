@@ -7,12 +7,7 @@ import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.messages.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
-
-
-//TODO change all the print
 
 /**
  * GameController, responsible for modifying the model according to the input from the player views

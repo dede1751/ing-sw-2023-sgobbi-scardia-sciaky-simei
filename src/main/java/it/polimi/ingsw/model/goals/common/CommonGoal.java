@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model.goals.common;
 
-import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Shelf;
 
 /**
