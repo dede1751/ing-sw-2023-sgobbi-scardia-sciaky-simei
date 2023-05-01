@@ -83,7 +83,7 @@ public abstract class View implements Runnable {
      * @return The server's response
      */
     protected Response notifyRequestLobby(Integer size){
-        return notifyServer(new RequestLobby(size, this.nickname, this.clientID));
+        return notifyServer(new RequestLobbyMessage(size, this.nickname, this.clientID));
     }
     
     /**

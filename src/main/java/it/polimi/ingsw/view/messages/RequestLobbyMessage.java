@@ -1,8 +1,8 @@
 package it.polimi.ingsw.view.messages;
 
-public class RequestLobby extends ViewMessage<Integer> {
+public class RequestLobbyMessage extends ViewMessage<Integer> {
     
-    public RequestLobby(Integer lobbyId, String playerNick, int clientId) {
+    public RequestLobbyMessage(Integer lobbyId, String playerNick, int clientId) {
         super(lobbyId, playerNick, clientId);
     }
     

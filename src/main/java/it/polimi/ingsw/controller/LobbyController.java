@@ -109,17 +109,17 @@ public class LobbyController {
     
     /**
      * Return the list of lobbies to the client
-     * @param requestLobby Lobby parameters
+     * @param requestLobbyMessage Lobby parameters
      * @return Response to the client
      */
     @SuppressWarnings("unused")
-    public Response onMessage(RequestLobby requestLobby) {
-        Client c = clientMapping.get(requestLobby.getClientId());
+    public Response onMessage(RequestLobbyMessage requestLobbyMessage) {
+        Client c = clientMapping.get(requestLobbyMessage.getClientId());
         try {
-            c.update(new AvailableLobbyMessage(this.searchForLobbies(requestLobby.getPayload())));
-            return Response.Ok(RequestLobby.class.getSimpleName());
+            c.update(new AvailableLobbyMessage(this.searchForLobbies(requestLobbyMessage.getPayload())));
+            return Response.Ok(RequestLobbyMessage.class.getSimpleName());
         } catch (RemoteException e) {
-            return Response.ServerError(RequestLobby.class.getSimpleName());
+            return Response.ServerError(RequestLobbyMessage.class.getSimpleName());
         }
     }
     

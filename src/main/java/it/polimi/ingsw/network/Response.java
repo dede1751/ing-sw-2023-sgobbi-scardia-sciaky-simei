@@ -15,11 +15,11 @@ public record Response(int status, String msg, String Action) implements Seriali
     }
     
     public static Response NicknameTaken(String Action) {
-        return new Response(-1, "NicknameTaken", Action);
+        return new Response(-1, "Nickname Taken", Action);
     }
     
     public static Response LobbyUnavailable(String Action) {
-        return new Response(-1, "LobbyUnavailable", Action);
+        return new Response(-1, "Lobby Unavailable", Action);
     }
     
     public static Response IllegalMove(String playerNick, String Action) {
