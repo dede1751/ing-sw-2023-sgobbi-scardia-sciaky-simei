@@ -14,6 +14,14 @@ public record Response(int status, String msg, String Action) implements Seriali
         return new Response(0, "OK", Action);
     }
     
+    public static Response NicknameTaken(String Action) {
+        return new Response(-1, "NicknameTaken", Action);
+    }
+    
+    public static Response LobbyUnavailable(String Action) {
+        return new Response(-1, "LobbyUnavailable", Action);
+    }
+    
     public static Response IllegalMove(String playerNick, String Action) {
         System.err.println("Illegal move by player : " + playerNick + " will be ignored");
         return new Response(-1, "Illegal Move : ignoring player action", Action );

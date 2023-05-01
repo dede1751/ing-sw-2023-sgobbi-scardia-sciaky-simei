@@ -3,7 +3,6 @@ package it.polimi.ingsw.network;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
-import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.RequestLobby;
@@ -26,19 +25,31 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     
     public LocalServer() throws RemoteException {
         super();
+        lobbyController.setServer(this);
     }
     
     public LocalServer(int port) throws RemoteException {
         super(port);
+        lobbyController.setServer(this);
+        
     }
     
     public LocalServer(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {
         super(port, csf, ssf);
+        lobbyController.setServer(this);
     }
     
     @Override
     public synchronized void register(Client client) throws RemoteException {
         lobbyController.register(client);
+    }
+    
+    /**
+     * Add clientID->controller mapping to current map
+     * @param mapping client mapping to add
+     */
+    public void addGameController(Map<Integer, GameController> mapping) {
+        gameControllers.putAll(mapping);
     }
     
     @Override
@@ -51,12 +62,12 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         }
         
         try {
-            // First try to see if it's a method handled by the server/lobby controller
-            Method m = this.getClass().getMethod("onMessage", message.getMessageType());
-            return (Response) m.invoke(this, message);
+            // First try to see if it's a method handled by the LobbyController
+            Method m = lobbyController.getClass().getMethod("onMessage", message.getMessageType());
+            return (Response) m.invoke(lobbyController, message);
             
         } catch( NoSuchMethodException e){
-            // Then, try forwarding it to a game controller
+            // Then, try forwarding it to a GameController
             GameController controller = gameControllers.get(clientID);
             
             if ( controller != null ){
@@ -76,40 +87,6 @@ public class LocalServer extends UnicastRemoteObject implements Server {
             System.err.println(e.getMessage());
             e.printStackTrace();
             return Response.ServerError(message.getClass().getSimpleName());
-        }
-    }
-    
-    @SuppressWarnings("unused")
-    public Response onMessage(RequestLobby requestLobby) {
-        Client c = lobbyController.getClient(requestLobby.getClientId());
-        try {
-            c.update(new AvailableLobbyMessage(lobbyController.searchForLobbies(requestLobby.getPayload())));
-            return Response.Ok(RequestLobby.class.getSimpleName());
-        } catch (RemoteException e) {
-            return Response.ServerError(RequestLobby.class.getSimpleName());
-        }
-    }
-    
-    @SuppressWarnings("unused")
-    public Response onMessage(CreateLobbyMessage message) {
-        try {
-            int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
-            return Response.Ok(CreateLobbyMessage.class.getSimpleName());
-        } catch( LoginException e ) {
-            return new Response(-1, e.getMessage(), CreateLobbyMessage.class.getSimpleName());
-        }
-    }
-    
-    @SuppressWarnings("unused")
-    public Response onMessage(JoinLobbyMessage message) {
-        try {
-            Map<Integer, GameController> mapping = lobbyController.joinLobby(message);
-            if( mapping != null){
-                this.gameControllers.putAll(mapping);
-            }
-            return Response.Ok(message.getClass().getSimpleName());
-        } catch (LoginException e) {
-            return new Response(-1, e.getMessage(), message.getClass().getSimpleName());
         }
     }
     

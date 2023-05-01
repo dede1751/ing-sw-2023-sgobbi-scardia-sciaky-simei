@@ -93,6 +93,8 @@ public class TUI extends View {
                 } else if ( r.msg().equals("NicknameTaken") ) {
                     System.out.println("Your nickname has been taken!. Please choose another one");
                     askNickname();
+                } else if ( r.msg().equals("LobbyUnavailable") ) {
+                    System.out.println("The lobby you chose is no longer available. Please choose another one");
                 }
             } else {
                 System.out.println("Please choose one of [CREATE/JOIN]");

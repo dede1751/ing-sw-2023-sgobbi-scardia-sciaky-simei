@@ -1,13 +1,13 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.GameModel;
+import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.network.LocalServer;
+import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
-import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
-import it.polimi.ingsw.view.messages.JoinLobby;
-import it.polimi.ingsw.view.messages.JoinLobbyMessage;
-import it.polimi.ingsw.view.messages.LobbyInformation;
+import it.polimi.ingsw.view.messages.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -20,6 +20,8 @@ import java.util.*;
 public class LobbyController {
     
     private static LobbyController INSTANCE;
+    
+    private LocalServer server = null;
     
     // lobbies must include mapping clientID->nickname to be able to "connect" the correct clients to the model
     public record Lobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID) {
@@ -64,10 +66,19 @@ public class LobbyController {
     }
     
     /**
+     * Set the server reference, only possible once
+     * @param server Server reference
+     */
+    public void setServer(LocalServer server) {
+        if (this.server == null) {
+            this.server = server;
+        }
+    }
+    
+    /**
      * Register a client to the global lobby
      *
      * @param client Client to register
-     *
      * @throws RemoteException Unable to set the client's id
      */
     public void register(Client client) throws RemoteException {
@@ -80,34 +91,10 @@ public class LobbyController {
      * Check if a client is currently registered to the server
      *
      * @param clientID Client's id
-     *
      * @return true if it's registered, false otherwise
      */
     public boolean checkRegistration(int clientID) {
         return this.clientMapping.get(clientID) != null;
-    }
-    
-    /**
-     * Return the reference to the client object corrisponding to the supplied id
-     * @param clientID clientID to be returned
-     * @return Client object corrisponding to the supplied id
-     */
-    public Client getClient(int clientID){
-        return clientMapping.get(clientID);
-    }
-    
-    /**
-     * Search for all lobbies with the information given in info.
-     * Any null parameters in info is ignored in the search.
-     * @param info information on the lobbies
-     * @return a list of lobbyView of all the lobbies that match info parameters
-     */
-    public List<LobbyView> searchForLobbies(LobbyInformation info){
-        return this.lobbies.values()
-                .stream()
-                .filter((x) -> info.size() == null || (info.size().equals(x.lobbySize())))
-                .map(Lobby::getLobbyView)
-                .toList();
     }
     
     /**
@@ -121,61 +108,88 @@ public class LobbyController {
     }
     
     /**
-     * Create a new lobby
-     *
-     * @param info the initial information about the lobby: its name and size
-     * @param firstPlayer the nickname of the first player
-     * @param fpId the id of the first player
-     * @return the id of the lobby
+     * Return the list of lobbies to the client
+     * @param requestLobby Lobby parameters
+     * @return Response to the client
      */
-    public int createLobby(LobbyInformation info, String firstPlayer, int fpId) throws LoginException {
-        if( this.nicknameTaken(firstPlayer) ) {
-            throw new LoginException("NicknameTaken");
+    @SuppressWarnings("unused")
+    public Response onMessage(RequestLobby requestLobby) {
+        Client c = clientMapping.get(requestLobby.getClientId());
+        try {
+            c.update(new AvailableLobbyMessage(this.searchForLobbies(requestLobby.getPayload())));
+            return Response.Ok(RequestLobby.class.getSimpleName());
+        } catch (RemoteException e) {
+            return Response.ServerError(RequestLobby.class.getSimpleName());
         }
-        int lobbySize = info.size();
+    }
+    
+    /**
+     * Create a new lobby
+     * @param message Lobby creation message
+     * @return Response to the client
+     */
+    @SuppressWarnings("unused")
+    public Response onMessage(CreateLobbyMessage message) {
+        String nickname = message.getPlayerNickname();
+        if( this.nicknameTaken(nickname) ) {
+            return Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName());
+        }
+        int lobbySize = message.getPayload().size();
         if ( lobbySize < 2 || lobbySize > 4  ) {
-            throw new LoginException("InvalidLobbySize");
+            return new Response(-1, "Invalid Lobby Size", CreateLobbyMessage.class.getSimpleName());
         }
         
         Lobby newLobby = new Lobby(
-                new ArrayList<>(List.of(firstPlayer)),
-                new ArrayList<>(List.of(fpId)),
-                info.size(),
+                new ArrayList<>(List.of(nickname)),
+                new ArrayList<>(List.of(message.getClientId())),
+                lobbySize,
                 lobbyIDCounter
         );
         lobbies.put(lobbyIDCounter, newLobby);
         lobbyIDCounter++;
-        return lobbyIDCounter - 1;
+        return Response.Ok(CreateLobbyMessage.class.getSimpleName());
     }
     
     /**
-     * Join a lobby from a JoinLobbyMessage
-     * Lobby ID must be specified.
-     * If a game needs to start, instantiate a controller and return the mapping to the server
-     *
-     * @param msg Message received from view
-     * @return Map between clientIDs and the same gamecontroller, null if no game started
+     * Join a lobby with the supplied id, and if needed start the game
+     * @param message Description of lobby to join
+     * @return Response to the client
      */
-    public Map<Integer, GameController> joinLobby(JoinLobbyMessage msg) throws LoginException {
-        
-        JoinLobby info = msg.getPayload();
+    @SuppressWarnings("unused")
+    public Response onMessage(JoinLobbyMessage message) {
+        JoinLobby info = message.getPayload();
         Lobby lobby = lobbies.get(info.id());
+        
         if( lobby == null || !lobby.isEmpty() ) {
-            throw new LoginException("LobbyUnavailable");
+            return Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName());
         }
-        if( this.nicknameTaken(msg.getPlayerNickname()) ) {
-            throw new LoginException("NicknameTaken");
+        if( this.nicknameTaken(message.getPlayerNickname()) ) {
+            return Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName());
         }
         
-        lobby.nicknames.add(msg.getPlayerNickname());
-        lobby.clientIDs.add(msg.getClientId());
+        lobby.nicknames.add(message.getPlayerNickname());
+        lobby.clientIDs.add(message.getClientId());
         
         // check if the game needs to be started
         if( !lobby.isEmpty() ) {
-            return initGame(lobby);
-        }else {
-            return null;
+            Map<Integer, GameController> mapping = initGame(lobby);
+            server.addGameController(mapping);
         }
+        return Response.Ok(message.getClass().getSimpleName());
+    }
+    
+    /**
+     * Search for all lobbies with the information given in info.
+     * Any null parameters in info is ignored in the search.
+     * @param info information on the lobbies
+     * @return a list of lobbyView of all the lobbies that match info parameters
+     */
+    private List<LobbyView> searchForLobbies(LobbyInformation info){
+        return this.lobbies.values()
+                .stream()
+                .filter((x) -> info.size() == null || (info.size().equals(x.lobbySize())))
+                .map(Lobby::getLobbyView)
+                .toList();
     }
     
     private boolean nicknameTaken(String nickname) {
