@@ -22,22 +22,23 @@ public class CommonGoal {
     /**
      * Initialize common goal from unique goal index.
      * Goals can only be created internally, only pre-initialized ones can actually be used.
+     *
      * @param goalIndex Unique integer ID of the goal
      */
     private CommonGoal(int goalIndex) {
         this.goalIndex = goalIndex;
-    
+        
         switch( goalIndex ) {
-            case 0  -> this.strategy = new SixGroupTwoTileGoal();
-            case 1  -> this.strategy = new FourGroupFourTileGoal();
-            case 2  -> this.strategy = new FourCornersGoal();
-            case 3  -> this.strategy = new TwoGroupSquareGoal();
-            case 4  -> this.strategy = new ThreeColumnSixTileGoal();
-            case 5  -> this.strategy = new EightUniqueGoal();
-            case 6  -> this.strategy = new DiagonalFiveTileGoal();
-            case 7  -> this.strategy = new FourRowFiveTileGoal();
-            case 8  -> this.strategy = new TwoColumnDistinctGoal();
-            case 9  -> this.strategy = new TwoRowDistinctGoal();
+            case 0 -> this.strategy = new SixGroupTwoTileGoal();
+            case 1 -> this.strategy = new FourGroupFourTileGoal();
+            case 2 -> this.strategy = new FourCornersGoal();
+            case 3 -> this.strategy = new TwoGroupSquareGoal();
+            case 4 -> this.strategy = new ThreeColumnSixTileGoal();
+            case 5 -> this.strategy = new EightUniqueGoal();
+            case 6 -> this.strategy = new DiagonalFiveTileGoal();
+            case 7 -> this.strategy = new FourRowFiveTileGoal();
+            case 8 -> this.strategy = new TwoColumnDistinctGoal();
+            case 9 -> this.strategy = new TwoRowDistinctGoal();
             case 10 -> this.strategy = new CrossGoal();
             case 11 -> this.strategy = new DecreasingColumnsGoal();
             default -> throw new IndexOutOfBoundsException("Goal index must be between 0 and 11, got:" + goalIndex);
@@ -46,27 +47,41 @@ public class CommonGoal {
     
     /**
      * Get instance of common goal with given id
+     *
      * @param goalIndex Unique integer id of goal to get
-     * @return          Goal with given id
+     *
+     * @return Goal with given id
      */
-    public static CommonGoal getCommonGoal(int goalIndex) { return goalList[goalIndex]; }
+    public static CommonGoal getCommonGoal(int goalIndex) {
+        return goalList[goalIndex];
+    }
     
     /**
      * Get the unique id of the goal
+     *
      * @return Unique integer id of goal
      */
-    public int getGoalIndex() { return this.goalIndex; }
+    public int getGoalIndex() {
+        return this.goalIndex;
+    }
     
     /**
      * Get a short description of the goal
+     *
      * @return String description of goal
      */
-    public String getDescription() { return this.strategy.getDescription(); }
+    public String getDescription() {
+        return this.strategy.getDescription();
+    }
     
     /**
      * Check whether the goal has been completed on the given shelf
+     *
      * @param shelf Shelf to check for the goal
-     * @return      True if the shelf satisfies the goal, else false
+     *
+     * @return True if the shelf satisfies the goal, else false
      */
-    public boolean checkGoal(Shelf shelf) { return this.strategy.checkShelf(shelf); }
+    public boolean checkGoal(Shelf shelf) {
+        return this.strategy.checkShelf(shelf);
+    }
 }

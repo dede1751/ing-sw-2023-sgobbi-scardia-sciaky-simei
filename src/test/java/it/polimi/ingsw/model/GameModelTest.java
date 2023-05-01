@@ -1,11 +1,13 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
+import it.polimi.ingsw.utils.files.ResourcesManager;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,13 +26,13 @@ public class GameModelTest {
         assertEquals(6, game.getCommonGoalX());
         assertEquals(5, game.getCommonGoalY());
         assertEquals(4, game.getNumPlayers());
-        assertFalse(game.isFinalTurn());
+        assertFalse(game.isLastTurn());
     }
     
     @Test
-    public void isFinalTurn() {
+    public void isLastTurn() {
         GameModel game = new GameModel(4, 0, 0);
-        assertFalse(game.isFinalTurn());
+        assertFalse(game.isLastTurn());
     }
     
     @Test
@@ -76,7 +78,7 @@ public class GameModelTest {
         List<Coordinate> board = game.getAllCoordinates();
         
         for( Coordinate coordinate : board ) {
-            if ( game.getTile(coordinate) != Tile.NOTILE ) {
+            if( game.getTile(coordinate) != Tile.NOTILE ) {
                 assertTrue(occupied.contains(coordinate));
             }
         }
@@ -110,49 +112,48 @@ public class GameModelTest {
         Tile tile = new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE);
         
         assertDoesNotThrow(() -> {
-            for (Coordinate coord: coords) {
+            for( Coordinate coord : coords ) {
                 game.insertTile(coord, tile);
             }
         });
-    
-        for (Coordinate coord: coords) {
+        
+        for( Coordinate coord : coords ) {
             assertEquals(Tile.Type.TROPHIES, game.getTile(coord).type());
         }
         
         game.removeSelection(coords);
-        for (Coordinate coord: coords) {
+        for( Coordinate coord : coords ) {
             assertEquals(Tile.NOTILE, game.getTile(coord));
         }
     }
     
     @Test
     public void shelveRemoveSelectionTest() {
-         GameModel game = new GameModel(2,5, 6);
-         Coordinate coord1 = new Coordinate(7, 3);
-         Coordinate coord2 = new Coordinate(7, 4);
-         Tile tile1 = new Tile(Tile.Type.CATS, Tile.Sprite.ONE);
-         Tile tile2 = new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE);
-         
-         assertDoesNotThrow( () -> game.insertTile(coord1, tile1) );
-         assertDoesNotThrow( () -> game.insertTile(coord2, tile2) );
-         
-         List<Tile> orderedTiles = List.of(tile1, tile2);
-         game.addPlayer("Lucrezia", 1);
-         game.addPlayer("Luca", 2);
-         game.setCurrentPlayer(1);
-         
-         int column = 1;
-         int tileAmount1 = game.getTileAmount(tile1);
-         int tileAmount2 = game.getTileAmount(tile2);
-         game.removeSelection(List.of(coord1, coord2));
-         game.shelveSelection(orderedTiles, column);
-         
-         assertEquals(tile1, game.getCurrentPlayer().getShelf().getTile(0, column));
-         assertEquals(tile2, game.getCurrentPlayer().getShelf().getTile(1, column));
-         assertEquals(Tile.NOTILE, game.getTile(coord1));
-         assertEquals(Tile.NOTILE, game.getTile(coord2));
-         assertEquals(tileAmount1 - 1, game.getTileAmount(tile1));
-         assertEquals(tileAmount2 - 1, game.getTileAmount(tile2));
+        GameModel game = new GameModel(2, 5, 6);
+        Coordinate coord1 = new Coordinate(7, 3);
+        Coordinate coord2 = new Coordinate(7, 4);
+        Tile tile1 = new Tile(Tile.Type.CATS, Tile.Sprite.ONE);
+        Tile tile2 = new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE);
+        
+        assertDoesNotThrow(() -> game.insertTile(coord1, tile1));
+        assertDoesNotThrow(() -> game.insertTile(coord2, tile2));
+        
+        List<Tile> orderedTiles = List.of(tile1, tile2);
+        game.addPlayer("Lucrezia", 1);
+        game.addPlayer("Luca", 2);
+        
+        int column = 1;
+        int tileAmount1 = game.getTileAmount(tile1);
+        int tileAmount2 = game.getTileAmount(tile2);
+        game.removeSelection(List.of(coord1, coord2));
+        game.shelveSelection(orderedTiles, column);
+        
+        assertEquals(tile1, game.getCurrentPlayer().getShelf().getTile(0, column));
+        assertEquals(tile2, game.getCurrentPlayer().getShelf().getTile(1, column));
+        assertEquals(Tile.NOTILE, game.getTile(coord1));
+        assertEquals(Tile.NOTILE, game.getTile(coord2));
+        assertEquals(tileAmount1 - 1, game.getTileAmount(tile1));
+        assertEquals(tileAmount2 - 1, game.getTileAmount(tile2));
     }
     
     @Test
@@ -165,7 +166,7 @@ public class GameModelTest {
         int scoreToAdd = 10;
         int expectedScore = startingScore + scoreToAdd;
         
-        game.addCurrentPlayerScore(scoreToAdd);
+        game.addCurrentPlayerCommongGoalScore(scoreToAdd);
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
     }
     
@@ -173,5 +174,27 @@ public class GameModelTest {
     public void getTileAmountTest() {
         GameModel game = new GameModel(2, 5, 6);
         assertEquals(8, game.getTileAmount(new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)));
+    }
+    
+    @Nested
+    public class SaveTesting {
+        @Test
+        public void testNotThrow() {
+            GameModel game = new GameModel(4, 5, 6);
+            game.addPlayer("Luca", 5);
+            game.addPlayer("Lucrezia", 6);
+            game.addPlayer("Andrea", 7);
+            game.addPlayer("Camilla", 8);
+            assertDoesNotThrow(() -> {
+                var file = ResourcesManager.openFileWrite(
+                        ResourcesManager.testRootDir + "/it/polimi/ingsw/resources/volatile/SaveFile.json");
+                var saveState = game.toJson();
+                ByteBuffer buf = ByteBuffer.allocate(saveState.length());
+                buf.put(saveState.getBytes());
+                buf.flip();
+                file.write(buf);
+                file.close();
+            });
+        }
     }
 }
