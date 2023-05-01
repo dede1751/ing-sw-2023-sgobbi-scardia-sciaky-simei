@@ -53,7 +53,7 @@ public class TUI extends View {
                 Response r = notifyCreateLobby(lobbySize);
                 if ( r.isOk() ) {
                     break;
-                } else if ( r.msg().equals("NicknameTaken") ) {
+                } else if ( r.msg().equals("Nickname Taken") ) {
                     System.out.println("Your nickname has been taken!. Please choose another one");
                     askNickname();
                 }
@@ -88,10 +88,10 @@ public class TUI extends View {
                 
                 if ( r.isOk() ) {
                     break;
-                } else if ( r.msg().equals("NicknameTaken") ) {
+                } else if ( r.msg().equals("Nickname Taken") ) {
                     System.out.println("Your nickname has been taken!. Please choose another one");
                     askNickname();
-                } else if ( r.msg().equals("LobbyUnavailable") ) {
+                } else if ( r.msg().equals("Lobby Unavailable") ) {
                     System.out.println("The lobby you chose is no longer available. Please choose another one");
                 }
             } else {
