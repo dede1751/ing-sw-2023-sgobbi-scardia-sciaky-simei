@@ -3,7 +3,6 @@ package it.polimi.ingsw.network;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
-import it.polimi.ingsw.utils.exceptions.LoginException;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.RequestLobby;
@@ -41,72 +40,76 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         lobbyController.register(client);
     }
     
-    //TODO change RemoteException to responses;
     @Override
-    public Response update(ViewMessage<?> message) throws RemoteException {
+    public Response update(ViewMessage<?> message) {
         int clientID = message.getClientId();
+        
+        // Ignore messages from unregistered clients
         if( !lobbyController.checkRegistration(clientID) ) {
             return new Response(1, "Client is not registered to the server", message.getClass().getSimpleName());
         }
+        
         try {
+            // First try to see if it's a method handled by the server/lobby controller
             Method m = this.getClass().getMethod("onMessage", message.getMessageType());
             return (Response) m.invoke(this, message);
-        }catch( NoSuchMethodException e){
+            
+        } catch( NoSuchMethodException e){
+            // Then, try forwarding it to a game controller
             GameController controller = gameControllers.get(clientID);
-            if(controller != null){
+            
+            if ( controller != null ){
                 try {
-                    return controller.update(message);
-                }catch( NoSuchMethodException f ){
+                    Method m = controller.getClass().getMethod("onMessage", message.getMessageType());
+                    return (Response) m.invoke(this, message);
+                } catch( NoSuchMethodException f ){
                     return new Response(-1, "Illegal message, no operation defined. Refere to the network manual", message.getClass().getSimpleName());
+                } catch( InvocationTargetException | IllegalAccessException f ) {
+                    return Response.ServerError(message.getClass().getSimpleName());
                 }
-            }else{
+            } else{
                 return new Response(-1, "Ignoring view Events until game is started!", message.getClass().getSimpleName());
             }
-        }
-        catch( IllegalAccessException e ) {
+            
+        } catch( IllegalAccessException | InvocationTargetException e ) {
             System.err.println(e.getMessage());
             e.printStackTrace();
-            return new Response(128, "Server is acting up, please be patient...", message.getClass().getSimpleName());
-        }catch( InvocationTargetException e ){
-            e.printStackTrace();
-            return new Response(127, e.getMessage(), message.getClass().getSimpleName());
+            return Response.ServerError(message.getClass().getSimpleName());
+        }
+    }
+    
+    @SuppressWarnings("unused")
+    public Response onMessage(RequestLobby requestLobby) {
+        Client c = lobbyController.getClient(requestLobby.getClientId());
+        try {
+            c.update(new AvailableLobbyMessage(lobbyController.searchForLobbies(requestLobby.getPayload())));
+            return Response.Ok(RequestLobby.class.getSimpleName());
+        } catch (RemoteException e) {
+            return Response.ServerError(RequestLobby.class.getSimpleName());
         }
     }
     
     @SuppressWarnings("unused")
     public Response onMessage(CreateLobbyMessage message) {
-        int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
-        return new Response(id,
-                                           "Created new Lobby with name : " + message.getPayload().name() +
-                                           " and id : " + id, message.getClass().getSimpleName());
-    }
-    
-    @SuppressWarnings("unused")
-    public Response onMessage(JoinLobbyMessage message) throws RemoteException {
-        Map<Integer, GameController> mapping = lobbyController.joinLobby(message);
-        if( mapping != null){
-            this.gameControllers.putAll(mapping);
-            return Response.Ok(message.getClass().getSimpleName());
-        }
-        //TODO proper message
-        else return new Response(-1, "proper message", message.getClass().getSimpleName());
-    }
-    
-    //FIXME sketchy
-    
-    @SuppressWarnings("unused")
-    public Response onMessage(RequestLobby requestLobby) throws RemoteException{
-        if( lobbyController.checkRegistration(requestLobby.getClientId()) ){
-            Client c = lobbyController.getClient(requestLobby.getClientId());
-            c.update(new AvailableLobbyMessage(lobbyController.searchForLobbies(requestLobby.getPayload())));
+        try {
+            int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
             return Response.Ok(RequestLobby.class.getSimpleName());
-        } else{
-            throw new RemoteException("Client is not registered to the server");
+        } catch( RemoteException e ) {
+            return new Response(-1, e.getMessage(), message.getClass().getSimpleName());
         }
-    
     }
     
-    
-    
+    @SuppressWarnings("unused")
+    public Response onMessage(JoinLobbyMessage message) {
+        try {
+            Map<Integer, GameController> mapping = lobbyController.joinLobby(message);
+            if( mapping != null){
+                this.gameControllers.putAll(mapping);
+            }
+            return Response.Ok(message.getClass().getSimpleName());
+        } catch (RemoteException e) {
+            return new Response(-1, e.getMessage(), message.getClass().getSimpleName());
+        }
+    }
     
 }

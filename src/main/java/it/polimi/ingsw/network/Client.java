@@ -14,12 +14,6 @@ public interface Client extends Remote {
      */
     void setClientID(int clientID) throws RemoteException;
     
-    
-    /**
-     * Returns the ID client
-     */
-    int getClientID() throws RemoteException;
-    
     /**
      * Notify the client of a model change
      * @param msg   The object that contains the model changes information

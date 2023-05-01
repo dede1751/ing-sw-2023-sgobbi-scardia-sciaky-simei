@@ -170,21 +170,6 @@ public class GameController {
         LobbyController.getInstance().endGame(this.lobbyID);
     }
     
-    /**
-     * Callback from view
-     *
-     * @param message ViewMessage containing all relevant view information
-     */
-    public <T extends ViewMessage<?>> Response update(T message ) throws NoSuchMethodException{
-        try {
-            Method m = this.getClass().getMethod("onMessage", message.getMessageType());
-            return (Response) m.invoke(this, message);
-        }
-        catch( InvocationTargetException | IllegalAccessException e ) {
-            return new Response(128, "Server is acting up, please be patient...", message.getClass().getSimpleName());
-        }
-    }
-    
     public Response onMessage(MoveMessage msg){
         
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
@@ -207,7 +192,6 @@ public class GameController {
     
     @SuppressWarnings("unused")
     public Response onMessage(ChatMessage chat){
-        
         model.chatBroker(chat);
         return Response.Ok(chat.getClass().getSimpleName());
     }
