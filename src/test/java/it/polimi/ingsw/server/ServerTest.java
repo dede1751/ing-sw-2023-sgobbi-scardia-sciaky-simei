@@ -28,11 +28,11 @@ public class ServerTest {
 
                 client1.connectServer();
 
-                Response t = server.update(new CreateLobbyMessage(new LobbyInformation(2), "Roberto", tui1.getClientID()));
+                Response t = server.update(new CreateLobbyMessage(2, "Roberto", tui1.getClientID()));
                 System.out.println(t.msg());
                 LocalClient client2 = new LocalClient(server, tui2);
                 client2.connectServer();
-                Response m = server.update(new JoinLobbyMessage(new JoinLobby( t.status()), "Luca",
+                Response m = server.update(new JoinLobbyMessage( 0, "Luca",
                                                                 tui2.getClientID() ));
                 
                 Response r = server.update(new DebugMessage("Paolo", "Roberto", tui1.getClientID()));

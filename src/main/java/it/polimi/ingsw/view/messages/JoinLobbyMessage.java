@@ -1,10 +1,10 @@
 package it.polimi.ingsw.view.messages;
 
-public class JoinLobbyMessage extends ViewMessage<JoinLobby> {
+public class JoinLobbyMessage extends ViewMessage<Integer> {
     
     
-    public JoinLobbyMessage(JoinLobby joinLobby, String playerNick, int clientId) {
-        super(joinLobby, playerNick, clientId);
+    public JoinLobbyMessage(Integer lobbyId, String playerNick, int clientId) {
+        super(lobbyId, playerNick, clientId);
     }
     
     @Override

@@ -134,7 +134,7 @@ public class LobbyController {
         if( this.nicknameTaken(nickname) ) {
             return Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName());
         }
-        int lobbySize = message.getPayload().size();
+        int lobbySize = message.getPayload();
         if ( lobbySize < 2 || lobbySize > 4  ) {
             return new Response(-1, "Invalid Lobby Size", CreateLobbyMessage.class.getSimpleName());
         }
@@ -157,8 +157,12 @@ public class LobbyController {
      */
     @SuppressWarnings("unused")
     public Response onMessage(JoinLobbyMessage message) {
-        JoinLobby info = message.getPayload();
-        Lobby lobby = lobbies.get(info.id());
+        Integer Iid = message.getPayload();
+        int id = 0;
+        if(Iid != null){
+            id = Iid;
+        }
+        Lobby lobby = lobbies.get(id);
         
         if( lobby == null || !lobby.isEmpty() ) {
             return Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName());
@@ -180,14 +184,14 @@ public class LobbyController {
     
     /**
      * Search for all lobbies with the information given in info.
-     * Any null parameters in info is ignored in the search.
-     * @param info information on the lobbies
+     * With null size return all the available lobby
+     * @param size the desired size of the lobby
      * @return a list of lobbyView of all the lobbies that match info parameters
      */
-    private List<LobbyView> searchForLobbies(LobbyInformation info){
+    private List<LobbyView> searchForLobbies(Integer size){
         return this.lobbies.values()
                 .stream()
-                .filter((x) -> info.size() == null || (info.size().equals(x.lobbySize())))
+                .filter((x) -> size == null || (size.equals(x.lobbySize())))
                 .map(Lobby::getLobbyView)
                 .toList();
     }

@@ -79,29 +79,29 @@ public abstract class View implements Runnable {
     
     /**
      * Request the lobby list from the server
-     * @param info Lobby filters
+     * @param size Desired lobby size
      * @return The server's response
      */
-    protected Response notifyRequestLobby(LobbyInformation info){
-        return notifyServer(new RequestLobby(info, this.nickname, this.clientID));
+    protected Response notifyRequestLobby(Integer size){
+        return notifyServer(new RequestLobby(size, this.nickname, this.clientID));
     }
     
     /**
      * Notify the server of a client's request to create a lobby
-     * @param info The new lobby's information
+     * @param size The new lobby's number of player
      * @return The server's response
      */
-    protected Response notifyCreateLobby(LobbyInformation info){
-        return notifyServer(new CreateLobbyMessage(info, this.nickname, this.clientID));
+    protected Response notifyCreateLobby(Integer size){
+        return notifyServer(new CreateLobbyMessage(size, this.nickname, this.clientID));
     }
     
     /**
      * Notify the server of a client's request to join a lobby
-     * @param info The lobby to join's information
+     * @param lobbyId The lobby to join's id
      * @return The server's response
      */
-    protected Response notifyJoinLobby(JoinLobby info){
-        return notifyServer(new JoinLobbyMessage(info, this.nickname, this.clientID));
+    protected Response notifyJoinLobby(int lobbyId){
+        return notifyServer(new JoinLobbyMessage(lobbyId, this.nickname, this.clientID));
     }
     
     /**

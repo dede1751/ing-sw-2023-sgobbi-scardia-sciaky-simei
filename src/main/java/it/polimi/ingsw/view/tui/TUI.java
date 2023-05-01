@@ -5,8 +5,6 @@ import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.messages.JoinLobby;
-import it.polimi.ingsw.view.messages.LobbyInformation;
 import it.polimi.ingsw.view.messages.Move;
 
 import java.util.*;
@@ -27,7 +25,7 @@ public class TUI extends View {
         Scanner scanner = new Scanner(System.in);
         
         // fetch all lobbies
-        notifyRequestLobby(new LobbyInformation(null));
+        notifyRequestLobby(null);
         if ( !lobbies.isEmpty() ) {
             System.out.println("\nHere are all the currently available lobbies. Avoid stealing someone's name!");
             lobbies.forEach(System.out::print);
@@ -52,7 +50,7 @@ public class TUI extends View {
                     }
                 }
                 
-                Response r = notifyCreateLobby(new LobbyInformation(lobbySize));
+                Response r = notifyCreateLobby(lobbySize);
                 if ( r.isOk() ) {
                     break;
                 } else if ( r.msg().equals("NicknameTaken") ) {
@@ -61,7 +59,7 @@ public class TUI extends View {
                 }
                 
             } else if( choice.equals("JOIN") ) {
-                notifyRequestLobby(new LobbyInformation(null));
+                notifyRequestLobby(null);
 
                 if( lobbies.stream().noneMatch((l) -> l.nicknames().size() < l.lobbySize()) ) {
                     System.out.println("\nNo lobbies are currently available, please create a new one");
@@ -78,7 +76,7 @@ public class TUI extends View {
                         if ( lobbies.stream().anyMatch(
                                 (l) -> l.lobbyID() == lobbyId && l.nicknames().size() < l.lobbySize()) )
                         {
-                            r = notifyJoinLobby(new JoinLobby(lobbyId));
+                            r = notifyJoinLobby(lobbyId);
                             break;
                         } else {
                             System.out.println("Please select a valid lobby identifier");
