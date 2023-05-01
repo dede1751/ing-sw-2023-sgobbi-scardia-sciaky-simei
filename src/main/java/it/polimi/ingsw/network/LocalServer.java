@@ -93,9 +93,9 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     public Response onMessage(CreateLobbyMessage message) {
         try {
             int id = lobbyController.createLobby(message.getPayload(), message.getPlayerNickname(), message.getClientId());
-            return Response.Ok(RequestLobby.class.getSimpleName());
+            return Response.Ok(CreateLobbyMessage.class.getSimpleName());
         } catch( RemoteException e ) {
-            return new Response(-1, e.getMessage(), message.getClass().getSimpleName());
+            return new Response(-1, e.getMessage(), CreateLobbyMessage.class.getSimpleName());
         }
     }
     
