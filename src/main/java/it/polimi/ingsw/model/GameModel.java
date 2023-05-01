@@ -1,29 +1,41 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import it.polimi.ingsw.model.messages.*;
+import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
+import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
+import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.view.messages.ChatMessage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.lang.reflect.Type;
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Game model class to be used as a representation of the game's state by the controller
  */
 public class GameModel {
     
+    private final int numPlayers;
+    
     private final int commonGoalNumX;
     private final int commonGoalNumY;
-    
-    private final int numPlayers;
     
     private final Stack<Integer> commonGoalStackX;
     private final Stack<Integer> commonGoalStackY;
     
-    private final int currentPlayerIndex;
-    private final boolean gameOver;
+    private boolean lastTurn;
+    
+    private int currentPlayerIndex;
     private final List<Player> players;
+    
+    private final Map<String, Client> clientMap;
+    
     private final Board board;
     
     private final TileBag tileBag;
@@ -42,30 +54,46 @@ public class GameModel {
         this.commonGoalNumY = commonGoalY;
         this.commonGoalStackY = new Stack<>();
         
-        if ( numPlayers > 3 ) {
+        if( numPlayers > 3 ) {
             this.commonGoalStackX.push(2);
             this.commonGoalStackY.push(2);
         }
-    
+        
         this.commonGoalStackX.push(4);
         this.commonGoalStackY.push(4);
-    
-        if ( numPlayers > 2 ) {
+        
+        if( numPlayers > 2 ) {
             this.commonGoalStackX.push(6);
             this.commonGoalStackY.push(6);
         }
-    
         this.commonGoalStackX.push(8);
         this.commonGoalStackY.push(8);
         
         this.tileBag = new TileBag();
-        this.gameOver = false;
+        this.lastTurn = false;
         
         this.board = new Board(numPlayers);
         this.players = new ArrayList<>();
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
-        System.out.println("Initialized game with " + numPlayers + " players");
+        
+        this.clientMap = new HashMap<>(numPlayers);
+    }
+    
+    public void startGame() {
+        this.notifyStartGame();
+    }
+    
+    private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
+        this.numPlayers = numPlayers;
+        this.commonGoalNumX = commonGoalNumX;
+        this.commonGoalNumY = commonGoalNumY;
+        this.commonGoalStackX = CGXS;
+        this.commonGoalStackY = CGYS;
+        this.players = new ArrayList<>(numPlayers);
+        this.board = board;
+        this.tileBag = tileBag;
+        this.clientMap = new HashMap<>(numPlayers);
     }
     
     /**
@@ -88,6 +116,7 @@ public class GameModel {
     
     /**
      * Get number of participating players
+     *
      * @return number of players
      */
     public int getNumPlayers() {
@@ -113,12 +142,21 @@ public class GameModel {
     }
     
     /**
-     * Checks if the game is on its final turn
-     *
-     * @return true if the turn is final (although some players might still have to play)
+     * Checks if the game is on its final turn and set gameOver to true if the turn is final
+     * (although some players might still have to play)
      */
-    public boolean isFinalTurn() {
-        return this.gameOver;
+    public void setLastTurn() {
+        lastTurn = true;
+        players.get(getCurrentPlayerIndex()).setBonusScore(1);//add the bonus point to the first who finishes the shelf
+        
+    }
+    
+    /**
+     * Check if it's the last turn
+     * @return true if it's the last turn, false otherwise
+     */
+    public boolean isLastTurn() {
+        return this.lastTurn;
     }
     
     /**
@@ -130,7 +168,6 @@ public class GameModel {
      */
     public void addPlayer(String nickname, int pgID) {
         players.add(new Player(nickname, pgID));
-        System.out.println("Player " + nickname + " with id: " + pgID);
     }
     
     /**
@@ -144,6 +181,15 @@ public class GameModel {
     }
     
     /**
+     * Return the index of the current player in the list returned by {@link #getPlayers() getPlayers}
+     *
+     * @return The index of the current player
+     */
+    public int getCurrentPlayerIndex() {
+        return currentPlayerIndex;
+    }
+    
+    /**
      * Return the current player
      *
      * @return The current player
@@ -153,14 +199,32 @@ public class GameModel {
     }
     
     /**
-     * Set current player based on index from getPlayers() list
-     *
-     * @param index Index of player to set as first in the player list
-     *
-     * @return Selected player
+     * Set the current player index
+     * @param currentPlayerIndex new index of the current player
      */
-    public Player setCurrentPlayer(int index) {
-        return players.get(index);
+    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+        this.currentPlayerIndex = currentPlayerIndex;
+        notifyCurrentPlayerChange();
+    }
+    
+    /**
+     * Adds given score to the current player's score
+     *
+     * @param score Integer score to give the current player
+     * @return Total score for current player
+     */
+    public int addCurrentPlayerCommongGoalScore(int score) { return this.getCurrentPlayer().addCommonGoalScore(score); }
+    
+    
+    /**
+     * Gets the amount of tiles left in play for the given type of tile
+     * Will throw a class cast exception if being used with Tile.NOTILE
+     *
+     * @param tile Type of tile to check
+     * @return Amount of tile left (counts both bag and board)
+     */
+    public int getTileAmount(Tile tile) {
+        return this.tileBag.getTileAmount(tile);
     }
     
     /**
@@ -189,12 +253,8 @@ public class GameModel {
      * @return List of all non-empty coordinates
      */
     public List<Coordinate> getOccupied() {
-        return this.board.getTiles()
-                .entrySet()
-                .stream()
-                .filter(x -> !(Tile.NOTILE.equals(x.getValue())))
-                .map(Map.Entry::getKey)
-                .toList();
+        return this.board.getTiles().entrySet().stream().filter(x -> !(Tile.NOTILE.equals(x.getValue()))).map(
+                Map.Entry::getKey).toList();
     }
     
     /**
@@ -216,6 +276,7 @@ public class GameModel {
      */
     public void removeSelection(List<Coordinate> selection) {
         this.board.removeSelection(selection);
+        notifyBoardChange();
     }
     
     /**
@@ -228,29 +289,197 @@ public class GameModel {
     public void shelveSelection(List<Tile> orderedTiles, int column) {
         this.tileBag.removeSelection(orderedTiles);
         this.getCurrentPlayer().getShelf().addTiles(orderedTiles, column);
+        notifyShelfChange();
     }
     
     /**
-     * Adds given score to the current player's score
+     * Add client reference to model.
+     * This method should be called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int)}.
+     * It is necessary for the correct functioning of the networking communication.
      *
-     * @param score Integer score to give the current player
+     * @param nickname nickname of the client
+     * @param client   reference to the client object
      *
-     * @return Total score for current player
+     * @throws DuplicateNickname    if it exists a client linked to the same nickname
+     * @throws NoPlayerWithNickname if a player with the same nickname doesn't exist. This method should be
+     *                              called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int) addPlayer}
      */
-    public int addCurrentPlayerScore(int score) {
-        return this.getCurrentPlayer().addScore(score);
+    public void addClient(String nickname, Client client) throws DuplicateNickname, NoPlayerWithNickname {
+        if( this.clientMap.containsKey(nickname) ) {
+            throw new DuplicateNickname(nickname);
+        }else if( this.players.stream().filter((x) -> x.getNickname().equals(nickname)).count() != 1 ) {
+            throw new NoPlayerWithNickname(nickname);
+        }else {
+            this.clientMap.put(nickname, client);
+        }
+    }
+    
+    private <T extends ModelMessage<?>> void notifyClient(T msg, Client player) {
+        try {
+            player.update(msg);
+        }
+        catch( RemoteException e ) {
+            AtomicReference<String> nick = new AtomicReference<>();
+            clientMap.entrySet()
+                    .stream()
+                    .filter((x) -> x.getValue() == player).findFirst()
+                    .ifPresent((x) -> nick.set(x.getKey()));
+            System.err.println("Unable to update player " + nick);
+            System.err.println(e.getMessage());
+        }
+    }
+    
+    private <T extends ModelMessage<?>> void notifyAllClient(T msg) {
+        for( var n : this.clientMap.entrySet() ) {
+            notifyClient(msg, n.getValue());
+        }
     }
     
     /**
-     * Gets the amount of tiles left in play for the given type of tile
-     * Will throw a class cast exception if being used with Tile.NOTILE
-     *
-     * @param tile Type of tile to check
-     *
-     * @return Amount of tile left (counts both bag and board)
+     * Broker a chat message to the correct client
+     * @param chat Message to be sent
      */
-    public int getTileAmount(Tile tile) {
-        return this.tileBag.getTileAmount(tile);
+    public void chatBroker(ChatMessage chat){
+        
+        IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
+        if(chat.getDestination().equals("BROADCAST")){
+            notifyAllClient(message);
+        }else{
+            Client player = this.clientMap.get(chat.getPlayerNickname());
+            notifyClient(message, player);
+        }
     }
     
+    private void notifyBoardChange() {
+        var boardMessage = new BoardMessage(this);
+        notifyAllClient(boardMessage);
+    }
+    
+    private void notifyCurrentPlayerChange() {
+        var pMessage = new CurrentPlayerMessage(this.getCurrentPlayer().getNickname());
+        notifyAllClient(pMessage);
+    }
+    
+    private void notifyShelfChange() {
+        var shelfMessage = new ShelfMessage(this.getCurrentPlayer().getShelf(), this.getCurrentPlayer().getNickname());
+        notifyAllClient(shelfMessage);
+    }
+    
+    private void notifyStartGame() {
+        var startGame = new StartGameMessage(this.players.stream().map(Player::getNickname).toList());
+        notifyAllClient(startGame);
+    }
+    
+    /**
+     * Notify the clients that the game is ended by sending a leaderboard.
+     */
+    public void notifyWinner() {
+        String winner = this.players.stream()
+                .max(Comparator.comparingInt(Player::getScore))
+                .orElseThrow()
+                .getNickname();
+        Map<String, Integer> leaderboard = new HashMap<>();
+        for (Player x : this.getPlayers()){
+            leaderboard.put(x.getNickname(), x.getScore());
+        }
+        notifyAllClient(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
+    }
+    
+    // Testing methods
+    public int peekStackCGX() {
+        return commonGoalStackX.peek();
+    }
+    
+    public int peekStackCGY() {
+        return commonGoalStackY.peek();
+    }
+    
+    public Board getBoard() {
+        return this.board;
+    }
+    
+    public TileBag getTileBag() {
+        return this.tileBag;
+    }
+    
+    private void addPlayer(Player player) {
+        players.add(player);
+    }
+    
+    protected static class ModelSerializer implements JsonSerializer<GameModel> {
+        @Override
+        public JsonElement serialize(GameModel model, Type typeOfSrc, JsonSerializationContext context) {
+            var result = new JsonObject();
+            Gson gson = new GsonBuilder().registerTypeAdapter(Player.class,
+                                                              new Player.PlayerSerializer()).registerTypeAdapter(
+                    Board.class, new Board.BoardSerializer()).create();
+            //Common goal properties
+            result.addProperty("CommonGoalX", model.commonGoalNumX);
+            result.addProperty("CommonGoalY", model.commonGoalNumY);
+            result.add("CGX",
+                       JsonParser.parseString(gson.toJson(model.commonGoalStackX, new TypeToken<Stack<Integer>>() {
+                       }.getType())));
+            result.add("CGY",
+                       JsonParser.parseString(gson.toJson(model.commonGoalStackY, new TypeToken<Stack<Integer>>() {
+                       }.getType())));
+            //Board state
+            result.add("Board", JsonParser.parseString(gson.toJson(model.board)));
+            //Bag
+            result.add("TileBag", JsonParser.parseString(gson.toJson(model.tileBag.getAllBag())));
+            //Global Players properties
+            result.addProperty("PlayersNumber", model.numPlayers);
+            result.addProperty("CurrentPlayer", model.currentPlayerIndex);
+            var playerNicks = new JsonArray();
+            for( var x : model.players ) {
+                playerNicks.add(x.getNickname());
+            }
+            result.add("PlayersNickname", playerNicks);
+            //Single players properties
+            for( var x : model.players ) {
+                result.add(x.getNickname(), JsonParser.parseString(gson.toJson(x)));
+            }
+            
+            return result;
+        }
+    }
+    
+    public String toJson() {
+        Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new ModelSerializer()).create();
+        return gson.toJson(this, GameModel.class);
+    }
+    
+    static public class ModelDeserializer implements JsonDeserializer<GameModel> {
+        @Override
+        public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class,
+                                                              new Shelf.ShelfDeserializer()).registerTypeAdapter(
+                    Player.class, new Player.PlayerDeserializer()).registerTypeAdapter(Board.class,
+                                                                                       new Board.BoardDeserializer()).registerTypeAdapter(
+                    TileBag.class, new TileBag.TileBagDeserializer()).create();
+            var stackToken = new TypeToken<Stack<Integer>>() {
+            }.getType();
+            var numPlayer =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "PlayersNumber"), int.class);
+            var CGX = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalX"), int.class);
+            var CGY = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalY"), int.class);
+            Stack<Integer> xStack =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGX"), stackToken);
+            Stack<Integer> yStack =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CGY"), stackToken);
+            var board = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "Board"), Board.class);
+            var tileBag =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "TileBag"), TileBag.class);
+            var players = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "PlayersNickname"),
+                                        String[].class);
+            var result = new GameModel(numPlayer, CGX, CGY, xStack, yStack, board, tileBag);
+            for( var p : players ) {
+                var player = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, p), Player.class);
+                result.addPlayer(player);
+            }
+            var currentPlayer =
+                    gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CurrentPlayer"), int.class);
+            result.setCurrentPlayerIndex(currentPlayer);
+            return result;
+        }
+    }
 }

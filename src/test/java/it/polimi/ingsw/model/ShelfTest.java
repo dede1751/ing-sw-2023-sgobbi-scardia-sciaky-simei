@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 
@@ -28,28 +29,20 @@ public class ShelfTest {
     public void fillShelfDet() {
         columns = new ArrayList<>();
         
-        columns.add(0, List.of(
-                new Tile(Tile.Type.CATS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.BOOKS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE)));
-        columns.add(1, List.of(
-                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                new Tile(Tile.Type.BOOKS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.CATS, Tile.Sprite.ONE)));
-        columns.add(2, List.of(
-                new Tile(Tile.Type.FRAMES, Tile.Sprite.ONE),
-                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)));
-        columns.add(3, List.of(
-                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
-                new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE)));
+        columns.add(0, List.of(new Tile(Tile.Type.CATS, Tile.Sprite.ONE), new Tile(Tile.Type.BOOKS, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE)));
+        columns.add(1,
+                    List.of(new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE), new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.BOOKS, Tile.Sprite.ONE), new Tile(Tile.Type.CATS, Tile.Sprite.ONE)));
+        columns.add(2,
+                    List.of(new Tile(Tile.Type.FRAMES, Tile.Sprite.ONE), new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)));
+        columns.add(3, List.of(new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE), new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE), new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.PLANTS, Tile.Sprite.ONE)));
         /*
          * COL 0 : CBP
          * COL 1 : PTBC
@@ -120,30 +113,49 @@ public class ShelfTest {
         Shelf s = new Shelf();
         
         for( int i = 0; i < Shelf.N_COL; i++ ) {
-            s.addTiles(
-                    List.of(
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)),
-                    i);
+            s.addTiles(List.of(new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)), i);
         }
         assertTrue(s.isFull());
         
         s = new Shelf();
         for( int i = 0; i < Shelf.N_COL; i++ ) {
-            s.addTiles(
-                    List.of(
-                            Tile.NOTILE,
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
-                            new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)),
-                    i);
+            s.addTiles(List.of(Tile.NOTILE, new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE),
+                               new Tile(Tile.Type.TROPHIES, Tile.Sprite.ONE)), i);
         }
         assertFalse(s.isFull());
     }
+    
+    @Test
+    void serDeserTest() {
+        var ser = Shelf.toJson(shelf);
+        var deserializedShelf = Shelf.fromJson(ser);
+        assertEquals(shelf, deserializedShelf);
+        assertEquals(shelf, Shelf.fromJson(shelf.toJson()));
+    }
+    
+    @Nested
+    class TileTest {
+        @Test
+        void TileTestAll() {
+            var validString = "(C,2)";
+            var invalidStrig = "),(23";
+            assertThrows(InvalidStringException.class, () -> Tile.fromString(invalidStrig));
+            assertDoesNotThrow(() -> {
+                var x = Tile.fromString(validString);
+                assertEquals(new Tile(Tile.Type.CATS, Tile.Sprite.TWO), x);
+            });
+            assertDoesNotThrow(() -> assertEquals(new Tile(Tile.Type.CATS, Tile.Sprite.TWO), Tile.fromString(
+                    new Tile(Tile.Type.CATS, Tile.Sprite.TWO).toString())));
+        }
+    }
+    
+    
 }

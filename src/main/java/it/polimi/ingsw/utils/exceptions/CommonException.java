@@ -1,6 +1,14 @@
 package it.polimi.ingsw.utils.exceptions;
 
 public class CommonException extends Exception {
+    
+    public CommonException(){
+        super();
+    }
+    public CommonException(String message){
+        super(message);
+    }
+    
     //not sure that it will always work
     public void stackPrintOrigin() {
         int depth_level = 1;

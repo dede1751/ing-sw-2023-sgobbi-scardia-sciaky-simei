@@ -1,20 +1,24 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.*;
 import it.polimi.ingsw.utils.exceptions.CommonException;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 
+import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.function.Predicate;
 
 /**
  * Board representation for the model
  */
-public class Board {
+public class Board implements Serializable{
     
     private final Map<Coordinate, Tile> tileOccupancy;
     
-    /**
+     /**
      * Initialize board for the given number of players
      * The player number cannot change dynamically throughout the game
      *
@@ -60,6 +64,10 @@ public class Board {
                 this.tileOccupancy.put(coordinate, Tile.NOTILE);
             }
         }
+    }
+    
+    private Board(Map<Coordinate, Tile> map) {
+        tileOccupancy = map;
     }
     
     /**
@@ -133,7 +141,7 @@ public class Board {
                 this.tileOccupancy.containsKey(x)
                 && !visited[x.row()][x.col()];
         
-        ArrayList<Coordinate> selected = new ArrayList<Coordinate>();
+        ArrayList<Coordinate> selected = new ArrayList<>();
         Queue<Coordinate> coordGraph = new LinkedList<>();
         Coordinate initial = coordList.get(engine.nextInt(0, coordList.size()));
         coordGraph.add(initial);
@@ -188,4 +196,62 @@ public class Board {
         }
     }
     
+    
+    /**
+     * Get the matrix representation of the board as a 9*9 tiles Matrix
+     * @return Tile[][] The matrix rapresentation of the board.
+     *         Invalid positions in the board are represented with null values
+     */
+    
+    public Tile[][] getAsMatrix(){
+        var result = new Tile[9][9];
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                var coord = new Coordinate(i, j);
+                result[i][j] = this.tileOccupancy.getOrDefault(coord, null);
+            }
+        }
+        return result;
+    }
+    
+    public static class BoardSerializer implements JsonSerializer<Board>{
+        
+        @Override
+        public JsonElement serialize(Board src, Type typeOfSrc, JsonSerializationContext context) {
+            String def = "(-,-)";
+            var mat = new String[9][9];
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    var coord = new Coordinate(i, j);
+                    if(src.tileOccupancy.containsKey(coord)){
+                        mat[i][j] = src.getTile(coord).toString();
+                    }else{
+                        mat[i][j] = def;
+                    }
+                }
+            }
+            Gson gson = new GsonBuilder().create();
+            return gson.toJsonTree(mat);
+        }
+    }
+    
+    public static class BoardDeserializer implements JsonDeserializer<Board>{
+        
+        @Override
+        public Board deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            Gson gson = new GsonBuilder().create();
+            var hashMap = new HashMap<Coordinate, Tile>();
+            var board = gson.fromJson(json, String[][].class);
+            for(int i = 0; i < 9; i++){
+                for(int j = 0; j < 9; j++){
+                    var coord = new Coordinate(i, j);
+                    try {
+                        var tile = Tile.fromString(board[i][j]);
+                        hashMap.put(coord, tile);
+                    } catch ( InvalidStringException ignored ) { }
+                }
+            }
+            return new Board(hashMap);
+        }
+    }
 }

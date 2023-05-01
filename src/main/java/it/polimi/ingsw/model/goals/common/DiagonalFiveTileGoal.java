@@ -29,7 +29,7 @@ public class DiagonalFiveTileGoal implements CommonGoalStrategy {
                    && shelf.getTile(4, 4).type() == shelf.getTile(3, 3).type()
                    && shelf.getTile(3, 3).type() == shelf.getTile(2, 2).type()
                    && shelf.getTile(2, 2).type() == shelf.getTile(1, 1).type()
-                   && shelf.getTile(0, 0).type() == shelf.getTile(0, 0).type());
+                   && shelf.getTile(1, 1).type() == shelf.getTile(0, 0).type());
     }
     
 }
