@@ -11,6 +11,8 @@ import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.messages.ChatMessage;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -446,6 +448,15 @@ public class GameModel {
     public String toJson() {
         Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new ModelSerializer()).create();
         return gson.toJson(this, GameModel.class);
+    }
+    
+    public void toJson(String path) throws IOException {
+        Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new ModelSerializer()).create();
+        FileWriter writer = new FileWriter(path);
+        
+        gson.toJson(this, GameModel.class, writer);
+        writer.flush();
+        writer.close();
     }
     
     static public class ModelDeserializer implements JsonDeserializer<GameModel> {

@@ -22,6 +22,8 @@ public final class ResourcesManager {
     public static final String mainRootDir = Paths.get("").toAbsolutePath() + "/src/main/java";
     public static final String testRootDir = Paths.get("").toAbsolutePath() + "/src/test/java";
     
+    public static final String recoveryDir = mainRootDir + "/it/polimi/ingsw/controller/recovery";
+    
     /**
      * @return the name of the method from which it was called
      */

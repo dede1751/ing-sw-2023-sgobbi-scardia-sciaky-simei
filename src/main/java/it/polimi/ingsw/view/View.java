@@ -87,6 +87,14 @@ public abstract class View implements Runnable {
     }
     
     /**
+     * Notify the server of a client's request to join a recovering lobby
+     * @return The server's response
+     */
+    protected Response notifyRecoverLobby(){
+        return notifyServer(new RecoverLobbyMessage(this.nickname, this.clientID));
+    }
+    
+    /**
      * Notify the server of a client's request to create a lobby
      * @param size The new lobby's number of player
      * @return The server's response

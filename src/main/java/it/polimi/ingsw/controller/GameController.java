@@ -4,9 +4,12 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.messages.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -163,6 +166,24 @@ public class GameController {
     }
     
     /**
+     * Save the model to a file
+     */
+    private void saveModel() {
+        try {
+            File dir = new File(ResourcesManager.recoveryDir);
+            if( !dir.exists() && !dir.mkdir() ) {
+                System.err.println("Unable to create recovery directory");
+                return;
+            }
+            
+            model.toJson(ResourcesManager.recoveryDir + "/" + lobbyID + ".json");
+        } catch( IOException e ) {
+            System.err.println("Error saving model");
+            e.printStackTrace();
+        }
+    }
+    
+    /**
      * Respond to a chat message received from a client
      * @param chat Message contents
      * @return Response to the client
@@ -183,25 +204,29 @@ public class GameController {
         
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
         if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
-            System.err.println(
-                "Ignoring event from player '" + msg.getPlayerNickname() + "': " + msg.getMessageType().getTypeName() + ". Not the current Player.");
+            System.err.println("Ignoring event from player '" + msg.getPlayerNickname() + "': " + msg.getMessageType().getTypeName() + ". Not the current Player.");
             return Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName());
-        }else {
-            Move move = msg.getPayload();
-            if( IntegrityChecks.checkMove(move, this.model.getBoard(), this.model.getCurrentPlayer().getShelf()) ) {
-                model.removeSelection(move.selection());
-                model.shelveSelection(move.tiles(), move.column());
-                turnManager();
-                nextPlayerSetter();
-                return Response.Ok(msg.getClass().getSimpleName());
-            }
+        }
+        
+        Move move = msg.getPayload();
+        if( !IntegrityChecks.checkMove(move, this.model.getBoard(), this.model.getCurrentPlayer().getShelf()) ) {
             return Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName());
         }
+        
+        // if the move is valid, execute the full turn
+        model.removeSelection(move.selection());
+        model.shelveSelection(move.tiles(), move.column());
+        turnManager();
+        nextPlayerSetter();
+        saveModel();
+        
+        return Response.Ok(msg.getClass().getSimpleName());
     }
     
     @SuppressWarnings("unused")
     public Response onMessage(DebugMessage message){
-        System.out.println("Debug message just arrived urray! It says : " + message.getPayload());
+        System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());
+        saveModel();
         return new Response(0, message.getPayload(), message.getClass().getSimpleName());
     }
     
