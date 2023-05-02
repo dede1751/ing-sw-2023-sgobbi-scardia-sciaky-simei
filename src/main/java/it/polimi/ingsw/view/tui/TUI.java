@@ -6,22 +6,11 @@ import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.Move;
+import it.polimi.ingsw.view.tui.TUITile;
 
 import java.util.*;
 
 public class TUI extends View {
-    
-    
-    public enum Tiles {
-        caTile1 {
-            public String toString() {
-                return "┏━━━┓	" +
-                       "┃ s ┃" +
-                       "┗━━━┛";
-            }
-        },
-    }
-    
     
     @Override
     public void run() {

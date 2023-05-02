@@ -1,8 +1,15 @@
 package it.polimi.ingsw.view.tui;
 
 import org.junit.jupiter.api.Test;
+import it.polimi.ingsw.view.tui.TUITile;
 
 class TUITest {
+    
+    @Test
+    void printTest() {
+        String s = String.valueOf(TUITile.Tiles.catTile1);
+        System.out.println(s);
+    }
     
     @Test
     void run() {
