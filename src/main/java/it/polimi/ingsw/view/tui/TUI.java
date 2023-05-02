@@ -240,19 +240,33 @@ public class TUI extends View {
     
     }
     
-    private String concatString(String s1, String s2, int space) {
+    public String concatString(String s1, String s2, int space) {
         String[] s1Lines = s1.split("\n");
         String[] s2Lines = s2.split("\n");
         StringBuilder sb = new StringBuilder();
+        String[] shortS = s1Lines.length > s2Lines.length ? s2Lines : s1Lines;
+        String[] longS = s1Lines.length < s2Lines.length ? s2Lines : s1Lines;
         
         
-        for( int i = 0; i < s1Lines.length; i++ ) {
+        for( int i = 0; i < shortS.length; i++ ) {
             sb.append(s1Lines[i]);
             for( int j = 0; j < space; j++ ) {
                 sb.append(" ");
             }
             sb.append(s2Lines[i]).append("\n");
         }
+        
+        for( int i = shortS.length; i < longS.length; i++ ) {
+            if( s1Lines == longS ) {
+                sb.append(s1Lines[i]).append("\n");
+            }else {
+                for( int j = 0; j < s1Lines[0].length() + space; j++ ) {
+                    sb.append(" ");
+                }
+                sb.append(s2Lines[i]).append("\n");
+            }
+        }
+        
         
         return sb.toString();
     }
