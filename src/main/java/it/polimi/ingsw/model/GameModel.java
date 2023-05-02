@@ -366,8 +366,12 @@ public class GameModel {
     }
     
     private void notifyStartGame() {
-        var startGame = new StartGameMessage(this.players.stream().map(Player::getNickname).toList());
-        notifyAllClient(startGame);
+        List<String> nicks = players.stream().map(Player::getNickname).toList();
+        for(var x : players){
+            Client c = this.clientMap.get(x.getNickname());
+            var msg = new StartGameMessage(nicks, x.getPg(), this.commonGoalNumX, this.commonGoalNumY);
+            notifyClient(msg, c);
+        }
     }
     
     /**
