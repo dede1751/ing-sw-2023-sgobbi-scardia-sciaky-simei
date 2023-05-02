@@ -26,7 +26,7 @@ public class TUI extends View {
         
         // fetch all lobbies
         notifyRequestLobby(null);
-        if ( !lobbies.isEmpty() ) {
+        if( !lobbies.isEmpty() ) {
             System.out.println("\nHere are all the currently available lobbies. Avoid stealing someone's name!");
             System.out.println("To recover crashed lobbies, user your old nickname!");
             lobbies.forEach(System.out::print);
@@ -34,8 +34,9 @@ public class TUI extends View {
         askNickname();
         
         label:
-        while ( true ) {
-            System.out.println("\nDo you want to create your own lobby, join an existing one or recover a crashed lobby? [CREATE/JOIN/RECOVER]");
+        while( true ) {
+            System.out.println(
+                    "\nDo you want to create your own lobby, join an existing one or recover a crashed lobby? [CREATE/JOIN/RECOVER]");
             System.out.print("\n>>  ");
             String choice = scanner.next().trim();
             
@@ -238,6 +239,24 @@ public class TUI extends View {
     private void printShelf(Shelf shelf) {
     
     }
+    
+    private String concatString(String s1, String s2, int space) {
+        String[] s1Lines = s1.split("\n");
+        String[] s2Lines = s2.split("\n");
+        StringBuilder sb = new StringBuilder();
+        
+        
+        for( int i = 0; i < s1Lines.length; i++ ) {
+            sb.append(s1Lines[i]);
+            for( int j = 0; j < space; j++ ) {
+                sb.append(" ");
+            }
+            sb.append(s2Lines[i]).append("\n");
+        }
+        
+        return sb.toString();
+    }
+    
     
     @SuppressWarnings("unused")
     @Override
