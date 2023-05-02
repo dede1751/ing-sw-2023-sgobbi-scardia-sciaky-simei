@@ -2,7 +2,7 @@ package it.polimi.ingsw.network.socket;
 
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Client;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.utils.ReflectionUtility;
 import it.polimi.ingsw.view.messages.ViewMessage;

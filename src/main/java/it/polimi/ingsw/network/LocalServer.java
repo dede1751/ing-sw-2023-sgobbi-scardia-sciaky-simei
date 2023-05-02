@@ -2,6 +2,8 @@ package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
+import it.polimi.ingsw.model.messages.Response;
+import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.lang.reflect.InvocationTargetException;
@@ -42,6 +44,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     
     /**
      * Add clientID->controller mapping to current map
+     *
      * @param mapping client mapping to add
      */
     public void addGameController(Map<Integer, GameController> mapping) {
@@ -49,40 +52,55 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     }
     
     @Override
-    public Response update(ViewMessage<?> message) {
+    public void update(ViewMessage<?> message) {
         int clientID = message.getClientId();
         
         // Ignore messages from unregistered clients
         if( !lobbyController.checkRegistration(clientID) ) {
-            return new Response(1, "Client is not registered to the server", message.getClass().getSimpleName());
+            return;
         }
-        
+        Client c = lobbyController.getClient(clientID);
         try {
             // First try to see if it's a method handled by the LobbyController
             Method m = lobbyController.getClass().getMethod("onMessage", message.getMessageType());
-            return (Response) m.invoke(lobbyController, message);
+            m.invoke(lobbyController, message);
             
-        } catch( NoSuchMethodException e){
+        }
+        catch( NoSuchMethodException e ) {
             // Then, try forwarding it to a GameController
             GameController controller = gameControllers.get(clientID);
             
-            if ( controller != null ){
+            if( controller != null ) {
                 try {
                     Method m = controller.getClass().getMethod("onMessage", message.getMessageType());
-                    return (Response) m.invoke(controller, message);
-                } catch( NoSuchMethodException f ){
-                    return new Response(-1, "Illegal message, no operation defined. Refere to the network manual", message.getClass().getSimpleName());
-                } catch( InvocationTargetException | IllegalAccessException f ) {
-                    return Response.ServerError(message.getClass().getSimpleName());
+                    m.invoke(controller, message);
                 }
-            } else{
-                return new Response(-1, "Ignoring view Events until game is started!", message.getClass().getSimpleName());
+                catch( NoSuchMethodException f ) {
+                    try {
+                        c.update(new ServerResponseMessage(
+                                new Response(-1, "Illegal message, no operation defined. Refere to the network manual",
+                                             message.getClass().getSimpleName())));
+                    }catch( RemoteException ignored ){};
+                }
+                catch( InvocationTargetException | IllegalAccessException f ) {
+                    try {
+                        c.update(new ServerResponseMessage(Response.ServerError(message.getClass().getSimpleName())));
+                    }catch( RemoteException ignored ){};
+                }
+            }else {
+                try {
+                    c.update(new ServerResponseMessage(new Response(-1, "Ignoring view Events until game is started!",
+                                                                    message.getClass().getSimpleName())));
+                }
+                catch( RemoteException ignored ) {
+                }
             }
             
-        } catch( IllegalAccessException | InvocationTargetException e ) {
+        }
+        catch( IllegalAccessException | InvocationTargetException e ) {
             System.err.println(e.getMessage());
             e.printStackTrace();
-            return Response.ServerError(message.getClass().getSimpleName());
+            c.update(new ServerResponseMessage(Response.ServerError(message.getClass().getSimpleName())));
         }
     }
     

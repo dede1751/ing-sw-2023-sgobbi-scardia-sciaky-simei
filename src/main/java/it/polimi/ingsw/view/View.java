@@ -2,7 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.*;
 

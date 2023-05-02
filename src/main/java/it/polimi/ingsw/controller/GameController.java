@@ -3,7 +3,7 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.messages.*;

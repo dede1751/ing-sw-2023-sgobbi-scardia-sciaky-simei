@@ -2,7 +2,7 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.*;
 import it.polimi.ingsw.view.tui.TUI;

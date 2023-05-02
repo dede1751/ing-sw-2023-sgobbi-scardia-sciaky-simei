@@ -2,7 +2,7 @@ package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.Move;

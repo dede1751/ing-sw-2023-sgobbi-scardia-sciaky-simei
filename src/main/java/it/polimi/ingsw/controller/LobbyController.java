@@ -5,9 +5,10 @@ import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
+import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
 import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
 import it.polimi.ingsw.utils.files.ResourcesManager;
@@ -170,19 +171,27 @@ public class LobbyController {
     }
     
     /**
+     * Get client with clientID id.
+     * @param clientID
+     * @return
+     */
+    
+    public Client getClient(int clientID){
+        return this.clientMapping.get(clientID);
+    }
+    
+    
+    /**
      * Return the list of lobbies to the client
      * @param requestLobbyMessage Lobby parameters
      * @return Response to the client
      */
     @SuppressWarnings("unused")
-    public Response onMessage(RequestLobbyMessage requestLobbyMessage) {
+    public void onMessage(RequestLobbyMessage requestLobbyMessage) {
         Client c = clientMapping.get(requestLobbyMessage.getClientId());
         try {
             c.update(new AvailableLobbyMessage(this.searchForLobbies(requestLobbyMessage.getPayload())));
-            return Response.Ok(RequestLobbyMessage.class.getSimpleName());
-        } catch (RemoteException e) {
-            return Response.ServerError(RequestLobbyMessage.class.getSimpleName());
-        }
+        } catch (RemoteException ignored) {}
     }
     
     /**
@@ -191,7 +200,7 @@ public class LobbyController {
      * @return Response to the client
      */
     @SuppressWarnings("unused")
-    public Response onMessage(RecoverLobbyMessage recoverLobbyMessage) {
+    public void onMessage(RecoverLobbyMessage recoverLobbyMessage) {
         String nickname = recoverLobbyMessage.getPlayerNickname();
         RecoveryLobby lobby = recoveryLobbies.values()
                 .stream()
@@ -200,18 +209,17 @@ public class LobbyController {
                 .orElse(null);
         
         if ( lobby == null ) {
-            return Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName());
+             Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName());
+        }else {
+            int index = lobby.nicknames.indexOf(nickname);
+            lobby.clientIDs.set(index, recoverLobbyMessage.getClientId());
         }
-        
-        int index = lobby.nicknames.indexOf(nickname);
-        lobby.clientIDs.set(index, recoverLobbyMessage.getClientId());
-        
         // check if the game needs to be started
         if ( !lobby.isEmpty() ) {
             Map<Integer, GameController> mapping = resumeGame(lobby);
             server.addGameController(mapping);
         }
-        return Response.Ok(RecoverLobbyMessage.class.getSimpleName());
+         Response.Ok(RecoverLobbyMessage.class.getSimpleName());
     }
     
     /**
