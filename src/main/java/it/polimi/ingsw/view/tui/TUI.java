@@ -11,6 +11,18 @@ import java.util.*;
 
 public class TUI extends View {
     
+    enum Tiles=
+    
+    catTile= "┏━━━┓	" +
+             "┃ s ┃" +
+             "┗━━━┛";
+    
+    
+    
+    
+    
+    
+    
     @Override
     public void run() {
         userLogin();
