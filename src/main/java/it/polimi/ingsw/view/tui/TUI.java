@@ -11,16 +11,16 @@ import java.util.*;
 
 public class TUI extends View {
     
-    enum Tiles=
     
-    catTile= "┏━━━┓	" +
-             "┃ s ┃" +
-             "┗━━━┛";
-    
-    
-    
-    
-    
+    public enum Tiles {
+        caTile1 {
+            public String toString() {
+                return "┏━━━┓	" +
+                       "┃ s ┃" +
+                       "┗━━━┛";
+            }
+        },
+    }
     
     
     @Override
