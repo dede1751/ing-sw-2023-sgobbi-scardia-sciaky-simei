@@ -19,10 +19,12 @@ import static java.nio.file.StandardOpenOption.*;
  * All function should be static
  */
 public final class ResourcesManager {
+    
+    public static final String mainResourcesDir = Paths.get("").toAbsolutePath() + "/src/resources";
     public static final String mainRootDir = Paths.get("").toAbsolutePath() + "/src/main/java";
     public static final String testRootDir = Paths.get("").toAbsolutePath() + "/src/test/java";
     
-    public static final String recoveryDir = mainRootDir + "/it/polimi/ingsw/controller/recovery";
+    public static final String recoveryDir = mainResourcesDir + "/controller/recovery";
     
     /**
      * @return the name of the method from which it was called

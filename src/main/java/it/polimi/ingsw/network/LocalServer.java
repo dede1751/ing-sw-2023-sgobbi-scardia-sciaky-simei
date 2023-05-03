@@ -100,7 +100,12 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         catch( IllegalAccessException | InvocationTargetException e ) {
             System.err.println(e.getMessage());
             e.printStackTrace();
-            c.update(new ServerResponseMessage(Response.ServerError(message.getClass().getSimpleName())));
+            try {
+                c.update(new ServerResponseMessage(Response.ServerError(message.getClass().getSimpleName())));
+            }
+            catch( RemoteException ex ) {
+            
+            }
         }
     }
     

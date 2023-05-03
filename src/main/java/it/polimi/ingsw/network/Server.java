@@ -20,8 +20,7 @@ public interface Server extends Remote {
     /**
      * Notify the server that a client has made a choice.
      * @param message the message sent by the view
-     * @return the response from the server
      */
-    Response update(ViewMessage<?> message) throws RemoteException;
+    void update(ViewMessage<?> message) throws RemoteException;
     
 }
