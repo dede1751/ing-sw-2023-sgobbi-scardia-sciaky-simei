@@ -39,7 +39,7 @@ public class TUITile {
                 return ANSI_CYAN_BACKGROUND + ANSI_BLACK + " T " + ANSI_RESET;
             }
         },
-        plantTile1 {
+        plantTile {
             public String toString() {
                 return ANSI_PURPLE_BACKGROUND + ANSI_BLACK + " P " + ANSI_RESET;
             }
