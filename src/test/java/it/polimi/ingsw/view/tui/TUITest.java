@@ -1,13 +1,12 @@
 package it.polimi.ingsw.view.tui;
 
 import org.junit.jupiter.api.Test;
-import it.polimi.ingsw.view.tui.TUITile;
 
 class TUITest {
     
     @Test
     void printTest() {
-        String s = String.valueOf(TUITile.Tiles.catTile);
+        String s = String.valueOf(TUIUtils.Tiles.catTile);
         System.out.println(s);
     }
     
@@ -28,12 +27,12 @@ class TUITest {
     void concat() {
         
         TUI tui = new TUI();
-        String s1 = String.valueOf(TUITile.Tiles.catTile);
-        String s2 = String.valueOf(TUITile.Tiles.catTile);
-        String s3 = String.valueOf(TUITile.Tiles.trophyTile);
-        String s4 = String.valueOf(TUITile.Tiles.plantTile);
-        String s5 = String.valueOf(TUITile.Tiles.bookTile);
-        String s6 = String.valueOf(TUITile.Tiles.frameTile);
+        String s1 = String.valueOf(TUIUtils.Tiles.catTile);
+        String s2 = String.valueOf(TUIUtils.Tiles.catTile);
+        String s3 = String.valueOf(TUIUtils.Tiles.trophyTile);
+        String s4 = String.valueOf(TUIUtils.Tiles.plantTile);
+        String s5 = String.valueOf(TUIUtils.Tiles.bookTile);
+        String s6 = String.valueOf(TUIUtils.Tiles.frameTile);
         String z = tui.concatString(s2, s3, 3);
         String z1 = tui.concatString(s1, s4, 3);
         String z2 = tui.concatString(s6, s5, 3);

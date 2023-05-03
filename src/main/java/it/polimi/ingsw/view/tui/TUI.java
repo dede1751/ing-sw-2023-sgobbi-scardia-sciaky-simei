@@ -6,7 +6,6 @@ import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.Move;
-import it.polimi.ingsw.view.tui.TUITile;
 
 import java.util.*;
 
@@ -209,67 +208,6 @@ public class TUI extends View {
         System.out.print("Enter y-coordinate: ");
         int y = scanner.nextInt();
         return new Coordinate(x, y);
-    }
-    
-    private void printBoard(Board board) {
-        var def = "C-,-)";
-        if( board == null ) {
-            System.out.println("Board Still not initialized!");
-            for( int i = 8; i >= 0; i-- ) {
-                for( int j = 0; j < 9; j++ ) {
-                    System.out.print(def + ",");
-                }
-                System.out.print("\n");
-            }
-        }else {
-            var matrix = board.getAsMatrix();
-            for( int i = 8; i >= 0; i-- ) {
-                for( int j = 0; j < 9; j++ ) {
-                    if( matrix[i][j] == null ) {
-                        System.out.print(def + ",");
-                    }else {
-                        System.out.print(matrix[i][j].toString() + ",");
-                    }
-                }
-                System.out.print("\n");
-            }
-        }
-    }
-    
-    //TODO
-    private void printShelf(Shelf shelf) {
-    
-    }
-    
-    public String concatString(String s1, String s2, int space) {
-        String[] s1Lines = s1.split("\n");
-        String[] s2Lines = s2.split("\n");
-        StringBuilder sb = new StringBuilder();
-        String[] shortS = s1Lines.length > s2Lines.length ? s2Lines : s1Lines;
-        String[] longS = s1Lines.length < s2Lines.length ? s2Lines : s1Lines;
-        
-        
-        for( int i = 0; i < shortS.length; i++ ) {
-            sb.append(s1Lines[i]);
-            for( int j = 0; j < space; j++ ) {
-                sb.append(" ");
-            }
-            sb.append(s2Lines[i]).append("\n");
-        }
-        
-        for( int i = shortS.length; i < longS.length; i++ ) {
-            if( s1Lines == longS ) {
-                sb.append(s1Lines[i]).append("\n");
-            }else {
-                for( int j = 0; j < s1Lines[0].length() + space; j++ ) {
-                    sb.append(" ");
-                }
-                sb.append(s2Lines[i]).append("\n");
-            }
-        }
-        
-        
-        return sb.toString();
     }
     
     
