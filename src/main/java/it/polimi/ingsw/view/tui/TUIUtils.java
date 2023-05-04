@@ -48,7 +48,7 @@ public class TUIUtils {
         }
     }
     
-    public String concatString(String s1, String s2, int space) {
+    public static String concatString(String s1, String s2, int space) {
         String[] s1Lines = s1.split("\n");
         String[] s2Lines = s2.split("\n");
         StringBuilder sb = new StringBuilder();
@@ -73,8 +73,10 @@ public class TUIUtils {
         return sb.toString();
     }
     
+<<<<<<< HEAD
     private void printBoard(Board board) {
         var def = " - ";
+>>>>>>> refs/remotes/origin/tui
         if( board == null ) {
             System.out.println("Board Still not initialized!");
             for( int i = 0; i < 9; i++ ) {
@@ -112,8 +114,27 @@ public class TUIUtils {
         }
     }
     
-    //TODO
-    private void printShelf(Shelf shelf) {
     
+    static String printShelf(Shelf shelf) {
+        StringBuilder sb = new StringBuilder();
+        //5*6
+        String top = "┌───┬───┬───┬───┬───┐\n";
+        String bottom = "└───┴───┴───┴───┴───┘\n";
+        
+        sb.append(top);
+        
+        
+        for( int i = 0; i < Shelf.N_ROW; i++ ) {
+            
+            for( int j = 0; j < Shelf.N_COL; j++ ) {
+                sb.append("│" + Tiles.catTile);
+            }
+            sb.append("│\n");
+            sb.append("├───┼───┼───┼───┼───┤\n");
+        }
+        sb.append("│" + Tiles.catTile + "│" + Tiles.catTile + "│" + Tiles.catTile + "│" + Tiles.catTile + "│" +
+                  Tiles.catTile + "│  \n");
+        sb.append(bottom);
+        return sb.toString();
     }
 }

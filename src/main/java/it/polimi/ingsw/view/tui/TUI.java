@@ -215,7 +215,7 @@ public class TUI extends View {
     @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
-        printBoard(this.model.getBoard());
+        TUIUtils.printBoard(this.model.getBoard());
     }
     
     @SuppressWarnings("unused")
