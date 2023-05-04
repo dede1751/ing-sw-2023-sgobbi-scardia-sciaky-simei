@@ -4,8 +4,9 @@ import java.io.Serializable;
 
 /**
  * Generic response returned to each client request
+ *
  * @param status 0 if OK, -1 if error
- * @param msg Message to be displayed to the client
+ * @param msg    Message to be displayed to the client
  * @param Action The type of action that generated this response
  */
 public record Response(int status, String msg, String Action) implements Serializable {
@@ -24,7 +25,7 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     public static Response IllegalMove(String playerNick, String Action) {
         System.err.println("Illegal move by player : " + playerNick + " will be ignored");
-        return new Response(-1, "Illegal Move : ignoring player action", Action );
+        return new Response(-1, "Illegal Move : ignoring player action", Action);
     }
     
     public static Response NotCurrentPlayer(String playerNick, String Action) {
@@ -39,10 +40,12 @@ public record Response(int status, String msg, String Action) implements Seriali
     /**
      * @return true if the response is OK, false otherwise
      */
-    public boolean isOk() { return status == 0; }
+    public boolean isOk() {
+        return status == 0;
+    }
     
     @Override
-    public String toString(){
+    public String toString() {
         return status + ", " + msg;
     }
     

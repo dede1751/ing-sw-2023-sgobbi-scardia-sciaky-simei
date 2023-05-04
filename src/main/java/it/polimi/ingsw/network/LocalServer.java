@@ -80,12 +80,16 @@ public class LocalServer extends UnicastRemoteObject implements Server {
                         c.update(new ServerResponseMessage(
                                 new Response(-1, "Illegal message, no operation defined. Refere to the network manual",
                                              message.getClass().getSimpleName())));
-                    }catch( RemoteException ignored ){};
+                    }
+                    catch( RemoteException ignored ) {
+                    }
                 }
                 catch( InvocationTargetException | IllegalAccessException f ) {
                     try {
                         c.update(new ServerResponseMessage(Response.ServerError(message.getClass().getSimpleName())));
-                    }catch( RemoteException ignored ){};
+                    }
+                    catch( RemoteException ignored ) {
+                    }
                 }
             }else {
                 try {

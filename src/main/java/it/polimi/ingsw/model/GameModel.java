@@ -3,11 +3,10 @@ package it.polimi.ingsw.model;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.network.Client;
-import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
-import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
-import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
+import it.polimi.ingsw.utils.ModelListener;
+import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.messages.ChatMessage;
 
@@ -36,7 +35,7 @@ public class GameModel {
     private int currentPlayerIndex;
     private final List<Player> players;
     
-    private final Map<String, Client> clientMap;
+    private final Map<String, ModelListener> listeners;
     
     private final Board board;
     
@@ -83,7 +82,7 @@ public class GameModel {
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
         
-        this.clientMap = new HashMap<>(numPlayers);
+        this.listeners = new HashMap<>(numPlayers);
     }
     
     public void startGame() {
@@ -99,7 +98,7 @@ public class GameModel {
         this.players = new ArrayList<>(numPlayers);
         this.board = board;
         this.tileBag = tileBag;
-        this.clientMap = new HashMap<>(numPlayers);
+        this.listeners = new HashMap<>(numPlayers);
     }
     
     /**
@@ -225,37 +224,37 @@ public class GameModel {
     public int addCurrentPlayerCommongGoalScore(int score, CGType t) {
         Player player = this.getCurrentPlayer();
         int i = player.addCommonGoalScore(score);
-        switch( t ){
+        switch( t ) {
             case X -> {
                 player.setCompletedGoalX(true);
-                notifyAllClient(new CommonGoalMessage(CGType.X, this.commonGoalStackX.peek()));
+                notifyAllListeners(new CommonGoalMessage(CGType.X, this.commonGoalStackX.peek()));
             }
             case Y -> {
                 player.setCompletedGoalY(true);
-                notifyAllClient(new CommonGoalMessage(CGType.Y, this.commonGoalStackY.peek()));
+                notifyAllListeners(new CommonGoalMessage(CGType.Y, this.commonGoalStackY.peek()));
             }
         }
-        notifyAllClient(new UpdateScoreMessage(i, UpdateScorePayload.Type.CommonGoal, player.getNickname()));
+        notifyAllListeners(new UpdateScoreMessage(i, UpdateScorePayload.Type.CommonGoal, player.getNickname()));
         return i;
     }
     
-    public int setCurrentPlayerPersonalScore(int score){
+    public int setCurrentPlayerPersonalScore(int score) {
         Player player = this.getCurrentPlayer();
         int i = player.setPersonalGoalScore(score);
-        notifyAllClient(new UpdateScoreMessage(score, UpdateScorePayload.Type.PersonalGoal, player.getNickname()));
+        notifyAllListeners(new UpdateScoreMessage(score, UpdateScorePayload.Type.PersonalGoal, player.getNickname()));
         return i;
     }
     
-    public int setCurrentPlayerAdiajencyScore(int score){
+    public int setCurrentPlayerAdiajencyScore(int score) {
         Player player = this.getCurrentPlayer();
         int i = player.setAdjacentScore(score);
-        notifyAllClient(new UpdateScoreMessage(score, UpdateScorePayload.Type.Adiajency, player.getNickname()));
+        notifyAllListeners(new UpdateScoreMessage(score, UpdateScorePayload.Type.Adiajency, player.getNickname()));
         return i;
     }
     
-    public void refillBoard(){
+    public void refillBoard() {
         this.board.refill(this.tileBag);
-        notifyAllClient(new BoardMessage(this));
+        notifyAllListeners(new BoardMessage(this));
     }
     
     /**
@@ -336,45 +335,41 @@ public class GameModel {
     }
     
     /**
-     * Add client reference to model.
-     * This method should be called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int)}.
+     * Add a listener to the model.
+     * At least one listener for each player should be supplied.
      * It is necessary for the correct functioning of the networking communication.
      *
-     * @param nickname nickname of the client
-     * @param client   reference to the client object
+     * @param name Listener name, should be the nickname for listeners relaying information to clients
+     * @param listener Reference to the listener
      *
-     * @throws DuplicateNickname    if it exists a client linked to the same nickname
-     * @throws NoPlayerWithNickname if a player with the same nickname doesn't exist. This method should be
-     *                              called only after {@link it.polimi.ingsw.model.GameModel#addPlayer(String, int) addPlayer}
+     * @throws DuplicateListener if a listener with the given name already exists
      */
-    public void addClient(String nickname, Client client) throws DuplicateNickname, NoPlayerWithNickname {
-        if( this.clientMap.containsKey(nickname) ) {
-            throw new DuplicateNickname(nickname);
-        }else if( this.players.stream().filter((x) -> x.getNickname().equals(nickname)).count() != 1 ) {
-            throw new NoPlayerWithNickname(nickname);
-        }else {
-            this.clientMap.put(nickname, client);
+    public void addListener(String name, ModelListener listener) throws DuplicateListener {
+        if( this.listeners.containsKey(name) ) {
+            throw new DuplicateListener(name);
+        } else {
+            this.listeners.put(name, listener);
         }
     }
     
-    private <T extends ModelMessage<?>> void notifyClient(T msg, Client player) {
+    private <T extends ModelMessage<?>> void notifyListener(T msg, ModelListener listener) {
         try {
-            player.update(msg);
+            listener.update(msg);
         }
         catch( RemoteException e ) {
             AtomicReference<String> nick = new AtomicReference<>();
-            clientMap.entrySet()
+            listeners.entrySet()
                     .stream()
-                    .filter((x) -> x.getValue() == player).findFirst()
+                    .filter((x) -> x.getValue() == listener).findFirst()
                     .ifPresent((x) -> nick.set(x.getKey()));
             System.err.println("Unable to update player " + nick);
             System.err.println(e.getMessage());
         }
     }
     
-    private <T extends ModelMessage<?>> void notifyAllClient(T msg) {
-        for( var n : this.clientMap.entrySet() ) {
-            notifyClient(msg, n.getValue());
+    private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
+        for( ModelListener listener : this.listeners.values() ) {
+            notifyListener(msg, listener);
         }
     }
     
@@ -387,34 +382,34 @@ public class GameModel {
         
         IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
         if( chat.getDestination().equals("BROADCAST") ) {
-            notifyAllClient(message);
+            notifyAllListeners(message);
         }else {
-            Client player = this.clientMap.get(chat.getPlayerNickname());
-            notifyClient(message, player);
+            ModelListener targetListener = this.listeners.get(chat.getPlayerNickname());
+            notifyListener(message, targetListener);
         }
     }
     
     private void notifyBoardChange() {
         var boardMessage = new BoardMessage(this);
-        notifyAllClient(boardMessage);
+        notifyAllListeners(boardMessage);
     }
     
     private void notifyCurrentPlayerChange() {
         var pMessage = new CurrentPlayerMessage(this.getCurrentPlayer().getNickname());
-        notifyAllClient(pMessage);
+        notifyAllListeners(pMessage);
     }
     
     private void notifyShelfChange() {
         var shelfMessage = new ShelfMessage(this.getCurrentPlayer().getShelf(), this.getCurrentPlayer().getNickname());
-        notifyAllClient(shelfMessage);
+        notifyAllListeners(shelfMessage);
     }
     
     private void notifyStartGame() {
         List<String> nicks = players.stream().map(Player::getNickname).toList();
         for( var x : players ) {
-            Client c = this.clientMap.get(x.getNickname());
+            ModelListener playerListener = this.listeners.get(x.getNickname());
             var msg = new StartGameMessage(nicks, x.getPg(), this.commonGoalNumX, this.commonGoalNumY);
-            notifyClient(msg, c);
+            notifyListener(msg, playerListener);
         }
     }
     
@@ -430,7 +425,7 @@ public class GameModel {
         for( Player x : this.getPlayers() ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
-        notifyAllClient(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
+        notifyAllListeners(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
     }
     
     // Testing methods

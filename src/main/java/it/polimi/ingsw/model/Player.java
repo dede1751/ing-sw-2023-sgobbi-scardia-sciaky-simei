@@ -99,9 +99,11 @@ public class Player implements Serializable {
         this.commonGoalScore += score;
         return this.commonGoalScore;
     }
-    public int getCommonGoalScore(){
+    
+    public int getCommonGoalScore() {
         return this.commonGoalScore;
     }
+    
     public int setPersonalGoalScore(int score) {
         this.personalGoalScore = score;
         

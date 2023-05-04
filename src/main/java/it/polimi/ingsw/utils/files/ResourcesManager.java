@@ -42,7 +42,7 @@ public final class ResourcesManager {
         return FileChannel.open(Path.of(path), READ);
     }
     
-    public static void closeChannel(Channel c) throws IOException{
+    public static void closeChannel(Channel c) throws IOException {
         c.close();
     }
     
@@ -64,7 +64,8 @@ public final class ResourcesManager {
         public static String getObjectByAttribute(String json, String attribute) throws JsonParseException {
             return getElementByAttribute(json, attribute).toString();
         }
-        public static JsonElement getElementByAttribute(String json, String attribute) throws JsonParseException{
+        
+        public static JsonElement getElementByAttribute(String json, String attribute) throws JsonParseException {
             var jsonTree = JsonParser.parseString(json).getAsJsonObject();
             if( jsonTree.has(attribute) ) {
                 var value = jsonTree.get(attribute);
@@ -75,12 +76,15 @@ public final class ResourcesManager {
                 throw new JsonParseException("Attribute not found : " + attribute);
             }
         }
-        public static JsonElement getElementByAttribute(JsonElement json, String attribute) throws JsonParseException{
-            if( json.isJsonObject() ){
-                if(json.getAsJsonObject().has(attribute)){
+        
+        public static JsonElement getElementByAttribute(JsonElement json, String attribute) throws JsonParseException {
+            if( json.isJsonObject() ) {
+                if( json.getAsJsonObject().has(attribute) ) {
                     return json.getAsJsonObject().get(attribute);
-                }else throw new JsonParseException("Json object doesn't have this attribute : " + attribute);
-            }else throw new JsonParseException("Json element is not an object");
+                }else
+                    throw new JsonParseException("Json object doesn't have this attribute : " + attribute);
+            }else
+                throw new JsonParseException("Json element is not an object");
         }
     }
     

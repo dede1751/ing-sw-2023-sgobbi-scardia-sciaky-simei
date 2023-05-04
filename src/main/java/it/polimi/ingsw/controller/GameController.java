@@ -6,9 +6,11 @@ import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.utils.files.ResourcesManager;
-import it.polimi.ingsw.utils.files.ServerLogger;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
-import it.polimi.ingsw.view.messages.*;
+import it.polimi.ingsw.view.messages.ChatMessage;
+import it.polimi.ingsw.view.messages.DebugMessage;
+import it.polimi.ingsw.view.messages.Move;
+import it.polimi.ingsw.view.messages.MoveMessage;
 
 import java.io.File;
 import java.io.IOException;

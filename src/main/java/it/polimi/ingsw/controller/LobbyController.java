@@ -6,12 +6,11 @@ import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.model.messages.ModelMessage;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.model.messages.Response;
-import it.polimi.ingsw.utils.exceptions.DuplicateNickname;
-import it.polimi.ingsw.utils.exceptions.NoPlayerWithNickname;
+import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.files.ServerLogger;
 import it.polimi.ingsw.view.messages.*;
@@ -208,7 +207,7 @@ public class LobbyController {
     
     protected record ClientContext(Client client, String nickname, int id) {
         @Override
-        public String toString(){
+        public String toString() {
             return nickname + " , " + id;
         }
         
@@ -225,7 +224,7 @@ public class LobbyController {
             ServerLogger.messageLog(cc.toString(), m);
         }
         catch( RemoteException e ) {
-            ServerLogger.errorLog(e,"Client : " + cc);
+            ServerLogger.errorLog(e, "Client : " + cc);
         }
     }
     
@@ -278,7 +277,6 @@ public class LobbyController {
      * Create a new lobby
      *
      * @param message Lobby creation message
-     *
      */
     @SuppressWarnings("unused")
     public void onMessage(CreateLobbyMessage message) {
@@ -311,7 +309,6 @@ public class LobbyController {
      * Join a lobby with the supplied id, and if needed start the game
      *
      * @param message Description of lobby to join
-     *
      */
     @SuppressWarnings("unused")
     public void onMessage(JoinLobbyMessage message) {
@@ -394,9 +391,9 @@ public class LobbyController {
             Client client = clientMapping.get(clientID);
             
             try {
-                model.addClient(lobby.nicknames.get(i), client);
+                model.addListener(lobby.nicknames.get(i), client::update);
             }
-            catch( DuplicateNickname | NoPlayerWithNickname ignored ) {
+            catch( DuplicateListener ignored ) {
             }
         }
         
@@ -435,9 +432,9 @@ public class LobbyController {
             Client client = clientMapping.get(clientID);
             model.addPlayer(lobby.nicknames().get(i), personalGoalIndices[i]);
             try {
-                model.addClient(lobby.nicknames().get(i), client);
+                model.addListener(lobby.nicknames.get(i), client::update);
             }
-            catch( DuplicateNickname | NoPlayerWithNickname ignored ) {
+            catch( DuplicateListener ignored ) {
             }
         }
         Map<Integer, GameController> gameMapping = new HashMap<>();

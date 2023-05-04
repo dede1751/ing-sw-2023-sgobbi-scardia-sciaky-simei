@@ -1,8 +1,8 @@
 package it.polimi.ingsw.network.socket;
 
 import it.polimi.ingsw.model.messages.ModelMessage;
-import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.model.messages.Response;
+import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
@@ -22,13 +22,15 @@ public class ClientSkeleton implements Client {
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot create output stream", e);
         }
         
         try {
             this.ois = new ObjectInputStream(socket.getInputStream());
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot create input stream", e);
         }
     }
@@ -41,10 +43,11 @@ public class ClientSkeleton implements Client {
                 oos.reset();
                 oos.flush();
                 this.clientID = clientID;
-            } else {
+            }else {
                 throw new RemoteException("ID already setted for this client");
             }
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send client id", e);
         }
     }
@@ -56,9 +59,11 @@ public class ClientSkeleton implements Client {
         try {
             message = (ViewMessage<?>) ois.readObject();
             response = server.update(message);
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot receive message from client", e);
-        } catch( ClassNotFoundException e ) {
+        }
+        catch( ClassNotFoundException e ) {
             throw new RemoteException("Sent message doesn't have the correct type", e);
         }
         
@@ -66,7 +71,8 @@ public class ClientSkeleton implements Client {
             oos.writeObject(response);
             oos.reset();
             oos.flush();
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send response", e);
         }
     }
@@ -77,7 +83,8 @@ public class ClientSkeleton implements Client {
             oos.writeObject(msg);
             oos.reset();
             oos.flush();
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send message", e);
         }
     }

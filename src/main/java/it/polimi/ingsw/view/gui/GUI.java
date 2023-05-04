@@ -1,6 +1,9 @@
 package it.polimi.ingsw.view.gui;
 
-import it.polimi.ingsw.model.messages.*;
+import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
+import it.polimi.ingsw.model.messages.BoardMessage;
+import it.polimi.ingsw.model.messages.EndGameMessage;
+import it.polimi.ingsw.model.messages.StartGameMessage;
 import it.polimi.ingsw.view.View;
 
 

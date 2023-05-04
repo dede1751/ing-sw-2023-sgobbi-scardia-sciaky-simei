@@ -1,8 +1,10 @@
 package it.polimi.ingsw.view.tui;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.Board;
+import it.polimi.ingsw.model.Coordinate;
+import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.Move;
@@ -26,7 +28,7 @@ public class TUI extends View {
         
         // fetch all lobbies
         notifyRequestLobby(null);
-        if ( !lobbies.isEmpty() ) {
+        if( !lobbies.isEmpty() ) {
             System.out.println("\nHere are all the currently available lobbies. Avoid stealing someone's name!");
             System.out.println("To recover crashed lobbies, user your old nickname!");
             lobbies.forEach(System.out::print);
@@ -34,8 +36,9 @@ public class TUI extends View {
         askNickname();
         
         label:
-        while ( true ) {
-            System.out.println("\nDo you want to create your own lobby, join an existing one or recover a crashed lobby? [CREATE/JOIN/RECOVER]");
+        while( true ) {
+            System.out.println(
+                    "\nDo you want to create your own lobby, join an existing one or recover a crashed lobby? [CREATE/JOIN/RECOVER]");
             System.out.print("\n>>  ");
             String choice = scanner.next().trim();
             
