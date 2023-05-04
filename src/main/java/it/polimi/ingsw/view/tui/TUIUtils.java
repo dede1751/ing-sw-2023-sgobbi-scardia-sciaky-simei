@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.Tile;
 
 public class TUIUtils {
     
@@ -14,9 +15,7 @@ public class TUIUtils {
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     
-    
     public enum Tiles {
-        
         catTile {
             public String toString() {
                 return ANSI_GREEN_BACKGROUND + ANSI_BLACK + " C " + ANSI_RESET;
@@ -56,12 +55,9 @@ public class TUIUtils {
         String[] shortS = s1Lines.length > s2Lines.length ? s2Lines : s1Lines;
         String[] longS = s1Lines.length < s2Lines.length ? s2Lines : s1Lines;
         
-        
         for( int i = 0; i < shortS.length; i++ ) {
             sb.append(s1Lines[i]);
-            for( int j = 0; j < space; j++ ) {
-                sb.append(" ");
-            }
+            sb.append(" ".repeat(Math.max(0, space)));
             sb.append(s2Lines[i]).append("\n");
         }
         
@@ -69,36 +65,46 @@ public class TUIUtils {
             if( s1Lines == longS ) {
                 sb.append(s1Lines[i]).append("\n");
             }else {
-                for( int j = 0; j < s1Lines[0].length() + space; j++ ) {
-                    sb.append(" ");
-                }
+                sb.append(" ".repeat(Math.max(0, s1Lines[0].length() + space)));
                 sb.append(s2Lines[i]).append("\n");
             }
         }
         
-        
         return sb.toString();
     }
     
-    
     private void printBoard(Board board) {
-        var def = "C-,-)";
+        var def = " - ";
         if( board == null ) {
             System.out.println("Board Still not initialized!");
-            for( int i = 8; i >= 0; i-- ) {
+            for( int i = 0; i < 9; i++ ) {
                 for( int j = 0; j < 9; j++ ) {
-                    System.out.print(def + ",");
+                    System.out.print(def);
                 }
                 System.out.print("\n");
             }
-        }else {
+        } else {
             var matrix = board.getAsMatrix();
-            for( int i = 8; i >= 0; i-- ) {
+            for( int i = 0; i < 9; i++ ) {
                 for( int j = 0; j < 9; j++ ) {
                     if( matrix[i][j] == null ) {
-                        System.out.print(def + ",");
-                    }else {
-                        System.out.print(matrix[i][j].toString() + ",");
+                        System.out.print(def);
+                    } else {
+                        var tile = matrix[i][j].type();
+                        switch (tile) {
+                            case CATS:
+                                System.out.print(Tiles.catTile);
+                            case BOOKS:
+                                System.out.print(Tiles.bookTile);
+                            case GAMES:
+                                System.out.print(Tiles.gameTile);
+                            case FRAMES:
+                                System.out.print(Tiles.frameTile);
+                            case TROPHIES:
+                                System.out.print(Tiles.trophyTile);
+                            case PLANTS:
+                                System.out.print(Tiles.plantTile);
+                        }
                     }
                 }
                 System.out.print("\n");
