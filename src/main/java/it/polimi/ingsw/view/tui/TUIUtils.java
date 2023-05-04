@@ -73,10 +73,8 @@ public class TUIUtils {
         return sb.toString();
     }
     
-<<<<<<< HEAD
     private void printBoard(Board board) {
         var def = " - ";
->>>>>>> refs/remotes/origin/tui
         if( board == null ) {
             System.out.println("Board Still not initialized!");
             for( int i = 0; i < 9; i++ ) {
