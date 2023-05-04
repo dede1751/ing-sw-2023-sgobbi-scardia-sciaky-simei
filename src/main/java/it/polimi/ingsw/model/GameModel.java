@@ -3,19 +3,17 @@ package it.polimi.ingsw.model;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.utils.ModelListener;
 import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.utils.mvc.ModelListener;
 import it.polimi.ingsw.view.messages.ChatMessage;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Game model class to be used as a representation of the game's state by the controller
@@ -187,6 +185,15 @@ public class GameModel {
     }
     
     /**
+     * Returns the list of player nicknames
+     *
+     * @return Full list of player nicknames
+     */
+    public List<String> getNicknames() {
+        return players.stream().map(Player::getNickname).toList();
+    }
+    
+    /**
      * Return the index of the current player in the list returned by {@link #getPlayers() getPlayers}
      *
      * @return The index of the current player
@@ -339,7 +346,7 @@ public class GameModel {
      * At least one listener for each player should be supplied.
      * It is necessary for the correct functioning of the networking communication.
      *
-     * @param name Listener name, should be the nickname for listeners relaying information to clients
+     * @param name     Listener name, should be the nickname for listeners relaying information to clients
      * @param listener Reference to the listener
      *
      * @throws DuplicateListener if a listener with the given name already exists
@@ -347,29 +354,14 @@ public class GameModel {
     public void addListener(String name, ModelListener listener) throws DuplicateListener {
         if( this.listeners.containsKey(name) ) {
             throw new DuplicateListener(name);
-        } else {
+        }else {
             this.listeners.put(name, listener);
-        }
-    }
-    
-    private <T extends ModelMessage<?>> void notifyListener(T msg, ModelListener listener) {
-        try {
-            listener.update(msg);
-        }
-        catch( RemoteException e ) {
-            AtomicReference<String> nick = new AtomicReference<>();
-            listeners.entrySet()
-                    .stream()
-                    .filter((x) -> x.getValue() == listener).findFirst()
-                    .ifPresent((x) -> nick.set(x.getKey()));
-            System.err.println("Unable to update player " + nick);
-            System.err.println(e.getMessage());
         }
     }
     
     private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
         for( ModelListener listener : this.listeners.values() ) {
-            notifyListener(msg, listener);
+            listener.update(msg);
         }
     }
     
@@ -385,31 +377,28 @@ public class GameModel {
             notifyAllListeners(message);
         }else {
             ModelListener targetListener = this.listeners.get(chat.getPlayerNickname());
-            notifyListener(message, targetListener);
+            targetListener.update(message);
         }
     }
     
     private void notifyBoardChange() {
-        var boardMessage = new BoardMessage(this);
-        notifyAllListeners(boardMessage);
+        notifyAllListeners(new BoardMessage(this));
     }
     
     private void notifyCurrentPlayerChange() {
-        var pMessage = new CurrentPlayerMessage(this.getCurrentPlayer().getNickname());
-        notifyAllListeners(pMessage);
+        notifyAllListeners(new CurrentPlayerMessage(this.getCurrentPlayer().getNickname()));
     }
     
     private void notifyShelfChange() {
-        var shelfMessage = new ShelfMessage(this.getCurrentPlayer().getShelf(), this.getCurrentPlayer().getNickname());
-        notifyAllListeners(shelfMessage);
+        notifyAllListeners(new ShelfMessage(this.getCurrentPlayer().getShelf(), this.getCurrentPlayer().getNickname()));
     }
     
     private void notifyStartGame() {
-        List<String> nicks = players.stream().map(Player::getNickname).toList();
-        for( var x : players ) {
+        List<String> nicks = this.getNicknames();
+        
+        for( Player x : players ) {
             ModelListener playerListener = this.listeners.get(x.getNickname());
-            var msg = new StartGameMessage(nicks, x.getPg(), this.commonGoalNumX, this.commonGoalNumY);
-            notifyListener(msg, playerListener);
+            playerListener.update(new StartGameMessage(nicks, x.getPg(), this.commonGoalNumX, this.commonGoalNumY));
         }
     }
     
@@ -421,11 +410,23 @@ public class GameModel {
                 .max(Comparator.comparingInt(Player::getScore))
                 .orElseThrow()
                 .getNickname();
+        
         Map<String, Integer> leaderboard = new HashMap<>();
         for( Player x : this.getPlayers() ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
         notifyAllListeners(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
+    }
+    
+    /**
+     * Notify a single client of a server message
+     *
+     * @param listenerName Name of the listener to notify
+     * @param msg          Server Response Message to send
+     */
+    public void notifyServerMessage(String listenerName, ServerResponseMessage msg) {
+        ModelListener listener = this.listeners.get(listenerName);
+        listener.update(msg);
     }
     
     // Testing methods

@@ -12,8 +12,6 @@ import it.polimi.ingsw.view.messages.DebugMessage;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.MoveMessage;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -172,19 +170,7 @@ public class GameController {
      * Save the model to a file
      */
     private void saveModel() {
-        try {
-            File dir = new File(ResourcesManager.recoveryDir);
-            if( !dir.exists() && !dir.mkdir() ) {
-                System.err.println("Unable to create recovery directory");
-                return;
-            }
-            
-            model.toJson(ResourcesManager.recoveryDir + "/" + lobbyID + ".json");
-        }
-        catch( IOException e ) {
-            System.err.println("Error saving model");
-            e.printStackTrace();
-        }
+        ResourcesManager.saveModel(model, lobbyID);
     }
     
     /**
@@ -199,27 +185,29 @@ public class GameController {
     
     /**
      * Respond to a move message received from a client
+     * In case of error, notify the client through the model with a ServerMessage.
      *
      * @param msg Move received
      */
     @SuppressWarnings("unused")
     public void onMessage(MoveMessage msg) {
-        
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
-        LobbyController.ClientContext cc = LobbyController.ClientContext.getCC(msg);
-        if( !cc.nickname().equals(currentPlayerNick) ) {
-            System.err.println("Ignoring event from player '" + msg.getPlayerNickname() + "': " +
-                               msg.getMessageType().getTypeName() + ". Not the current Player.");
-            var r = new ServerResponseMessage(
-                    Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName()));
-            LobbyController.getInstance().updateClient(cc, r);
+        
+        if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
+            this.model.notifyServerMessage(
+                    msg.getPlayerNickname(),
+                    new ServerResponseMessage(
+                            Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName()))
+            );
             return;
         }
         
         Move move = msg.getPayload();
         if( !IntegrityChecks.checkMove(move, this.model.getBoard(), this.model.getCurrentPlayer().getShelf()) ) {
-            var r = new ServerResponseMessage(Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName()));
-            LobbyController.getInstance().updateClient(cc, r);
+            this.model.notifyServerMessage(
+                    msg.getPlayerNickname(),
+                    new ServerResponseMessage(Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName()))
+            );
             return;
         }
         
@@ -233,11 +221,13 @@ public class GameController {
     
     @SuppressWarnings("unused")
     public void onMessage(DebugMessage message) {
-        LobbyController.ClientContext cc = LobbyController.ClientContext.getCC(message);
         System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());
         saveModel();
-        var r = new ServerResponseMessage(new Response(0, message.getPayload(), message.getClass().getSimpleName()));
-        LobbyController.getInstance().updateClient(cc, r);
+        
+        this.model.notifyServerMessage(
+                message.getPlayerNickname(),
+                new ServerResponseMessage(new Response(0, message.getPayload(), message.getClass().getSimpleName()))
+        );
     }
     
 }

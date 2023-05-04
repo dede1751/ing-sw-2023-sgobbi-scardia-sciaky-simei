@@ -1,7 +1,6 @@
 package it.polimi.ingsw.network.socket;
 
 import it.polimi.ingsw.model.messages.ModelMessage;
-import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.ViewMessage;
@@ -52,29 +51,25 @@ public class ClientSkeleton implements Client {
         }
     }
     
+    /**
+     * Reads the input stream for ViewMessages and forwards them to the server
+     *
+     * @param server the server to forward the messages to
+     *
+     * @throws RemoteException if the message cannot be read or is not a ViewMessage
+     */
     public void receive(Server server) throws RemoteException {
-        ViewMessage<?> message;
-        Response response;
         
         try {
-            message = (ViewMessage<?>) ois.readObject();
-            response = server.update(message);
+            server.update((ViewMessage<?>) ois.readObject());
         }
         catch( IOException e ) {
             throw new RemoteException("Cannot receive message from client", e);
         }
-        catch( ClassNotFoundException e ) {
+        catch( ClassNotFoundException | ClassCastException e ) {
             throw new RemoteException("Sent message doesn't have the correct type", e);
         }
         
-        try {
-            oos.writeObject(response);
-            oos.reset();
-            oos.flush();
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot send response", e);
-        }
     }
     
     @Override

@@ -19,8 +19,6 @@ public abstract class ViewMessage<Payload extends Serializable> implements Seria
         return this.payload;
     }
     
-    public abstract Class<?> getMessageType();
-    
     public String getPlayerNickname() {
         return this.nickname;
     }
@@ -28,4 +26,5 @@ public abstract class ViewMessage<Payload extends Serializable> implements Seria
     public int getClientId() {
         return this.clientId;
     }
+    
 }

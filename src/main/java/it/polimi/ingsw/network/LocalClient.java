@@ -1,10 +1,9 @@
 package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.model.messages.ModelMessage;
+import it.polimi.ingsw.utils.mvc.ReflectionUtility;
 import it.polimi.ingsw.view.View;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
@@ -59,18 +58,11 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     @Override
     public void update(ModelMessage<?> msg) {
         try {
-            Method m = view.getClass().getMethod("onMessage", msg.getClass());
-            m.invoke(view, msg);
+            ReflectionUtility.invokeMethod(null, view, "onMessage", msg);
         }
         catch( NoSuchMethodException e ) {
             System.out.println(
                     "There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
-        }
-        catch( InvocationTargetException e ) {
-            e.printStackTrace(System.err);
-        }
-        catch( IllegalAccessException e ) {
-            System.err.println("Illegal access exception in update, controll code");
         }
     }
     

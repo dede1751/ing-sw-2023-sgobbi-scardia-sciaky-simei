@@ -11,44 +11,53 @@ import java.time.Instant;
 
 public class ServerLogger {
     
-    private static FileChannel log = null;
+    private static final FileChannel log;
+    
+    private static final FileChannel errorLog;
     
     static {
         try {
             log = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/server/log.txt");
+            errorLog = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/server/error_log.txt");
         }
         catch( IOException e ) {
             throw new RuntimeException(e);
         }
     }
     
-    public static void log(String s) {
+    private static void writeLog(String s, FileChannel channel) {
+        String logString = Timestamp.from(Instant.now()) + " - " + s + "\n";
+        
         try {
-            if( log != null ) {
-                String s1 = s + " " + Timestamp.from(Instant.now()) + "\n";
-                log.write(ByteBuffer.wrap(s.getBytes(Charset.defaultCharset())));
+            if( channel != null ) {
+                channel.write(ByteBuffer.wrap(logString.getBytes(Charset.defaultCharset())));
             }
         }
         catch( IOException e ) {
-            System.err.println("Logger IOException");
+            System.err.println("Unable to log message : " + s);
             e.printStackTrace(System.err);
         }
     }
     
+    public static void log(String s) {
+        ServerLogger.writeLog(s, log);
+    }
+    
     public static void messageLog(String clientContext, ModelMessage<?> message) {
-        String s = "Updated Client : " + clientContext + "\nwith message type : " + message.getClass().getSimpleName() +
+        String s = "Updated Client : " + clientContext + " with message type : " + message.getClass().getSimpleName() +
                    "\n";
-        ServerLogger.log(s);
+        ServerLogger.writeLog(s, log);
     }
     
     public static void errorLog(Exception e, String additionalContext) {
         String s = "Server encountered exception of type : " + e.getClass() + "\n";
         String s1 = "Message : " + e.getMessage() + "\n";
         String s2 = "Cause : " + e.getCause();
+        
         if( additionalContext != null ) {
-            ServerLogger.log(s + s1 + s2 + "\n" + additionalContext);
+            ServerLogger.writeLog(s + s1 + s2 + "\n" + additionalContext, errorLog);
         }else {
-            ServerLogger.log(s + s1 + s2);
+            ServerLogger.writeLog(s + s1 + s2, errorLog);
         }
     }
     

@@ -13,4 +13,5 @@ abstract public class ModelMessage<Payload extends Serializable> implements Seri
     public ModelMessage(Payload p) {
         this.payload = p;
     }
+    
 }

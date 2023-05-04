@@ -1,9 +1,6 @@
 package it.polimi.ingsw.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.model.messages.Response;
@@ -13,20 +10,18 @@ import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.files.ServerLogger;
+import it.polimi.ingsw.utils.mvc.ModelListener;
 import it.polimi.ingsw.view.messages.*;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.stream.Stream;
 
 
 /**
  * Handles registration to multiple lobbies for concurrent play
+ * LobbyController receives RequestLobby, RecoverLobby, CreateLobby and JoinLobby messages.
+ * It always directly responds to each of these messages with a ServerResponseMessage, both in case of success and failure.
  */
 public class LobbyController {
     
@@ -34,30 +29,81 @@ public class LobbyController {
     
     private LocalServer server = null;
     
-    // lobbies must include mapping clientID->nickname to be able to "connect" the correct clients to the model
-    public record Lobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID) {
-        public boolean isEmpty() {
-            return nicknames.size() < lobbySize();
+    /**
+     * Client context derived from a received message
+     * Can be used as a model listener, which simply calls the client's update method and logs messages/errors
+     *
+     * @param client   Client reference
+     * @param nickname Nickname of the client
+     * @param id       Client's id on the server
+     */
+    public record ClientContext(Client client, String nickname, int id) implements ModelListener {
+        @Override
+        public String toString() {
+            return nickname + " , " + id;
         }
         
-        public LobbyView getLobbyView() {
-            return new LobbyView(nicknames, lobbySize, lobbyID, false);
+        public static ClientContext getCC(ViewMessage<?> msg) {
+            return new ClientContext(getInstance().clientMapping.get(msg.getClientId()), msg.getPlayerNickname(),
+                                     msg.getClientId());
+        }
+        
+        @Override
+        public void update(ModelMessage<?> m) {
+            try {
+                this.client.update(m);
+                ServerLogger.messageLog(this.toString(), m);
+            }
+            catch( RemoteException e ) {
+                ServerLogger.errorLog(e, "Client : " + this.toString());
+            }
         }
     }
     
-    // RecoveryLobby are lobbies derived from models saved to disk. When the game restarts, they are converted back
-    public record RecoveryLobby(List<String> nicknames, List<Integer> clientIDs, int lobbySize, int lobbyID,
-                                GameModel model) {
+    /**
+     * Lobby record, representing both recovery and normal lobbies
+     *
+     * @param model         Game model
+     * @param clientIDs     List of client ids
+     * @param personalGoals List of personal goals, null for recovery lobbies
+     * @param lobbySize     Lobby size
+     * @param lobbyID       Unique lobby id
+     * @param isRecovery    True if the lobby is a recovery lobby
+     */
+    public record Lobby(GameModel model, List<Integer> clientIDs, List<Integer> personalGoals, int lobbySize,
+                        int lobbyID, boolean isRecovery) {
         public boolean isEmpty() {
-            return clientIDs.contains(-1);
+            if( isRecovery ) {
+                return clientIDs.contains(-1);
+            }else {
+                return clientIDs.size() < lobbySize();
+            }
         }
         
-        public Lobby getLobby() {
-            return new Lobby(nicknames, clientIDs, lobbySize, lobbyID);
+        public void addClient(ClientContext client) {
+            if( isRecovery ) {
+                int index = this.model.getNicknames().indexOf(client.nickname());
+                clientIDs.set(index, client.id());
+            }else {
+                int index = this.clientIDs.size();
+                clientIDs.add(client.id());
+                this.model.addPlayer(client.nickname(), this.personalGoals.get(index));
+            }
+            
+            try {
+                this.model.addListener(client.nickname(), client);
+            }
+            catch( DuplicateListener e ) {
+                ServerLogger.errorLog(e, "Client : " + client);
+            }
+        }
+        
+        public Lobby recoverLobby() {
+            return new Lobby(model, clientIDs, personalGoals, lobbySize, lobbyID, false);
         }
         
         public LobbyView getLobbyView() {
-            return new LobbyView(nicknames, lobbySize, lobbyID, true);
+            return new LobbyView(model.getNicknames(), lobbySize, lobbyID, isRecovery);
         }
     }
     
@@ -80,13 +126,11 @@ public class LobbyController {
                        ("Occupancy: [" + this.nicknames().size() + "/" + this.lobbySize() + "]\n")
                        + nickames;
             }
-            
         }
     }
     
     // Lobbies are mapped by their unique lobbyID (recovery lobbies have their id's reset)
     private final HashMap<Integer, Lobby> lobbies = new HashMap<>();
-    private final HashMap<Integer, RecoveryLobby> recoveryLobbies = new HashMap<>();
     private int lobbyIDCounter = 0;
     
     // Clients are mapped by their unique clientID
@@ -97,35 +141,18 @@ public class LobbyController {
      * Init LobbyController by reading all the saved models from disk
      */
     private LobbyController() {
-        File dir = new File(ResourcesManager.recoveryDir);
-        if( !dir.exists() && !dir.mkdir() ) {
-            System.err.println("Unable to create recovery directory");
-            return;
-        }
-        
-        for( File file : Objects.requireNonNull(dir.listFiles()) ) {
-            try {
-                String modelJson = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-                Gson gson = new GsonBuilder()
-                        .registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer())
-                        .create();
-                
-                GameModel model = gson.fromJson(modelJson, GameModel.class);
-                RecoveryLobby lobby = new RecoveryLobby(
-                        model.getPlayers().stream().map(Player::getNickname).toList(),
-                        new ArrayList<>(Collections.nCopies(model.getNumPlayers(), -1)),
-                        model.getNumPlayers(),
-                        lobbyIDCounter,
-                        model
-                );
-                
-                recoveryLobbies.put(lobbyIDCounter, lobby);
-                lobbyIDCounter++;
-                
-            }
-            catch( IOException e ) {
-                System.err.println("Unable to read file " + file.getName());
-            }
+        for( GameModel model : ResourcesManager.getSavedModels() ) {
+            Lobby lobby = new Lobby(
+                    model,
+                    new ArrayList<>(Collections.nCopies(model.getNumPlayers(), -1)),
+                    null,
+                    model.getNumPlayers(),
+                    lobbyIDCounter,
+                    true
+            );
+            
+            lobbies.put(lobbyIDCounter, lobby);
+            lobbyIDCounter++;
         }
     }
     
@@ -164,68 +191,23 @@ public class LobbyController {
         client.setClientID(clientIDCounter);
         this.clientMapping.put(clientIDCounter, client);
         clientIDCounter++;
+        
         ServerLogger.log("Registered new Client with id : " + clientIDCounter);
     }
     
     /**
-     * Check if a client is currently registered to the server
-     *
-     * @param clientID Client's id
-     *
-     * @return true if it's registered, false otherwise
-     */
-    public boolean checkRegistration(int clientID) {
-        return this.clientMapping.get(clientID) != null;
-    }
-    
-    /**
-     * TODO: remove clients from mapping
      * End a game, removing the lobby from the tracked list of lobbies
      *
      * @param lobbyID Lobby to stop tracking
      */
     public void endGame(int lobbyID) {
+        for( int clientID : lobbies.get(lobbyID).clientIDs ) {
+            clientMapping.remove(clientID);
+        }
         this.lobbies.remove(lobbyID);
-        ServerLogger.log("Game ended : removed lobby : " + lobbyID);
-    }
-    
-    /**
-     * Get client with clientID id.
-     *
-     * @param clientID
-     *
-     * @return Client reference.
-     */
-    
-    public Client getClient(int clientID) {
-        return this.clientMapping.get(clientID);
-    }
-    
-    protected static Client getClient(ViewMessage<?> m) {
-        return getInstance().clientMapping.get(m.getClientId());
-    }
-    
-    protected record ClientContext(Client client, String nickname, int id) {
-        @Override
-        public String toString() {
-            return nickname + " , " + id;
-        }
+        ResourcesManager.deleteModel(lobbyID);
         
-        public static ClientContext getCC(ViewMessage<?> message) {
-            return new ClientContext(getClient(message), message.getPlayerNickname(), message.getClientId());
-        }
-    }
-    
-    
-    protected void updateClient(ClientContext cc, ModelMessage<?> m) {
-        
-        try {
-            cc.client.update(m);
-            ServerLogger.messageLog(cc.toString(), m);
-        }
-        catch( RemoteException e ) {
-            ServerLogger.errorLog(e, "Client : " + cc);
-        }
+        ServerLogger.log("Game ended, removed lobby : " + lobbyID);
     }
     
     /**
@@ -235,12 +217,8 @@ public class LobbyController {
      */
     @SuppressWarnings("unused")
     public void onMessage(RequestLobbyMessage requestLobbyMessage) {
-        Client c = getClient(requestLobbyMessage);
-        try {
-            c.update(new AvailableLobbyMessage(this.searchForLobbies(requestLobbyMessage.getPayload())));
-        }
-        catch( RemoteException ignored ) {
-        }
+        ClientContext.getCC(requestLobbyMessage)
+                .update(new AvailableLobbyMessage(this.searchForLobbies(requestLobbyMessage.getPayload())));
     }
     
     /**
@@ -250,27 +228,46 @@ public class LobbyController {
      */
     @SuppressWarnings("unused")
     public void onMessage(RecoverLobbyMessage recoverLobbyMessage) {
-        var cc = ClientContext.getCC(recoverLobbyMessage);
-        RecoveryLobby lobby = recoveryLobbies.values()
+        ClientContext client = ClientContext.getCC(recoverLobbyMessage);
+        Lobby lobby = lobbies.values()
                 .stream()
-                .filter((l) -> l.nicknames.contains(cc.nickname()))
+                .filter((l) -> l.isRecovery && l.model.getNicknames().contains(client.nickname()))
                 .findFirst()
                 .orElse(null);
         
         if( lobby == null ) {
-            var r = new ServerResponseMessage(Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName()));
-            updateClient(cc, r);
-        }else {
-            int index = lobby.nicknames.indexOf(cc.nickname());
-            lobby.clientIDs.set(index, recoverLobbyMessage.getClientId());
-            // check if the game needs to be started
-            if( !lobby.isEmpty() ) {
-                Map<Integer, GameController> mapping = resumeGame(lobby);
-                server.addGameController(mapping);
-            }
-            var r = new ServerResponseMessage(Response.Ok(RecoverLobbyMessage.class.getSimpleName()));
-            updateClient(cc, r);
+            // lobby is unavailable/doesn't exist
+            client.update(
+                    new ServerResponseMessage(Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName())));
+            return;
         }
+        
+        lobby.addClient(client);
+        
+        // check if the game needs to be started
+        if( !lobby.isEmpty() ) {
+            Map<Integer, GameController> mapping = new HashMap<>();
+            GameController controller = new GameController(lobby.model, lobby.lobbyID);
+            
+            for( Integer clientID : lobby.clientIDs ) {
+                mapping.put(clientID, controller);
+            }
+            
+            // set the lobby as fully recovered
+            Lobby newLobby = lobby.recoverLobby();
+            lobbies.replace(lobby.lobbyID, newLobby);
+            
+            server.addGameController(mapping);
+        }
+        
+        client.update(new ServerResponseMessage(Response.Ok(RecoverLobbyMessage.class.getSimpleName())));
+    }
+    
+    private static int[] randDistinctIndices(int count) {
+        return new Random().ints(0, 12)
+                .distinct()
+                .limit(count)
+                .toArray();
     }
     
     /**
@@ -280,29 +277,36 @@ public class LobbyController {
      */
     @SuppressWarnings("unused")
     public void onMessage(CreateLobbyMessage message) {
+        ClientContext client = ClientContext.getCC(message);
         
-        var cc = ClientContext.getCC(message);
-        if( this.nicknameTaken(cc.nickname()) ) {
-            var r = new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName()));
-            updateClient(cc, r);
+        if( this.nicknameTaken(client.nickname()) ) {
+            client.update(new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
+            return;
         }
+        
         int lobbySize = message.getPayload();
         if( lobbySize < 2 || lobbySize > 4 ) {
-            var r = new ServerResponseMessage(
-                    new Response(-1, "Invalid Lobby Size", CreateLobbyMessage.class.getSimpleName()));
-            updateClient(cc, r);
+            client.update(new ServerResponseMessage(Response.InvalidLobbySize()));
+            return;
         }
         
-        Lobby newLobby = new Lobby(
-                new ArrayList<>(List.of(cc.nickname())),
-                new ArrayList<>(List.of(message.getClientId())),
+        // initialize lobby and model
+        int[] commonGoalIndices = randDistinctIndices(2);
+        int[] personalGoalIndices = randDistinctIndices(lobbySize);
+        Lobby lobby = new Lobby(
+                new GameModel(lobbySize, commonGoalIndices[0], commonGoalIndices[1]),
+                new ArrayList<>(),
+                new ArrayList<>(Arrays.stream(personalGoalIndices).boxed().toList()),
                 lobbySize,
-                lobbyIDCounter
+                lobbyIDCounter,
+                false
         );
-        lobbies.put(lobbyIDCounter, newLobby);
+        
+        lobby.addClient(client);
+        lobbies.put(lobbyIDCounter, lobby);
         lobbyIDCounter++;
-        var r = new ServerResponseMessage(Response.Ok(CreateLobbyMessage.class.getSimpleName()));
-        updateClient(cc, r);
+        
+        client.update(new ServerResponseMessage(Response.Ok(CreateLobbyMessage.class.getSimpleName())));
     }
     
     /**
@@ -312,36 +316,32 @@ public class LobbyController {
      */
     @SuppressWarnings("unused")
     public void onMessage(JoinLobbyMessage message) {
-        var cc = ClientContext.getCC(message);
-        Integer Iid = message.getPayload();
-        int id = 0;
-        if( Iid != null ) {
-            id = Iid;
-        }
-        Lobby lobby = lobbies.get(id);
+        ClientContext client = ClientContext.getCC(message);
+        Lobby lobby = lobbies.get(message.getPayload());
         
         if( lobby == null || !lobby.isEmpty() ) {
-            var r = new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName()));
-            updateClient(cc, r);
+            client.update(new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         
         if( this.nicknameTaken(message.getPlayerNickname()) ) {
-            var r = new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName()));
-            updateClient(cc, r);
+            client.update(new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         
-        lobby.nicknames.add(message.getPlayerNickname());
-        lobby.clientIDs.add(message.getClientId());
+        lobby.addClient(client);
         
         // check if the game needs to be started
         if( !lobby.isEmpty() ) {
-            Map<Integer, GameController> mapping = initGame(lobby);
+            Map<Integer, GameController> mapping = new HashMap<>();
+            GameController controller = new GameController(lobby.model, lobby.lobbyID);
+            
+            for( Integer clientID : lobby.clientIDs ) {
+                mapping.put(clientID, controller);
+            }
             server.addGameController(mapping);
         }
-        var r = new ServerResponseMessage(Response.Ok(message.getClass().getSimpleName()));
-        updateClient(cc, r);
+        client.update(new ServerResponseMessage(Response.Ok(JoinLobbyMessage.class.getSimpleName())));
     }
     
     /**
@@ -354,17 +354,11 @@ public class LobbyController {
      * @return a list of lobbyView of all the lobbies that match info parameters
      */
     private List<LobbyView> searchForLobbies(Integer size) {
-        Stream<LobbyView> lobbyStream = this.lobbies.values()
+        return this.lobbies.values()
                 .stream()
                 .filter((x) -> size == null || (size.equals(x.lobbySize())))
-                .map(Lobby::getLobbyView);
-        
-        Stream<LobbyView> recoveryStream = this.recoveryLobbies.values()
-                .stream()
-                .filter((x) -> size == null || (size.equals(x.lobbySize())))
-                .map(RecoveryLobby::getLobbyView);
-        
-        return Stream.concat(lobbyStream, recoveryStream).toList();
+                .map(Lobby::getLobbyView)
+                .toList();
     }
     
     /**
@@ -376,75 +370,8 @@ public class LobbyController {
      */
     private boolean nicknameTaken(String nickname) {
         return lobbies.values()
-                       .stream()
-                       .anyMatch((l) -> l.nicknames.contains(nickname))
-               || recoveryLobbies.values()
-                       .stream()
-                       .anyMatch((l) -> l.nicknames.contains(nickname));
-    }
-    
-    private Map<Integer, GameController> resumeGame(RecoveryLobby lobby) {
-        GameModel model = lobby.model;
-        
-        for( int i = 0; i < lobby.clientIDs.size(); ++i ) {
-            int clientID = lobby.clientIDs.get(i);
-            Client client = clientMapping.get(clientID);
-            
-            try {
-                model.addListener(lobby.nicknames.get(i), client::update);
-            }
-            catch( DuplicateListener ignored ) {
-            }
-        }
-        
-        Map<Integer, GameController> gameMapping = new HashMap<>();
-        GameController controller = new GameController(model, lobby.lobbyID);
-        
-        for( Integer clientID : lobby.clientIDs ) {
-            gameMapping.put(clientID, controller);
-        }
-        
-        // convert the recovery lobby to a regular lobby
-        Lobby newLobby = lobby.getLobby();
-        recoveryLobbies.remove(lobby.lobbyID);
-        lobbies.put(lobby.lobbyID, newLobby);
-        
-        return gameMapping;
-    }
-    
-    private static int[] randDistinctIndices(int count) {
-        return new Random().ints(0, 12)
-                .distinct()
-                .limit(count)
-                .toArray();
-    }
-    
-    private Map<Integer, GameController> initGame(Lobby lobby) {
-        int[] commonGoalIndices = randDistinctIndices(2);
-        int[] personalGoalIndices = randDistinctIndices(4);
-        
-        GameModel model = new GameModel(lobby.lobbySize(), commonGoalIndices[0], commonGoalIndices[1]);
-        model.getBoard().refill(model.getTileBag());
-        
-        for( int i = 0; i < lobby.lobbySize(); ++i ) {
-            int clientID = lobby.clientIDs().get(i);
-            
-            Client client = clientMapping.get(clientID);
-            model.addPlayer(lobby.nicknames().get(i), personalGoalIndices[i]);
-            try {
-                model.addListener(lobby.nicknames.get(i), client::update);
-            }
-            catch( DuplicateListener ignored ) {
-            }
-        }
-        Map<Integer, GameController> gameMapping = new HashMap<>();
-        GameController controller = new GameController(model, lobby.lobbyID);
-        
-        for( Integer clientID : lobby.clientIDs ) {
-            gameMapping.put(clientID, controller);
-        }
-        
-        return gameMapping;
+                .stream()
+                .anyMatch((l) -> l.model.getNicknames().contains(nickname));
     }
     
 }

@@ -18,9 +18,9 @@ public interface Server extends Remote {
     void register(Client client) throws RemoteException;
     
     /**
-     * Notify the server that a client has made a choice.
+     * Notify the server of a client's message
      *
-     * @param message the message sent by the view
+     * @param message the message sent by the client
      */
     void update(ViewMessage<?> message) throws RemoteException;
     

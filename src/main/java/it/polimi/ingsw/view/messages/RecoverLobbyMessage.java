@@ -8,9 +8,4 @@ public class RecoverLobbyMessage extends ViewMessage<Serializable> {
         super(null, playerNick, clientId);
     }
     
-    @Override
-    public Class<?> getMessageType() {
-        return this.getClass();
-    }
-    
 }

@@ -6,9 +6,4 @@ public class RequestLobbyMessage extends ViewMessage<Integer> {
         super(lobbyId, playerNick, clientId);
     }
     
-    @Override
-    public Class<?> getMessageType() {
-        return this.getClass();
-    }
-    
 }

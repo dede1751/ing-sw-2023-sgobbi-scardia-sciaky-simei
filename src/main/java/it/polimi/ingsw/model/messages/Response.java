@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model.messages;
 
+import it.polimi.ingsw.view.messages.CreateLobbyMessage;
+
 import java.io.Serializable;
 
 /**
@@ -21,6 +23,10 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     public static Response LobbyUnavailable(String Action) {
         return new Response(-1, "LobbyUnavailable", Action);
+    }
+    
+    public static Response InvalidLobbySize() {
+        return new Response(-1, "Invalid Lobby Size", CreateLobbyMessage.class.getSimpleName());
     }
     
     public static Response IllegalMove(String playerNick, String Action) {

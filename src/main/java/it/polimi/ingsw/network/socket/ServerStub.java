@@ -1,21 +1,15 @@
 package it.polimi.ingsw.network.socket;
 
 import it.polimi.ingsw.model.messages.ModelMessage;
-import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.utils.ReflectionUtility;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class ServerStub implements Server {
     
@@ -26,11 +20,7 @@ public class ServerStub implements Server {
     
     private Socket socket;
     
-    private Client clientContext;
-    
-    
-    private final Object queueLock = new Object();
-    private final Queue<Response> responseQueue = new LinkedList<>();
+    private Client client;
     
     public ServerStub(String ip, int port) {
         this.ip = ip;
@@ -71,11 +61,11 @@ public class ServerStub implements Server {
             throw new RemoteException("Cannot deserialize lobby info from server", e);
         }
         
-        this.clientContext = client;
+        this.client = client;
     }
     
     @Override
-    public Response update(ViewMessage<?> message) throws RemoteException {
+    public void update(ViewMessage<?> message) throws RemoteException {
         try {
             oos.writeObject(message);
             oos.reset();
@@ -84,20 +74,13 @@ public class ServerStub implements Server {
         catch( IOException e ) {
             throw new RemoteException("Cannot send message", e);
         }
-        
-        synchronized(queueLock) {
-            while( responseQueue.peek() == null ||
-                   !responseQueue.peek().Action().equals(message.getClass().getSimpleName()) ) {
-                try {
-                    queueLock.wait();
-                }
-                catch( InterruptedException ignored ) {
-                }
-            }
-            return responseQueue.poll();
-        }
     }
     
+    /**
+     * Reads the input stream and forwards the messages to the client
+     *
+     * @throws RemoteException if the message cannot be read or is not a ModelMessage
+     */
     public void receive() throws RemoteException {
         
         Object o;
@@ -112,31 +95,13 @@ public class ServerStub implements Server {
         }
         
         try {
-            Method m = ReflectionUtility.GetMethod(this.getClass(), "onMessageReceived", o.getClass());
-            m.invoke(this, o);
+            this.client.update((ModelMessage<?>) o);
         }
-        catch( NoSuchMethodException e ) {
+        catch( ClassCastException e ) {
             throw new RemoteException("Server responded with illformed object", e);
-        }
-        catch( InvocationTargetException | IllegalAccessException e ) {
-            throw new RemoteException("Something that shouldn't happen did indeed happen, tough luck", e);
         }
         
     }
-    
-    @SuppressWarnings("unused")
-    public void onMessageReceived(Response response) {
-        synchronized(queueLock) {
-            responseQueue.add(response);
-            queueLock.notifyAll();
-        }
-    }
-    
-    @SuppressWarnings("unused")
-    public <T extends ModelMessage<?>> void onMessageReceived(T mgs) throws RemoteException {
-        this.clientContext.update(mgs);
-    }
-    
     
     public void close() throws RemoteException {
         try {

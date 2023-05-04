@@ -20,9 +20,9 @@ public interface Client extends Remote {
     void setClientID(int clientID) throws RemoteException;
     
     /**
-     * Notify the client of a model change
+     * Notify the client of a model message
      *
-     * @param msg The object that contains the model changes information
+     * @param msg Message from the server or describing a model change
      */
     void update(ModelMessage<?> msg) throws RemoteException;
     
