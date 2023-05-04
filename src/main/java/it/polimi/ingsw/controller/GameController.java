@@ -4,7 +4,9 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.model.messages.Response;
+import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.utils.files.ServerLogger;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.messages.*;
 
@@ -63,6 +65,7 @@ public class GameController {
      * Compute adjacency score for final scores
      *
      * @param shelf Shelf to check for the score
+     *
      * @return Integer score assigned for adjacent similar tiles in the given shelf
      */
     public int calculateAdjacency(Shelf shelf) {
@@ -119,24 +122,22 @@ public class GameController {
         
         if( !currentPlayer.isCompletedGoalX() &&
             CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
-            model.addCurrentPlayerCommongGoalScore(model.popStackCGX());
-            currentPlayer.setCompletedGoalX(true);
+            model.addCurrentPlayerCommongGoalScore(model.popStackCGX(), GameModel.CGType.X);
         }
         if( !currentPlayer.isCompletedGoalY() &&
             CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
-            model.addCurrentPlayerCommongGoalScore(model.popStackCGY());
-            currentPlayer.setCompletedGoalY(true);
+            model.addCurrentPlayerCommongGoalScore(model.popStackCGY(), GameModel.CGType.Y);
         }
         
         //calculate and set in every turn the personalGoalScore
-        currentPlayer.setPersonalGoalScore(
+        model.setCurrentPlayerPersonalScore(
                 PersonalGoal.getPersonalGoal(currentPlayer.getPg()).checkGoal(currentPlayer.getShelf()));
         
         //calculate and set in every turn the adjacentTiles and score
-        currentPlayer.setAdjacentScore(calculateAdjacency(currentPlayer.getShelf()));
+        model.setCurrentPlayerAdiajencyScore(calculateAdjacency(currentPlayer.getShelf()));
         
         if( needRefill() ) {
-            model.getBoard().refill(model.getTileBag());
+            model.refillBoard();
         }
         
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
@@ -177,7 +178,8 @@ public class GameController {
             }
             
             model.toJson(ResourcesManager.recoveryDir + "/" + lobbyID + ".json");
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             System.err.println("Error saving model");
             e.printStackTrace();
         }
@@ -185,32 +187,38 @@ public class GameController {
     
     /**
      * Respond to a chat message received from a client
+     *
      * @param chat Message contents
-     * @return Response to the client
      */
     @SuppressWarnings("unused")
-    public Response onMessage(ChatMessage chat){
+    public void onMessage(ChatMessage chat) {
         model.chatBroker(chat);
-        return Response.Ok(chat.getClass().getSimpleName());
     }
     
     /**
      * Respond to a move message received from a client
+     *
      * @param msg Move received
-     * @return Response to the client
      */
     @SuppressWarnings("unused")
-    public Response onMessage(MoveMessage msg){
+    public void onMessage(MoveMessage msg) {
         
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
-        if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
-            System.err.println("Ignoring event from player '" + msg.getPlayerNickname() + "': " + msg.getMessageType().getTypeName() + ". Not the current Player.");
-            return Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName());
+        LobbyController.ClientContext cc = LobbyController.ClientContext.getCC(msg);
+        if( !cc.nickname().equals(currentPlayerNick) ) {
+            System.err.println("Ignoring event from player '" + msg.getPlayerNickname() + "': " +
+                               msg.getMessageType().getTypeName() + ". Not the current Player.");
+            var r = new ServerResponseMessage(
+                    Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName()));
+            LobbyController.getInstance().updateClient(cc, r);
+            return;
         }
         
         Move move = msg.getPayload();
         if( !IntegrityChecks.checkMove(move, this.model.getBoard(), this.model.getCurrentPlayer().getShelf()) ) {
-            return Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName());
+            var r = new ServerResponseMessage(Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName()));
+            LobbyController.getInstance().updateClient(cc, r);
+            return;
         }
         
         // if the move is valid, execute the full turn
@@ -219,15 +227,15 @@ public class GameController {
         turnManager();
         nextPlayerSetter();
         saveModel();
-        
-        return Response.Ok(msg.getClass().getSimpleName());
     }
     
     @SuppressWarnings("unused")
-    public Response onMessage(DebugMessage message){
+    public void onMessage(DebugMessage message) {
+        LobbyController.ClientContext cc = LobbyController.ClientContext.getCC(message);
         System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());
         saveModel();
-        return new Response(0, message.getPayload(), message.getClass().getSimpleName());
+        var r = new ServerResponseMessage(new Response(0, message.getPayload(), message.getClass().getSimpleName()));
+        LobbyController.getInstance().updateClient(cc, r);
     }
     
 }

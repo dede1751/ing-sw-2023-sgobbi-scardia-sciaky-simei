@@ -202,23 +202,23 @@ public class LobbyController {
         return this.clientMapping.get(clientID);
     }
     
-    private Client getClient(ViewMessage<?> m) {
-        return this.clientMapping.get(m.getClientId());
+    protected static Client getClient(ViewMessage<?> m) {
+        return getInstance().clientMapping.get(m.getClientId());
     }
     
-    private record ClientContext(Client client, String nickname, int id) {
+    protected record ClientContext(Client client, String nickname, int id) {
         @Override
         public String toString(){
             return nickname + " , " + id;
         }
-    }
-    
-    private ClientContext getCC(ViewMessage<?> message) {
-        return new ClientContext(getClient(message), message.getPlayerNickname(), message.getClientId());
-    }
-    
-    private void updateClient(ClientContext cc, ModelMessage<?> m) {
         
+        public static ClientContext getCC(ViewMessage<?> message) {
+            return new ClientContext(getClient(message), message.getPlayerNickname(), message.getClientId());
+        }
+    }
+    
+    
+    protected void updateClient(ClientContext cc, ModelMessage<?> m) {
         
         try {
             cc.client.update(m);
@@ -251,7 +251,7 @@ public class LobbyController {
      */
     @SuppressWarnings("unused")
     public void onMessage(RecoverLobbyMessage recoverLobbyMessage) {
-        var cc = getCC(recoverLobbyMessage);
+        var cc = ClientContext.getCC(recoverLobbyMessage);
         RecoveryLobby lobby = recoveryLobbies.values()
                 .stream()
                 .filter((l) -> l.nicknames.contains(cc.nickname()))
@@ -269,7 +269,7 @@ public class LobbyController {
                 Map<Integer, GameController> mapping = resumeGame(lobby);
                 server.addGameController(mapping);
             }
-            var r = new ServerResponseMessage(Response.Ok(RecoverLobbyMessage.class.getSimpleName())));
+            var r = new ServerResponseMessage(Response.Ok(RecoverLobbyMessage.class.getSimpleName()));
             updateClient(cc, r);
         }
     }
@@ -279,12 +279,11 @@ public class LobbyController {
      *
      * @param message Lobby creation message
      *
-     * @return Response to the client
      */
     @SuppressWarnings("unused")
     public void onMessage(CreateLobbyMessage message) {
         
-        var cc = getCC(message);
+        var cc = ClientContext.getCC(message);
         if( this.nicknameTaken(cc.nickname()) ) {
             var r = new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName()));
             updateClient(cc, r);
@@ -316,7 +315,7 @@ public class LobbyController {
      */
     @SuppressWarnings("unused")
     public void onMessage(JoinLobbyMessage message) {
-        var cc = getCC(message);
+        var cc = ClientContext.getCC(message);
         Integer Iid = message.getPayload();
         int id = 0;
         if( Iid != null ) {

@@ -42,6 +42,10 @@ public class GameModel {
     
     private final TileBag tileBag;
     
+    public enum CGType {
+        X, Y
+    }
+    
     /**
      * Initialize an empty model
      *
@@ -155,6 +159,7 @@ public class GameModel {
     
     /**
      * Check if it's the last turn
+     *
      * @return true if it's the last turn, false otherwise
      */
     public boolean isLastTurn() {
@@ -202,6 +207,7 @@ public class GameModel {
     
     /**
      * Set the current player index
+     *
      * @param currentPlayerIndex new index of the current player
      */
     public void setCurrentPlayerIndex(int currentPlayerIndex) {
@@ -213,16 +219,51 @@ public class GameModel {
      * Adds given score to the current player's score
      *
      * @param score Integer score to give the current player
+     *
      * @return Total score for current player
      */
-    public int addCurrentPlayerCommongGoalScore(int score) { return this.getCurrentPlayer().addCommonGoalScore(score); }
+    public int addCurrentPlayerCommongGoalScore(int score, CGType t) {
+        Player player = this.getCurrentPlayer();
+        int i = player.addCommonGoalScore(score);
+        switch( t ){
+            case X -> {
+                player.setCompletedGoalX(true);
+                notifyAllClient(new CommonGoalMessage(CGType.X, this.commonGoalStackX.peek()));
+            }
+            case Y -> {
+                player.setCompletedGoalY(true);
+                notifyAllClient(new CommonGoalMessage(CGType.Y, this.commonGoalStackY.peek()));
+            }
+        }
+        notifyAllClient(new UpdateScoreMessage(i, UpdateScorePayload.Type.CommonGoal, player.getNickname()));
+        return i;
+    }
     
+    public int setCurrentPlayerPersonalScore(int score){
+        Player player = this.getCurrentPlayer();
+        int i = player.setPersonalGoalScore(score);
+        notifyAllClient(new UpdateScoreMessage(score, UpdateScorePayload.Type.PersonalGoal, player.getNickname()));
+        return i;
+    }
+    
+    public int setCurrentPlayerAdiajencyScore(int score){
+        Player player = this.getCurrentPlayer();
+        int i = player.setAdjacentScore(score);
+        notifyAllClient(new UpdateScoreMessage(score, UpdateScorePayload.Type.Adiajency, player.getNickname()));
+        return i;
+    }
+    
+    public void refillBoard(){
+        this.board.refill(this.tileBag);
+        notifyAllClient(new BoardMessage(this));
+    }
     
     /**
      * Gets the amount of tiles left in play for the given type of tile
      * Will throw a class cast exception if being used with Tile.NOTILE
      *
      * @param tile Type of tile to check
+     *
      * @return Amount of tile left (counts both bag and board)
      */
     public int getTileAmount(Tile tile) {
@@ -339,14 +380,15 @@ public class GameModel {
     
     /**
      * Broker a chat message to the correct client
+     *
      * @param chat Message to be sent
      */
-    public void chatBroker(ChatMessage chat){
+    public void chatBroker(ChatMessage chat) {
         
         IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
-        if(chat.getDestination().equals("BROADCAST")){
+        if( chat.getDestination().equals("BROADCAST") ) {
             notifyAllClient(message);
-        }else{
+        }else {
             Client player = this.clientMap.get(chat.getPlayerNickname());
             notifyClient(message, player);
         }
@@ -369,7 +411,7 @@ public class GameModel {
     
     private void notifyStartGame() {
         List<String> nicks = players.stream().map(Player::getNickname).toList();
-        for(var x : players){
+        for( var x : players ) {
             Client c = this.clientMap.get(x.getNickname());
             var msg = new StartGameMessage(nicks, x.getPg(), this.commonGoalNumX, this.commonGoalNumY);
             notifyClient(msg, c);
@@ -385,7 +427,7 @@ public class GameModel {
                 .orElseThrow()
                 .getNickname();
         Map<String, Integer> leaderboard = new HashMap<>();
-        for (Player x : this.getPlayers()){
+        for( Player x : this.getPlayers() ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
         notifyAllClient(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
