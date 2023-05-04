@@ -21,7 +21,7 @@ class TUITest {
     private String getResource(String className) throws IOException {
         return Files.readString(
                 Path.of(ResourcesManager.testRootDir,
-                        "it/polimi/ingsw/view.tui/resources/" + className),
+                        "it/polimi/ingsw/view/tui/resources/" + className + ".json"),
                 StandardCharsets.UTF_8);
     }
     
@@ -40,7 +40,7 @@ class TUITest {
             Gson gson =
                     new GsonBuilder().registerTypeAdapter(Board.class,
                                                           new Board.BoardDeserializer()).create();
-            var board = gson.fromJson(json, Board.class);
+            var board = gson.fromJson(json, Board[][].class);
             TUIUtils.printBoard(board);
         }
         catch( IOException e ) {

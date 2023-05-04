@@ -15,6 +15,7 @@ public class TUIUtils {
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     
+    
     public enum Tiles {
         catTile {
             public String toString() {
@@ -48,6 +49,7 @@ public class TUIUtils {
         }
     }
     
+    
     public static String concatString(String s1, String s2, int space) {
         String[] s1Lines = s1.split("\n");
         String[] s2Lines = s2.split("\n");
@@ -73,23 +75,15 @@ public class TUIUtils {
         return sb.toString();
     }
     
+    
     static void printBoard(Board board) {
-        var def = " - ";
         if( board == null ) {
             System.out.println("Board Still not initialized!");
-            for( int i = 0; i < 9; i++ ) {
-                for( int j = 0; j < 9; j++ ) {
-                    System.out.print(def);
-                }
-                System.out.print("\n");
-            }
         } else {
             var matrix = board.getAsMatrix();
             for( int i = 0; i < 9; i++ ) {
                 for( int j = 0; j < 9; j++ ) {
-                    if( matrix[i][j] == null ) {
-                        System.out.print(def);
-                    } else {
+                    if( matrix[i][j] != null ) {
                         var tile = matrix[i][j].type();
                         switch (tile) {
                             case CATS:
@@ -121,12 +115,9 @@ public class TUIUtils {
         
         sb.append(top);
         
-        
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
-            
-            for( int j = 0; j < Shelf.N_COL; j++ ) {
-                sb.append("│" + Tiles.catTile);
-            }
+    
+            sb.append(("│" + Tiles.catTile).repeat(Shelf.N_COL));
             sb.append("│\n");
             sb.append("├───┼───┼───┼───┼───┤\n");
         }
