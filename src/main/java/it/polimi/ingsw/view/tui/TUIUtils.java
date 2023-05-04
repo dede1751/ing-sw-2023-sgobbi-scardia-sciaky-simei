@@ -73,7 +73,7 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    private void printBoard(Board board) {
+    static void printBoard(Board board) {
         var def = " - ";
         if( board == null ) {
             System.out.println("Board Still not initialized!");

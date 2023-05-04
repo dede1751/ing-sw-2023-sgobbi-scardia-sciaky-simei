@@ -1,14 +1,52 @@
 package it.polimi.ingsw.view.tui;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import it.polimi.ingsw.model.Board;
+import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.Test;
+import it.polimi.ingsw.view.tui.TUIUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 class TUITest {
+    
+    private String getResource(String className) throws IOException {
+        return Files.readString(
+                Path.of(ResourcesManager.testRootDir,
+                        "it/polimi/ingsw/view.tui/resources/" + className),
+                StandardCharsets.UTF_8);
+    }
     
     @Test
     void printTest() {
         String s = String.valueOf(TUIUtils.Tiles.catTile);
         System.out.println(s);
+    }
+    
+    @Test
+    void printBoardTest() {
+        var name = ResourcesManager.getCurrentMethod();
+        String json;
+        try {
+            json = getResource(name);
+            Gson gson =
+                    new GsonBuilder().registerTypeAdapter(Board.class,
+                                                          new Board.BoardDeserializer()).create();
+            var board = gson.fromJson(json, Board.class);
+            TUIUtils.printBoard(board);
+        }
+        catch( IOException e ) {
+            e.printStackTrace();
+            fail();
+        }
     }
     
     @Test
