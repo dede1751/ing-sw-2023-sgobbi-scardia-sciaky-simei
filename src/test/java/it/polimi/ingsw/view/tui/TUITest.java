@@ -42,10 +42,10 @@ class TUITest {
         try {
             json = getResource(name);
             Gson gson =
-                    new GsonBuilder().registerTypeAdapter(Board.class,
-                                                          new Board.BoardDeserializer()).create();
-            var board = gson.fromJson(json, String[][].class);
-            TUIUtils.printBoard(board);
+                    new GsonBuilder().create();
+            record wrapper(String[][] Board){};
+            var board = gson.fromJson(json, wrapper.class);
+            TUIUtils.printBoard(board.Board);
         }
         catch( IOException e ) {
             e.printStackTrace();
