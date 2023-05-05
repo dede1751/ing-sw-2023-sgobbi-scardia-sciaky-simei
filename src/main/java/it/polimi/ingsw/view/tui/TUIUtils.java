@@ -134,7 +134,7 @@ public class TUIUtils {
         String top = nickname + ", it's your turn!\n";
         String mid = nickname + "\n";
         String bottom = points + "\n";
-        return String.valueOf(top) +
+        return top + "\n" +
                mid +
                bottom;
     }
