@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.Test;
@@ -92,5 +93,44 @@ class TUITest {
         // System.out.println(TUIUtils.concatString(h3, h2, 3));
         
         System.out.println(TUIUtils.printShelf(new Shelf()));
+    }
+    
+    @Test
+    void commonGoals() {
+        System.out.println(TUIUtils.printCommonGoal(0, 0));
+        System.out.println(TUIUtils.printCommonGoal(4, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println("┌─────────────┐\n" +
+                           "│             │\n" +
+                           "│             │\n" +
+                           "│      " + "\u001B[47m" + "=" + "\u001B[0m" + "      │\n" +
+                           "│      " + "\u001B[47m" + "=" + "\u001B[0m" + "      │\n" +
+                           "│      x6     │\n" +
+                           "│             │\n" +
+                           "└─────────────┘");
+        System.out.println(TUIUtils.printCommonGoal(4, 0));
+        
+        
+        System.out.println(TUIUtils.printCommonGoal(1, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(2, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(3, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(4, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(5, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(6, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(7, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(8, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(9, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(10, 0));
+        System.out.println("\n\n\n\n");
+        System.out.println(TUIUtils.printCommonGoal(11, 0));
     }
 }

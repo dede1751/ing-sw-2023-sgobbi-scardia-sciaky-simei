@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.tui;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.goals.common.*;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.view.LocalModel;
@@ -17,6 +18,7 @@ public class TUIUtils {
     public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    //public static final String ANSI_WHITE_BACKGROUND = "\u001B[41m";
     
     
     public enum Tiles {
@@ -79,32 +81,65 @@ public class TUIUtils {
     }
     
     
+    public static String createBox(String input) {
+        StringBuilder output = new StringBuilder();
+        String[] lines = input.split("\n");
+        String[] linesNoColor = input.split("\n");
+        int maxLength = 0;
+        
+        // Iterate over each line to calculate the max length
+        for( String line : linesNoColor ) {
+            // Remove ANSI color codes before measuring length
+            String plainLine = line.replaceAll("\u001B\\[[;\\d]*m", "");
+            maxLength = Math.max(maxLength, plainLine.length());
+        }
+        
+        int width = maxLength; // Add 2 for each side of the box
+        String top = "┌" + "─".repeat(width + 2) + "┐\n";
+        String bottom = "└" + "─".repeat(width + 2) + "┘\n";
+        
+        
+        output.append(top);
+        
+        for( String line : lines ) {
+            output.append("│ ");
+            // Replace ANSI color codes with empty strings before padding
+            String plainLine = line.replaceAll("\u001B\\[[;\\d]*m", "");
+            output.append(line);
+            output.append(" ".repeat(maxLength - plainLine.length()));
+            output.append(" │\n");
+        }
+        
+        output.append(bottom);
+        return output.toString();
+    }
+    
     static void printBoard(String[][] matrix) throws InvalidStringException {
         // if( board == null ) {
-            // System.out.println("Board Still not initialized!");
+        // System.out.println("Board Still not initialized!");
         // } else {
-            // var matrix = board.getAsMatrix();
-            for( int i = 0; i < 9; i++ ) {
-                for( int j = 0; j < 9; j++ ) {
-                    var str = Tile.fromString(matrix[i][j]);
-                        var tile = str.type();
-                        switch (tile) {
-                            case CATS:
-                                System.out.print(Tiles.catTile);
-                            case BOOKS:
-                                System.out.print(Tiles.bookTile);
-                            case GAMES:
-                                System.out.print(Tiles.gameTile);
-                            case FRAMES:
-                                System.out.print(Tiles.frameTile);
-                            case TROPHIES:
-                                System.out.print(Tiles.trophyTile);
-                            case PLANTS:
-                                System.out.print(Tiles.plantTile);
-                        }
-                    }
+        // var matrix = board.getAsMatrix();
+        for( int i = 0; i < 9; i++ ) {
+            for( int j = 0; j < 9; j++ ) {
+                var str = Tile.fromString(matrix[i][j]);
+                var tile = str.type();
+                switch( tile ) {
+                    case CATS:
+                        System.out.print(Tiles.catTile);
+                    case BOOKS:
+                        System.out.print(Tiles.bookTile);
+                    case GAMES:
+                        System.out.print(Tiles.gameTile);
+                    case FRAMES:
+                        System.out.print(Tiles.frameTile);
+                    case TROPHIES:
+                        System.out.print(Tiles.trophyTile);
+                    case PLANTS:
+                        System.out.print(Tiles.plantTile);
                 }
-                System.out.print("\n");
+            }
+        }
+        System.out.print("\n");
         // }
     }
     
@@ -118,7 +153,7 @@ public class TUIUtils {
         sb.append(top);
         
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
-    
+            
             sb.append(("│" + Tiles.catTile).repeat(Shelf.N_COL));
             sb.append("│\n");
             sb.append("├───┼───┼───┼───┼───┤\n");
@@ -127,6 +162,73 @@ public class TUIUtils {
                   Tiles.catTile + "│  \n");
         sb.append(bottom);
         return sb.toString();
+    }
+    
+    
+    static String printCommonGoal(int commonGoal1, int commonGoal2) {
+        StringBuilder sb = new StringBuilder();
+        switch( commonGoal1 ) {
+            case 0 -> sb.append(" " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                "x6\n");
+            
+            
+            case 1 -> sb.append(ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " x4\n");
+            
+            case 2 -> sb.append(
+                    ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "    " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET +
+                    "\n\n\n\n" +
+                    ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "    " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET);
+            
+            case 3 -> sb.append(ANSI_WHITE_BACKGROUND + "==" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "==" + ANSI_RESET + " x2");
+            case 4 -> sb.append("█\n" +
+                                "█\n" +
+                                "█   max 3 " + ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
+                                "█   x3\n" +
+                                "█\n" +
+                                "█\n");
+            case 5 -> sb.append(
+                    " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET +
+                    " \n" +
+                    ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET +
+                    " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET +
+                    "\n" +
+                    ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET +
+                    " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET);
+            case 6 -> sb.append(ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                "  " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                "   " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                                "    " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n");
+            case 7 -> sb.append("█████  \n" +
+                                "  max 3 " + ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
+                                "    X4");
+            case 8 -> sb.append(ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + " x2\n" +
+                                ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
+                                ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "");
+            case 9 -> sb.append(ANSI_WHITE_BACKGROUND + "≠≠≠≠≠" + ANSI_RESET + "\n" +
+                                "  x2 ");
+            case 10 -> sb.append(
+                    ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
+                    " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " \n" +
+                    ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET);
+            case 11 -> sb.append("█\n" +
+                                 "██\n" +
+                                 "███\n" +
+                                 "████\n" +
+                                 "█████");
+        }
+        
+        
+        return createBox(sb.toString());
+        
     }
     
     
