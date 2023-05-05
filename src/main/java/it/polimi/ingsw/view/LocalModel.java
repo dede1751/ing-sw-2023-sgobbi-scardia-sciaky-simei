@@ -17,6 +17,8 @@ public class LocalModel {
     
     private List<String> playersNicknames;
     
+    private String currentPlayer;
+    
     private final Map<String, Shelf> shelves = new HashMap<>();
     
     private final Map<String, Integer> points = new HashMap<>();
@@ -27,6 +29,7 @@ public class LocalModel {
     private int topCGXscore = 0;
     private int topCGYscore = 0;
     private Board board;
+    
     
     private LocalModel() {
     }
@@ -103,4 +106,11 @@ public class LocalModel {
         this.playersNicknames = playersNicknames;
     }
     
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+    
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
 }

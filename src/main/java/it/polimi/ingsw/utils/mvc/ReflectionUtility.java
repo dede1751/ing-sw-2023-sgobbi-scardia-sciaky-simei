@@ -5,7 +5,7 @@ import it.polimi.ingsw.model.messages.ServerResponseMessage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
+import java.util.Arrays;
 
 public class ReflectionUtility {
     
@@ -19,22 +19,17 @@ public class ReflectionUtility {
      */
     public static void invokeMethod(ModelListener errorListener, Object obj, String methodName, Object... args) throws NoSuchMethodException {
         try {
-            Method method = obj.getClass().getMethod(methodName, args.getClass());
+            Class<?>[] types = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
+            Method method = obj.getClass().getMethod(methodName, types);
             method.invoke(obj, args);
         }
         catch( IllegalAccessException | InvocationTargetException e ) {
             System.err.println(e.getMessage());
             e.printStackTrace();
             
-            try {
-                if( errorListener != null ) {
-                    errorListener.update(
-                            new ServerResponseMessage(Response.ServerError(args.getClass().getSimpleName())));
-                }
-            }
-            catch( RemoteException ex ) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace();
+            if( errorListener != null ) {
+                errorListener.update(
+                        new ServerResponseMessage(Response.ServerError(args.getClass().getSimpleName())));
             }
         }
     }

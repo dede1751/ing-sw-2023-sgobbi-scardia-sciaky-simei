@@ -1,10 +1,7 @@
 package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.LobbyController;
-import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
-import it.polimi.ingsw.model.messages.BoardMessage;
-import it.polimi.ingsw.model.messages.EndGameMessage;
-import it.polimi.ingsw.model.messages.StartGameMessage;
+import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.*;
 
@@ -75,6 +72,13 @@ public abstract class View implements Runnable {
     
     @SuppressWarnings("unused")
     public abstract void onMessage(StartGameMessage msg);
+    
+    public abstract void onMessage(ServerResponseMessage msg);
+    public abstract void onMessage(ShelfMessage msg);
+    public abstract void onMessage(IncomingChatMessage msg);
+    public abstract void onMessage(UpdateScoreMessage msg);
+    public abstract void onMessage(CommonGoalMessage msg);
+    public abstract void onMessage(CurrentPlayerMessage msg);
     
     
     private Server server;

@@ -5,6 +5,7 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -86,6 +87,9 @@ public class ServerStub implements Server {
         Object o;
         try {
             o = ois.readObject();
+        }
+        catch( EOFException e ){
+            return;
         }
         catch( IOException e ) {
             throw new RemoteException("Cannot receive model view from server", e);

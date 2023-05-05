@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.gui;
 
-import it.polimi.ingsw.model.messages.AvailableLobbyMessage;
-import it.polimi.ingsw.model.messages.BoardMessage;
-import it.polimi.ingsw.model.messages.EndGameMessage;
-import it.polimi.ingsw.model.messages.StartGameMessage;
+import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
 
 
@@ -26,6 +23,54 @@ public class GUI extends View {
     
     @Override
     public void onMessage(StartGameMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(ServerResponseMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(ShelfMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(IncomingChatMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(UpdateScoreMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(CommonGoalMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(CurrentPlayerMessage msg) {
     
     }
     

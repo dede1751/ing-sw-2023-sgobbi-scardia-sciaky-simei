@@ -74,16 +74,18 @@ public final class ResourcesManager {
         
         for( File file : Objects.requireNonNull(dir.listFiles()) ) {
             try {
-                String modelJson = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-                Gson gson = new GsonBuilder()
-                        .registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer())
-                        .create();
-                
-                models.add(gson.fromJson(modelJson, GameModel.class));
-                
-                // delete old recovery files
-                if( !file.delete() ) {
-                    ServerLogger.errorLog(new IOException("Unable to delete recovery file: " + file.getName()));
+                if( !file.getName().equals(".gitignore") ) {
+                    String modelJson = Files.readString(file.toPath(), StandardCharsets.UTF_8);
+                    Gson gson = new GsonBuilder()
+                            .registerTypeAdapter(GameModel.class, new GameModel.ModelDeserializer())
+                            .create();
+                    
+                    models.add(gson.fromJson(modelJson, GameModel.class));
+                    
+                    // delete old recovery files
+                    if( !file.delete() ) {
+                        ServerLogger.errorLog(new IOException("Unable to delete recovery file: " + file.getName()));
+                    }
                 }
             }
             catch( IOException e ) {
