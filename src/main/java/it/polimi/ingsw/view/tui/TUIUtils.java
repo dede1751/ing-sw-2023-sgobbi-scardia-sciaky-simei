@@ -4,6 +4,8 @@ import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
+import it.polimi.ingsw.model.GameModel;
+import it.polimi.ingsw.view.LocalModel;
 
 public class TUIUtils {
     
@@ -125,5 +127,15 @@ public class TUIUtils {
                   Tiles.catTile + "│  \n");
         sb.append(bottom);
         return sb.toString();
+    }
+    
+    
+    static String printCurrentPlayer(String nickname, Integer points) {
+        String top = nickname + ", it's your turn!\n";
+        String mid = nickname + "\n";
+        String bottom = points + "\n";
+        return String.valueOf(top) +
+               mid +
+               bottom;
     }
 }
