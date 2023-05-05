@@ -4,6 +4,7 @@ import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.view.messages.*;
 
 import java.rmi.RemoteException;
@@ -51,7 +52,7 @@ public abstract class View implements Runnable {
     public String getNickname() { return nickname; }
     
     @SuppressWarnings("unused")
-    public abstract void onMessage(BoardMessage msg);
+    public abstract void onMessage(BoardMessage msg) throws InvalidStringException;
     @SuppressWarnings("unused")
     public abstract void onMessage(AvailableLobbyMessage msg);
     @SuppressWarnings("unused")

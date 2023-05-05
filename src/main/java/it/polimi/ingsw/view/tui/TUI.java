@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.tui;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.Move;
@@ -213,9 +214,10 @@ public class TUI extends View {
     
     @SuppressWarnings("unused")
     @Override
-    public void onMessage(BoardMessage msg) {
+    public void onMessage(BoardMessage msg) throws InvalidStringException {
         this.model.setBoard(msg.getPayload());
-        TUIUtils.printBoard(this.model.getBoard());
+        TUIUtils.printBoard(
+                (String[][]) Arrays.stream(this.model.getBoard().getAsMatrix()).map(Object::toString).toArray());
     }
     
     @SuppressWarnings("unused")

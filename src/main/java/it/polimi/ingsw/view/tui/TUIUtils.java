@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.tui;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 
 public class TUIUtils {
     
@@ -76,15 +77,15 @@ public class TUIUtils {
     }
     
     
-    static void printBoard(Board board) {
-        if( board == null ) {
-            System.out.println("Board Still not initialized!");
-        } else {
-            var matrix = board.getAsMatrix();
+    static void printBoard(String[][] matrix) throws InvalidStringException {
+        // if( board == null ) {
+            // System.out.println("Board Still not initialized!");
+        // } else {
+            // var matrix = board.getAsMatrix();
             for( int i = 0; i < 9; i++ ) {
                 for( int j = 0; j < 9; j++ ) {
-                    if( matrix[i][j] != null ) {
-                        var tile = matrix[i][j].type();
+                    var str = Tile.fromString(matrix[i][j]);
+                        var tile = str.type();
                         switch (tile) {
                             case CATS:
                                 System.out.print(Tiles.catTile);
@@ -102,8 +103,7 @@ public class TUIUtils {
                     }
                 }
                 System.out.print("\n");
-            }
-        }
+        // }
     }
     
     

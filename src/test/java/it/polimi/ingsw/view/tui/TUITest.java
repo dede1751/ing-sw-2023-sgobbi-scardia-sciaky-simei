@@ -5,14 +5,17 @@ import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.Test;
 import it.polimi.ingsw.view.tui.TUIUtils;
+import it.polimi.ingsw.model.Tile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -40,12 +43,15 @@ class TUITest {
             Gson gson =
                     new GsonBuilder().registerTypeAdapter(Board.class,
                                                           new Board.BoardDeserializer()).create();
-            var board = gson.fromJson(json, Board[][].class);
+            var board = gson.fromJson(json, String[][].class);
             TUIUtils.printBoard(board);
         }
         catch( IOException e ) {
             e.printStackTrace();
             fail();
+        }
+        catch( InvalidStringException e ) {
+            throw new RuntimeException(e);
         }
     }
     

@@ -83,7 +83,7 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
                 default -> Sprite.NOSPRITE;
             };
             return new Tile(type, sprite);
-        }else {
+        } else {
             throw new InvalidStringException();
         }
         
