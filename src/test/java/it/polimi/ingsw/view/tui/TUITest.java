@@ -79,6 +79,8 @@ class TUITest {
         String s4 = String.valueOf(TUIUtils.Tiles.plantTile);
         String s5 = String.valueOf(TUIUtils.Tiles.bookTile);
         String s6 = String.valueOf(TUIUtils.Tiles.frameTile);
+        String s7 = String.valueOf(TUIUtils.printCommonGoal(7));
+        String s8 = String.valueOf(TUIUtils.printCommonGoal(1));
         String z = TUIUtils.concatString(s2, s3, 3);
         String z1 = TUIUtils.concatString(s1, s4, 3);
         String z2 = TUIUtils.concatString(s6, s5, 3);
@@ -88,49 +90,39 @@ class TUITest {
         String h3 = TUIUtils.concatString(z, f2, 3);
         String h2 = TUIUtils.concatString(z1, f3, 3);
         String h1 = TUIUtils.concatString(z2, f1, 3);
+        String h4 = TUIUtils.concatString(s7, s8, 0);
         // System.out.println(TUIUtils.concatString(h3, h1, 3));
         // System.out.println(TUIUtils.concatString(h2, h1, 3));
         // System.out.println(TUIUtils.concatString(h3, h2, 3));
-        
+        System.out.println(h4);
         System.out.println(TUIUtils.printShelf(new Shelf()));
     }
     
     @Test
     void commonGoals() {
-        System.out.println(TUIUtils.printCommonGoal(0, 0));
-        System.out.println(TUIUtils.printCommonGoal(4, 0));
-        System.out.println("\n\n\n\n");
-        System.out.println("┌─────────────┐\n" +
-                           "│             │\n" +
-                           "│             │\n" +
-                           "│      " + "\u001B[47m" + "=" + "\u001B[0m" + "      │\n" +
-                           "│      " + "\u001B[47m" + "=" + "\u001B[0m" + "      │\n" +
-                           "│      x6     │\n" +
-                           "│             │\n" +
-                           "└─────────────┘");
-        System.out.println(TUIUtils.printCommonGoal(4, 0));
+        System.out.println(TUIUtils.printCommonGoal(0));
         
         
-        System.out.println(TUIUtils.printCommonGoal(1, 0));
+        System.out.println(TUIUtils.printCommonGoal(1));
+        
+        System.out.println(TUIUtils.printCommonGoal(2));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(2, 0));
+        System.out.println(TUIUtils.printCommonGoal(3));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(3, 0));
+        System.out.println(TUIUtils.printCommonGoal(4));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(4, 0));
+        System.out.println(TUIUtils.printCommonGoal(5));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(5, 0));
+        System.out.println(TUIUtils.printCommonGoal(6));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(6, 0));
+        System.out.println(TUIUtils.printCommonGoal(7));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(7, 0));
+        System.out.println(TUIUtils.printCommonGoal(8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(8, 0));
+        System.out.println(TUIUtils.printCommonGoal(9));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(9, 0));
+        System.out.println(TUIUtils.printCommonGoal(10));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(10, 0));
-        System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(11, 0));
+        System.out.println(TUIUtils.printCommonGoal(11));
     }
 }
