@@ -77,7 +77,6 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    
     public static String createBox(String input) {
         StringBuilder output = new StringBuilder();
         String[] lines = input.split("\n");
