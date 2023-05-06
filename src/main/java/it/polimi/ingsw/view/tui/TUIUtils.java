@@ -1,11 +1,8 @@
 package it.polimi.ingsw.view.tui;
 
-import it.polimi.ingsw.model.Board;
-import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.*;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
-import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.view.LocalModel;
 
 public class TUIUtils {
@@ -232,6 +229,125 @@ public class TUIUtils {
         
         return createBox(sb.toString());
         
+    }
+    
+    static String printPersonalGoal(int personalGoal) {
+        StringBuilder sb = new StringBuilder();
+        switch( personalGoal ) {
+            case 0 -> {
+                sb.append(ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
+                          + "    \n" +
+                          "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                          "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          "\n" +
+                          "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    ");
+            }
+            case 1 -> {
+                sb.append(
+                        "\n" +
+                        "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                        ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET +
+                        "    \n" +
+                        "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n"
+                        + "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                        "        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
+                );
+            }
+            case 2 -> {
+                sb.append("\n" +
+                          ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_YELLOW_BACKGROUND + "  " +
+                          ANSI_RESET +
+                          "  \n" +
+                          "    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_CYAN_BACKGROUND + "  " +
+                          ANSI_RESET + "\n" +
+                          "\n" +
+                          ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        ");
+            }
+            case 3 -> {
+                sb.append("        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          "\n" +
+                          ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET +
+                          "    \n" +
+                          "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                          "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET +
+                          "\n     ");
+            }
+            case 4 -> {
+                sb.append("          \n" +
+                          "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          "          \n" +
+                          "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET +
+                          "    \n" +
+                          "        " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_GREEN_BACKGROUND + "  " +
+                          ANSI_RESET +
+                          "  ");
+            }
+            case 5 -> {
+                sb.append("    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_GREEN_BACKGROUND + "  " +
+                          ANSI_RESET + "\n" +
+                          "          \n" +
+                          "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                          "          \n" +
+                          "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
+                          ANSI_RESET + "  \n" +
+                          ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n");
+            }
+            case 6 -> {
+                sb.append(ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET
+                          + "        \n" +
+                          "      " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                          "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                          "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          "    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    ");
+            }
+            case 7 -> {
+                sb.append("        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                          "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                          "      " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  ");
+            }
+            case 8 -> {
+                sb.append("    " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          "          \n" +
+                          "    " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_PURPLE_BACKGROUND + "  " +
+                          ANSI_RESET + "\n" +
+                          ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "        ");
+            }
+            case 9 -> {
+                sb.append("        " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                          "      " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                          "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n");
+            }
+            case 10 -> {
+                sb.append("    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                          "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  ");
+            }
+            case 11 -> {
+                sb.append("    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                          "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                          "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                          "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                          ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "        ");
+            }
+            
+        }
+        return createBox(sb.toString());
     }
     
     

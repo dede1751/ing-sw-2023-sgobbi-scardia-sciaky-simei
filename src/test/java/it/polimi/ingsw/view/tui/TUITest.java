@@ -79,8 +79,8 @@ class TUITest {
         String s4 = String.valueOf(TUIUtils.Tiles.plantTile);
         String s5 = String.valueOf(TUIUtils.Tiles.bookTile);
         String s6 = String.valueOf(TUIUtils.Tiles.frameTile);
-        String s7 = String.valueOf(TUIUtils.printCommonGoal(7));
-        String s8 = String.valueOf(TUIUtils.printCommonGoal(1));
+        String s7 = TUIUtils.printCommonGoal(7);
+        String s8 = TUIUtils.printCommonGoal(1);
         String z = TUIUtils.concatString(s2, s3, 3);
         String z1 = TUIUtils.concatString(s1, s4, 3);
         String z2 = TUIUtils.concatString(s6, s5, 3);
@@ -125,4 +125,29 @@ class TUITest {
         System.out.println("\n\n\n\n");
         System.out.println(TUIUtils.printCommonGoal(11));
     }
+    
+    @Test
+    void personalGoals() {
+        
+        System.out.println(TUIUtils.printPersonalGoal(0));
+        System.out.println(TUIUtils.printPersonalGoal(1));
+        System.out.println(TUIUtils.printPersonalGoal(2));
+        System.out.println(TUIUtils.printPersonalGoal(3));
+        System.out.println(TUIUtils.printPersonalGoal(4));
+        System.out.println(TUIUtils.printPersonalGoal(5));
+        System.out.println(TUIUtils.printPersonalGoal(6));
+        System.out.println(TUIUtils.printPersonalGoal(7));
+        System.out.println(TUIUtils.printPersonalGoal(8));
+        System.out.println(TUIUtils.printPersonalGoal(9));
+        System.out.println(TUIUtils.printPersonalGoal(10));
+        System.out.println(TUIUtils.printPersonalGoal(11));
+        
+        
+    }
 }
+
+    
+    
+
+
+
