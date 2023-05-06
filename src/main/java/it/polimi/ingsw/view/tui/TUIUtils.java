@@ -21,40 +21,6 @@ public class TUIUtils {
     //public static final String ANSI_WHITE_BACKGROUND = "\u001B[41m";
     
     
-    public enum Tiles {
-        catTile {
-            public String toString() {
-                return ANSI_GREEN_BACKGROUND + ANSI_BLACK + " C " + ANSI_RESET;
-            }
-        },
-        bookTile {
-            public String toString() {
-                return ANSI_WHITE_BACKGROUND + ANSI_BLACK + " B " + ANSI_RESET;
-            }
-        },
-        gameTile {
-            public String toString() {
-                return ANSI_YELLOW_BACKGROUND + ANSI_BLACK + " G " + ANSI_RESET;
-            }
-        },
-        frameTile {
-            public String toString() {
-                return ANSI_BLUE_BACKGROUND + ANSI_BLACK + " F " + ANSI_RESET;
-            }
-        },
-        trophyTile {
-            public String toString() {
-                return ANSI_CYAN_BACKGROUND + ANSI_BLACK + " T " + ANSI_RESET;
-            }
-        },
-        plantTile {
-            public String toString() {
-                return ANSI_PURPLE_BACKGROUND + ANSI_BLACK + " P " + ANSI_RESET;
-            }
-        }
-    }
-    
-    
     public static String concatString(String s1, String s2, int space) {
         String[] s1Lines = s1.split("\n");
         String[] s2Lines = s2.split("\n");
@@ -98,7 +64,6 @@ public class TUIUtils {
         String top = "┌" + "─".repeat(width + 2) + "┐\n";
         String bottom = "└" + "─".repeat(width + 2) + "┘\n";
         
-        
         output.append(top);
         
         for( String line : lines ) {
@@ -114,33 +79,23 @@ public class TUIUtils {
         return output.toString();
     }
     
-    static void printBoard(String[][] matrix) throws InvalidStringException {
-        // if( board == null ) {
-        // System.out.println("Board Still not initialized!");
-        // } else {
-        // var matrix = board.getAsMatrix();
-        for( int i = 0; i < 9; i++ ) {
-            for( int j = 0; j < 9; j++ ) {
-                var str = Tile.fromString(matrix[i][j]);
-                var tile = str.type();
-                switch( tile ) {
-                    case CATS:
-                        System.out.print(Tiles.catTile);
-                    case BOOKS:
-                        System.out.print(Tiles.bookTile);
-                    case GAMES:
-                        System.out.print(Tiles.gameTile);
-                    case FRAMES:
-                        System.out.print(Tiles.frameTile);
-                    case TROPHIES:
-                        System.out.print(Tiles.trophyTile);
-                    case PLANTS:
-                        System.out.print(Tiles.plantTile);
+    
+    static String printBoard(Board board) {
+        StringBuilder sb = new StringBuilder();
+        
+        if( board == null ) {
+            System.out.println("Board Still not initialized!");
+        }else {
+            var matrix = board.getAsMatrix();
+            for( int i = 0; i < 9; i++ ) {
+                for( int j = 0; j < 9; j++ ) {
+                    var tile = matrix[i][j].toTile();
+                    sb.append(tile);
                 }
+                sb.append("\n");
             }
         }
-        System.out.print("\n");
-        // }
+        return sb.toString();
     }
     
     
@@ -151,17 +106,29 @@ public class TUIUtils {
         String bottom = "└───┴───┴───┴───┴───┘\n";
         
         sb.append(top);
-        
-        for( int i = 0; i < Shelf.N_ROW; i++ ) {
-            
-            sb.append(("│" + Tiles.catTile).repeat(Shelf.N_COL));
-            sb.append("│\n");
-            sb.append("├───┼───┼───┼───┼───┤\n");
+        var matrix = shelf.getAllShelf();
+        for( int i = Shelf.N_ROW; i >= 0; i-- ) {
+            for( int j = 0; j < Shelf.N_COL; j++ ) {
+                var tile = matrix[i][j].toTile();
+                sb.append("│").append(tile);
+                sb.append("│\n");
+                if( i != Shelf.N_ROW )
+                    sb.append("├───┼───┼───┼───┼───┤\n");
+                else
+                    sb.append(bottom);
+            }
         }
-        sb.append("│" + Tiles.catTile + "│" + Tiles.catTile + "│" + Tiles.catTile + "│" + Tiles.catTile + "│" +
-                  Tiles.catTile + "│  \n");
-        sb.append(bottom);
         return sb.toString();
+    }
+    
+    
+    static String printCurrentPlayer(String nickname, Integer points) {
+        String top = nickname + ", it's your turn!\n";
+        String mid = nickname + "\n";
+        String bottom = points + "\n";
+        return top +
+               mid +
+               bottom;
     }
     
     
@@ -171,7 +138,6 @@ public class TUIUtils {
             case 0 -> sb.append(" " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                                 " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                                 "x6\n");
-            
             
             case 1 -> sb.append(ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                                 ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
@@ -185,12 +151,14 @@ public class TUIUtils {
             
             case 3 -> sb.append(ANSI_WHITE_BACKGROUND + "==" + ANSI_RESET + "\n" +
                                 ANSI_WHITE_BACKGROUND + "==" + ANSI_RESET + " x2");
+            
             case 4 -> sb.append("█\n" +
                                 "█\n" +
                                 "█   max 3 " + ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 "█   x3\n" +
                                 "█\n" +
                                 "█\n");
+            
             case 5 -> sb.append(
                     " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET +
                     " \n" +
@@ -199,45 +167,43 @@ public class TUIUtils {
                     "\n" +
                     ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET +
                     " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET);
+            
             case 6 -> sb.append(ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                                 " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                                 "  " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                                 "   " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                                 "    " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n");
+            
             case 7 -> sb.append("█████  \n" +
                                 "  max 3 " + ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 "    X4");
+            
             case 8 -> sb.append(ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + " x2\n" +
                                 ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "");
+            
             case 9 -> sb.append(ANSI_WHITE_BACKGROUND + "≠≠≠≠≠" + ANSI_RESET + "\n" +
                                 "  x2 ");
+            
             case 10 -> sb.append(
                     ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + "\n" +
                     " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " \n" +
                     ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + "=" + ANSI_RESET);
-            case 11 -> sb.append("█\n" +
-                                 "██\n" +
-                                 "███\n" +
-                                 "████\n" +
-                                 "█████");
+            
+            case 11 -> sb.append("""
+                                         █
+                                         ██
+                                         ███
+                                         ████
+                                         █████""");
         }
         
         
         return createBox(sb.toString());
-        
+ 
     }
     
-    
-    static String printCurrentPlayer(String nickname, Integer points) {
-        String top = nickname + ", it's your turn!\n";
-        String mid = nickname + "\n";
-        String bottom = points + "\n";
-        return top + "\n" +
-               mid +
-               bottom;
-    }
 }
