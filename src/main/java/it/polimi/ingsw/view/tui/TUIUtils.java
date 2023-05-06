@@ -211,10 +211,13 @@ public class TUIUtils {
 
     static String printPersonalScore() {
         StringBuilder sb = new StringBuilder();
-        String grid = "───┼───┼───┼───┼───┼───";
+        String grid = """
+                        ───┼───┼───┼───┼───┼───""";
         
         for( int i = 1; i <= 6; i++ ) {
             sb.append(" ").append(i).append(" ");
+            if( i != 6 )
+                sb.append("│");
         }
         sb.append("\n").append(grid).append("\n");
         for( int i = 1; i <= 6; i++ ) {
@@ -234,6 +237,8 @@ public class TUIUtils {
                     sb.append(12);
             }
             sb.append(" ");
+            if( i != 6 )
+                sb.append("│");
         }
         
         return sb.toString();
