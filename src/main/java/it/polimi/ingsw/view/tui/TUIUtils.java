@@ -79,11 +79,15 @@ public class TUIUtils {
     static String printBoard(Board board) {
         StringBuilder sb = new StringBuilder();
         
+        String colmns = "    0  1  2  3  4  5  6  7  8 ";
+        
         if( board == null ) {
-            System.out.println("Board Still not initialized!");
-        }else {
+            System.out.println("Board still not initialized!");
+        } else {
+            sb.append(colmns);
             var matrix = board.getAsMatrix();
             for( int i = 0; i < 9; i++ ) {
+                sb.append(i);
                 for( int j = 0; j < 9; j++ ) {
                     var tile = matrix[i][j].toTile();
                     sb.append(tile);
@@ -117,13 +121,12 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    
 
     static String printCurrentPlayer(String nickname, Integer points) {
         String top = nickname + ", it's your turn!\n";
         String mid = nickname + "\n";
         String bottom = points + "\n";
-        return top +
+        return top + "\n" +
                mid +
                bottom;
     }
@@ -206,6 +209,36 @@ public class TUIUtils {
     }
     
 
+    static String printPersonalScore() {
+        StringBuilder sb = new StringBuilder();
+        String grid = "───┼───┼───┼───┼───┼───";
+        
+        for( int i = 1; i <= 6; i++ ) {
+            sb.append(" ").append(i).append(" ");
+        }
+        sb.append("\n").append(grid).append("\n");
+        for( int i = 1; i <= 6; i++ ) {
+            sb.append(" ");
+            switch( i ) {
+                case 1 ->
+                    sb.append(1);
+                case 2 ->
+                    sb.append(2);
+                case 3 ->
+                    sb.append(4);
+                case 4 ->
+                    sb.append(6);
+                case 5 ->
+                    sb.append(9);
+                case 6 ->
+                    sb.append(12);
+            }
+            sb.append(" ");
+        }
+        
+        return sb.toString();
+    }
+    
     static String printPersonalGoal(int personalGoal) {
         StringBuilder sb = new StringBuilder();
         switch( personalGoal ) {
