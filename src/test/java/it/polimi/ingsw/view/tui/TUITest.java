@@ -37,27 +37,6 @@ class TUITest {
     
     /*
     @Test
-    void printBoardTest() {
-        var name = ResourcesManager.getCurrentMethod();
-        String json;
-        try {
-            json = getResource(name);
-            Gson gson =
-                    new GsonBuilder().registerTypeAdapter(Board.class,
-                                                          new Board.BoardDeserializer()).create();
-            var board = gson.fromJson(json, String[][].class);
-            TUIUtils.printBoard(board);
-        }
-        catch( IOException e ) {
-            e.printStackTrace();
-            fail();
-        }
-        catch( InvalidStringException e ) {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    @Test
     void run() {
     }
     

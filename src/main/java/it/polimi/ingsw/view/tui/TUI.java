@@ -216,8 +216,7 @@ public class TUI extends View {
     @Override
     public void onMessage(BoardMessage msg) throws InvalidStringException {
         this.model.setBoard(msg.getPayload());
-        TUIUtils.printBoard(
-                (String[][]) Arrays.stream(this.model.getBoard().getAsMatrix()).map(Object::toString).toArray());
+        TUIUtils.printBoard(this.model.getBoard());
     }
     
     @SuppressWarnings("unused")
