@@ -2,10 +2,11 @@ package it.polimi.ingsw.utils.exceptions;
 
 public class CommonException extends Exception {
     
-    public CommonException(){
+    public CommonException() {
         super();
     }
-    public CommonException(String message){
+    
+    public CommonException(String message) {
         super(message);
     }
     

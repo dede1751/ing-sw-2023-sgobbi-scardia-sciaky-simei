@@ -19,7 +19,8 @@ public class AppServer {
         Server server;
         try {
             server = new LocalServer();
-        } catch( RemoteException e ) {
+        }
+        catch( RemoteException e ) {
             System.err.println("Unable to start server. Shutting down...");
             return;
         }
@@ -27,7 +28,8 @@ public class AppServer {
         Thread rmiThread = new Thread(() -> {
             try {
                 startRMI(server);
-            } catch (RemoteException e) {
+            }
+            catch( RemoteException e ) {
                 System.err.println("Cannot start RMI. This protocol will be disabled.");
             }
         });
@@ -36,7 +38,8 @@ public class AppServer {
         Thread socketThread = new Thread(() -> {
             try {
                 startSocket(server);
-            } catch (RemoteException e) {
+            }
+            catch( RemoteException e ) {
                 System.err.println("Cannot start socket. This protocol will be disabled.");
             }
         });
@@ -45,7 +48,8 @@ public class AppServer {
         try {
             rmiThread.join();
             socketThread.join();
-        } catch (InterruptedException e) {
+        }
+        catch( InterruptedException e ) {
             System.err.println("No connection protocol available. Exiting...");
         }
     }
@@ -57,32 +61,36 @@ public class AppServer {
     }
     
     public static void startSocket(Server server) throws RemoteException {
-        try ( ExecutorService executorService = Executors.newCachedThreadPool();
-              ServerSocket serverSocket = new ServerSocket(1234)) {
+        try( ExecutorService executorService = Executors.newCachedThreadPool();
+             ServerSocket serverSocket = new ServerSocket(1234) ) {
             //noinspection InfiniteLoopStatement
-            while (true) {
+            while( true ) {
                 Socket socket = serverSocket.accept();
                 executorService.submit(() -> {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
-
+                        
                         server.register(clientSkeleton);
                         //noinspection InfiniteLoopStatement
-                        while (true) {
+                        while( true ) {
                             clientSkeleton.receive(server);
                         }
-                    } catch (RemoteException e) {
+                    }
+                    catch( RemoteException e ) {
                         System.err.println("Cannot receive from client. Closing this connection...");
-                    } finally {
+                    }
+                    finally {
                         try {
                             socket.close();
-                        } catch ( IOException e) {
+                        }
+                        catch( IOException e ) {
                             System.err.println("Cannot close socket");
                         }
                     }
                 });
             }
-        } catch (IOException e) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot start socket server", e);
         }
     }

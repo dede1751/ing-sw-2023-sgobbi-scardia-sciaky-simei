@@ -10,15 +10,15 @@ public class CrossGoal implements CommonGoalStrategy {
     }
     
     public boolean checkShelf(Shelf shelf) {
-        for (int i = 2; i < 6; i++) {
-            for (int j = 0; j < 3; j++) {
+        for( int i = 2; i < 6; i++ ) {
+            for( int j = 0; j < 3; j++ ) {
                 Tile tile = shelf.getTile(i, j);
                 
-                if (tile != Tile.NOTILE
-                    && tile.type() == shelf.getTile(i-1, j+1).type()
-                    && tile.type() == shelf.getTile(i, j+2).type()
-                    && tile.type() == shelf.getTile(i-2, j).type()
-                    && tile.type() == shelf.getTile(i-2, j+2).type()) {
+                if( tile != Tile.NOTILE
+                    && tile.type() == shelf.getTile(i - 1, j + 1).type()
+                    && tile.type() == shelf.getTile(i, j + 2).type()
+                    && tile.type() == shelf.getTile(i - 2, j).type()
+                    && tile.type() == shelf.getTile(i - 2, j + 2).type() ) {
                     return true;
                 }
             }

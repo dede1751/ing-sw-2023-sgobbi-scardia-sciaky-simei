@@ -1,7 +1,7 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.LocalClient;
+import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.socket.ServerStub;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.GUI;
@@ -20,7 +20,7 @@ import java.util.Scanner;
 
 public class AppClient {
     
-    public static void main( String[] args ) throws RemoteException, NotBoundException {
+    public static void main(String[] args) throws RemoteException, NotBoundException {
         System.out.println("\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\");
         System.out.println("$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|");
         System.out.println("$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\");
@@ -28,7 +28,8 @@ public class AppClient {
         System.out.println("$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |");
         System.out.println("$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|");
         System.out.println("$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\");
-        System.out.println("\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|");
+        System.out.println(
+                "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|");
         System.out.println("             $$\\   $$ |");
         System.out.println("             \\$$$$$$  |");
         System.out.println("              \\______/\n");
@@ -37,28 +38,28 @@ public class AppClient {
         View view;
         
         System.out.println("Choose the type of user interface: [GUI/TUI]");
-        while (true) {
+        while( true ) {
             System.out.print("\n>>  ");
             String input = scanner.next().trim();
             
-            if ( input.equals("GUI") ) {
+            if( input.equals("GUI") ) {
                 view = new GUI();
                 break;
-            } else if ( input.equals("TUI") ) {
+            }else if( input.equals("TUI") ) {
                 view = new TUI();
                 break;
             }
         }
         
         System.out.println("Choose the type of network protocol: [RMI/SOCKET]");
-        while (true) {
+        while( true ) {
             System.out.print("\n>>  ");
             String input = scanner.next().trim();
             
-            if ( input.equals("RMI") ) {
+            if( input.equals("RMI") ) {
                 runRMI(view);
                 break;
-            } else if ( input.equals("SOCKET") ) {
+            }else if( input.equals("SOCKET") ) {
                 runSocket(view);
                 break;
             }
@@ -80,15 +81,17 @@ public class AppClient {
         
         client.connectServer();
         new Thread(() -> {
-            while(true) {
+            while( true ) {
                 try {
                     serverStub.receive();
-                } catch (RemoteException e){
+                }
+                catch( RemoteException e ) {
                     e.printStackTrace(System.err);
                     System.err.println(e.getMessage() + "\n" + "Cannot receive from server. Stopping...");
                     try {
                         serverStub.close();
-                    } catch (RemoteException ex) {
+                    }
+                    catch( RemoteException ex ) {
                         System.err.println("Cannot close connection with server. Halting...");
                     }
                     System.exit(1);

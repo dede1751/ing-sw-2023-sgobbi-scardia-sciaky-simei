@@ -4,6 +4,8 @@ import com.google.gson.*;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
+import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -183,6 +185,7 @@ class GameControllerTest {
                 Gson gson =
                         new GsonBuilder().registerTypeAdapter(GameModel.class,
                                                               new GameModel.ModelDeserializer()).create();
+                
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, 0);
                 controller.turnManager();

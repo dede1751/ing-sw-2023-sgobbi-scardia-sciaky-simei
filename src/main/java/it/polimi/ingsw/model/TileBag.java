@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
-import com.google.gson.*;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 
 import java.lang.reflect.Type;
@@ -81,8 +84,8 @@ public class TileBag {
         @Override
         public TileBag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             var result = new HashMap<Tile, Integer>();
-            if( json.isJsonObject() ){
-                for(var x : json.getAsJsonObject().entrySet()){
+            if( json.isJsonObject() ) {
+                for( var x : json.getAsJsonObject().entrySet() ) {
                     try {
                         result.put(Tile.fromString(x.getKey()), x.getValue().getAsInt());
                     }

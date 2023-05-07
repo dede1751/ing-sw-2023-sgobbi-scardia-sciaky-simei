@@ -2,7 +2,7 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.*;
 import it.polimi.ingsw.view.tui.TUI;
@@ -28,16 +28,13 @@ public class ServerTest {
 
                 client1.connectServer();
 
-                Response t = server.update(new CreateLobbyMessage(2, "Roberto", tui1.getClientID()));
-                System.out.println(t.msg());
+                server.update(new CreateLobbyMessage(2, "Roberto", tui1.getClientID()));
                 LocalClient client2 = new LocalClient(server, tui2);
                 client2.connectServer();
-                Response m = server.update(new JoinLobbyMessage( 0, "Luca",
+                server.update(new JoinLobbyMessage( 0, "Luca",
                                                                 tui2.getClientID() ));
                 
-                Response r = server.update(new DebugMessage("Paolo", "Roberto", tui1.getClientID()));
-                System.out.println(r.msg());
-                assertEquals(0, r.status());
+                server.update(new DebugMessage("Paolo", "Roberto", tui1.getClientID()));
             }
             catch( RemoteException e ) {
                 throw new RuntimeException(e);

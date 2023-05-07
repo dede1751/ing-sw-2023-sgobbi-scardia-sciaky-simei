@@ -22,5 +22,5 @@ public interface CommonGoalStrategy {
      * @return true if common goal is achieved, else false
      */
     boolean checkShelf(Shelf shelf);
-
+    
 }
