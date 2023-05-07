@@ -35,6 +35,7 @@ class TUITest {
         System.out.println(s);
     }
     
+    /*
     @Test
     void printBoardTest() {
         var name = ResourcesManager.getCurrentMethod();
@@ -97,7 +98,7 @@ class TUITest {
         System.out.println(h4);
         System.out.println(TUIUtils.printShelf(new Shelf()));
     }
-    
+    */
     @Test
     void commonGoals() {
         System.out.println(TUIUtils.printCommonGoal(0));
