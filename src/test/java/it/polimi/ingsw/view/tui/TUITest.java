@@ -1,22 +1,13 @@
 package it.polimi.ingsw.view.tui;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import it.polimi.ingsw.model.Board;
-import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.model.goals.common.CommonGoal;
-import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.Test;
-import it.polimi.ingsw.view.tui.TUIUtils;
 import it.polimi.ingsw.model.Tile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -81,47 +72,47 @@ class TUITest {
     */
     @Test
     void commonGoals() {
-        System.out.println(TUIUtils.printCommonGoal(0));
+        System.out.println(TUIUtils.generateCommonGoal(0));
         
         
-        System.out.println(TUIUtils.printCommonGoal(1));
+        System.out.println(TUIUtils.generateCommonGoal(1));
         
-        System.out.println(TUIUtils.printCommonGoal(2));
+        System.out.println(TUIUtils.generateCommonGoal(2));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(3));
+        System.out.println(TUIUtils.generateCommonGoal(3));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(4));
+        System.out.println(TUIUtils.generateCommonGoal(4));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(5));
+        System.out.println(TUIUtils.generateCommonGoal(5));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(6));
+        System.out.println(TUIUtils.generateCommonGoal(6));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(7));
+        System.out.println(TUIUtils.generateCommonGoal(7));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(8));
+        System.out.println(TUIUtils.generateCommonGoal(8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(9));
+        System.out.println(TUIUtils.generateCommonGoal(9));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(10));
+        System.out.println(TUIUtils.generateCommonGoal(10));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.printCommonGoal(11));
+        System.out.println(TUIUtils.generateCommonGoal(11));
     }
     
     @Test
     void personalGoals() {
         
-        System.out.println(TUIUtils.printPersonalGoal(0));
-        System.out.println(TUIUtils.printPersonalGoal(1));
-        System.out.println(TUIUtils.printPersonalGoal(2));
-        System.out.println(TUIUtils.printPersonalGoal(3));
-        System.out.println(TUIUtils.printPersonalGoal(4));
-        System.out.println(TUIUtils.printPersonalGoal(5));
-        System.out.println(TUIUtils.printPersonalGoal(6));
-        System.out.println(TUIUtils.printPersonalGoal(7));
-        System.out.println(TUIUtils.printPersonalGoal(8));
-        System.out.println(TUIUtils.printPersonalGoal(9));
-        System.out.println(TUIUtils.printPersonalGoal(10));
-        System.out.println(TUIUtils.printPersonalGoal(11));
+        System.out.println(TUIUtils.generatePersonalGoal(0));
+        System.out.println(TUIUtils.generatePersonalGoal(1));
+        System.out.println(TUIUtils.generatePersonalGoal(2));
+        System.out.println(TUIUtils.generatePersonalGoal(3));
+        System.out.println(TUIUtils.generatePersonalGoal(4));
+        System.out.println(TUIUtils.generatePersonalGoal(5));
+        System.out.println(TUIUtils.generatePersonalGoal(6));
+        System.out.println(TUIUtils.generatePersonalGoal(7));
+        System.out.println(TUIUtils.generatePersonalGoal(8));
+        System.out.println(TUIUtils.generatePersonalGoal(9));
+        System.out.println(TUIUtils.generatePersonalGoal(10));
+        System.out.println(TUIUtils.generatePersonalGoal(11));
         
         
     }

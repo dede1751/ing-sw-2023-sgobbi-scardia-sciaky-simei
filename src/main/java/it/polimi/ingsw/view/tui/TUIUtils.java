@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.model.goals.common.*;
-import it.polimi.ingsw.utils.exceptions.InvalidStringException;
-import it.polimi.ingsw.view.LocalModel;
 
 public class TUIUtils {
     
@@ -76,7 +73,7 @@ public class TUIUtils {
     }
     
     
-    static String printBoard(Board board) {
+    static String generateBoard(Board board) {
         StringBuilder sb = new StringBuilder();
         
         String colmns = "   0  1  2  3  4  5  6  7  8 ";
@@ -104,7 +101,7 @@ public class TUIUtils {
     }
     
     
-    static String printShelf(Shelf shelf) {
+    static String generateShelf(Shelf shelf) {
         StringBuilder sb = new StringBuilder();
         
         
@@ -133,7 +130,7 @@ public class TUIUtils {
     }
     
     
-    static String printCurrentPlayer(String nickname, Integer points) {
+    static String generateCurrentPlayer(String nickname, Integer points) {
         String top = nickname + ", it's your turn!\n";
         String mid = nickname + "\n";
         String bottom = points + "\n";
@@ -143,7 +140,7 @@ public class TUIUtils {
     }
     
     
-    static String printCommonGoal(int commonGoal1) {
+    static String generateCommonGoal(int commonGoal1) {
         StringBuilder sb = new StringBuilder();
         
         switch( commonGoal1 ) {
@@ -220,7 +217,7 @@ public class TUIUtils {
     }
     
     
-    static String printPersonalScore() {
+    static String generatePersonalScore() {
         StringBuilder sb = new StringBuilder();
         String grid = """
                 ───┼───┼───┼───┼───┼───""";
@@ -249,7 +246,7 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    static String printPersonalGoal(int personalGoal) {
+    static String generatePersonalGoal(int personalGoal) {
         StringBuilder sb = new StringBuilder();
         switch( personalGoal ) {
             case 0 -> {

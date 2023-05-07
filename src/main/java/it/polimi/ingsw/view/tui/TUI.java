@@ -1,8 +1,6 @@
 package it.polimi.ingsw.view.tui;
 
-import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Coordinate;
-import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
 
@@ -11,7 +9,6 @@ import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
-import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 
 import java.util.*;
@@ -280,7 +277,7 @@ public class TUI extends View {
     @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
-        String s = TUIUtils.printBoard(this.model.getBoard());
+        String s = TUIUtils.generateBoard(this.model.getBoard());
         System.out.println(s);
         
     }
