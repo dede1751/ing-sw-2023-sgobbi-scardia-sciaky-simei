@@ -31,7 +31,8 @@ class TUITest {
     
     @Test
     void printTest() {
-        String s = String.valueOf(TUIUtils.Tiles.catTile);
+        Tile t = new Tile(Tile.Type.CATS);
+        String s = String.valueOf(t.toTile());
         System.out.println(s);
     }
     

@@ -83,8 +83,8 @@ public class TUIUtils {
         
         if( board == null ) {
             System.out.println("Board still not initialized!");
-        } else {
-            sb.append(colmns);
+        }else {
+            sb.append(colmns).append("\n");
             var matrix = board.getAsMatrix();
             for( int i = 0; i < 9; i++ ) {
                 sb.append(i);
@@ -102,26 +102,32 @@ public class TUIUtils {
     static String printShelf(Shelf shelf) {
         StringBuilder sb = new StringBuilder();
         //5*6
-        String top = "┌───┬───┬───┬───┬───┐\n";
-        String bottom = "└───┴───┴───┴───┴───┘\n";
         
-        sb.append(top);
-        var matrix = shelf.getAllShelf();
-        for( int i = Shelf.N_ROW; i >= 0; i-- ) {
-            for( int j = 0; j < Shelf.N_COL; j++ ) {
-                var tile = matrix[i][j].toTile();
-                sb.append("│").append(tile);
-                sb.append("│\n");
-                if( i != Shelf.N_ROW )
-                    sb.append("├───┼───┼───┼───┼───┤\n");
-                else
-                    sb.append(bottom);
+        if( shelf == null ) {
+            System.out.println("Shelf still not initialized!");
+        }else {
+            String top = "┌───┬───┬───┬───┬───┐\n";
+            String bottom = "└───┴───┴───┴───┴───┘\n";
+            
+            sb.append(top);
+            var matrix = shelf.getAllShelf();
+            for( int i = Shelf.N_ROW; i >= 0; i-- ) {
+                for( int j = 0; j < Shelf.N_COL; j++ ) {
+                    var tile = matrix[i][j].toTile();
+                    sb.append("│").append(tile);
+                    sb.append("│\n");
+                    if( i != Shelf.N_ROW )
+                        sb.append("├───┼───┼───┼───┼───┤\n");
+                    else
+                        sb.append(bottom);
+                }
             }
         }
+        
         return sb.toString();
     }
     
-
+    
     static String printCurrentPlayer(String nickname, Integer points) {
         String top = nickname + ", it's your turn!\n";
         String mid = nickname + "\n";
@@ -153,7 +159,7 @@ public class TUIUtils {
             
             case 3 -> sb.append("\n\n\n\n   " + ANSI_WHITE_BACKGROUND + " = = " + ANSI_RESET + "\n   " +
                                 ANSI_WHITE_BACKGROUND + " = = " + ANSI_RESET + "x2 \n\n");
-
+            
             case 4 -> sb.append("█\n" +
                                 "█\n" +
                                 "█   max 3 " + ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
@@ -202,17 +208,17 @@ public class TUIUtils {
                                  " █ █ █\n" +
                                  " █ █ █ █\n" +
                                  " █ █ █ █ █");
-
+            
         }
         return createBox(sb.toString());
- 
+        
     }
     
-
+    
     static String printPersonalScore() {
         StringBuilder sb = new StringBuilder();
         String grid = """
-                        ───┼───┼───┼───┼───┼───""";
+                ───┼───┼───┼───┼───┼───""";
         
         for( int i = 1; i <= 6; i++ ) {
             sb.append(" ").append(i).append(" ");
@@ -223,18 +229,12 @@ public class TUIUtils {
         for( int i = 1; i <= 6; i++ ) {
             sb.append(" ");
             switch( i ) {
-                case 1 ->
-                    sb.append(1);
-                case 2 ->
-                    sb.append(2);
-                case 3 ->
-                    sb.append(4);
-                case 4 ->
-                    sb.append(6);
-                case 5 ->
-                    sb.append(9);
-                case 6 ->
-                    sb.append(12);
+                case 1 -> sb.append(1);
+                case 2 -> sb.append(2);
+                case 3 -> sb.append(4);
+                case 4 -> sb.append(6);
+                case 5 -> sb.append(9);
+                case 6 -> sb.append(12);
             }
             sb.append(" ");
             if( i != 6 )

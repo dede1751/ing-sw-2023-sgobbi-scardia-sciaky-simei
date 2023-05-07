@@ -15,10 +15,20 @@ public class TUI extends View {
     @Override
     public void run() {
         userLogin();
-        
+        Boolean flag = true;
         //noinspection InfiniteLoopStatement
+        
+        
         while( true ) {
-            askPassTurn();
+            if( flag ) {
+                
+                
+                TUIUtils.printBoard(model.getBoard());
+                TUIUtils.printShelf(model.getShelf(nickname));
+                flag = false;
+            }
+            
+            
         }
     }
     
@@ -155,7 +165,7 @@ public class TUI extends View {
     }
     
     //TODO add tile order selection
-    public List<Coordinate> askSelection(Move move) {
+    public List<Coordinate> askSelection() {
         
         Scanner scanner = new Scanner(System.in);
         List<Coordinate> selection = new ArrayList<>();
