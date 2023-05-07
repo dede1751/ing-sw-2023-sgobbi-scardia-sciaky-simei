@@ -27,23 +27,33 @@ public class TUI extends View {
     
     protected boolean newLobbies = false;
     
+    private Boolean flag = false;
+    
+    private final Object playerLock = new Object();
+    
     @Override
     public void run() {
         userLogin();
-        Boolean flag = true;
+        
         //noinspection InfiniteLoopStatement
         
         
         while( true ) {
-            if( flag ) {
-                
-                
-                TUIUtils.printBoard(model.getBoard());
-                TUIUtils.printShelf(model.getShelf(nickname));
-                flag = false;
+            synchronized(playerLock) {
+                try {
+                    playerLock.wait();
+                    
+                    
+                }
+                catch( InterruptedException e ) {
+                    throw new RuntimeException(e);
+                }
             }
             
-            
+            //questo codice si esegue una volta sola quando è il tuo turno
+            var sel = askSelection();
+            int c = askColumn();
+            //notifyMove(new Move());
         }
     }
     
@@ -270,7 +280,9 @@ public class TUI extends View {
     @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
-        TUIUtils.printBoard(this.model.getBoard());
+        String s = TUIUtils.printBoard(this.model.getBoard());
+        System.out.println(s);
+        
     }
     
     @SuppressWarnings("unused")
@@ -300,7 +312,9 @@ public class TUI extends View {
         model.setPlayersNicknames(msg.getPayload().nicknames());
         System.out.println("GAME START!");
         System.out.println("Players name:");
+        
         msg.getPayload().nicknames().forEach(System.out::println);
+        
     }
     
     /**
@@ -329,7 +343,8 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(ShelfMessage msg) {
-        //TODO
+        this.model.setShelves(msg.getPayload(), msg.getPlayer());
+        
     }
     
     /**
@@ -361,7 +376,13 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
-        //TODO
+        this.model.setCurrentPlayer(msg.getPayload());
+        synchronized(playerLock) {
+            //lock che viene notificato quando è il tuo turno
+            if( msg.getPayload().equals(this.nickname) ) {
+                playerLock.notifyAll();
+            }
+        }
     }
     
 }

@@ -81,7 +81,7 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
             case FRAMES -> ANSI_BLUE_BACKGROUND + ANSI_BLACK + " F " + ANSI_RESET;
             case TROPHIES -> ANSI_CYAN_BACKGROUND + ANSI_BLACK + " T " + ANSI_RESET;
             case PLANTS -> ANSI_PURPLE_BACKGROUND + ANSI_BLACK + " P " + ANSI_RESET;
-            case NOTILE -> ANSI_BLACK_BACKGROUND + " " + ANSI_RESET;
+            case NOTILE -> ANSI_BLACK_BACKGROUND + "   " + ANSI_RESET;
         };
     }
     

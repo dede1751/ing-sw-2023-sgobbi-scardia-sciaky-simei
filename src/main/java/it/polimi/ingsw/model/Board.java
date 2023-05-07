@@ -64,6 +64,8 @@ public class Board implements Serializable {
                 this.tileOccupancy.put(coordinate, Tile.NOTILE);
             }
         }
+        
+        
     }
     
     private Board(Map<Coordinate, Tile> map) {

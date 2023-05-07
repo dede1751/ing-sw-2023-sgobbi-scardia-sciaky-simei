@@ -38,6 +38,7 @@ public class GameController {
         this.playerNumber = model.getPlayers().size();
         
         model.startGame();
+        model.refillBoard();
     }
     
     /**

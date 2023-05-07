@@ -79,7 +79,7 @@ public class TUIUtils {
     static String printBoard(Board board) {
         StringBuilder sb = new StringBuilder();
         
-        String colmns = "    0  1  2  3  4  5  6  7  8 ";
+        String colmns = "   0  1  2  3  4  5  6  7  8 ";
         
         if( board == null ) {
             System.out.println("Board still not initialized!");
@@ -87,10 +87,15 @@ public class TUIUtils {
             sb.append(colmns).append("\n");
             var matrix = board.getAsMatrix();
             for( int i = 0; i < 9; i++ ) {
-                sb.append(i);
+                sb.append(i).append(" ");
                 for( int j = 0; j < 9; j++ ) {
-                    var tile = matrix[i][j].toTile();
-                    sb.append(tile);
+                    if( matrix[i][j] != null ) {
+                        var tile = matrix[i][j].toTile();
+                        sb.append(tile);
+                    }else {
+                        sb.append(Tile.NOTILE.toTile());
+                    }
+                    
                 }
                 sb.append("\n");
             }
@@ -101,7 +106,7 @@ public class TUIUtils {
     
     static String printShelf(Shelf shelf) {
         StringBuilder sb = new StringBuilder();
-        //5*6
+        
         
         if( shelf == null ) {
             System.out.println("Shelf still not initialized!");

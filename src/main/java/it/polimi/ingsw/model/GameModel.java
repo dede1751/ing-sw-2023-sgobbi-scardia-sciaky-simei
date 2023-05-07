@@ -76,6 +76,7 @@ public class GameModel {
         this.lastTurn = false;
         
         this.board = new Board(numPlayers);
+        
         this.players = new ArrayList<>();
         this.numPlayers = numPlayers;
         this.currentPlayerIndex = 0;
@@ -84,7 +85,9 @@ public class GameModel {
     }
     
     public void startGame() {
+        
         this.notifyStartGame();
+        
     }
     
     private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
@@ -97,6 +100,7 @@ public class GameModel {
         this.board = board;
         this.tileBag = tileBag;
         this.listeners = new HashMap<>(numPlayers);
+        
     }
     
     /**
