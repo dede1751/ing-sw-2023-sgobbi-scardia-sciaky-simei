@@ -61,6 +61,30 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
         return "(" + type().name().charAt(0) + "," + sp + ")";
     }
     
+    
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_BLACK = "\u001B[30m";
+    private static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
+    private static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    private static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+    private static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    private static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    private static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
+    private static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    
+    
+    public String toTile() {
+        return switch( type() ) {
+            case CATS -> ANSI_GREEN_BACKGROUND + ANSI_BLACK + " C " + ANSI_RESET;
+            case BOOKS -> ANSI_WHITE_BACKGROUND + ANSI_BLACK + " B " + ANSI_RESET;
+            case GAMES -> ANSI_YELLOW_BACKGROUND + ANSI_BLACK + " G " + ANSI_RESET;
+            case FRAMES -> ANSI_BLUE_BACKGROUND + ANSI_BLACK + " F " + ANSI_RESET;
+            case TROPHIES -> ANSI_CYAN_BACKGROUND + ANSI_BLACK + " T " + ANSI_RESET;
+            case PLANTS -> ANSI_PURPLE_BACKGROUND + ANSI_BLACK + " P " + ANSI_RESET;
+            case NOTILE -> ANSI_BLACK_BACKGROUND + "   " + ANSI_RESET;
+        };
+    }
+    
     /**
      * Return a tile from a valid string representation
      *
@@ -83,7 +107,7 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
                 default -> Sprite.NOSPRITE;
             };
             return new Tile(type, sprite);
-        } else {
+        }else {
             throw new InvalidStringException();
         }
         

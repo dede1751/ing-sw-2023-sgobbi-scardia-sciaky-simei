@@ -14,11 +14,11 @@ import java.util.function.Predicate;
 /**
  * Board representation for the model
  */
-public class Board implements Serializable{
+public class Board implements Serializable {
     
     private final Map<Coordinate, Tile> tileOccupancy;
     
-     /**
+    /**
      * Initialize board for the given number of players
      * The player number cannot change dynamically throughout the game
      *
@@ -64,6 +64,8 @@ public class Board implements Serializable{
                 this.tileOccupancy.put(coordinate, Tile.NOTILE);
             }
         }
+        
+        
     }
     
     private Board(Map<Coordinate, Tile> map) {
@@ -128,6 +130,7 @@ public class Board implements Serializable{
      * The bag will not be modified, as the contents of the tilebag include the contents of the board.
      * If not enough tiles are present to refill the board, it will only be partially refilled.
      * Refilling happens in a breadth-first approach starting at a random coordinate
+     *
      * @param tileBag Bag to draw the tiles from.
      */
     public void refill(TileBag tileBag) {
@@ -199,14 +202,15 @@ public class Board implements Serializable{
     
     /**
      * Get the matrix representation of the board as a 9*9 tiles Matrix
+     *
      * @return Tile[][] The matrix rapresentation of the board.
-     *         Invalid positions in the board are represented with null values
+     * Invalid positions in the board are represented with null values
      */
     
-    public Tile[][] getAsMatrix(){
+    public Tile[][] getAsMatrix() {
         var result = new Tile[9][9];
-        for(int i = 0; i < 9; i++){
-            for(int j = 0; j < 9; j++){
+        for( int i = 0; i < 9; i++ ) {
+            for( int j = 0; j < 9; j++ ) {
                 var coord = new Coordinate(i, j);
                 result[i][j] = this.tileOccupancy.getOrDefault(coord, null);
             }
@@ -214,18 +218,18 @@ public class Board implements Serializable{
         return result;
     }
     
-    public static class BoardSerializer implements JsonSerializer<Board>{
+    public static class BoardSerializer implements JsonSerializer<Board> {
         
         @Override
         public JsonElement serialize(Board src, Type typeOfSrc, JsonSerializationContext context) {
             String def = "(-,-)";
             var mat = new String[9][9];
-            for(int i = 0; i < 9; i++){
-                for(int j = 0; j < 9; j++){
+            for( int i = 0; i < 9; i++ ) {
+                for( int j = 0; j < 9; j++ ) {
                     var coord = new Coordinate(i, j);
-                    if(src.tileOccupancy.containsKey(coord)){
+                    if( src.tileOccupancy.containsKey(coord) ) {
                         mat[i][j] = src.getTile(coord).toString();
-                    }else{
+                    }else {
                         mat[i][j] = def;
                     }
                 }
@@ -235,20 +239,22 @@ public class Board implements Serializable{
         }
     }
     
-    public static class BoardDeserializer implements JsonDeserializer<Board>{
+    public static class BoardDeserializer implements JsonDeserializer<Board> {
         
         @Override
         public Board deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             Gson gson = new GsonBuilder().create();
             var hashMap = new HashMap<Coordinate, Tile>();
             var board = gson.fromJson(json, String[][].class);
-            for(int i = 0; i < 9; i++){
-                for(int j = 0; j < 9; j++){
+            for( int i = 0; i < 9; i++ ) {
+                for( int j = 0; j < 9; j++ ) {
                     var coord = new Coordinate(i, j);
                     try {
                         var tile = Tile.fromString(board[i][j]);
                         hashMap.put(coord, tile);
-                    } catch ( InvalidStringException ignored ) { }
+                    }
+                    catch( InvalidStringException ignored ) {
+                    }
                 }
             }
             return new Board(hashMap);

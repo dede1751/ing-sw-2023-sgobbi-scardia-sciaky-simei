@@ -13,21 +13,22 @@ public class TwoRowDistinctGoal implements CommonGoalStrategy {
     
     public boolean checkShelf(Shelf shelf) {
         int rowCounter = 0;
-        for (int i = 0; i < 6; i++) {
+        for( int i = 0; i < 6; i++ ) {
             HashSet<Tile.Type> uniqueTiles = new HashSet<>();
             boolean skipRow = false;
-
-            for (int j = 0; j < 5; j++) {
+            
+            for( int j = 0; j < 5; j++ ) {
                 Tile tile = shelf.getTile(i, j);
-    
-                if ( tile == Tile.NOTILE ) {
+                
+                if( tile == Tile.NOTILE ) {
                     skipRow = true;
                     break;
                 }
                 uniqueTiles.add(tile.type());
             }
-    
-            if ( !skipRow && uniqueTiles.size() == 5 ) rowCounter++;
+            
+            if( !skipRow && uniqueTiles.size() == 5 )
+                rowCounter++;
         }
         return rowCounter >= 2;
     }

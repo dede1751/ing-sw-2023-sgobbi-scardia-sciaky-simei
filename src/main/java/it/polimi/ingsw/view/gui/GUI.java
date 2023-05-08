@@ -26,6 +26,54 @@ public class GUI extends View {
     
     }
     
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(ServerResponseMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(ShelfMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(IncomingChatMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(UpdateScoreMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(CommonGoalMessage msg) {
+    
+    }
+    
+    /**
+     * @param msg
+     */
+    @Override
+    public void onMessage(CurrentPlayerMessage msg) {
+    
+    }
+    
     @Override
     public void run() {
     

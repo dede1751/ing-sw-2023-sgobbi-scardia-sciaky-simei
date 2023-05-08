@@ -6,9 +6,4 @@ public class DebugMessage extends ViewMessage<String> {
         super(s, playerNick, clientId);
     }
     
-    @Override
-    public Class<?> getMessageType() {
-        return this.getClass();
-    }
-    
 }

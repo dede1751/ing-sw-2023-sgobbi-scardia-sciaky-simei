@@ -166,7 +166,7 @@ public class GameModelTest {
         int scoreToAdd = 10;
         int expectedScore = startingScore + scoreToAdd;
         
-        game.addCurrentPlayerCommongGoalScore(scoreToAdd);
+        game.addCurrentPlayerCommongGoalScore(scoreToAdd, GameModel.CGType.X);
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
     }
     

@@ -27,13 +27,14 @@ public class PersonalGoal {
     /**
      * Initialize personal goal from unique goal index
      * Goals can only be created internally, only pre-initialized ones can actually be used.
+     *
      * @param goalIndex Unique integer ID of the goal
      */
     public PersonalGoal(int goalIndex) {
         this.goalIndex = goalIndex;
         this.goal = new HashMap<>();
         
-        switch (goalIndex) {
+        switch( goalIndex ) {
             case 0 -> {
                 this.goal.put(new Coordinate(4, 4), Tile.Type.CATS);
                 this.goal.put(new Coordinate(3, 3), Tile.Type.BOOKS);
@@ -136,27 +137,39 @@ public class PersonalGoal {
     
     /**
      * Get instance of personal goal with given id
+     *
      * @param goalIndex Unique integer id of goal to get
-     * @return          Goal with given id
+     *
+     * @return Goal with given id
      */
-    public static PersonalGoal getPersonalGoal(int goalIndex) { return goalList[goalIndex]; }
+    public static PersonalGoal getPersonalGoal(int goalIndex) {
+        return goalList[goalIndex];
+    }
     
     /**
      * Get the unique id of the goal
+     *
      * @return Unique integer id of goal
      */
-    public int getGoalIndex() { return this.goalIndex; }
+    public int getGoalIndex() {
+        return this.goalIndex;
+    }
     
     /**
      * Get the contents of the goal as a map of coordinates and their contents.
+     *
      * @return Copy of coordinate->Tile.Type mapping
      */
-    public Map<Coordinate, Tile.Type> getGoal() { return new HashMap<>(this.goal); }
+    public Map<Coordinate, Tile.Type> getGoal() {
+        return new HashMap<>(this.goal);
+    }
     
     /**
      * Checks the goal against the given shelf and computes the score
+     *
      * @param shelf Shelf to check for goal achievement
-     * @return      Score obtained from goal completion
+     *
+     * @return Score obtained from goal completion
      */
     public int checkGoal(Shelf shelf) {
         long count = this.goal.entrySet()
@@ -169,7 +182,7 @@ public class PersonalGoal {
                 })
                 .count();
         
-        final int[] scores = { 0, 1, 2, 4, 6, 9, 12 };
+        final int[] scores = {0, 1, 2, 4, 6, 9, 12};
         
         return scores[(int) count];
     }

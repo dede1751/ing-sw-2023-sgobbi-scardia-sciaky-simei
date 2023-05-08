@@ -9,16 +9,12 @@ public class ChatMessage extends ViewMessage<String> {
         dest = "BROADCAST";
     }
     
-    @Override
-    public Class<?> getMessageType() {
-        return this.getClass();
-    }
-    
-    public ChatMessage(String s, String PlayerNick, String playerDestination, int clientId){
+    public ChatMessage(String s, String PlayerNick, String playerDestination, int clientId) {
         super(s, PlayerNick, clientId);
         dest = playerDestination;
     }
-    public String getDestination(){
+    
+    public String getDestination() {
         return this.dest;
     }
     

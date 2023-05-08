@@ -3,13 +3,15 @@ package it.polimi.ingsw.controller;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.goals.common.CommonGoal;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
-import it.polimi.ingsw.network.Response;
+import it.polimi.ingsw.model.messages.Response;
+import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
-import it.polimi.ingsw.view.messages.*;
+import it.polimi.ingsw.view.messages.ChatMessage;
+import it.polimi.ingsw.view.messages.DebugMessage;
+import it.polimi.ingsw.view.messages.Move;
+import it.polimi.ingsw.view.messages.MoveMessage;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -36,6 +38,7 @@ public class GameController {
         this.playerNumber = model.getPlayers().size();
         
         model.startGame();
+        model.refillBoard();
     }
     
     /**
@@ -63,6 +66,7 @@ public class GameController {
      * Compute adjacency score for final scores
      *
      * @param shelf Shelf to check for the score
+     *
      * @return Integer score assigned for adjacent similar tiles in the given shelf
      */
     public int calculateAdjacency(Shelf shelf) {
@@ -119,24 +123,22 @@ public class GameController {
         
         if( !currentPlayer.isCompletedGoalX() &&
             CommonGoal.getCommonGoal(model.getCommonGoalX()).checkGoal(currentPlayer.getShelf()) ) {
-            model.addCurrentPlayerCommongGoalScore(model.popStackCGX());
-            currentPlayer.setCompletedGoalX(true);
+            model.addCurrentPlayerCommongGoalScore(model.popStackCGX(), GameModel.CGType.X);
         }
         if( !currentPlayer.isCompletedGoalY() &&
             CommonGoal.getCommonGoal(model.getCommonGoalY()).checkGoal(currentPlayer.getShelf()) ) {
-            model.addCurrentPlayerCommongGoalScore(model.popStackCGY());
-            currentPlayer.setCompletedGoalY(true);
+            model.addCurrentPlayerCommongGoalScore(model.popStackCGY(), GameModel.CGType.Y);
         }
         
         //calculate and set in every turn the personalGoalScore
-        currentPlayer.setPersonalGoalScore(
+        model.setCurrentPlayerPersonalScore(
                 PersonalGoal.getPersonalGoal(currentPlayer.getPg()).checkGoal(currentPlayer.getShelf()));
         
         //calculate and set in every turn the adjacentTiles and score
-        currentPlayer.setAdjacentScore(calculateAdjacency(currentPlayer.getShelf()));
+        model.setCurrentPlayerAdiajencyScore(calculateAdjacency(currentPlayer.getShelf()));
         
         if( needRefill() ) {
-            model.getBoard().refill(model.getTileBag());
+            model.refillBoard();
         }
         
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
@@ -169,48 +171,45 @@ public class GameController {
      * Save the model to a file
      */
     private void saveModel() {
-        try {
-            File dir = new File(ResourcesManager.recoveryDir);
-            if( !dir.exists() && !dir.mkdir() ) {
-                System.err.println("Unable to create recovery directory");
-                return;
-            }
-            
-            model.toJson(ResourcesManager.recoveryDir + "/" + lobbyID + ".json");
-        } catch( IOException e ) {
-            System.err.println("Error saving model");
-            e.printStackTrace();
-        }
+        ResourcesManager.saveModel(model, lobbyID);
     }
     
     /**
      * Respond to a chat message received from a client
+     *
      * @param chat Message contents
-     * @return Response to the client
      */
     @SuppressWarnings("unused")
-    public Response onMessage(ChatMessage chat){
+    public void onMessage(ChatMessage chat) {
         model.chatBroker(chat);
-        return Response.Ok(chat.getClass().getSimpleName());
     }
     
     /**
      * Respond to a move message received from a client
+     * In case of error, notify the client through the model with a ServerMessage.
+     *
      * @param msg Move received
-     * @return Response to the client
      */
     @SuppressWarnings("unused")
-    public Response onMessage(MoveMessage msg){
-        
+    public void onMessage(MoveMessage msg) {
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
+        
         if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
-            System.err.println("Ignoring event from player '" + msg.getPlayerNickname() + "': " + msg.getMessageType().getTypeName() + ". Not the current Player.");
-            return Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName());
+            this.model.notifyServerMessage(
+                    msg.getPlayerNickname(),
+                    new ServerResponseMessage(
+                            Response.NotCurrentPlayer(currentPlayerNick, msg.getClass().getSimpleName()))
+            );
+            return;
         }
         
         Move move = msg.getPayload();
         if( !IntegrityChecks.checkMove(move, this.model.getBoard(), this.model.getCurrentPlayer().getShelf()) ) {
-            return Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName());
+            this.model.notifyServerMessage(
+                    msg.getPlayerNickname(),
+                    new ServerResponseMessage(Response.IllegalMove(currentPlayerNick, msg.getClass().getSimpleName()))
+            );
+            return;
         }
         
         // if the move is valid, execute the full turn
@@ -219,15 +218,17 @@ public class GameController {
         turnManager();
         nextPlayerSetter();
         saveModel();
-        
-        return Response.Ok(msg.getClass().getSimpleName());
     }
     
     @SuppressWarnings("unused")
-    public Response onMessage(DebugMessage message){
+    public void onMessage(DebugMessage message) {
         System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());
         saveModel();
-        return new Response(0, message.getPayload(), message.getClass().getSimpleName());
+        
+        this.model.notifyServerMessage(
+                message.getPlayerNickname(),
+                new ServerResponseMessage(new Response(0, message.getPayload(), message.getClass().getSimpleName()))
+        );
     }
     
 }

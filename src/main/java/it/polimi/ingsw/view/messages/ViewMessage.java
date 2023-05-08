@@ -8,19 +8,23 @@ public abstract class ViewMessage<Payload extends Serializable> implements Seria
     private final String nickname;
     
     private final int clientId;
-    public ViewMessage(Payload payload, String playerNick, int clientId){
+    
+    public ViewMessage(Payload payload, String playerNick, int clientId) {
         this.payload = payload;
         this.nickname = playerNick;
         this.clientId = clientId;
     }
-    public Payload getPayload(){
+    
+    public Payload getPayload() {
         return this.payload;
     }
-    public abstract Class<?> getMessageType();
-    public String getPlayerNickname(){
+    
+    public String getPlayerNickname() {
         return this.nickname;
     }
-    public int getClientId(){
+    
+    public int getClientId() {
         return this.clientId;
     }
+    
 }

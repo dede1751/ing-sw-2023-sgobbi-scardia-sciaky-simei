@@ -17,6 +17,8 @@ public class LocalModel {
     
     private List<String> playersNicknames;
     
+    private String currentPlayer;
+    
     private final Map<String, Shelf> shelves = new HashMap<>();
     
     private final Map<String, Integer> points = new HashMap<>();
@@ -28,7 +30,9 @@ public class LocalModel {
     private int topCGYscore = 0;
     private Board board;
     
-    private LocalModel() {}
+    
+    private LocalModel() {
+    }
     
     public void setBoard(Board board) {
         this.board = board;
@@ -38,27 +42,27 @@ public class LocalModel {
         return board;
     }
     
-    public void setPoints(Integer points, String nickname){
-        if(this.points.containsKey(nickname)){
+    public void setPoints(Integer points, String nickname) {
+        if( this.points.containsKey(nickname) ) {
             this.points.replace(nickname, points);
-        }else{
+        }else {
             this.points.put(nickname, points);
         }
     }
     
-    public int getPoints(String nickname){
+    public int getPoints(String nickname) {
         return this.points.get(nickname);
     }
     
     public void setShelves(Shelf shelf, String nickname) {
-        if(this.shelves.containsKey(nickname)){
+        if( this.shelves.containsKey(nickname) ) {
             this.shelves.replace(nickname, shelf);
-        }else{
+        }else {
             this.shelves.put(nickname, shelf);
         }
     }
     
-    public Shelf getShelf(String nickname){
+    public Shelf getShelf(String nickname) {
         return this.shelves.get(nickname);
     }
     
@@ -102,4 +106,11 @@ public class LocalModel {
         this.playersNicknames = playersNicknames;
     }
     
+    public String getCurrentPlayer() {
+        return currentPlayer;
+    }
+    
+    public void setCurrentPlayer(String currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
 }
