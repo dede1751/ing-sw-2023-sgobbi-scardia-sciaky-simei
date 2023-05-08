@@ -1,6 +1,7 @@
 package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.view.LocalModel;
 
 public class TUIUtils {
     
@@ -363,6 +364,28 @@ public class TUIUtils {
             
         }
         return createBox(sb.toString());
+    }
+    
+    static void printGame(LocalModel model, String nickname) {
+        StringBuilder game = new StringBuilder();
+        StringBuilder cg = new StringBuilder();
+        cg.append(generateCommonGoal(0))
+                .append("\n")
+                .append(generateCommonGoal(9));
+        for( int i = 0; i < model.getPlayersNicknames().size(); i++ ) {
+            if( model.getPlayersNicknames().get(i) != nickname )
+                TUIUtils.concatString(game.toString(), TUIUtils.generateShelf(
+                        model.getShelf(model.getPlayersNicknames().get(i))), 1);
+        }
+        
+        game.append("\n")
+                .append(generateBoard(model.getBoard()))
+                .append(cg.toString())
+                .append("\n")
+                .append(generateShelf(model.getShelf(nickname)))
+                .append(generatePersonalGoal(3));
+        
+        System.out.println(game.toString());
     }
     
 }
