@@ -24,7 +24,7 @@ public class Board implements Serializable {
      *
      * @param numPlayers Total number of players for the game
      */
-    protected Board(int numPlayers) {
+    public Board(int numPlayers) {
         this.tileOccupancy = new HashMap<>();
         
         Coordinate[] commonCoordinates = {

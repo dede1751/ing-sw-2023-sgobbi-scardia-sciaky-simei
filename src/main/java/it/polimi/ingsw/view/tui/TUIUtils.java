@@ -370,25 +370,26 @@ public class TUIUtils {
     }
     
     static void printGame(LocalModel model, String nickname) {
+        
+        
         StringBuilder game = new StringBuilder();
         StringBuilder cg = new StringBuilder();
         
         var cgx = model.getCGXindex();
         var cgy = model.getCGYindex();
-        var cgxdesc = model.getCGXdescription();
-        var cgydesc = model.getCGXdescription();
+        //var cgxdesc = model.getCGXdescription();
+        //var cgydesc = model.getCGXdescription();
         
-        cg.append(generateCommonGoal(cgx)).append("   ").append(generateCommonGoal(cgy))
-                .append("\n").append(" ");
-        for( int i = 0; i <= cgxdesc.length() - 11; i+=11 ) {
-            cg.append( cgxdesc.substring(i, i + 10) )
-                    .append("\n");
-        }
-        cg.append("                 ");
-        for( int i = 0; i <= cgydesc.length() - 11; i+=11 ) {
-            cg.append( cgydesc.substring(i, i + 10) )
-                    .append("\n");
-        }
+        cg.append(concatString(generateCommonGoal(cgx), generateCommonGoal(cgy), 2)).append("\n");
+        
+        //    cg.append( cgxdesc.substring(i, i + 10) )
+        //             .append("\n");
+        // }
+        // cg.append("                 ");
+        // for( int i = 0; i <= cgydesc.length() - 11; i+=11 ) {
+        //     cg.append( cgydesc.substring(i, i + 10) )
+        //             .append("\n");
+        // }
         
         for( int i = 0; i < model.getPlayersNicknames().size(); i++ ) {
             if( !Objects.equals(model.getPlayersNicknames().get(i), nickname) )
@@ -401,20 +402,21 @@ public class TUIUtils {
                 .append("     ").append(cg.toString())
                 .append("\n");
         var players = model.getPlayersNicknames();
-        for( int i = 0; i <= players.size(); i++ ) {
+        for( int i = 0; i < players.size(); i++ ) {
             game.append(generateShelf(model.getShelf(players.get(i))))
-                    .append("     ") ;
+                    .append("     ");
         }
         game.append("\n");
         for( int i = 0; i <= players.size(); i++ ) {
             game.append(players.get(i))
-                    .append("     ") ;
+                    .append("     ");
         }
         game.append("\n")
                 .append(generatePersonalScore()).append("\n")
-                        .append(generatePersonalGoal(2));
+                .append(generatePersonalGoal(model.getPg()));
         
         System.out.println(game.toString());
+        
     }
     
 }

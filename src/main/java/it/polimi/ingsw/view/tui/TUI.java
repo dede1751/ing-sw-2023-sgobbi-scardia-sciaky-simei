@@ -1,6 +1,8 @@
 package it.polimi.ingsw.view.tui;
 
+import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Coordinate;
+import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
 
@@ -277,8 +279,7 @@ public class TUI extends View {
     @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
-        String s = TUIUtils.generateBoard(this.model.getBoard());
-        System.out.println(s);
+        TUIUtils.printGame(model, nickname);
         
     }
     
@@ -307,10 +308,22 @@ public class TUI extends View {
     @Override
     public void onMessage(StartGameMessage msg) {
         model.setPlayersNicknames(msg.getPayload().nicknames());
+        model.setCGXindex(msg.getPayload().XCGnumber());
+        model.setCGYindex(msg.getPayload().YCGnumber());
+        model.setPg(msg.getPayload().personalGoalId());
+        if( model.getBoard() == null ) {
+            model.setBoard(new Board(msg.getPayload().nicknames().size()));
+        }
+        for( int i = 0; i < msg.getPayload().nicknames().size(); i++ ) {
+            model.setShelves(new Shelf(), msg.getPayload().nicknames().get(i));
+        }
+        
         System.out.println("GAME START!");
         System.out.println("Players name:");
-        
         msg.getPayload().nicknames().forEach(System.out::println);
+        
+        
+        TUIUtils.printGame(model, nickname);
         
     }
     
@@ -341,7 +354,7 @@ public class TUI extends View {
     @Override
     public void onMessage(ShelfMessage msg) {
         this.model.setShelves(msg.getPayload(), msg.getPlayer());
-        
+        TUIUtils.printGame(model, nickname);
     }
     
     /**
