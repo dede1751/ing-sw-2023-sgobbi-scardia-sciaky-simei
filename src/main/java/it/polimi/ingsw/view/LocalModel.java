@@ -23,7 +23,9 @@ public class LocalModel {
     
     private final Map<String, Integer> points = new HashMap<>();
     
+    private int CGXindex;
     private String CGXdescription = "";
+    private int CGYindex;
     private String CGYdescription = "";
     
     private int topCGXscore = 0;
@@ -81,6 +83,7 @@ public class LocalModel {
     public void setTopCGYscore(int topCGYscore) {
         this.topCGYscore = topCGYscore;
     }
+    public int getCGXindex() { return CGXindex; }
     
     public String getCGXdescription() {
         return CGXdescription;
@@ -89,6 +92,7 @@ public class LocalModel {
     public void setCGXdescription(String CGXdescription) {
         this.CGXdescription = CGXdescription;
     }
+    public int getCGYindex() { return CGYindex; }
     
     public String getCGYdescription() {
         return CGYdescription;

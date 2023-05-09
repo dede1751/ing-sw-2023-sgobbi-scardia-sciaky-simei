@@ -3,6 +3,9 @@ package it.polimi.ingsw.view.tui;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.LocalModel;
 
+import java.util.Objects;
+import java.util.Random;
+
 public class TUIUtils {
     
     public static final String ANSI_RESET = "\u001B[0m";
@@ -369,21 +372,47 @@ public class TUIUtils {
     static void printGame(LocalModel model, String nickname) {
         StringBuilder game = new StringBuilder();
         StringBuilder cg = new StringBuilder();
-        cg.append(generateCommonGoal(0))
-                .append("\n")
-                .append(generateCommonGoal(9));
+        
+        var cgx = model.getCGXindex();
+        var cgy = model.getCGYindex();
+        var cgxdesc = model.getCGXdescription();
+        var cgydesc = model.getCGXdescription();
+        
+        cg.append(generateCommonGoal(cgx)).append("   ").append(generateCommonGoal(cgy))
+                .append("\n").append(" ");
+        for( int i = 0; i <= cgxdesc.length() - 11; i+=11 ) {
+            cg.append( cgxdesc.substring(i, i + 10) )
+                    .append("\n");
+        }
+        cg.append("                 ");
+        for( int i = 0; i <= cgydesc.length() - 11; i+=11 ) {
+            cg.append( cgydesc.substring(i, i + 10) )
+                    .append("\n");
+        }
+        
         for( int i = 0; i < model.getPlayersNicknames().size(); i++ ) {
-            if( model.getPlayersNicknames().get(i) != nickname )
+            if( !Objects.equals(model.getPlayersNicknames().get(i), nickname) )
                 TUIUtils.concatString(game.toString(), TUIUtils.generateShelf(
                         model.getShelf(model.getPlayersNicknames().get(i))), 1);
         }
         
         game.append("\n")
                 .append(generateBoard(model.getBoard()))
-                .append(cg.toString())
-                .append("\n")
-                .append(generateShelf(model.getShelf(nickname)))
-                .append(generatePersonalGoal(3));
+                .append("     ").append(cg.toString())
+                .append("\n");
+        var players = model.getPlayersNicknames();
+        for( int i = 0; i <= players.size(); i++ ) {
+            game.append(generateShelf(model.getShelf(players.get(i))))
+                    .append("     ") ;
+        }
+        game.append("\n");
+        for( int i = 0; i <= players.size(); i++ ) {
+            game.append(players.get(i))
+                    .append("     ") ;
+        }
+        game.append("\n")
+                .append(generatePersonalScore()).append("\n")
+                        .append(generatePersonalGoal(2));
         
         System.out.println(game.toString());
     }
