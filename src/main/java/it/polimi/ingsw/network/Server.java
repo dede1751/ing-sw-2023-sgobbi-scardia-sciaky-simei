@@ -12,15 +12,16 @@ import java.rmi.RemoteException;
 public interface Server extends Remote {
     /**
      * Register a client to the server
+     *
      * @param client the client to register
      */
     void register(Client client) throws RemoteException;
     
     /**
-     * Notify the server that a client has made a choice.
-     * @param message the message sent by the view
-     * @return the response from the server
+     * Notify the server of a client's message
+     *
+     * @param message the message sent by the client
      */
-    Response update(ViewMessage<?> message) throws RemoteException;
+    void update(ViewMessage<?> message) throws RemoteException;
     
 }

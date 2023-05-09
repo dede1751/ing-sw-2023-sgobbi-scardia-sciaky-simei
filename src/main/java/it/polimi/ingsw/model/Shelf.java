@@ -1,16 +1,16 @@
 package it.polimi.ingsw.model;
 
-import java.io.Serializable;
 import com.google.gson.*;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.*;
 
 /**
  * Shelf representation within the model
  */
-public class Shelf implements Serializable{
+public class Shelf implements Serializable {
     
     static final long serialVersionUID = 1L;
     

@@ -2,7 +2,6 @@ package it.polimi.ingsw.network.socket;
 
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Client;
-import it.polimi.ingsw.network.Response;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
@@ -22,13 +21,15 @@ public class ClientSkeleton implements Client {
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot create output stream", e);
         }
         
         try {
             this.ois = new ObjectInputStream(socket.getInputStream());
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot create input stream", e);
         }
     }
@@ -41,34 +42,34 @@ public class ClientSkeleton implements Client {
                 oos.reset();
                 oos.flush();
                 this.clientID = clientID;
-            } else {
+            }else {
                 throw new RemoteException("ID already setted for this client");
             }
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send client id", e);
         }
     }
     
+    /**
+     * Reads the input stream for ViewMessages and forwards them to the server
+     *
+     * @param server the server to forward the messages to
+     *
+     * @throws RemoteException if the message cannot be read or is not a ViewMessage
+     */
     public void receive(Server server) throws RemoteException {
-        ViewMessage<?> message;
-        Response response;
         
         try {
-            message = (ViewMessage<?>) ois.readObject();
-            response = server.update(message);
-        } catch( IOException e ) {
+            server.update((ViewMessage<?>) ois.readObject());
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot receive message from client", e);
-        } catch( ClassNotFoundException e ) {
+        }
+        catch( ClassNotFoundException | ClassCastException e ) {
             throw new RemoteException("Sent message doesn't have the correct type", e);
         }
         
-        try {
-            oos.writeObject(response);
-            oos.reset();
-            oos.flush();
-        } catch( IOException e ) {
-            throw new RemoteException("Cannot send response", e);
-        }
     }
     
     @Override
@@ -77,7 +78,8 @@ public class ClientSkeleton implements Client {
             oos.writeObject(msg);
             oos.reset();
             oos.flush();
-        } catch( IOException e ) {
+        }
+        catch( IOException e ) {
             throw new RemoteException("Cannot send message", e);
         }
     }

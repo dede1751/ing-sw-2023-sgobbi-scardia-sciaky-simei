@@ -6,9 +6,4 @@ public class MoveMessage extends ViewMessage<Move> {
         super(move, playerNick, clientId);
     }
     
-    @Override
-    public Class<?> getMessageType() {
-        return this.getClass();
-    }
-    
 }

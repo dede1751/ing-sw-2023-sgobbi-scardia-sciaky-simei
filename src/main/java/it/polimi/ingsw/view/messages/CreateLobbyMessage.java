@@ -5,9 +5,4 @@ public class CreateLobbyMessage extends ViewMessage<Integer> {
         super(i, playerNick, clientId);
     }
     
-    @Override
-    public Class<?> getMessageType() {
-        return this.getClass();
-    }
-    
 }
