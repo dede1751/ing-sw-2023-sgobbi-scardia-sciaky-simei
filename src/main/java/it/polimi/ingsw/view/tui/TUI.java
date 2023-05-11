@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.tui;
 
-import it.polimi.ingsw.model.Board;
-import it.polimi.ingsw.model.Coordinate;
-import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.model.messages.*;
 
 
@@ -362,7 +359,8 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
-        //TODO
+        this.model.addChatMessage(msg.getSender(), msg.getPayload());
+        TUIUtils.printGame(model, nickname);
     }
     
     /**
@@ -370,7 +368,8 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
-        //TODO
+        this.model.setPoints(msg.getPayload().score(), msg.getPayload().player());
+        TUIUtils.printGame(model, nickname);
     }
     
     /**
@@ -378,7 +377,12 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(CommonGoalMessage msg) {
-        //TODO
+        if( msg.getPayload().type() == GameModel.CGType.Y ) {
+            this.model.setTopCGYscore(msg.getPayload().availableTopScore());
+        }else {
+            this.model.setTopCGXscore(msg.getPayload().availableTopScore());
+        }
+        TUIUtils.printGame(model, nickname);
     }
     
     /**
@@ -387,6 +391,7 @@ public class TUI extends View {
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         this.model.setCurrentPlayer(msg.getPayload());
+        
         synchronized(playerLock) {
             //lock che viene notificato quando è il tuo turno
             if( msg.getPayload().equals(this.nickname) ) {

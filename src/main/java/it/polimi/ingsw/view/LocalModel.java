@@ -3,6 +3,7 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,20 +24,35 @@ public class LocalModel {
     
     private final Map<String, Integer> points = new HashMap<>();
     
-    private int pg;
+    private int pg = 0;
     
-    private int CGXindex;
+    private int CGXindex = 0;
     private String CGXdescription = "";
-    private int CGYindex;
+    private int CGYindex = 0;
     private String CGYdescription = "";
     
     private int topCGXscore = 0;
     private int topCGYscore = 0;
     private Board board;
     
+    private List<String> chat = new ArrayList<>();
+    
     
     private LocalModel() {
     }
+    
+    public void addChatMessage(String nickname, String message) {
+        chat.add(nickname + "->" + message + "\n");
+    }
+    
+    public String getChat() {
+        StringBuilder sb = new StringBuilder();
+        for( int i = 0; i < chat.size(); i++ ) {
+            sb.append(chat.get(i));
+        }
+        return sb.toString();
+    }
+    
     
     public void setBoard(Board board) {
         this.board = board;
