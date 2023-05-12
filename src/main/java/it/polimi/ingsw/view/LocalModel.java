@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Player;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +26,10 @@ public class LocalModel {
     
     private final Map<String, Integer> points = new HashMap<>();
     
-    private int pg = 0;
+    private final Map<String, Integer> pgid = new HashMap<>();
     
     private int CGXindex = 0;
-    private String CGXdescription = "";
     private int CGYindex = 0;
-    private String CGYdescription = "";
     
     private int topCGXscore = 0;
     private int topCGYscore = 0;
@@ -63,6 +62,11 @@ public class LocalModel {
         return board;
     }
     
+    
+    /**
+     * Methods to access and modify values of a Map that associates
+     * a player with his respective score.
+     */
     public void setPoints(Integer points, String nickname) {
         if( this.points.containsKey(nickname) ) {
             this.points.replace(nickname, points);
@@ -75,6 +79,11 @@ public class LocalModel {
         return this.points.get(nickname);
     }
     
+    
+    /**
+     * Methods to access and modify values of a Map that associates
+     * a player with his respective shelf.
+     */
     public void setShelves(Shelf shelf, String nickname) {
         if( this.shelves.containsKey(nickname) ) {
             this.shelves.replace(nickname, shelf);
@@ -86,6 +95,22 @@ public class LocalModel {
     public Shelf getShelf(String nickname) {
         return this.shelves.get(nickname);
     }
+    
+    
+    /**
+     * Method to access and add values to a Map that associates
+     * a player with his respective personal score.
+     */
+    public void setPgid(Integer id, String nickname) {
+        if( !this.pgid.containsKey(nickname) ) {
+            this.pgid.put(nickname, id);
+        }
+    }
+    
+    public int getPgid(String nickname) {
+        return this.pgid.get(nickname);
+    }
+    
     
     public int getTopCGXscore() {
         return topCGXscore;
@@ -103,36 +128,12 @@ public class LocalModel {
         this.topCGYscore = topCGYscore;
     }
     
-    public int getPg() {
-        return pg;
-    }
-    
-    public void setPg(int index) {
-        this.pg = index;
-    }
-    
     public int getCGXindex() {
         return CGXindex;
     }
     
-    public String getCGXdescription() {
-        return CGXdescription;
-    }
-    
-    public void setCGXdescription(String CGXdescription) {
-        this.CGXdescription = CGXdescription;
-    }
-    
     public int getCGYindex() {
         return CGYindex;
-    }
-    
-    public String getCGYdescription() {
-        return CGYdescription;
-    }
-    
-    public void setCGYdescription(String CGYdescription) {
-        this.CGYdescription = CGYdescription;
     }
     
     public List<String> getPlayersNicknames() {
