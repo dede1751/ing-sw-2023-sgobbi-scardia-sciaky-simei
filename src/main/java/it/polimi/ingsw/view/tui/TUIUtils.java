@@ -35,7 +35,7 @@ public class TUIUtils {
                 .append(generateCurrentShelf(model))
                 .append("\n\n")
                 
-                .append(generatePersonalGoal(model.getPgid(nickname)))
+                .append(generatePersonalGoal(model.getPgid()))
                 .append(generatePersonalScore())
                 .append("\n\n");
                 

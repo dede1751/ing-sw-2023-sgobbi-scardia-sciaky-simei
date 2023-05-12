@@ -307,9 +307,7 @@ public class TUI extends View {
         model.setPlayersNicknames(msg.getPayload().nicknames());
         model.setCGXindex(msg.getPayload().XCGnumber());
         model.setCGYindex(msg.getPayload().YCGnumber());
-        for( int i = 0; i < msg.getPayload().nicknames().size(); i++ ) {
-            model.setPgid(msg.getPayload().personalGoalId().get(i), msg.getPayload().nicknames().get(i));
-        }
+        model.setPgid((msg.getPayload()).personalGoalId());
         if( model.getBoard() == null ) {
             model.setBoard(new Board(msg.getPayload().nicknames().size()));
         }

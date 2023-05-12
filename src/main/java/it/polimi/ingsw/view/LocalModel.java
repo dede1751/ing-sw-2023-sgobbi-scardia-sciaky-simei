@@ -26,7 +26,7 @@ public class LocalModel {
     
     private final Map<String, Integer> points = new HashMap<>();
     
-    private final Map<String, Integer> pgid = new HashMap<>();
+    private int pgid = 0;
     
     private int CGXindex = 0;
     private int CGYindex = 0;
@@ -101,14 +101,12 @@ public class LocalModel {
      * Method to access and add values to a Map that associates
      * a player with his respective personal score.
      */
-    public void setPgid(Integer id, String nickname) {
-        if( !this.pgid.containsKey(nickname) ) {
-            this.pgid.put(nickname, id);
-        }
+    public void setPgid(int pgid) {
+        this.pgid = pgid;
     }
     
-    public int getPgid(String nickname) {
-        return this.pgid.get(nickname);
+    public int getPgid() {
+        return this.pgid;
     }
     
     
