@@ -3,8 +3,8 @@ package it.polimi.ingsw.view.tui;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.view.LocalModel;
 
+import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Random;
 
 public class TUIUtils {
     
@@ -18,6 +18,32 @@ public class TUIUtils {
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     //public static final String ANSI_WHITE_BACKGROUND = "\u001B[41m";
     
+    
+    public static void printGame(LocalModel model, String nickname) {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append(generateShelves(model))
+                .append("\n\n");
+                
+        var str = concatString(generateBoard(model.getBoard()),
+                               generateCommonGoal(model.getCGXindex()), 3);
+        str = concatString(str, generateCommonGoal(model.getCGYindex()), 2);
+        
+        sb.append(str)
+                .append("\n\n")
+                
+                .append(generateCurrentShelf(model))
+                .append("\n\n")
+                
+                .append(generatePersonalGoal(model.getPg()))
+                .append(generatePersonalScore())
+                .append("\n\n");
+                
+                //.append(generateCurrentPlayer(model.getCurrentPlayer(),
+                //                              model.getPoints(model.getCurrentPlayer())));
+        
+        System.out.println(sb);
+    }
     
     public static String concatString(String s1, String s2, int space) {
         String[] s1Lines = s1.split("\n");
@@ -105,28 +131,72 @@ public class TUIUtils {
     }
     
     
-    static String generateShelf(Shelf shelf) {
+    static String generateShelves(LocalModel model) {
+    
         StringBuilder sb = new StringBuilder();
+        String top = "┌───┬───┬───┬───┬───┐";
+        String bot = "└───┴───┴───┴───┴───┘";
+    
+        var playersNickname = model.getPlayersNicknames();
+        var currentPlayer = model.getCurrentPlayer();
+    
+        ArrayList<Shelf> shelves = new ArrayList<Shelf>();
+        for( String player : playersNickname ) {
+            if( !Objects.equals(player, currentPlayer) ) {
+                shelves.add(model.getShelf(player));
+            }
+        }
+    
+        for( int i = Shelf.N_ROW; i >= -1; i-- ) {
+    
+            for( Shelf shelf : shelves ) {
+                var matrix = shelf.getAllShelf();
+                
+                switch( i ) {
+                    case 6 -> sb.append(top);
+                    case -1 -> sb.append(bot);
+                    default -> {
+                        for( int j = 0; j < Shelf.N_COL; j++ ) {
+                            var tile = matrix[i][j].toTile();
+                            sb.append("│").append(tile);
+                        }
+                        sb.append("│");
+                    }
+                }
+                sb.append("    ");
+            }
+            sb.append("\n");
+            for( Shelf shelf : shelves ) {
+                sb.append("├───┼───┼───┼───┼───┤").append("    ");
+            }
+        }
+        return sb.toString();
+    }
+
+    
+    static String generateCurrentShelf(LocalModel model) {
         
+        StringBuilder sb = new StringBuilder();
+        String top = "┌───┬───┬───┬───┬───┐";
+        String bot = "└───┴───┴───┴───┴───┘";
         
-        if( shelf == null ) {
-            System.out.println("Shelf still not initialized!");
-        }else {
-            String top = "┌───┬───┬───┬───┬───┐\n";
-            String bottom = "└───┴───┴───┴───┴───┘\n";
-            
-            sb.append(top);
+        var shelf = model.getShelf(model.getCurrentPlayer());
+        
+        if( shelf != null ) {
             var matrix = shelf.getAllShelf();
-            for( int i = Shelf.N_ROW; i >= 0; i-- ) {
+    
+            sb.append(top).append("\n");
+    
+            for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
                 for( int j = 0; j < Shelf.N_COL; j++ ) {
                     var tile = matrix[i][j].toTile();
                     sb.append("│").append(tile);
-                    sb.append("│\n");
-                    if( i != Shelf.N_ROW )
-                        sb.append("├───┼───┼───┼───┼───┤\n");
-                    else
-                        sb.append(bottom);
                 }
+                sb.append("│").append("\n");
+                if( i != 0 )
+                    sb.append("├───┼───┼───┼───┼───┤");
+                else
+                    sb.append(bot);
             }
         }
         
@@ -367,56 +437,6 @@ public class TUIUtils {
             
         }
         return createBox(sb.toString());
-    }
-    
-    static void printGame(LocalModel model, String nickname) {
-        
-        
-        StringBuilder game = new StringBuilder();
-        StringBuilder cg = new StringBuilder();
-        
-        var cgx = model.getCGXindex();
-        var cgy = model.getCGYindex();
-        //var cgxdesc = model.getCGXdescription();
-        //var cgydesc = model.getCGXdescription();
-        
-        cg.append(concatString(generateCommonGoal(cgx), generateCommonGoal(cgy), 2)).append("\n");
-        
-        //    cg.append( cgxdesc.substring(i, i + 10) )
-        //             .append("\n");
-        // }
-        // cg.append("                 ");
-        // for( int i = 0; i <= cgydesc.length() - 11; i+=11 ) {
-        //     cg.append( cgydesc.substring(i, i + 10) )
-        //             .append("\n");
-        // }
-        
-        for( int i = 0; i < model.getPlayersNicknames().size(); i++ ) {
-            if( !Objects.equals(model.getPlayersNicknames().get(i), nickname) )
-                TUIUtils.concatString(game.toString(), TUIUtils.generateShelf(
-                        model.getShelf(model.getPlayersNicknames().get(i))), 1);
-        }
-        
-        game.append("\n")
-                .append(generateBoard(model.getBoard()))
-                .append("     ").append(cg.toString())
-                .append("\n");
-        var players = model.getPlayersNicknames();
-        for( int i = 0; i < players.size(); i++ ) {
-            game.append(generateShelf(model.getShelf(players.get(i))))
-                    .append("     ");
-        }
-        game.append("\n");
-        for( int i = 0; i <= players.size(); i++ ) {
-            game.append(players.get(i))
-                    .append("     ");
-        }
-        game.append("\n")
-                .append(generatePersonalScore()).append("\n")
-                .append(generatePersonalGoal(model.getPg()));
-        
-        System.out.println(game.toString());
-        
     }
     
 }

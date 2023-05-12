@@ -2,6 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
