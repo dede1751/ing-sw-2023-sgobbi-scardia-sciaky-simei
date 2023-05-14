@@ -23,8 +23,6 @@ public class TUI extends View {
     
     protected boolean newLobbies = false;
     
-    private Boolean flag = false;
-    
     private final Object playerLock = new Object();
     
     @Override
@@ -304,24 +302,26 @@ public class TUI extends View {
     @SuppressWarnings("unused")
     @Override
     public void onMessage(StartGameMessage msg) {
-        model.setPlayersNicknames(msg.getPayload().nicknames());
-        model.setCGXindex(msg.getPayload().XCGnumber());
-        model.setCGYindex(msg.getPayload().YCGnumber());
-        model.setPgid((msg.getPayload()).personalGoalId());
-        if( model.getBoard() == null ) {
-            model.setBoard(new Board(msg.getPayload().nicknames().size()));
-        }
-        for( int i = 0; i < msg.getPayload().nicknames().size(); i++ ) {
-            model.setShelves(new Shelf(), msg.getPayload().nicknames().get(i));
+        StartGamePayload payload = msg.getPayload();
+        
+        model.setPlayersNicknames(payload.nicknames());
+        
+        model.setPgid(payload.personalGoalId());
+        model.setCGXindex(payload.CGXIndex());
+        model.setTopCGXscore(payload.topCGXScore());
+        model.setCGYindex(payload.CGYIndex());
+        model.setTopCGYscore(payload.topCGYScore());
+        
+        model.setBoard(payload.board());
+        for( int i = 0; i < payload.nicknames().size(); i++ ) {
+            model.setShelf(payload.shelves().get(i), payload.nicknames().get(i));
         }
         
         System.out.println("GAME START!");
         System.out.println("Players name:");
         msg.getPayload().nicknames().forEach(System.out::println);
         
-        
         TUIUtils.printGame(model, nickname);
-        
     }
     
     /**
@@ -350,7 +350,7 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(ShelfMessage msg) {
-        this.model.setShelves(msg.getPayload(), msg.getPlayer());
+        this.model.setShelf(msg.getPayload(), msg.getPlayer());
         TUIUtils.printGame(model, nickname);
     }
     

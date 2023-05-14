@@ -25,10 +25,10 @@ public class LocalModel {
     
     private final Map<String, Integer> points = new HashMap<>();
     
-    private final Map<String,Integer> cgScore=new HashMap<>();
-    private final Map<String,Integer> pgScore=new HashMap<>();
-    private final Map<String,Integer> adiajencyScore=new HashMap<>();
-    private final Map<String,Integer> bonusScore=new HashMap<>();
+    private final Map<String,Integer> cgScore = new HashMap<>();
+    private final Map<String,Integer> pgScore = new HashMap<>();
+    private final Map<String,Integer> adjacencyScore = new HashMap<>();
+    private final Map<String,Integer> bonusScore = new HashMap<>();
     
     
     private int pgid = 0;
@@ -38,22 +38,23 @@ public class LocalModel {
     
     private int topCGXscore = 0;
     private int topCGYscore = 0;
+    
     private Board board;
     
-    private List<String> chat = new ArrayList<>();
+    private final List<String> chat = new ArrayList<>();
     
     
     private LocalModel() {
     }
     
     public void addChatMessage(String nickname, String message) {
-        chat.add(nickname + "->" + message + "\n");
+        chat.add(nickname + " -> " + message + "\n");
     }
     
     public String getChat() {
         StringBuilder sb = new StringBuilder();
-        for( int i = 0; i < chat.size(); i++ ) {
-            sb.append(chat.get(i));
+        for( String s : chat ) {
+            sb.append(s);
         }
         return sb.toString();
     }
@@ -72,26 +73,21 @@ public class LocalModel {
      * Methods to access and modify values of a Map that associates
      * a player with his respective score.
      */
-
-
-
-    
-    
-  public void setPoints(UpdateScorePayload.Type type, String nickname, int score){
+    public void setPoints(UpdateScorePayload.Type type, String nickname, int score){
         switch( type ){
-            case Adiajency :setadiajencyScore(score,nickname);
+            case Adjacency :setadjacencyScore(score,nickname);
             case CommonGoal: setCgScore(score,nickname);
             case PersonalGoal:setPgScore(score,nickname);
             case Bonus:setBonusScore(score,nickname);
         }
-      int points= getAdiajencyScore(nickname)+getCgScore(nickname)+getPgScore(nickname)+getBonusScore(nickname);
-      if( this.points.containsKey(nickname) ) {
-          this.points.replace(nickname, points);
-      }else {
-          this.cgScore.put(nickname, points);
-      }
-    
-  }
+        
+        int points = getadjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
+        if( this.points.containsKey(nickname) ) {
+            this.points.replace(nickname, points);
+        }else {
+            this.cgScore.put(nickname, points);
+        }
+    }
     
     
     public int getPoints(String nickname) {
@@ -126,18 +122,18 @@ public class LocalModel {
         return this.pgScore.get(nickname);
     }
     
-    public void setadiajencyScore(Integer points, String nickname) {
-        if( this.adiajencyScore.containsKey(nickname) ) {
-            this.adiajencyScore.replace(nickname, points);
+    public void setadjacencyScore(Integer points, String nickname) {
+        if( this.adjacencyScore.containsKey(nickname) ) {
+            this.adjacencyScore.replace(nickname, points);
         }else {
-            this.adiajencyScore.put(nickname, points);
+            this.adjacencyScore.put(nickname, points);
         }
         
     
     }
     
-    public int getAdiajencyScore(String nickname) {
-        return this.adiajencyScore.get(nickname);
+    public int getadjacencyScore(String nickname) {
+        return this.adjacencyScore.get(nickname);
     }
     
     public void setBonusScore(Integer points, String nickname) {
@@ -154,12 +150,11 @@ public class LocalModel {
         return this.bonusScore.get(nickname);
     }
     
-    
     /**
      * Methods to access and modify values of a Map that associates
      * a player with his respective shelf.
      */
-    public void setShelves(Shelf shelf, String nickname) {
+    public void setShelf(Shelf shelf, String nickname) {
         if( this.shelves.containsKey(nickname) ) {
             this.shelves.replace(nickname, shelf);
         }else {
@@ -232,6 +227,5 @@ public class LocalModel {
     public void setCGYindex(int CGYindex) {
         this.CGYindex = CGYindex;
     }
-    
     
 }
