@@ -2,7 +2,7 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.model.messages.UpdateScorePayload;
+import it.polimi.ingsw.model.messages.UpdateScoreMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +73,7 @@ public class LocalModel {
      * Methods to access and modify values of a Map that associates
      * a player with his respective score.
      */
-    public void setPoints(UpdateScorePayload.Type type, String nickname, int score){
+    public void setPoints(UpdateScoreMessage.Type type, String nickname, int score){
         switch( type ){
             case Adjacency :setadjacencyScore(score,nickname);
             case CommonGoal: setCgScore(score,nickname);

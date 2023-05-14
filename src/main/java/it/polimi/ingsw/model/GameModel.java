@@ -241,21 +241,21 @@ public class GameModel {
                 notifyAllListeners(new CommonGoalMessage(CGType.Y, this.commonGoalStackY.peek()));
             }
         }
-        notifyAllListeners(new UpdateScoreMessage(i, UpdateScorePayload.Type.CommonGoal, player.getNickname()));
+        notifyAllListeners(new UpdateScoreMessage(i, UpdateScoreMessage.Type.CommonGoal, player.getNickname()));
         return i;
     }
     
     public int setCurrentPlayerPersonalScore(int score) {
         Player player = this.getCurrentPlayer();
         int i = player.setPersonalGoalScore(score);
-        notifyAllListeners(new UpdateScoreMessage(score, UpdateScorePayload.Type.PersonalGoal, player.getNickname()));
+        notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.PersonalGoal, player.getNickname()));
         return i;
     }
     
     public int setCurrentPlayerAdjacencyScore(int score) {
         Player player = this.getCurrentPlayer();
         int i = player.setAdjacentScore(score);
-        notifyAllListeners(new UpdateScoreMessage(score, UpdateScorePayload.Type.Adjacency, player.getNickname()));
+        notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.Adjacency, player.getNickname()));
         return i;
     }
     
@@ -420,7 +420,7 @@ public class GameModel {
         for( Player x : this.getPlayers() ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
-        notifyAllListeners(new EndGameMessage(new EndGamePayload(winner, leaderboard)));
+        notifyAllListeners(new EndGameMessage(winner, leaderboard));
     }
     
     /**

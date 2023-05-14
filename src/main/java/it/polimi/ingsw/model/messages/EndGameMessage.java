@@ -1,8 +1,14 @@
 package it.polimi.ingsw.model.messages;
 
-public class EndGameMessage extends ModelMessage<EndGamePayload> {
+import java.io.Serializable;
+import java.util.Map;
+
+public class EndGameMessage extends ModelMessage<EndGameMessage.EndGamePayload> {
     
-    public EndGameMessage(EndGamePayload p) {
-        super(p);
+    public record EndGamePayload(String winner, Map<String, Integer> points) implements Serializable {}
+    
+    public EndGameMessage(String winner, Map<String, Integer> points) {
+        super(new EndGamePayload(winner, points));
     }
+    
 }

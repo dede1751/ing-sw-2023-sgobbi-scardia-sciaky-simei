@@ -5,4 +5,5 @@ public class CurrentPlayerMessage extends ModelMessage<String> {
     public CurrentPlayerMessage(String p) {
         super(p);
     }
+    
 }

@@ -5,4 +5,5 @@ public class ServerResponseMessage extends ModelMessage<Response> {
     public ServerResponseMessage(Response response) {
         super(response);
     }
+    
 }

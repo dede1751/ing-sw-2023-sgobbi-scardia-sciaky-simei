@@ -319,7 +319,7 @@ public class TUI extends View {
     @SuppressWarnings("unused")
     @Override
     public void onMessage(StartGameMessage msg) {
-        StartGamePayload payload = msg.getPayload();
+        var payload = msg.getPayload();
         
         model.setPlayersNicknames(payload.nicknames());
         
