@@ -92,12 +92,9 @@ public class LocalModel {
       }
     
   }
-    
-    
     public int getPoints(String nickname) {
         return this.points.get(nickname);
     }
-    
     public void setCgScore(Integer points, String nickname) {
         if( this.cgScore.containsKey(nickname) ) {
             this.cgScore.replace(nickname, points);
@@ -106,12 +103,9 @@ public class LocalModel {
         }
         
     }
-    
     public int getCgScore(String nickname) {
         return this.cgScore.get(nickname);
     }
-    
-    
     public void setPgScore(Integer points, String nickname) {
         if( this.pgScore.containsKey(nickname) ) {
             this.pgScore.replace(nickname, points);
@@ -121,11 +115,9 @@ public class LocalModel {
        
     
     }
-    
     public int getPgScore(String nickname) {
         return this.pgScore.get(nickname);
     }
-    
     public void setadiajencyScore(Integer points, String nickname) {
         if( this.adiajencyScore.containsKey(nickname) ) {
             this.adiajencyScore.replace(nickname, points);
@@ -135,11 +127,9 @@ public class LocalModel {
         
     
     }
-    
     public int getAdiajencyScore(String nickname) {
         return this.adiajencyScore.get(nickname);
     }
-    
     public void setBonusScore(Integer points, String nickname) {
         if( this.bonusScore.containsKey(nickname) ) {
             this.bonusScore.replace(nickname, points);
@@ -149,7 +139,6 @@ public class LocalModel {
         
     
     }
-    
     public int getBonusScore(String nickname) {
         return this.bonusScore.get(nickname);
     }

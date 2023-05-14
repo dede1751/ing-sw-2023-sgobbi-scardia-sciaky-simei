@@ -29,12 +29,29 @@ public class TUI extends View {
     
     @Override
     public void run() {
+        Scanner scanner = new Scanner(System.in);
         userLogin();
         
         //noinspection InfiniteLoopStatement
         
         
         while( true ) {
+            
+            System.out.print("\n>>  ");
+            String command = scanner.next().trim();
+            switch (command){
+                case "prova":
+                    System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
+                    List<Tile> arr=new ArrayList<Tile>();
+                    arr.add(model.getBoard().getTile(new Coordinate(4,3)));
+                    model.getShelf(nickname).addTiles(arr,1);
+                    model.getShelf(nickname).addTiles(arr,3);
+                    System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
+                    
+                    
+                default:System.out.println("Insert command");
+            }
+           /*
             synchronized(playerLock) {
                 try {
                     playerLock.wait();
@@ -49,7 +66,7 @@ public class TUI extends View {
             //questo codice si esegue una volta sola quando è il tuo turno
             var sel = askSelection();
             int c = askColumn();
-            //notifyMove(new Move());
+            //notifyMove(new Move());*/
         }
     }
     
@@ -312,7 +329,10 @@ public class TUI extends View {
             model.setBoard(new Board(msg.getPayload().nicknames().size()));
         }
         for( int i = 0; i < msg.getPayload().nicknames().size(); i++ ) {
-            model.setShelves(new Shelf(), msg.getPayload().nicknames().get(i));
+           if(model.getShelf(msg.getPayload().nicknames().get(i))==null){
+               model.setShelves(new Shelf(), msg.getPayload().nicknames().get(i));
+           }
+           
         }
         
         System.out.println("GAME START!");
