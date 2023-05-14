@@ -85,9 +85,7 @@ public class GameModel {
     }
     
     public void startGame() {
-        
         this.notifyStartGame();
-        
     }
     
     private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
@@ -100,7 +98,6 @@ public class GameModel {
         this.board = board;
         this.tileBag = tileBag;
         this.listeners = new HashMap<>(numPlayers);
-        
     }
     
     /**
@@ -155,7 +152,6 @@ public class GameModel {
     public void setLastTurn() {
         lastTurn = true;
         players.get(getCurrentPlayerIndex()).setBonusScore(1);//add the bonus point to the first who finishes the shelf
-        
     }
     
     /**
@@ -256,10 +252,10 @@ public class GameModel {
         return i;
     }
     
-    public int setCurrentPlayerAdiajencyScore(int score) {
+    public int setCurrentPlayerAdjacencyScore(int score) {
         Player player = this.getCurrentPlayer();
         int i = player.setAdjacentScore(score);
-        notifyAllListeners(new UpdateScoreMessage(score, UpdateScorePayload.Type.Adiajency, player.getNickname()));
+        notifyAllListeners(new UpdateScoreMessage(score, UpdateScorePayload.Type.Adjacency, player.getNickname()));
         return i;
     }
     
@@ -399,10 +395,15 @@ public class GameModel {
     
     private void notifyStartGame() {
         List<String> nicks = this.getNicknames();
+        List<Shelf> shelves = this.getPlayers().stream().map(Player::getShelf).toList();
         
         for( Player x : players ) {
             ModelListener playerListener = this.listeners.get(x.getNickname());
-            playerListener.update(new StartGameMessage(nicks, x.getPg(), this.commonGoalNumX, this.commonGoalNumY));
+            playerListener.update(
+                    new StartGameMessage(
+                            nicks, x.getPg(), shelves, this.board,
+                            this.commonGoalNumX, this.peekStackCGX(), this.commonGoalNumY, this.peekStackCGY())
+            );
         }
     }
     

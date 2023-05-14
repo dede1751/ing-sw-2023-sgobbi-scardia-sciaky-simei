@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public record UpdateScorePayload(Type type, int score, String player) implements Serializable {
     public enum Type {
-        CommonGoal, PersonalGoal, Adiajency, Bonus
+        CommonGoal, PersonalGoal, Adjacency, Bonus
     }
     
 }
