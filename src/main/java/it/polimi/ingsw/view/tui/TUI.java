@@ -368,7 +368,7 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
-        this.model.setPoints(msg.getPayload().score(), msg.getPayload().player());
+        this.model.setPoints(msg.getPayload().type(),msg.getPayload().player(), msg.getPayload().score());
         TUIUtils.printGame(model, nickname);
     }
     

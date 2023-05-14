@@ -2,9 +2,8 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.model.messages.UpdateScorePayload;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +24,12 @@ public class LocalModel {
     private final Map<String, Shelf> shelves = new HashMap<>();
     
     private final Map<String, Integer> points = new HashMap<>();
+    
+    private final Map<String,Integer> cgScore=new HashMap<>();
+    private final Map<String,Integer> pgScore=new HashMap<>();
+    private final Map<String,Integer> adiajencyScore=new HashMap<>();
+    private final Map<String,Integer> bonusScore=new HashMap<>();
+    
     
     private int pgid = 0;
     
@@ -67,16 +72,86 @@ public class LocalModel {
      * Methods to access and modify values of a Map that associates
      * a player with his respective score.
      */
-    public void setPoints(Integer points, String nickname) {
-        if( this.points.containsKey(nickname) ) {
-            this.points.replace(nickname, points);
-        }else {
-            this.points.put(nickname, points);
+
+
+
+    
+    
+  public void setPoints(UpdateScorePayload.Type type, String nickname, int score){
+        switch( type ){
+            case Adiajency :setadiajencyScore(score,nickname);
+            case CommonGoal: setCgScore(score,nickname);
+            case PersonalGoal:setPgScore(score,nickname);
+            case Bonus:setBonusScore(score,nickname);
         }
-    }
+      int points= getAdiajencyScore(nickname)+getCgScore(nickname)+getPgScore(nickname)+getBonusScore(nickname);
+      if( this.points.containsKey(nickname) ) {
+          this.points.replace(nickname, points);
+      }else {
+          this.cgScore.put(nickname, points);
+      }
+    
+  }
+    
     
     public int getPoints(String nickname) {
         return this.points.get(nickname);
+    }
+    
+    public void setCgScore(Integer points, String nickname) {
+        if( this.cgScore.containsKey(nickname) ) {
+            this.cgScore.replace(nickname, points);
+        }else {
+            this.cgScore.put(nickname, points);
+        }
+        
+    }
+    
+    public int getCgScore(String nickname) {
+        return this.cgScore.get(nickname);
+    }
+    
+    
+    public void setPgScore(Integer points, String nickname) {
+        if( this.pgScore.containsKey(nickname) ) {
+            this.pgScore.replace(nickname, points);
+        }else {
+            this.pgScore.put(nickname, points);
+        }
+       
+    
+    }
+    
+    public int getPgScore(String nickname) {
+        return this.pgScore.get(nickname);
+    }
+    
+    public void setadiajencyScore(Integer points, String nickname) {
+        if( this.adiajencyScore.containsKey(nickname) ) {
+            this.adiajencyScore.replace(nickname, points);
+        }else {
+            this.adiajencyScore.put(nickname, points);
+        }
+        
+    
+    }
+    
+    public int getAdiajencyScore(String nickname) {
+        return this.adiajencyScore.get(nickname);
+    }
+    
+    public void setBonusScore(Integer points, String nickname) {
+        if( this.bonusScore.containsKey(nickname) ) {
+            this.bonusScore.replace(nickname, points);
+        }else {
+            this.bonusScore.put(nickname, points);
+        }
+        
+    
+    }
+    
+    public int getBonusScore(String nickname) {
+        return this.bonusScore.get(nickname);
     }
     
     
