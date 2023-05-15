@@ -34,12 +34,12 @@ public class TUI extends View {
             System.out.print("\n>>  ");
             String command = scanner.next().trim();
             if( command.equals("prova") ) {
-                System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
+                System.out.println(TUIUtils.generateShelf(nickname));
                 List<Tile> arr = new ArrayList<Tile>();
                 arr.add(model.getBoard().getTile(new Coordinate(4, 3)));
                 model.getShelf(nickname).addTiles(arr, 1);
                 model.getShelf(nickname).addTiles(arr, 3);
-                System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
+                System.out.println(TUIUtils.generateShelf(nickname));
             }
             System.out.println("Insert command");
         }
@@ -52,18 +52,9 @@ public class TUI extends View {
     private void userLogin() {
         Scanner scanner = new Scanner(System.in);
         
-        // fetch all lobbies
-        notifyRequestLobby(null);
-        waitLobbies();
-        
-        if( !lobbies.isEmpty() ) {
-            System.out.println("\nHere are all the currently available lobbies. Avoid stealing someone's name!");
-            System.out.println("To recover crashed lobbies, user your old nickname!");
-            lobbies.forEach(System.out::print);
-        }
         askNickname();
         
-        label:
+        main_loop:
         while( true ) {
             System.out.println(
                     "\nDo you want to create your own lobby, join an existing one or recover a crashed lobby? [CREATE/JOIN/RECOVER]");
@@ -90,7 +81,7 @@ public class TUI extends View {
                     Response r = waitLoginResponse(CreateLobbyMessage.class.getSimpleName());
                     
                     if( r.isOk() ) {
-                        break label;
+                        break main_loop;
                     }else if( r.msg().equals("NicknameTaken") ) {
                         System.out.println("Your nickname has been taken!. Please choose another one");
                         askNickname();
@@ -114,19 +105,23 @@ public class TUI extends View {
                         System.out.print("\n>>  ");
                         try {
                             int lobbyId = Integer.parseInt(scanner.next());
-                            if( lobbies.stream().anyMatch(
-                                    (l) -> l.lobbyID() == lobbyId && l.nicknames().size() < l.lobbySize()) ) {
+                            boolean valid_lobby = lobbies.stream()
+                                    .anyMatch((l) -> l.lobbyID() == lobbyId && l.nicknames().size() < l.lobbySize());
+                            
+                            if( valid_lobby ) {
                                 notifyJoinLobby(lobbyId);
                                 Response r = waitLoginResponse(JoinLobbyMessage.class.getSimpleName());
+                                
                                 if( r.isOk() ) {
-                                    break label;
+                                    break main_loop;
                                 }else if( r.msg().equals("NicknameTaken") ) {
                                     System.out.println("Your nickname has been taken!. Please choose another one");
                                     askNickname();
-                                    
                                 }else if( r.msg().equals("LobbyUnvailable") ) {
                                     System.out.println("Please choose a viable lobby!");
                                 }
+                                
+                                // if we encounter an error, let the user choose what login action to take
                                 break;
                             }else {
                                 System.out.println("Please select a valid lobby identifier");
@@ -143,7 +138,7 @@ public class TUI extends View {
                     Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
                     
                     if( r.isOk() ) {
-                        break label;
+                        break main_loop;
                     }else if( r.msg().equals("LobbyUnavailable") ) {
                         System.out.println("There is no lobby you can recover. Did you misspell your nickname?");
                         askNickname();
@@ -153,18 +148,37 @@ public class TUI extends View {
                 default -> System.out.println("Please choose one of [CREATE/JOIN/RECOVER]");
             }
         }
-        System.out.println("\nSuccesfully logged in to server. Awaiting game start... ");
+        
+        if ( !model.isStarted() ) {
+            System.out.println("\nSuccesfully logged in to server. Awaiting game start... ");
+        }
     }
     
+    /**
+     * Ask the user for a nickname, providing the list of all active lobbies fetched from the server.
+     * Does not allow choice of nicknames already present in lobby list.
+     */
     private void askNickname() {
+        notifyRequestLobby(null);
+        waitLobbies();
+        
+        if( !lobbies.isEmpty() ) {
+            System.out.println("\nHere are all the currently available lobbies. To recover crashed lobbies, user your old nickname!");
+            lobbies.forEach(System.out::print);
+        } else {
+            System.out.println("\nThere is currently no active lobby!");
+        }
+        
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\nChoose the nickname you'll be using in game:");
+        System.out.println("\nChoose the nickname you'll be using in game: (avoid those present in other lobbies)");
         
         while( true ) {
             System.out.print("\n>>  ");
             String nickname = scanner.next().trim();
             
-            if( !nickname.equals("") ) {
+            if( !nickname.equals("")
+                && lobbies.stream().noneMatch((l) -> l.nicknames().contains(nickname))
+            ) {
                 this.setNickname(nickname);
                 break;
             }
@@ -339,9 +353,7 @@ public class TUI extends View {
             model.setShelf(payload.shelves().get(i), payload.nicknames().get(i));
         }
         
-        System.out.println("GAME START!");
-        System.out.println("Players name:");
-        msg.getPayload().nicknames().forEach(System.out::println);
+        TUIUtils.printStartGame();
         
         TUIUtils.printGame(nickname);
         model.setStarted(true);

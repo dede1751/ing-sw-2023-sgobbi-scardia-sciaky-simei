@@ -22,20 +22,36 @@ public class TUIUtils {
     //public static final String ANSI_WHITE_BACKGROUND = "\u001B[41m";
     
     
+    // TODO titolo figo
+    public static void printStartGame() {
+        System.out.println("THE GAME HAS STARTED");
+    }
+    
     public static void printGame(String nickname) {
         StringBuilder sb = new StringBuilder();
         StringBuilder playersb = new StringBuilder();
         
         
-        var boardCg = concatString(generateBoard(),
-                                   generateCommonGoal(model.getCGXindex()), 3);
-        boardCg = concatString(boardCg, generateCommonGoal(model.getCGYindex()), 1);
+        String boardCg = concatString(
+                generateBoard(),
+                "\n\n" + generateCommonGoal(model.getCGXindex()),
+                3
+        );
         
-        var player = concatString(generateShelf(model.getShelf(nickname)),
-                                  playersb.append(generatePersonalGoal(model.getPgid()))
-                                          .append(generatePersonalScore()).toString(), 2);
+        boardCg = concatString(
+                boardCg,
+                "\n\n" + generateCommonGoal(model.getCGYindex()),
+                1
+        );
         
-        sb.append(generateShelves())
+        String player = concatString(
+                generateShelf(nickname),
+                playersb.append("\n\n")
+                        .append(generatePersonalGoal(model.getPgid()))
+                        .append(generatePersonalScore()).toString(),
+                2);
+        
+        sb.append(generateOtherShelves(nickname))
                 .append("\n\n")
                 .append(boardCg)
                 .append("\n\n\n")
@@ -134,15 +150,17 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    static String generateShelf(Shelf shelf) {
+    static String generateShelf(String nickname) {
+        Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
+        String name = String.format(" * %-18.18s\n", nickname);
         String top = "┌───┬───┬───┬───┬───┐";
         String bot = "└───┴───┴───┴───┴───┘";
         
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();
             
-            sb.append(top).append("\n");
+            sb.append(name).append(top).append("\n");
             
             for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
                 for( int j = 0; j < Shelf.N_COL; j++ ) {
@@ -162,22 +180,18 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    static String generateShelves() {
-        
+    /**
+     * Generate the shelves for all players except the given nickname
+     * @param nickname nickname to exclude
+     * @return string containing all shelves
+     */
+    static String generateOtherShelves(String nickname) {
         String s = "";
-        var playersNickname = model.getPlayersNicknames();
-        var currentPlayer = model.getCurrentPlayer();
         
-        ArrayList<Shelf> shelves = new ArrayList<Shelf>();
-        for( String player : playersNickname ) {
-            if( !player.equals(currentPlayer) ) {
-                shelves.add(model.getShelf(player));
+        for (String n: model.getPlayersNicknames() ) {
+            if (!n.equals(nickname)) {
+                s = concatString(s, generateShelf(n), 1);
             }
-        }
-        
-        
-        for( Shelf shelf : shelves ) {
-            s = concatString(s, generateShelf(shelf), 1);
         }
         
         return s;
