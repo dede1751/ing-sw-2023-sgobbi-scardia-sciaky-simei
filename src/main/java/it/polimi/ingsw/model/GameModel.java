@@ -402,7 +402,8 @@ public class GameModel {
             playerListener.update(
                     new StartGameMessage(
                             nicks, x.getPg(), shelves, this.board,
-                            this.commonGoalNumX, this.peekStackCGX(), this.commonGoalNumY, this.peekStackCGY())
+                            this.commonGoalNumX, this.peekStackCGX(), this.commonGoalNumY, this.peekStackCGY(),
+                            this.getCurrentPlayer().getNickname())
             );
         }
     }

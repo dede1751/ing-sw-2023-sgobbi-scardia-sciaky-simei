@@ -18,6 +18,7 @@ public class LocalModel {
     
     private static LocalModel INSTANCE;
     
+    private final Object startLock = new Object();
     private boolean started = false;
     
     private List<String> playersNicknames;
@@ -58,12 +59,30 @@ public class LocalModel {
         return INSTANCE;
     }
     
+    /**
+     * Wait for the game to be started by a StartGameMessage.
+     */
+    public void waitStart() {
+        synchronized( startLock ) {
+            while( !started ) {
+                try {
+                    startLock.wait();
+                }catch( InterruptedException e ) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+    
     public boolean isStarted() {
         return started;
     }
     
     public void setStarted(boolean started) {
-        this.started = started;
+        synchronized( startLock ) {
+            this.started = started;
+            startLock.notifyAll();
+        }
     }
     
     public void addChatMessage(String nickname, String message) {
@@ -136,8 +155,6 @@ public class LocalModel {
         }else {
             this.pgScore.put(nickname, points);
         }
-        
-        
     }
     
     public int getPgScore(String nickname) {
@@ -150,8 +167,6 @@ public class LocalModel {
         }else {
             this.adjacencyScore.put(nickname, points);
         }
-        
-        
     }
     
     public int getadjacencyScore(String nickname) {
@@ -164,8 +179,6 @@ public class LocalModel {
         }else {
             this.bonusScore.put(nickname, points);
         }
-        
-        
     }
     
     public int getBonusScore(String nickname) {

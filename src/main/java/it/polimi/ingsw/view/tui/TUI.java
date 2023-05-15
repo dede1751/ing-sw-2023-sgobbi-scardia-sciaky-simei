@@ -22,7 +22,6 @@ public class TUI extends View {
     
     private final Object lobbyLock = new Object();
     protected boolean newLobbies = false;
-    private Boolean yourTurnFlag = false;
     
     
     @Override
@@ -30,31 +29,31 @@ public class TUI extends View {
         Scanner scanner = new Scanner(System.in);
         userLogin();
         
+        // wait for the game to start before allowing user input
+        model.waitStart();
+        
         //noinspection InfiniteLoopStatement
         while( true ) {
-            
-            System.out.print("\n>>  ");
+            System.out.print("Please select the action you want to take: [MOVE/CHAT]\n>> ");
             String command = scanner.next().trim();
+            
             switch( command ) {
-                case "-H":
-                    System.out.println("to make a move write MOVE\nto chat with other players write CHAT\n");
-                case "MOVE":
-                    if( yourTurnFlag ) {
-                        List<Coordinate> sel = askSelection();
-                        List<Tile> tiles = getTiles(sel);
-                        int col = askColumn();
-                        Move move = new Move(sel, tiles, col);
+                case "MOVE" -> {
+                    if( model.getCurrentPlayer().equals(this.nickname) ) {
+                        List<Coordinate> selection = askSelection();
+                        List<Tile> tiles = askSelectionOrder(selection);
+                        int column = askColumn(tiles);
+                        
+                        Move move = new Move(selection, tiles, column);
                         notifyMove(move);
                         System.out.println("Move sent");
                     }else {
-                        System.out.println("WAIT FOR YOUR TURN!");
+                        System.out.println("Please, wait for your turn!");
                     }
-                    yourTurnFlag = false;
+                }
                 
-                case "CHAT":
+                case "CHAT" -> System.out.println("To be implemented"); //TODO
             }
-            
-            System.out.println("Insert command");
         }
     }
     
@@ -199,71 +198,97 @@ public class TUI extends View {
         }
     }
     
-    //TODO add tile order selection
-    //FIXME checks on input should ALL be done with IntegrityChecks !!!!
-    public List<Coordinate> askSelection() {
-        
+    /**
+     * Ask the user to select a list of tiles from the board.
+     * @return a list of coordinates representing the tiles selected by the user
+     */
+    private List<Coordinate> askSelection() {
         Scanner scanner = new Scanner(System.in);
-        List<Coordinate> selection = new ArrayList<>();
-        System.out.print("Enter number of coordinates (1-3): ");
-        int numCoordinates = scanner.nextInt();
-        scanner.nextLine();
+        List<Coordinate> selection = null;
         
-        while( numCoordinates > 3 || numCoordinates < 1 ) {//check if the number of coordinates is right
-            System.out.print("The number must be between 1 and 3, try again: ");
-            numCoordinates = scanner.nextInt();
-            scanner.nextLine();
-        }
-        //todo add checks ora è solo per prova
-        //le coordinate devono essere da 0 a 8
-        // do {
-        for( int i = 0; i < numCoordinates; i++ ) {
-            // boolean validCoordinate = false;
-            // while( !validCoordinate ) {
-            //     if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
-            //         model.getBoard().getTile(coordinate) == null ) {
-            //         validCoordinate = true;
-            //     }
-            //     coordinate = getCoordinate();
-            // }
+        while ( !IntegrityChecks.checkSelectionForm(selection, model.getBoard(), model.getShelf(this.nickname)) ) {
+            if ( selection != null ) {
+                System.out.print("\nThe coordinates you entered are not valid, please try again: \n>> ");
+            } else {
+                System.out.print("\nEnter the ROW,COL coordinates of the tiles you want to select (e.g. 1,2 2,2): \n>> ");
+            }
             
-            selection.add(getCoordinate());
-            scanner.nextLine(); // consume the newline character
-            
+            // try to parse selection
+            selection = Arrays.stream(
+                    scanner.nextLine()
+                            .split(" "))
+                            .map((s) -> {
+                                String[] coordinates = s.split(",");
+                                try {
+                                    return new Coordinate(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
+                                } catch (Exception e) {
+                                    return new Coordinate(-1, -1); // this will invalidate the selection
+                                }
+                            }).toList();
         }
-        //}
-        //while( IntegrityChecks.checkSelectionForm(selection) );
-        System.out.println("Entered coordinates: " + selection);
+        
         return selection;
-        
     }
     
-    public List<Tile> getTiles(List<Coordinate> selection) {
-        List<Tile> tiles = new LinkedList<>();
-        for( Coordinate coordinate : selection ) {
-            tiles.add(model.getBoard().getTile(coordinate));
+    /**
+     * Ask the user to pick the order in which the tiles get put on the shelf.
+     * @param selection the list of coordinates already selected by the player
+     * @return the ordered list of tiles at those coordinates picked by the player
+     */
+    private List<Tile> askSelectionOrder(List<Coordinate> selection) {
+        Scanner scanner = new Scanner(System.in);
+        List<Tile> tiles = null;
+        
+        while ( !IntegrityChecks.checkTileSelection(selection, tiles, model.getBoard()) ) {
+            if ( tiles != null ) {
+                System.out.print("\nThe order you specified is not valid, try again: \n>> ");
+            } else {
+                System.out.print("\nEnter the order you want to insert these tiles in ( e.g. 2 1 3, 2 goes to the bottom ):\n");
+                TUIUtils.printSelection(selection);
+                System.out.print("\n>> ");
+            }
+            
+            // try to parse selection
+            tiles = new LinkedList<>();
+            for ( String s : scanner.nextLine().split(" ") ) {
+                try {
+                    tiles.add(
+                            model.getBoard().getTile(selection.get(Integer.parseInt(s) - 1))
+                    );
+                } catch (Exception e) {
+                    tiles.add(Tile.NOTILE); // this will invalidate the selection
+                }
+            }
         }
+        
         return tiles;
     }
     
-    public int askColumn() {
+    /**
+     * Ask the user to pick a column in the shelf to put the tiles in.
+     * @param tiles the list of tiles to be put on the shelf
+     * @return the column number picked by the user
+     */
+    public int askColumn(List<Tile> tiles) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the column in which you want to place your selection: ");
-        int column = scanner.nextInt();
-        scanner.nextLine();
-        return column;
-    }
-    
-    
-    //TODO integrity check for the coordinates
-    private Coordinate getCoordinate() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter x-coordinate: ");
-        int x = scanner.nextInt();
+        int column = -1;
         
-        System.out.print("Enter y-coordinate: ");
-        int y = scanner.nextInt();
-        return new Coordinate(x, y);
+        while ( !IntegrityChecks.checkColumnValidity(tiles, column, model.getShelf(this.nickname)) ) {
+            if ( column != -1 ) {
+                System.out.print("\nThe column you specified cannot be filled, choose another one: \n>> ");
+            } else {
+                System.out.print("\nEnter the number of the column you want to insert your tiles into: [0,1,2,3,4]\n>> ");
+            }
+            
+            // try to parse column
+            try {
+                column = Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) {
+                column = -1; // this will invalidate the selection
+            }
+        }
+        
+        return column;
     }
     
     /**
@@ -313,10 +338,6 @@ public class TUI extends View {
     @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
-        
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
-        }
     }
     
     /**
@@ -372,18 +393,12 @@ public class TUI extends View {
         model.setTopCGYscore(payload.topCGYScore());
         
         model.setBoard(payload.board());
-        model.setCurrentPlayer(payload.nicknames().get(0));
+        model.setCurrentPlayer(payload.currentPlayer());
         for( int i = 0; i < payload.nicknames().size(); i++ ) {
             model.setShelf(payload.shelves().get(i), payload.nicknames().get(i));
         }
         
         TUIUtils.printStartGame();
-        //brutto
-        if( nickname.equals(model.getCurrentPlayer()) ) {
-            yourTurnFlag = true;
-            System.out.println("it's your turn");
-        }
-        
         TUIUtils.printGame(nickname);
         model.setStarted(true);
     }
@@ -421,9 +436,6 @@ public class TUI extends View {
     @Override
     public void onMessage(ShelfMessage msg) {
         this.model.setShelf(msg.getPayload(), msg.getPlayer());
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
-        }
     }
     
     /**
@@ -447,9 +459,6 @@ public class TUI extends View {
     @Override
     public void onMessage(UpdateScoreMessage msg) {
         this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
-        }
     }
     
     /**
@@ -464,10 +473,6 @@ public class TUI extends View {
         }else {
             this.model.setTopCGXscore(msg.getPayload().availableTopScore());
         }
-        
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
-        }
     }
     
     /**
@@ -479,11 +484,6 @@ public class TUI extends View {
     public void onMessage(CurrentPlayerMessage msg) {
         this.model.setCurrentPlayer(msg.getPayload());
         
-        //brutto
-        if( nickname.equals(msg.getPayload()) ) {
-            yourTurnFlag = true;
-            System.out.println("it's your turn");
-        }
         if( this.model.isStarted() ) {
             TUIUtils.printGame(nickname);
         }

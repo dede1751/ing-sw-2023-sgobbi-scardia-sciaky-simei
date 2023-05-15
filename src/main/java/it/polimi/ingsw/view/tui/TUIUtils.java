@@ -1,26 +1,30 @@
 package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.model.Board;
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.view.LocalModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TUIUtils {
     
     private static final LocalModel model = LocalModel.getInstance();
     
     public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
+    
     public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
     public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
     public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
-    //public static final String ANSI_WHITE_BACKGROUND = "\u001B[41m";
     
+    public static final String ANSI_BLACK = "\u001B[30m";
+    public static final String ANSI_YELLOW_BOLD = "\033[1;33m";
+    public static final String ANSI_BROWN_BOLD = "\033[1;38;5;130m";
     
     // TODO titolo figo
     public static void printStartGame() {
@@ -51,19 +55,31 @@ public class TUIUtils {
                         .append(generatePersonalScore()).toString(),
                 2);
         
-        sb.append(
-                        concatString(
-                                generateOtherShelves(nickname), "-H for help", 5))
+        sb.append(generateOtherShelves(nickname))
                 .append("\n\n")
                 .append(boardCg)
                 .append("\n\n\n")
                 .append(player)
                 .append("\n\n");
         
-        //.append(generateCurrentPlayer(model.getCurrentPlayer(),
-        //                              model.getPoints(model.getCurrentPlayer())));
-        
         System.out.println(sb);
+    }
+    
+    public static void printSelection(List<Coordinate> selection) {
+        StringBuilder sb = new StringBuilder();
+        
+        List<Tile> tiles = selection.stream()
+                .map(c -> model.getBoard().getTile(c))
+                .toList();
+        
+        for ( int i = 0; i < tiles.size(); i++ ) {
+            sb.append(i + 1)
+                    .append(": ")
+                    .append(tiles.get(i).toTile())
+                    .append(" ");
+        }
+        
+        System.out.print(sb);
     }
     
     public static String concatString(String s1, String s2, int space) {
@@ -124,40 +140,42 @@ public class TUIUtils {
     }
     
     
-    static String generateBoard() {
+    private static String generateBoard() {
         Board board = model.getBoard();
         StringBuilder sb = new StringBuilder();
         
-        String colmns = "   0  1  2  3  4  5  6  7  8 ";
+        String columns = "   0  1  2  3  4  5  6  7  8 \n";
         
-        if( board == null ) {
-            System.out.println("Board still not initialized!");
-        }else {
-            sb.append(colmns).append("\n");
-            var matrix = board.getAsMatrix();
-            for( int i = 0; i < 9; i++ ) {
-                sb.append(i).append(" ");
-                for( int j = 0; j < 9; j++ ) {
-                    if( matrix[i][j] != null ) {
-                        var tile = matrix[i][j].toTile();
-                        sb.append(tile);
-                    }else {
-                        sb.append(Tile.NOTILE.toTile());
-                    }
-                    
+        sb.append(columns);
+        Tile[][] matrix = board != null ? board.getAsMatrix() : new Tile[9][9];
+        
+        for( int i = 8; i >= 0; i-- ) {
+            sb.append(i).append(" ");
+            
+            for( int j = 0; j < 9; j++ ) {
+                if( matrix[i][j] != null ) {
+                    String tile = matrix[i][j].toTile();
+                    sb.append(tile);
+                }else {
+                    sb.append(Tile.NOTILE.toTile());
                 }
-                sb.append("\n");
             }
+            sb.append("\n");
         }
+        
         return sb.toString();
     }
     
-    static String generateShelf(String nickname) {
+    // TODO use method to color string? better coloring
+    private static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
         String name = String.format(" * %-18.18s \n", nickname);
-        String top = "┌───┬───┬───┬───┬───┐";
-        String bot = "└───┴───┴───┴───┴───┘";
+        if ( nickname.equals(model.getCurrentPlayer()) ) {
+            name = ANSI_YELLOW_BOLD + name + ANSI_RESET;
+        }
+        String top = ANSI_BROWN_BOLD + "┌───┬───┬───┬───┬───┐" + ANSI_RESET;
+        String bot = ANSI_BROWN_BOLD + "└───┴───┴───┴───┴───┘" + ANSI_RESET;
         
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();
@@ -167,13 +185,16 @@ public class TUIUtils {
             for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
                 for( int j = 0; j < Shelf.N_COL; j++ ) {
                     var tile = matrix[i][j].toTile();
-                    sb.append("│").append(tile);
+                    sb.append(ANSI_BROWN_BOLD + "│" + ANSI_RESET).append(tile);
                 }
-                sb.append("│").append("\n");
-                if( i != 0 )
-                    sb.append("├───┼───┼───┼───┼───┤\n");
-                else
+                sb.append(ANSI_BROWN_BOLD + "│" + ANSI_RESET).append("\n");
+                if( i != 0 ) {
+                    sb.append(ANSI_BROWN_BOLD + "├───┼───┼───┼───┼───┤" + ANSI_RESET);
+                    sb.append("\n");
+                }
+                else {
                     sb.append(bot);
+                }
             }
         }else {
             return "no shelf received";
@@ -190,7 +211,7 @@ public class TUIUtils {
      *
      * @return string containing all shelves
      */
-    static String generateOtherShelves(String nickname) {
+    private static String generateOtherShelves(String nickname) {
         String s = "";
         
         for( String n : model.getPlayersNicknames() ) {
@@ -202,18 +223,7 @@ public class TUIUtils {
         return s;
     }
     
-    
-    static String generateCurrentPlayer(String nickname, Integer points) {
-        String top = nickname + ", it's your turn!\n";
-        String mid = nickname + "\n";
-        String bottom = points + "\n";
-        return top + "\n" +
-               mid +
-               bottom;
-    }
-    
-    
-    static String generateCommonGoal(int commonGoal1) {
+    private static String generateCommonGoal(int commonGoal1) {
         StringBuilder sb = new StringBuilder();
         
         switch( commonGoal1 ) {
@@ -290,7 +300,7 @@ public class TUIUtils {
     }
     
     
-    static String generatePersonalScore() {
+    private static String generatePersonalScore() {
         StringBuilder sb = new StringBuilder();
         String grid = """
                 ───┼───┼───┼───┼───┼───""";
@@ -319,7 +329,7 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    static String generatePersonalGoal(int personalGoal) {
+    private static String generatePersonalGoal(int personalGoal) {
         StringBuilder sb = new StringBuilder();
         switch( personalGoal ) {
             case 0 -> {
