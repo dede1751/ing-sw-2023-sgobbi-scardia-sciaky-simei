@@ -51,7 +51,9 @@ public class TUIUtils {
                         .append(generatePersonalScore()).toString(),
                 2);
         
-        sb.append(generateOtherShelves(nickname))
+        sb.append(
+                        concatString(
+                                generateOtherShelves(nickname), "-H for help", 5))
                 .append("\n\n")
                 .append(boardCg)
                 .append("\n\n\n")
@@ -153,7 +155,7 @@ public class TUIUtils {
     static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
-        String name = String.format(" * %-18.18s\n", nickname);
+        String name = String.format(" * %-18.18s \n", nickname);
         String top = "┌───┬───┬───┬───┬───┐";
         String bot = "└───┴───┴───┴───┴───┘";
         
@@ -177,19 +179,22 @@ public class TUIUtils {
             return "no shelf received";
         }
         
+        
         return sb.toString();
     }
     
     /**
      * Generate the shelves for all players except the given nickname
+     *
      * @param nickname nickname to exclude
+     *
      * @return string containing all shelves
      */
     static String generateOtherShelves(String nickname) {
         String s = "";
         
-        for (String n: model.getPlayersNicknames() ) {
-            if (!n.equals(nickname)) {
+        for( String n : model.getPlayersNicknames() ) {
+            if( !n.equals(nickname) ) {
                 s = concatString(s, generateShelf(n), 1);
             }
         }

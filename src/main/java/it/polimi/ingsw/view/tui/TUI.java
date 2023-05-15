@@ -8,6 +8,7 @@ import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
+import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 
 import java.util.*;
@@ -21,6 +22,7 @@ public class TUI extends View {
     
     private final Object lobbyLock = new Object();
     protected boolean newLobbies = false;
+    private Boolean yourTurnFlag = false;
     
     
     @Override
@@ -33,14 +35,25 @@ public class TUI extends View {
             
             System.out.print("\n>>  ");
             String command = scanner.next().trim();
-            if( command.equals("prova") ) {
-                System.out.println(TUIUtils.generateShelf(nickname));
-                List<Tile> arr = new ArrayList<Tile>();
-                arr.add(model.getBoard().getTile(new Coordinate(4, 3)));
-                model.getShelf(nickname).addTiles(arr, 1);
-                model.getShelf(nickname).addTiles(arr, 3);
-                System.out.println(TUIUtils.generateShelf(nickname));
+            switch( command ) {
+                case "-H":
+                    System.out.println("to make a move write MOVE\nto chat with other players write CHAT\n");
+                case "MOVE":
+                    if( yourTurnFlag ) {
+                        List<Coordinate> sel = askSelection();
+                        List<Tile> tiles = getTiles(sel);
+                        int col = askColumn();
+                        Move move = new Move(sel, tiles, col);
+                        notifyMove(move);
+                        System.out.println("Move sent");
+                    }else {
+                        System.out.println("WAIT FOR YOUR TURN!");
+                    }
+                    yourTurnFlag = false;
+                
+                case "CHAT":
             }
+            
             System.out.println("Insert command");
         }
     }
@@ -149,7 +162,7 @@ public class TUI extends View {
             }
         }
         
-        if ( !model.isStarted() ) {
+        if( !model.isStarted() ) {
             System.out.println("\nSuccesfully logged in to server. Awaiting game start... ");
         }
     }
@@ -163,9 +176,10 @@ public class TUI extends View {
         waitLobbies();
         
         if( !lobbies.isEmpty() ) {
-            System.out.println("\nHere are all the currently available lobbies. To recover crashed lobbies, user your old nickname!");
+            System.out.println(
+                    "\nHere are all the currently available lobbies. To recover crashed lobbies, user your old nickname!");
             lobbies.forEach(System.out::print);
-        } else {
+        }else {
             System.out.println("\nThere is currently no active lobby!");
         }
         
@@ -200,29 +214,36 @@ public class TUI extends View {
             numCoordinates = scanner.nextInt();
             scanner.nextLine();
         }
-        
+        //todo add checks ora è solo per prova
         //le coordinate devono essere da 0 a 8
-        do {
-            for( int i = 0; i < numCoordinates; i++ ) {
-                Coordinate coordinate = getCoordinate();
-                boolean validCoordinate = false;
-                while( !validCoordinate ) {
-                    if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
-                        model.getBoard().getTile(coordinate) == null ) {
-                        validCoordinate = true;
-                    }
-                    coordinate = getCoordinate();
-                }
-                
-                selection.add(getCoordinate());
-                scanner.nextLine(); // consume the newline character
-                
-            }
+        // do {
+        for( int i = 0; i < numCoordinates; i++ ) {
+            // boolean validCoordinate = false;
+            // while( !validCoordinate ) {
+            //     if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
+            //         model.getBoard().getTile(coordinate) == null ) {
+            //         validCoordinate = true;
+            //     }
+            //     coordinate = getCoordinate();
+            // }
+            
+            selection.add(getCoordinate());
+            scanner.nextLine(); // consume the newline character
+            
         }
-        while( IntegrityChecks.checkSelectionForm(selection) );
+        //}
+        //while( IntegrityChecks.checkSelectionForm(selection) );
         System.out.println("Entered coordinates: " + selection);
         return selection;
         
+    }
+    
+    public List<Tile> getTiles(List<Coordinate> selection) {
+        List<Tile> tiles = new LinkedList<>();
+        for( Coordinate coordinate : selection ) {
+            tiles.add(model.getBoard().getTile(coordinate));
+        }
+        return tiles;
     }
     
     public int askColumn() {
@@ -233,6 +254,8 @@ public class TUI extends View {
         return column;
     }
     
+    
+    //TODO integrity check for the coordinates
     private Coordinate getCoordinate() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter x-coordinate: ");
@@ -349,11 +372,17 @@ public class TUI extends View {
         model.setTopCGYscore(payload.topCGYScore());
         
         model.setBoard(payload.board());
+        model.setCurrentPlayer(payload.nicknames().get(0));
         for( int i = 0; i < payload.nicknames().size(); i++ ) {
             model.setShelf(payload.shelves().get(i), payload.nicknames().get(i));
         }
         
         TUIUtils.printStartGame();
+        //brutto
+        if( nickname.equals(model.getCurrentPlayer()) ) {
+            yourTurnFlag = true;
+            System.out.println("it's your turn");
+        }
         
         TUIUtils.printGame(nickname);
         model.setStarted(true);
@@ -450,6 +479,11 @@ public class TUI extends View {
     public void onMessage(CurrentPlayerMessage msg) {
         this.model.setCurrentPlayer(msg.getPayload());
         
+        //brutto
+        if( nickname.equals(msg.getPayload()) ) {
+            yourTurnFlag = true;
+            System.out.println("it's your turn");
+        }
         if( this.model.isStarted() ) {
             TUIUtils.printGame(nickname);
         }
