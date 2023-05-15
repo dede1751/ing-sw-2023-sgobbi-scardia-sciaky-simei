@@ -71,6 +71,7 @@ public class CommonGoalTest {
     class CrossGoalTest {
         
         public final CommonGoalStrategy goal = new CrossGoal();
+        
         @Test
         public void CrossGoalTrue() {
             var attribute = ResourcesManager.getCurrentMethod();
@@ -87,15 +88,15 @@ public class CommonGoalTest {
     @Tag("DecreasingColumnsGoalTest")
     @Nested
     class DecreasingColumnsGoalTest {
-    
+        
         public final CommonGoalStrategy goal = new DecreasingColumnsGoal();
-    
+        
         @Test
         public void DecreasingColumnsGoalTrue1() {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
-    
+        
         @Test
         public void DecreasingColumnsGoalTrue2() {
             var attribute = ResourcesManager.getCurrentMethod();
@@ -107,7 +108,7 @@ public class CommonGoalTest {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
-    
+        
         @Test
         public void DecreasingColumnsGoalTrue4() {
             var attribute = ResourcesManager.getCurrentMethod();
@@ -126,24 +127,25 @@ public class CommonGoalTest {
     class DiagonalFiveTileGoalTest {
         
         public final CommonGoalStrategy goal = new DiagonalFiveTileGoal();
+        
         @Test
         public void DiagonalFiveTileTrue1() {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
-    
+        
         @Test
         public void DiagonalFiveTileTrue2() {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
-    
+        
         @Test
         public void DiagonalFiveTileTrue3() {
             var attribute = ResourcesManager.getCurrentMethod();
             testTrue(attribute, goal);
         }
-    
+        
         @Test
         public void DiagonalFiveTileTrue4() {
             var attribute = ResourcesManager.getCurrentMethod();

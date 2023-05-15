@@ -1,15 +1,13 @@
 package it.polimi.ingsw.view.tui;
 
+import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.Test;
-import it.polimi.ingsw.model.Tile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
-import static org.junit.jupiter.api.Assertions.fail;
 
 class TUITest {
     

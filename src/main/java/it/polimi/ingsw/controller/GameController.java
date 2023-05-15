@@ -38,12 +38,12 @@ public class GameController {
         this.playerNumber = model.getPlayers().size();
         
         // Reset PersonalGoal/Adjacency scores (this is used because the model could be a recovery one)
-        for (Player p : model.getPlayers()) {
+        for( Player p : model.getPlayers() ) {
             p.setPersonalGoalScore(PersonalGoal.getPersonalGoal(p.getPg()).checkGoal(p.getShelf()));
             p.setAdjacentScore(calculateAdjacency(p.getShelf()));
         }
         // Refill the board (recovery boards may not need refilling
-        if ( needRefill() ) {
+        if( needRefill() ) {
             model.refillBoard();
         }
         

@@ -3,7 +3,6 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import it.polimi.ingsw.view.messages.*;
 
 import java.rmi.RemoteException;

@@ -7,7 +7,8 @@ import java.util.List;
 
 public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.AvailableLobbyPayload> {
     
-    public record AvailableLobbyPayload(List<LobbyController.LobbyView> lobbyViewList) implements Serializable {}
+    public record AvailableLobbyPayload(List<LobbyController.LobbyView> lobbyViewList) implements Serializable {
+    }
     
     public AvailableLobbyMessage(List<LobbyController.LobbyView> p) {
         super(new AvailableLobbyPayload(p));

@@ -88,7 +88,7 @@ public class ServerStub implements Server {
         try {
             o = ois.readObject();
         }
-        catch( EOFException e ){
+        catch( EOFException e ) {
             return;
         }
         catch( IOException e ) {

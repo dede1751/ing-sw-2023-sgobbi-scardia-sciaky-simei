@@ -1,9 +1,9 @@
 package it.polimi.ingsw.view.tui;
 
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.model.Coordinate;
+import it.polimi.ingsw.model.GameModel;
+import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
-
-
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
@@ -33,19 +33,16 @@ public class TUI extends View {
             
             System.out.print("\n>>  ");
             String command = scanner.next().trim();
-            switch (command){
-                case "prova":
-                    System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
-                    List<Tile> arr=new ArrayList<Tile>();
-                    arr.add(model.getBoard().getTile(new Coordinate(4,3)));
-                    model.getShelf(nickname).addTiles(arr,1);
-                    model.getShelf(nickname).addTiles(arr,3);
-                    System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
-                    
-                    
-                default:System.out.println("Insert command");
+            if( command.equals("prova") ) {
+                System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
+                List<Tile> arr = new ArrayList<Tile>();
+                arr.add(model.getBoard().getTile(new Coordinate(4, 3)));
+                model.getShelf(nickname).addTiles(arr, 1);
+                model.getShelf(nickname).addTiles(arr, 3);
+                System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
             }
-           /*
+            System.out.println("Insert command");
+/*
             synchronized(playerLock) {
                 try {
                     playerLock.wait();
@@ -250,7 +247,9 @@ public class TUI extends View {
     
     /**
      * Wait until a response for the given action is received
+     *
      * @param action name of the action to wait for
+     *
      * @return the response received
      */
     private Response waitLoginResponse(String action) {
@@ -286,6 +285,7 @@ public class TUI extends View {
     
     /**
      * Respond to a BoardMessage, receiving a board update from the server
+     *
      * @param msg the message received
      */
     @SuppressWarnings("unused")
@@ -293,7 +293,7 @@ public class TUI extends View {
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
         
-        if ( this.model.isStarted() ) {
+        if( this.model.isStarted() ) {
             TUIUtils.printGame(model, nickname);
         }
     }
@@ -301,6 +301,7 @@ public class TUI extends View {
     /**
      * Respond to an AvailableLobbyMessage, updating the list of available lobbies.
      * This frees up the newLobby lock, allowing the client to read the updated lobbies.
+     *
      * @param msg the message received
      */
     @SuppressWarnings("unused")
@@ -315,6 +316,7 @@ public class TUI extends View {
     
     /**
      * Respond to an EndGameMessage, printing the leaderboard and terminating the game.
+     *
      * @param msg the message received
      */
     @SuppressWarnings("unused")
@@ -332,6 +334,7 @@ public class TUI extends View {
     
     /**
      * Respond to a StartGameMessage, setting up the model's initial state and starting the game.
+     *
      * @param msg the message received
      */
     @SuppressWarnings("unused")
@@ -364,6 +367,7 @@ public class TUI extends View {
      * Responde to a ServerResponseMessage.
      * These messages are received as a response to various requests to the server.
      * Messages involving registration always receive a response, while during the game one is received only for errors.
+     *
      * @param msg the message received
      */
     @Override
@@ -386,42 +390,46 @@ public class TUI extends View {
     
     /**
      * Respond to a ShelfMessage, updating the current player's shelf.
+     *
      * @param msg the message received
      */
     @Override
     public void onMessage(ShelfMessage msg) {
         this.model.setShelf(msg.getPayload(), msg.getPlayer());
-        if ( this.model.isStarted() ) {
+        if( this.model.isStarted() ) {
             TUIUtils.printGame(model, nickname);
         }
     }
     
     /**
      * Respond to an incoming chat message
+     *
      * @param msg the message received
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
         this.model.addChatMessage(msg.getSender(), msg.getPayload());
-        if ( this.model.isStarted() ) {
+        if( this.model.isStarted() ) {
             TUIUtils.printGame(model, nickname);
         }
     }
     
     /**
      * Respond to an UpdateScoreMessage, providing score updates at the end of the turn.
+     *
      * @param msg the message received
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
-        this.model.setPoints(msg.getPayload().type(),msg.getPayload().player(), msg.getPayload().score());
-        if ( this.model.isStarted() ) {
+        this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
+        if( this.model.isStarted() ) {
             TUIUtils.printGame(model, nickname);
         }
     }
     
     /**
      * Respond to a CommonGoalMessage, updating the score of the common goal stacks.
+     *
      * @param msg the message received
      */
     @Override
@@ -432,20 +440,21 @@ public class TUI extends View {
             this.model.setTopCGXscore(msg.getPayload().availableTopScore());
         }
         
-        if ( this.model.isStarted() ) {
+        if( this.model.isStarted() ) {
             TUIUtils.printGame(model, nickname);
         }
     }
     
     /**
      * Respond to a CurrentPlayerMessage, updating the current player
+     *
      * @param msg the message received
      */
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         this.model.setCurrentPlayer(msg.getPayload());
         
-        if ( this.model.isStarted() ) {
+        if( this.model.isStarted() ) {
             TUIUtils.printGame(model, nickname);
         }
     }

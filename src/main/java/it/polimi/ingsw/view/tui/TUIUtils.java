@@ -22,25 +22,26 @@ public class TUIUtils {
     
     public static void printGame(LocalModel model, String nickname) {
         StringBuilder sb = new StringBuilder();
-        StringBuilder playersb=new StringBuilder();
+        StringBuilder playersb = new StringBuilder();
         
-                
+        
         var boardCg = concatString(generateBoard(model.getBoard()),
-                               generateCommonGoal(model.getCGXindex()), 3);
+                                   generateCommonGoal(model.getCGXindex()), 3);
         boardCg = concatString(boardCg, generateCommonGoal(model.getCGYindex()), 1);
         
-        var player=concatString(generateShelf(model.getShelf(nickname)),playersb.append(generatePersonalGoal(model.getPgid()))
-                .append(generatePersonalScore()).toString(),2);
-    
+        var player = concatString(generateShelf(model.getShelf(nickname)),
+                                  playersb.append(generatePersonalGoal(model.getPgid()))
+                                          .append(generatePersonalScore()).toString(), 2);
+        
         sb.append(generateShelves(model))
                 .append("\n\n")
                 .append(boardCg)
                 .append("\n\n\n")
                 .append(player)
                 .append("\n\n");
-                
-                //.append(generateCurrentPlayer(model.getCurrentPlayer(),
-                //                              model.getPoints(model.getCurrentPlayer())));
+        
+        //.append(generateCurrentPlayer(model.getCurrentPlayer(),
+        //                              model.getPoints(model.getCurrentPlayer())));
         
         System.out.println(sb);
     }
@@ -130,16 +131,16 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    static String generateShelf(Shelf shelf){
+    static String generateShelf(Shelf shelf) {
         StringBuilder sb = new StringBuilder();
         String top = "┌───┬───┬───┬───┬───┐";
         String bot = "└───┴───┴───┴───┴───┘";
-    
+        
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();
-        
+            
             sb.append(top).append("\n");
-        
+            
             for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
                 for( int j = 0; j < Shelf.N_COL; j++ ) {
                     var tile = matrix[i][j].toTile();
@@ -151,36 +152,35 @@ public class TUIUtils {
                 else
                     sb.append(bot);
             }
-        }
-        else{
+        }else {
             return "no shelf received";
         }
-    
+        
         return sb.toString();
     }
-    static String generateShelves(LocalModel model) {
     
-        String s = new String();
+    static String generateShelves(LocalModel model) {
+        
+        String s = "";
         var playersNickname = model.getPlayersNicknames();
         var currentPlayer = model.getCurrentPlayer();
-    
+        
         ArrayList<Shelf> shelves = new ArrayList<Shelf>();
         for( String player : playersNickname ) {
             if( !player.equals(currentPlayer) ) {
                 shelves.add(model.getShelf(player));
             }
         }
-    
-
-            for( Shelf shelf : shelves ) {
-                s=concatString(s,generateShelf(shelf),1);
-            }
-           
+        
+        
+        for( Shelf shelf : shelves ) {
+            s = concatString(s, generateShelf(shelf), 1);
+        }
+        
         return s;
     }
-
     
-   
+    
     static String generateCurrentPlayer(String nickname, Integer points) {
         String top = nickname + ", it's your turn!\n";
         String mid = nickname + "\n";

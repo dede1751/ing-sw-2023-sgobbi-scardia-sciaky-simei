@@ -1,11 +1,10 @@
 package it.polimi.ingsw.controller;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
-import it.polimi.ingsw.network.Client;
-import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -210,7 +209,7 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, 0);
-
+                
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
                 
@@ -232,7 +231,7 @@ class GameControllerTest {
                 fail();
             }
         }
-    
+        
         @DisplayName("Common goal X already achieved by the current player")
         @Test
         public void turnManagerGoalXFalse1() {
@@ -268,7 +267,7 @@ class GameControllerTest {
                 fail();
             }
         }
-    
+        
         @DisplayName("Common goal X not achieved by the current player")
         @Test
         public void turnManagerGoalXFalse2() {
@@ -281,21 +280,21 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, 0);
-            
+                
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
-            
+                
                 var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
                 var goalPeek = model.peekStackCGX();
-            
+                
                 controller.turnManager();
-            
+                
                 var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
                 var newGoalPeek = model.peekStackCGX();
-            
+                
                 assertEquals(commonGoaLScore, newCommonGoaLScore);
                 assertEquals(goalPeek, newGoalPeek);
-            
+                
                 completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
             }
@@ -304,7 +303,7 @@ class GameControllerTest {
                 fail();
             }
         }
-    
+        
         @DisplayName("Common goal Y achieved by the current player")
         @Test
         public void turnManagerGoalYTrue() {
@@ -320,17 +319,17 @@ class GameControllerTest {
                 
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertFalse(completedGoalY);
-    
+                
                 var commonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
                 var goalPeek = model.peekStackCGY();
                 var expectedCommonGoalScore = commonGoalScore + goalPeek;
-    
+                
                 controller.turnManager();
-    
+                
                 var newCommonGoalScore = model.getCurrentPlayer().getCommonGoalScore();
-    
+                
                 assertEquals(expectedCommonGoalScore, newCommonGoalScore);
-    
+                
                 completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertTrue(completedGoalY);
             }
@@ -339,7 +338,7 @@ class GameControllerTest {
                 fail();
             }
         }
-    
+        
         @DisplayName("Common goal Y already achieved by the current player")
         @Test
         public void turnManagerGoalYFalse1() {
@@ -355,18 +354,18 @@ class GameControllerTest {
                 
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertTrue(completedGoalY);
-    
+                
                 var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
                 var goalPeek = model.peekStackCGY();
-    
+                
                 controller.turnManager();
-    
+                
                 var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
                 var newGoalPeek = model.peekStackCGY();
-    
+                
                 assertEquals(commonGoaLScore, newCommonGoaLScore);
                 assertEquals(goalPeek, newGoalPeek);
-    
+                
                 completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertTrue(completedGoalY);
             }
@@ -375,7 +374,7 @@ class GameControllerTest {
                 fail();
             }
         }
-    
+        
         @DisplayName("Common goal Y not achieved by the current player")
         @Test
         public void turnManagerGoalYFalse2() {
@@ -388,21 +387,21 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, 0);
-            
+                
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalY);
-            
+                
                 var commonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
                 var goalPeek = model.peekStackCGY();
-            
+                
                 controller.turnManager();
-            
+                
                 var newCommonGoaLScore = model.getCurrentPlayer().getCommonGoalScore();
                 var newGoalPeek = model.peekStackCGY();
-            
+                
                 assertEquals(commonGoaLScore, newCommonGoaLScore);
                 assertEquals(goalPeek, newGoalPeek);
-            
+                
                 completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertFalse(completedGoalY);
             }
@@ -440,7 +439,7 @@ class GameControllerTest {
                 fail();
             }
         }
-    
+        
         @Test
         public void turnManagerPersonalGoalFalse() {
             var name = ResourcesManager.getCurrentMethod();
@@ -452,16 +451,16 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model, 0);
-            
+                
                 var shelf = model.getCurrentPlayer().getShelf();
                 var pgID = model.getCurrentPlayer().getPg();
                 var personalGoal = new PersonalGoal(pgID);
                 var personalScore = personalGoal.checkGoal(shelf);
-            
+                
                 controller.turnManager();
-            
+                
                 var newPersonalScore = model.getCurrentPlayer().getPersonalGoalScore();
-            
+                
                 assertEquals(personalScore, newPersonalScore);
             }
             catch( IOException e ) {
@@ -469,7 +468,7 @@ class GameControllerTest {
                 fail();
             }
         }
-    
+        
         //TODO setAdjacentScore testing
     }
 }

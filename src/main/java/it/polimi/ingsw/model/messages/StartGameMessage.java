@@ -11,12 +11,12 @@ public class StartGameMessage extends ModelMessage<StartGameMessage.StartGamePay
     public record StartGamePayload(
             List<String> nicknames, Integer personalGoalId, List<Shelf> shelves, Board board,
             int CGXIndex, int topCGXScore, int CGYIndex, int topCGYScore
-    ) implements Serializable {}
+    ) implements Serializable {
+    }
     
     public StartGameMessage(
             List<String> p, Integer personalGoalId, List<Shelf> shelves, Board board,
-            int CGXIndex, int topCGXScore, int CGYIndex, int topCGYScore)
-    {
+            int CGXIndex, int topCGXScore, int CGYIndex, int topCGYScore) {
         super(new StartGamePayload(p, personalGoalId, shelves, board, CGXIndex, topCGXScore, CGYIndex, topCGYScore));
     }
     

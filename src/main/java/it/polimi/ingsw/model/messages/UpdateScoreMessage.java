@@ -8,7 +8,8 @@ public class UpdateScoreMessage extends ModelMessage<UpdateScoreMessage.UpdateSc
         CommonGoal, PersonalGoal, Adjacency, Bonus
     }
     
-    public record UpdateScorePayload(Type type, int score, String player) implements Serializable {}
+    public record UpdateScorePayload(Type type, int score, String player) implements Serializable {
+    }
     
     public UpdateScoreMessage(Integer score, Type type, String nickname) {
         super(new UpdateScorePayload(type, score, nickname));

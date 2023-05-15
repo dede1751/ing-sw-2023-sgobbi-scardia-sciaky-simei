@@ -27,10 +27,10 @@ public class LocalModel {
     
     private final Map<String, Integer> points = new HashMap<>();
     
-    private final Map<String,Integer> cgScore = new HashMap<>();
-    private final Map<String,Integer> pgScore = new HashMap<>();
-    private final Map<String,Integer> adjacencyScore = new HashMap<>();
-    private final Map<String,Integer> bonusScore = new HashMap<>();
+    private final Map<String, Integer> cgScore = new HashMap<>();
+    private final Map<String, Integer> pgScore = new HashMap<>();
+    private final Map<String, Integer> adjacencyScore = new HashMap<>();
+    private final Map<String, Integer> bonusScore = new HashMap<>();
     
     
     private int pgid = 0;
@@ -49,9 +49,13 @@ public class LocalModel {
     private LocalModel() {
     }
     
-    public boolean isStarted() { return started; }
+    public boolean isStarted() {
+        return started;
+    }
     
-    public void setStarted(boolean started) { this.started = started; }
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
     
     public void addChatMessage(String nickname, String message) {
         chat.add(nickname + " -> " + message + "\n");
@@ -79,15 +83,20 @@ public class LocalModel {
      * Methods to access and modify values of a Map that associates
      * a player with his respective score.
      */
-    public void setPoints(UpdateScoreMessage.Type type, String nickname, int score){
-        switch( type ){
-            case Adjacency :setadjacencyScore(score,nickname);
-            case CommonGoal: setCgScore(score,nickname);
-            case PersonalGoal:setPgScore(score,nickname);
-            case Bonus:setBonusScore(score,nickname);
+    public void setPoints(UpdateScoreMessage.Type type, String nickname, int score) {
+        switch( type ) {
+            case Adjacency:
+                setadjacencyScore(score, nickname);
+            case CommonGoal:
+                setCgScore(score, nickname);
+            case PersonalGoal:
+                setPgScore(score, nickname);
+            case Bonus:
+                setBonusScore(score, nickname);
         }
         
-        int points = getadjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
+        int points =
+                getadjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
         if( this.points.containsKey(nickname) ) {
             this.points.replace(nickname, points);
         }else {
@@ -107,6 +116,7 @@ public class LocalModel {
         }
         
     }
+    
     public int getCgScore(String nickname) {
         return this.cgScore.get(nickname);
     }
@@ -117,8 +127,8 @@ public class LocalModel {
         }else {
             this.pgScore.put(nickname, points);
         }
-       
-    
+        
+        
     }
     
     public int getPgScore(String nickname) {
@@ -132,7 +142,7 @@ public class LocalModel {
             this.adjacencyScore.put(nickname, points);
         }
         
-    
+        
     }
     
     public int getadjacencyScore(String nickname) {
@@ -146,8 +156,9 @@ public class LocalModel {
             this.bonusScore.put(nickname, points);
         }
         
-    
+        
     }
+    
     public int getBonusScore(String nickname) {
         return this.bonusScore.get(nickname);
     }
