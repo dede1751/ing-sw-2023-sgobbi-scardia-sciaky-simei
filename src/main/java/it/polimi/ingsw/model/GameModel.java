@@ -225,10 +225,8 @@ public class GameModel {
      * Adds given score to the current player's score
      *
      * @param score Integer score to give the current player
-     *
-     * @return Total score for current player
      */
-    public int addCurrentPlayerCommongGoalScore(int score, CGType t) {
+    public void addCurrentPlayerCommongGoalScore(int score, CGType t) {
         Player player = this.getCurrentPlayer();
         int i = player.addCommonGoalScore(score);
         switch( t ) {
@@ -242,21 +240,18 @@ public class GameModel {
             }
         }
         notifyAllListeners(new UpdateScoreMessage(i, UpdateScoreMessage.Type.CommonGoal, player.getNickname()));
-        return i;
     }
     
-    public int setCurrentPlayerPersonalScore(int score) {
+    public void setCurrentPlayerPersonalScore(int score) {
         Player player = this.getCurrentPlayer();
-        int i = player.setPersonalGoalScore(score);
+        player.setPersonalGoalScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.PersonalGoal, player.getNickname()));
-        return i;
     }
     
-    public int setCurrentPlayerAdjacencyScore(int score) {
+    public void setCurrentPlayerAdjacencyScore(int score) {
         Player player = this.getCurrentPlayer();
-        int i = player.setAdjacentScore(score);
+        player.setAdjacencyScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.Adjacency, player.getNickname()));
-        return i;
     }
     
     public void refillBoard() {
@@ -394,15 +389,16 @@ public class GameModel {
     }
     
     private void notifyStartGame() {
-        List<String> nicks = this.getNicknames();
-        List<Shelf> shelves = this.getPlayers().stream().map(Player::getShelf).toList();
-        
+        // we have to create separate messages for each client
         for( Player x : players ) {
             ModelListener playerListener = this.listeners.get(x.getNickname());
             playerListener.update(
                     new StartGameMessage(
-                            nicks, x.getPg(), shelves, this.board,
-                            this.commonGoalNumX, this.peekStackCGX(), this.commonGoalNumY, this.peekStackCGY(),
+                            this.players,
+                            x.getPg(),
+                            this.board,
+                            this.commonGoalNumX, this.peekStackCGX(),
+                            this.commonGoalNumY, this.peekStackCGY(),
                             this.getCurrentPlayer().getNickname())
             );
         }

@@ -14,6 +14,8 @@ import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 import java.util.*;
 import java.util.function.Predicate;
 
+//TODO: Save text before asking for input in buffer, and print it again at the bottom of the model when receiving updates
+
 public class TUI extends View {
     
     private final Queue<Response> responseList = new LinkedList<>();
@@ -46,7 +48,6 @@ public class TUI extends View {
                         
                         Move move = new Move(selection, tiles, column);
                         notifyMove(move);
-                        System.out.println("Move sent");
                     }else {
                         System.out.println("Please, wait for your turn!");
                     }
@@ -376,15 +377,28 @@ public class TUI extends View {
     
     /**
      * Respond to a StartGameMessage, setting up the model's initial state and starting the game.
-     *
      * @param msg the message received
      */
     @SuppressWarnings("unused")
     @Override
     public void onMessage(StartGameMessage msg) {
         var payload = msg.getPayload();
+        var players = payload.players();
         
-        model.setPlayersNicknames(payload.nicknames());
+        model.setPlayersNicknames(
+                players.stream().map(StartGameMessage.PlayerRecord::nickname).toList()
+        );
+        
+        List<String> nicknames = new LinkedList<>();
+        for ( var p: players ) {
+            nicknames.add(p.nickname());
+            model.setShelf(p.shelf(), p.nickname());
+            model.setCgScore(p.commonGoalScore(), p.nickname());
+            model.setPgScore(p.personalGoalScore(), p.nickname());
+            model.setAdjacencyScore(p.adjacencyScore(), p.nickname());
+            model.setBonusScore(p.bonusScore(), p.nickname());
+        }
+        model.setPlayersNicknames(nicknames);
         
         model.setPgid(payload.personalGoalId());
         model.setCGXindex(payload.CGXIndex());
@@ -394,9 +408,6 @@ public class TUI extends View {
         
         model.setBoard(payload.board());
         model.setCurrentPlayer(payload.currentPlayer());
-        for( int i = 0; i < payload.nicknames().size(); i++ ) {
-            model.setShelf(payload.shelves().get(i), payload.nicknames().get(i));
-        }
         
         TUIUtils.printStartGame();
         TUIUtils.printGame(nickname);

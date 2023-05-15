@@ -114,7 +114,7 @@ public class LocalModel {
     public void setPoints(UpdateScoreMessage.Type type, String nickname, int score) {
         switch( type ) {
             case Adjacency:
-                setadjacencyScore(score, nickname);
+                setAdjacencyScore(score, nickname);
             case CommonGoal:
                 setCgScore(score, nickname);
             case PersonalGoal:
@@ -124,7 +124,7 @@ public class LocalModel {
         }
         
         int points =
-                getadjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
+                getAdjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
         if( this.points.containsKey(nickname) ) {
             this.points.replace(nickname, points);
         }else {
@@ -161,7 +161,7 @@ public class LocalModel {
         return this.pgScore.get(nickname);
     }
     
-    public void setadjacencyScore(Integer points, String nickname) {
+    public void setAdjacencyScore(Integer points, String nickname) {
         if( this.adjacencyScore.containsKey(nickname) ) {
             this.adjacencyScore.replace(nickname, points);
         }else {
@@ -169,7 +169,7 @@ public class LocalModel {
         }
     }
     
-    public int getadjacencyScore(String nickname) {
+    public int getAdjacencyScore(String nickname) {
         return this.adjacencyScore.get(nickname);
     }
     
