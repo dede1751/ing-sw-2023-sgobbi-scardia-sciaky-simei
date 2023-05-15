@@ -15,15 +15,13 @@ import java.util.function.Predicate;
 
 public class TUI extends View {
     
-    
-    private final Object loginLock = new Object();
     private final Queue<Response> responseList = new LinkedList<>();
     
-    private final Object lobbyLock = new Object();
+    private final Object loginLock = new Object();
     
+    private final Boolean lobbyLock = false;
     protected boolean newLobbies = false;
     
-    private final Object playerLock = new Object();
     
     @Override
     public void run() {
@@ -31,8 +29,6 @@ public class TUI extends View {
         userLogin();
         
         //noinspection InfiniteLoopStatement
-        
-        
         while( true ) {
             
             System.out.print("\n>>  ");
@@ -68,12 +64,15 @@ public class TUI extends View {
         }
     }
     
+    /**
+     * Take care of user login to a lobby on the server
+     * This will set up the player's nickname and sign them up to an active lobby
+     */
     private void userLogin() {
         Scanner scanner = new Scanner(System.in);
         
         // fetch all lobbies
         notifyRequestLobby(null);
-        
         waitLobbies();
         
         if( !lobbies.isEmpty() ) {
@@ -93,9 +92,9 @@ public class TUI extends View {
             switch( choice ) {
                 
                 case "CREATE" -> {
-                    
                     int lobbySize = -1;
                     System.out.println("\nChoose the amount of players for the match (2-4): ");
+                    
                     while( !(lobbySize >= 2 && lobbySize <= 4) ) {
                         System.out.print("\n>>  ");
                         try {
@@ -108,6 +107,7 @@ public class TUI extends View {
                     
                     notifyCreateLobby(lobbySize);
                     Response r = waitLoginResponse(CreateLobbyMessage.class.getSimpleName());
+                    
                     if( r.isOk() ) {
                         break label;
                     }else if( r.msg().equals("NicknameTaken") ) {
@@ -117,6 +117,7 @@ public class TUI extends View {
                 }
                 
                 case "JOIN" -> {
+                    // fetch all lobbies from the server
                     notifyRequestLobby(null);
                     waitLobbies();
                     if( lobbies.stream().noneMatch((l) -> l.nicknames().size() < l.lobbySize()) ) {
@@ -126,6 +127,8 @@ public class TUI extends View {
                     
                     System.out.println("\nChoose one of the following lobbies (avoid ones that are full): ");
                     lobbies.forEach(System.out::print);
+                    
+                    // ask the user to select a lobby
                     while( true ) {
                         System.out.print("\n>>  ");
                         try {
@@ -157,6 +160,7 @@ public class TUI extends View {
                 case "RECOVER" -> {
                     notifyRecoverLobby();
                     Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
+                    
                     if( r.isOk() ) {
                         break label;
                     }else if( r.msg().equals("LobbyUnavailable") ) {
@@ -186,21 +190,8 @@ public class TUI extends View {
         }
     }
     
-    private void askPassTurn() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("\nWrite 'PASS' to pass your turn: ");
-        
-        while( true ) {
-            System.out.print("\n>>  ");
-            String input = scanner.next().trim();
-            if( input.equals("PASS") ) {
-                this.notifyDebugMessage("Turn Passed");
-                break;
-            }
-        }
-    }
-    
     //TODO add tile order selection
+    //FIXME checks on input should ALL be done with IntegrityChecks !!!!
     public List<Coordinate> askSelection() {
         
         Scanner scanner = new Scanner(System.in);
@@ -257,7 +248,11 @@ public class TUI extends View {
         return new Coordinate(x, y);
     }
     
-    
+    /**
+     * Wait until a response for the given action is received
+     * @param action name of the action to wait for
+     * @return the response received
+     */
     private Response waitLoginResponse(String action) {
         synchronized(loginLock) {
             try {
@@ -272,6 +267,9 @@ public class TUI extends View {
         }
     }
     
+    /**
+     * Wait until the lobby list is updated by the server
+     */
     private void waitLobbies() {
         synchronized(lobbyLock) {
             try {
@@ -286,15 +284,25 @@ public class TUI extends View {
         }
     }
     
-    
+    /**
+     * Respond to a BoardMessage, receiving a board update from the server
+     * @param msg the message received
+     */
     @SuppressWarnings("unused")
     @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
-        TUIUtils.printGame(model, nickname);
         
+        if ( this.model.isStarted() ) {
+            TUIUtils.printGame(model, nickname);
+        }
     }
     
+    /**
+     * Respond to an AvailableLobbyMessage, updating the list of available lobbies.
+     * This frees up the newLobby lock, allowing the client to read the updated lobbies.
+     * @param msg the message received
+     */
     @SuppressWarnings("unused")
     @Override
     public void onMessage(AvailableLobbyMessage msg) {
@@ -305,6 +313,10 @@ public class TUI extends View {
         }
     }
     
+    /**
+     * Respond to an EndGameMessage, printing the leaderboard and terminating the game.
+     * @param msg the message received
+     */
     @SuppressWarnings("unused")
     @Override
     public void onMessage(EndGameMessage msg) {
@@ -314,8 +326,14 @@ public class TUI extends View {
         for( var x : p.points().entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList() ) {
             System.out.println(x.getKey() + " : " + x.getValue());
         }
+        
+        model.setStarted(false);
     }
     
+    /**
+     * Respond to a StartGameMessage, setting up the model's initial state and starting the game.
+     * @param msg the message received
+     */
     @SuppressWarnings("unused")
     @Override
     public void onMessage(StartGameMessage msg) {
@@ -339,10 +357,14 @@ public class TUI extends View {
         msg.getPayload().nicknames().forEach(System.out::println);
         
         TUIUtils.printGame(model, nickname);
+        model.setStarted(true);
     }
     
     /**
-     * @param msg
+     * Responde to a ServerResponseMessage.
+     * These messages are received as a response to various requests to the server.
+     * Messages involving registration always receive a response, while during the game one is received only for errors.
+     * @param msg the message received
      */
     @Override
     public void onMessage(ServerResponseMessage msg) {
@@ -363,34 +385,44 @@ public class TUI extends View {
     }
     
     /**
-     * @param msg
+     * Respond to a ShelfMessage, updating the current player's shelf.
+     * @param msg the message received
      */
     @Override
     public void onMessage(ShelfMessage msg) {
         this.model.setShelf(msg.getPayload(), msg.getPlayer());
-        TUIUtils.printGame(model, nickname);
+        if ( this.model.isStarted() ) {
+            TUIUtils.printGame(model, nickname);
+        }
     }
     
     /**
-     * @param msg
+     * Respond to an incoming chat message
+     * @param msg the message received
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
         this.model.addChatMessage(msg.getSender(), msg.getPayload());
-        TUIUtils.printGame(model, nickname);
+        if ( this.model.isStarted() ) {
+            TUIUtils.printGame(model, nickname);
+        }
     }
     
     /**
-     * @param msg
+     * Respond to an UpdateScoreMessage, providing score updates at the end of the turn.
+     * @param msg the message received
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
         this.model.setPoints(msg.getPayload().type(),msg.getPayload().player(), msg.getPayload().score());
-        TUIUtils.printGame(model, nickname);
+        if ( this.model.isStarted() ) {
+            TUIUtils.printGame(model, nickname);
+        }
     }
     
     /**
-     * @param msg
+     * Respond to a CommonGoalMessage, updating the score of the common goal stacks.
+     * @param msg the message received
      */
     @Override
     public void onMessage(CommonGoalMessage msg) {
@@ -399,21 +431,22 @@ public class TUI extends View {
         }else {
             this.model.setTopCGXscore(msg.getPayload().availableTopScore());
         }
-        TUIUtils.printGame(model, nickname);
+        
+        if ( this.model.isStarted() ) {
+            TUIUtils.printGame(model, nickname);
+        }
     }
     
     /**
-     * @param msg
+     * Respond to a CurrentPlayerMessage, updating the current player
+     * @param msg the message received
      */
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         this.model.setCurrentPlayer(msg.getPayload());
         
-        synchronized(playerLock) {
-            //lock che viene notificato quando è il tuo turno
-            if( msg.getPayload().equals(this.nickname) ) {
-                playerLock.notifyAll();
-            }
+        if ( this.model.isStarted() ) {
+            TUIUtils.printGame(model, nickname);
         }
     }
     

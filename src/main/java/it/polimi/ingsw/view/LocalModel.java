@@ -17,6 +17,8 @@ public class LocalModel {
     
     public static final LocalModel INSTANCE = new LocalModel();
     
+    private boolean started = false;
+    
     private List<String> playersNicknames;
     
     private String currentPlayer;
@@ -46,6 +48,10 @@ public class LocalModel {
     
     private LocalModel() {
     }
+    
+    public boolean isStarted() { return started; }
+    
+    public void setStarted(boolean started) { this.started = started; }
     
     public void addChatMessage(String nickname, String message) {
         chat.add(nickname + " -> " + message + "\n");
@@ -89,10 +95,10 @@ public class LocalModel {
         }
     }
     
-    
     public int getPoints(String nickname) {
         return this.points.get(nickname);
     }
+    
     public void setCgScore(Integer points, String nickname) {
         if( this.cgScore.containsKey(nickname) ) {
             this.cgScore.replace(nickname, points);
@@ -104,6 +110,7 @@ public class LocalModel {
     public int getCgScore(String nickname) {
         return this.cgScore.get(nickname);
     }
+    
     public void setPgScore(Integer points, String nickname) {
         if( this.pgScore.containsKey(nickname) ) {
             this.pgScore.replace(nickname, points);
@@ -113,6 +120,7 @@ public class LocalModel {
        
     
     }
+    
     public int getPgScore(String nickname) {
         return this.pgScore.get(nickname);
     }
@@ -159,7 +167,6 @@ public class LocalModel {
     public Shelf getShelf(String nickname) {
         return this.shelves.get(nickname);
     }
-    
     
     /**
      * Method to access and add values to a Map that associates
