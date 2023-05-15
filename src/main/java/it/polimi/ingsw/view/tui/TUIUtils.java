@@ -9,6 +9,8 @@ import java.util.ArrayList;
 
 public class TUIUtils {
     
+    private static final LocalModel model = LocalModel.getInstance();
+    
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
@@ -20,12 +22,12 @@ public class TUIUtils {
     //public static final String ANSI_WHITE_BACKGROUND = "\u001B[41m";
     
     
-    public static void printGame(LocalModel model, String nickname) {
+    public static void printGame(String nickname) {
         StringBuilder sb = new StringBuilder();
         StringBuilder playersb = new StringBuilder();
         
         
-        var boardCg = concatString(generateBoard(model.getBoard()),
+        var boardCg = concatString(generateBoard(),
                                    generateCommonGoal(model.getCGXindex()), 3);
         boardCg = concatString(boardCg, generateCommonGoal(model.getCGYindex()), 1);
         
@@ -33,7 +35,7 @@ public class TUIUtils {
                                   playersb.append(generatePersonalGoal(model.getPgid()))
                                           .append(generatePersonalScore()).toString(), 2);
         
-        sb.append(generateShelves(model))
+        sb.append(generateShelves())
                 .append("\n\n")
                 .append(boardCg)
                 .append("\n\n\n")
@@ -104,7 +106,8 @@ public class TUIUtils {
     }
     
     
-    static String generateBoard(Board board) {
+    static String generateBoard() {
+        Board board = model.getBoard();
         StringBuilder sb = new StringBuilder();
         
         String colmns = "   0  1  2  3  4  5  6  7  8 ";
@@ -159,7 +162,7 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    static String generateShelves(LocalModel model) {
+    static String generateShelves() {
         
         String s = "";
         var playersNickname = model.getPlayersNicknames();

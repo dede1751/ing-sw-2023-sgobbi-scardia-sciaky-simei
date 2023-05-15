@@ -16,7 +16,7 @@ import java.util.List;
  */
 public abstract class View implements Runnable {
     
-    protected final LocalModel model = LocalModel.INSTANCE;
+    protected final LocalModel model = LocalModel.getInstance();
     
     protected int clientID;
     
