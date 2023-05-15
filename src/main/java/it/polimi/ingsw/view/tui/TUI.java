@@ -42,22 +42,6 @@ public class TUI extends View {
                 System.out.println(TUIUtils.generateShelf(model.getShelf(nickname)));
             }
             System.out.println("Insert command");
-/*
-            synchronized(playerLock) {
-                try {
-                    playerLock.wait();
-                    
-                    
-                }
-                catch( InterruptedException e ) {
-                    throw new RuntimeException(e);
-                }
-            }
-            
-            //questo codice si esegue una volta sola quando è il tuo turno
-            var sel = askSelection();
-            int c = askColumn();
-            //notifyMove(new Move());*/
         }
     }
     
@@ -294,7 +278,7 @@ public class TUI extends View {
         this.model.setBoard(msg.getPayload());
         
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(model, nickname);
+            TUIUtils.printGame(nickname);
         }
     }
     
@@ -359,7 +343,7 @@ public class TUI extends View {
         System.out.println("Players name:");
         msg.getPayload().nicknames().forEach(System.out::println);
         
-        TUIUtils.printGame(model, nickname);
+        TUIUtils.printGame(nickname);
         model.setStarted(true);
     }
     
@@ -397,7 +381,7 @@ public class TUI extends View {
     public void onMessage(ShelfMessage msg) {
         this.model.setShelf(msg.getPayload(), msg.getPlayer());
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(model, nickname);
+            TUIUtils.printGame(nickname);
         }
     }
     
@@ -410,7 +394,7 @@ public class TUI extends View {
     public void onMessage(IncomingChatMessage msg) {
         this.model.addChatMessage(msg.getSender(), msg.getPayload());
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(model, nickname);
+            TUIUtils.printGame(nickname);
         }
     }
     
@@ -423,7 +407,7 @@ public class TUI extends View {
     public void onMessage(UpdateScoreMessage msg) {
         this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(model, nickname);
+            TUIUtils.printGame(nickname);
         }
     }
     
@@ -441,7 +425,7 @@ public class TUI extends View {
         }
         
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(model, nickname);
+            TUIUtils.printGame(nickname);
         }
     }
     
@@ -455,7 +439,7 @@ public class TUI extends View {
         this.model.setCurrentPlayer(msg.getPayload());
         
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(model, nickname);
+            TUIUtils.printGame(nickname);
         }
     }
     

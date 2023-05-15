@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view;
 
+import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.messages.UpdateScoreMessage;
@@ -15,7 +16,7 @@ import java.util.Map;
  */
 public class LocalModel {
     
-    public static final LocalModel INSTANCE = new LocalModel();
+    private static LocalModel INSTANCE;
     
     private boolean started = false;
     
@@ -47,6 +48,14 @@ public class LocalModel {
     
     
     private LocalModel() {
+    }
+    
+    public static LocalModel getInstance() {
+        if( INSTANCE == null ) {
+            INSTANCE = new LocalModel();
+        }
+        
+        return INSTANCE;
     }
     
     public boolean isStarted() {
