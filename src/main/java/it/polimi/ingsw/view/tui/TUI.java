@@ -19,7 +19,7 @@ public class TUI extends View {
     
     private final Object loginLock = new Object();
     
-    private final Boolean lobbyLock = false;
+    private final Object lobbyLock = new Object();
     protected boolean newLobbies = false;
     
     
