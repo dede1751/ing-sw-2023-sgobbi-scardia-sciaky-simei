@@ -180,21 +180,22 @@ public class TUI extends View {
             System.out.print("\n>>  ");
             String nickname = scanner.next().trim();
             
-            if( !nickname.equals("")) {
+            if( !nickname.equals("") ) {
                 // Nickname is already taken in a non-recovery lobby
-                if ( lobbies.stream().anyMatch((l) -> !l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                if( lobbies.stream().anyMatch((l) -> !l.isRecovery() && l.nicknames().contains(nickname)) ) {
                     continue;
                 }
                 
                 this.setNickname(nickname);
                 
                 // nickname matches a recovery lobby, try connecting to it
-                if ( lobbies.stream().anyMatch((l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                if( lobbies.stream().anyMatch((l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
                     notifyRecoverLobby();
                     Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
                     
                     if( r.msg().equals("LobbyUnavailable") ) {
-                        System.out.println("The lobby you are trying to recover is unavailable. Please choose another nickname");
+                        System.out.println(
+                                "The lobby you are trying to recover is unavailable. Please choose another nickname");
                         continue;
                     }
                     return true;
@@ -207,31 +208,34 @@ public class TUI extends View {
     
     /**
      * Ask the user to select a list of tiles from the board.
+     *
      * @return a list of coordinates representing the tiles selected by the user
      */
     private List<Coordinate> askSelection() {
         Scanner scanner = new Scanner(System.in);
         List<Coordinate> selection = null;
         
-        while ( !IntegrityChecks.checkSelectionForm(selection, model.getBoard(), model.getShelf(this.nickname)) ) {
-            if ( selection != null ) {
+        while( !IntegrityChecks.checkSelectionForm(selection, model.getBoard(), model.getShelf(this.nickname)) ) {
+            if( selection != null ) {
                 System.out.print("\nThe coordinates you entered are not valid, please try again: \n>> ");
-            } else {
-                System.out.print("\nEnter the ROW,COL coordinates of the tiles you want to select (e.g. 1,2 2,2): \n>> ");
+            }else {
+                System.out.print(
+                        "\nEnter the ROW,COL coordinates of the tiles you want to select (e.g. 1,2 2,2): \n>> ");
             }
             
             // try to parse selection
             selection = Arrays.stream(
-                    scanner.nextLine()
-                            .split(" "))
-                            .map((s) -> {
-                                String[] coordinates = s.split(",");
-                                try {
-                                    return new Coordinate(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
-                                } catch (Exception e) {
-                                    return new Coordinate(-1, -1); // this will invalidate the selection
-                                }
-                            }).toList();
+                            scanner.nextLine()
+                                    .split(" "))
+                    .map((s) -> {
+                        String[] coordinates = s.split(",");
+                        try {
+                            return new Coordinate(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
+                        }
+                        catch( Exception e ) {
+                            return new Coordinate(-1, -1); // this will invalidate the selection
+                        }
+                    }).toList();
         }
         
         return selection;
@@ -239,30 +243,34 @@ public class TUI extends View {
     
     /**
      * Ask the user to pick the order in which the tiles get put on the shelf.
+     *
      * @param selection the list of coordinates already selected by the player
+     *
      * @return the ordered list of tiles at those coordinates picked by the player
      */
     private List<Tile> askSelectionOrder(List<Coordinate> selection) {
         Scanner scanner = new Scanner(System.in);
         List<Tile> tiles = null;
         
-        while ( !IntegrityChecks.checkTileSelection(selection, tiles, model.getBoard()) ) {
-            if ( tiles != null ) {
+        while( !IntegrityChecks.checkTileSelection(selection, tiles, model.getBoard()) ) {
+            if( tiles != null ) {
                 System.out.print("\nThe order you specified is not valid, try again: \n\n>> ");
-            } else {
-                System.out.print("\nEnter the order you want to insert these tiles in ( e.g. 2 1 3, 2 goes to the bottom ):\n");
+            }else {
+                System.out.print(
+                        "\nEnter the order you want to insert these tiles in ( e.g. 2 1 3, 2 goes to the bottom ):\n");
                 TUIUtils.printSelection(selection);
                 System.out.print("\n>> ");
             }
             
             // try to parse selection
             tiles = new LinkedList<>();
-            for ( String s : scanner.nextLine().split(" ") ) {
+            for( String s : scanner.nextLine().split(" ") ) {
                 try {
                     tiles.add(
                             model.getBoard().getTile(selection.get(Integer.parseInt(s) - 1))
                     );
-                } catch (Exception e) {
+                }
+                catch( Exception e ) {
                     tiles.add(Tile.NOTILE); // this will invalidate the selection
                 }
             }
@@ -273,24 +281,28 @@ public class TUI extends View {
     
     /**
      * Ask the user to pick a column in the shelf to put the tiles in.
+     *
      * @param tiles the list of tiles to be put on the shelf
+     *
      * @return the column number picked by the user
      */
     public int askColumn(List<Tile> tiles) {
         Scanner scanner = new Scanner(System.in);
         int column = -1;
         
-        while ( !IntegrityChecks.checkColumnValidity(tiles, column, model.getShelf(this.nickname)) ) {
-            if ( column != -1 ) {
+        while( !IntegrityChecks.checkColumnValidity(tiles, column, model.getShelf(this.nickname)) ) {
+            if( column != -1 ) {
                 System.out.print("\nThe column you specified cannot be filled, choose another one:\n\n>> ");
-            } else {
-                System.out.print("\nEnter the number of the column you want to insert your tiles into: [0,1,2,3,4]\n\n>> ");
+            }else {
+                System.out.print(
+                        "\nEnter the number of the column you want to insert your tiles into: [0,1,2,3,4]\n\n>> ");
             }
             
             // try to parse column
             try {
                 column = Integer.parseInt(scanner.nextLine());
-            } catch (Exception e) {
+            }
+            catch( Exception e ) {
                 column = -1; // this will invalidate the selection
             }
         }
@@ -383,6 +395,7 @@ public class TUI extends View {
     
     /**
      * Respond to a StartGameMessage, setting up the model's initial state and starting the game.
+     *
      * @param msg the message received
      */
     @SuppressWarnings("unused")
@@ -396,7 +409,7 @@ public class TUI extends View {
         );
         
         List<String> nicknames = new LinkedList<>();
-        for ( var p: players ) {
+        for( var p : players ) {
             nicknames.add(p.nickname());
             model.setShelf(p.shelf(), p.nickname());
             model.setCgScore(p.commonGoalScore(), p.nickname());

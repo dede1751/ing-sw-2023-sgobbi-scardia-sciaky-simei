@@ -57,6 +57,7 @@ public class GameController {
     /**
      * Mock GameController class for testing purposes.
      * This hooks empty listeners to the model to avoid problems when it tries to send data to a client
+     *
      * @param model Model instance to run
      */
     public GameController(GameModel model) {
@@ -66,8 +67,11 @@ public class GameController {
         
         for( Player p : model.getPlayers() ) {
             try {
-                model.addListener(p.getNickname(), (m) -> {});
-            } catch( Exception ignored ) {}
+                model.addListener(p.getNickname(), (m) -> {
+                });
+            }
+            catch( Exception ignored ) {
+            }
         }
     }
     
@@ -95,7 +99,7 @@ public class GameController {
                 .toList();
         
         // Handle empty boards
-        if (removable.isEmpty()) {
+        if( removable.isEmpty() ) {
             return true;
         }
         

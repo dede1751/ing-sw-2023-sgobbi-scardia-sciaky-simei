@@ -28,18 +28,18 @@ public class TUIUtils {
     
     public static void printStartGame() {
         String title = ANSI_YELLOW_BOLD +
-                    "\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\\n" +
-                    "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|\n" +
-                    "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\\n" +
-                    "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\\n" +
-                    "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |\n" +
-                    "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|\n" +
-                    "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\\n" +
-                    "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|\n" +
-                    "             $$\\   $$ |\n" +
-                    "             \\$$$$$$  |\n" +
-                    "              \\______/\n" +
-                    ANSI_RESET;
+                       "\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\\n" +
+                       "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|\n" +
+                       "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\\n" +
+                       "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\\n" +
+                       "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |\n" +
+                       "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|\n" +
+                       "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\\n" +
+                       "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|\n" +
+                       "             $$\\   $$ |\n" +
+                       "             \\$$$$$$  |\n" +
+                       "              \\______/\n" +
+                       ANSI_RESET;
         
         System.out.println(title);
     }
@@ -85,7 +85,7 @@ public class TUIUtils {
                 .map(c -> model.getBoard().getTile(c))
                 .toList();
         
-        for ( int i = 0; i < tiles.size(); i++ ) {
+        for( int i = 0; i < tiles.size(); i++ ) {
             sb.append(i + 1)
                     .append(": ")
                     .append(tiles.get(i).toTile())
@@ -182,7 +182,7 @@ public class TUIUtils {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
         String name = String.format(" * %-18.18s \n", nickname);
-        if ( nickname.equals(model.getCurrentPlayer()) ) {
+        if( nickname.equals(model.getCurrentPlayer()) ) {
             name = ANSI_YELLOW_BOLD + name + ANSI_RESET;
         }
         String top = ANSI_BROWN_BOLD + "┌───┬───┬───┬───┬───┐" + ANSI_RESET;
@@ -202,8 +202,7 @@ public class TUIUtils {
                 if( i != 0 ) {
                     sb.append(ANSI_BROWN_BOLD + "├───┼───┼───┼───┼───┤" + ANSI_RESET);
                     sb.append("\n");
-                }
-                else {
+                }else {
                     sb.append(bot);
                 }
             }
@@ -300,7 +299,7 @@ public class TUIUtils {
                     ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
             
             case 11 -> sb.append("""
-                                         
+                                          
                                           █
                                           █ █
                                           █ █ █

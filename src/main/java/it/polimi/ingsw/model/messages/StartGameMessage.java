@@ -35,7 +35,8 @@ public class StartGameMessage extends ModelMessage<StartGameMessage.StartGamePay
             Integer personalGoalId,
             int CGXIndex, int topCGXScore,
             int CGYIndex, int topCGYScore
-    ) implements Serializable {}
+    ) implements Serializable {
+    }
     
     public StartGameMessage(
             List<Player> players,

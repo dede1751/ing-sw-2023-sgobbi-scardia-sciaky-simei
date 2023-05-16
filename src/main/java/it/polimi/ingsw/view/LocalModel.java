@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.messages.UpdateScoreMessage;
@@ -63,11 +62,12 @@ public class LocalModel {
      * Wait for the game to be started by a StartGameMessage.
      */
     public void waitStart() {
-        synchronized( startLock ) {
+        synchronized(startLock) {
             while( !started ) {
                 try {
                     startLock.wait();
-                }catch( InterruptedException e ) {
+                }
+                catch( InterruptedException e ) {
                     Thread.currentThread().interrupt();
                 }
             }
@@ -79,7 +79,7 @@ public class LocalModel {
     }
     
     public void setStarted(boolean started) {
-        synchronized( startLock ) {
+        synchronized(startLock) {
             this.started = started;
             startLock.notifyAll();
         }
