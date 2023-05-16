@@ -6,7 +6,6 @@ import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.view.LocalModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TUIUtils {
@@ -22,13 +21,27 @@ public class TUIUtils {
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     
-    public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_YELLOW_BOLD = "\033[1;33m";
     public static final String ANSI_BROWN_BOLD = "\033[1;38;5;130m";
+    public static final String ANSI_DARK_BROWN_BOLD = "\033[1;38;5;94m";
     
-    // TODO titolo figo
+    
     public static void printStartGame() {
-        System.out.println("THE GAME HAS STARTED");
+        String title = ANSI_YELLOW_BOLD +
+                    "\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\\n" +
+                    "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|\n" +
+                    "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\\n" +
+                    "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\\n" +
+                    "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |\n" +
+                    "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|\n" +
+                    "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\\n" +
+                    "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|\n" +
+                    "             $$\\   $$ |\n" +
+                    "             \\$$$$$$  |\n" +
+                    "              \\______/\n" +
+                    ANSI_RESET;
+        
+        System.out.println(title);
     }
     
     public static void printGame(String nickname) {
@@ -107,7 +120,7 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    public static String createBox(String input) {
+    public static String createBox(String input, String color) {
         StringBuilder output = new StringBuilder();
         String[] lines = input.split("\n");
         String[] linesNoColor = input.split("\n");
@@ -121,24 +134,23 @@ public class TUIUtils {
         }
         
         int width = maxLength; // Add 2 for each side of the box
-        String top = "┌" + "─".repeat(width + 2) + "┐\n";
-        String bottom = "└" + "─".repeat(width + 2) + "┘\n";
+        String top = color + "┌" + "─".repeat(width + 2) + "┐" + ANSI_RESET + "\n";
+        String bottom = color + "└" + "─".repeat(width + 2) + "┘" + ANSI_RESET + "\n";
         
         output.append(top);
         
         for( String line : lines ) {
-            output.append("│ ");
+            output.append(color).append("│ ").append(ANSI_RESET);
             // Replace ANSI color codes with empty strings before padding
             String plainLine = line.replaceAll("\u001B\\[[;\\d]*m", "");
             output.append(line);
             output.append(" ".repeat(maxLength - plainLine.length()));
-            output.append(" │\n");
+            output.append(color).append(" │").append(ANSI_RESET).append("\n");
         }
         
         output.append(bottom);
         return output.toString();
     }
-    
     
     private static String generateBoard() {
         Board board = model.getBoard();
@@ -166,7 +178,6 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    // TODO use method to color string? better coloring
     private static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
@@ -288,14 +299,17 @@ public class TUIUtils {
                     "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n\n" +
                     ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
             
-            case 11 -> sb.append("\n █\n" +
-                                 " █ █\n" +
-                                 " █ █ █\n" +
-                                 " █ █ █ █\n" +
-                                 " █ █ █ █ █");
+            case 11 -> sb.append("""
+                                         
+                                          █
+                                          █ █
+                                          █ █ █
+                                          █ █ █ █
+                                          █ █ █ █ █\
+                                         """);
             
         }
-        return createBox(sb.toString());
+        return createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
         
     }
     
@@ -445,7 +459,7 @@ public class TUIUtils {
             }
             
         }
-        return createBox(sb.toString());
+        return createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
     }
     
 }

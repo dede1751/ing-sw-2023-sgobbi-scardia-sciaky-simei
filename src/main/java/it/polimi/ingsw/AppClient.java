@@ -21,19 +21,6 @@ import java.util.Scanner;
 public class AppClient {
     
     public static void main(String[] args) throws RemoteException, NotBoundException {
-        System.out.println("\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\");
-        System.out.println("$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|");
-        System.out.println("$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\");
-        System.out.println("$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\");
-        System.out.println("$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |");
-        System.out.println("$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|");
-        System.out.println("$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\");
-        System.out.println(
-                "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|");
-        System.out.println("             $$\\   $$ |");
-        System.out.println("             \\$$$$$$  |");
-        System.out.println("              \\______/\n");
-        
         Scanner scanner = new Scanner(System.in);
         View view;
         
