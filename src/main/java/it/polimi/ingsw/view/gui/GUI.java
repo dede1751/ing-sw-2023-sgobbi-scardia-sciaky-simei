@@ -4,7 +4,11 @@ import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
 
 
-public class GUI extends View {
+public class GUI extends View  {
+    
+    
+    
+    private GUIApp app = new GUIApp(this);
     
     @Override
     public void onMessage(BoardMessage msg) {
