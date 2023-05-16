@@ -12,7 +12,10 @@ import it.polimi.ingsw.view.messages.DebugMessage;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.MoveMessage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * GameController, responsible for modifying the model according to the input from the player views
@@ -52,24 +55,56 @@ public class GameController {
     }
     
     /**
+     * Mock GameController class for testing purposes.
+     * This hooks empty listeners to the model to avoid problems when it tries to send data to a client
+     * @param model Model instance to run
+     */
+    public GameController(GameModel model) {
+        this.model = model;
+        this.lobbyID = 0;
+        this.playerNumber = model.getPlayers().size();
+        
+        for( Player p : model.getPlayers() ) {
+            try {
+                model.addListener(p.getNickname(), (m) -> {});
+            } catch( Exception ignored ) {}
+        }
+    }
+    
+    /**
      * Check if the board needs to be refilled according to the rules (either empty or all tiles isolated)
      *
      * @return True if a refill is needed, false otherwise
      */
     public boolean needRefill() {
-        Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
+        Board board = model.getBoard();
         
-        for( var entry : toBeChecked.entrySet() ) {
-            if( !(entry.getValue().equals(Tile.NOTILE)) ) {
-                if( !(model.getBoard().getTile(entry.getKey().getDown()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getUp()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getLeft()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getRight()) == Tile.NOTILE) ) {
-                    return false;
-                }
-            }
+        // get all coordinates with at least one empty side
+        List<Coordinate> removable = board.getTiles()
+                .keySet()
+                .stream()
+                .filter(c -> !board.getTile(c).equals(Tile.NOTILE)
+                             && (board.getTile(c.getDown()) == null
+                                 || board.getTile(c.getDown()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getUp()) == null
+                                 || board.getTile(c.getUp()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getLeft()) == null
+                                 || board.getTile(c.getLeft()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getRight()) == null
+                                 || board.getTile(c.getRight()).equals(Tile.NOTILE)))
+                .toList();
+        
+        // Handle empty boards
+        if (removable.isEmpty()) {
+            return true;
         }
-        return true;
+        
+        // check if there is at least one where an adjacent coordinate is also removable
+        return removable.stream()
+                .noneMatch(c -> removable.contains(c.getDown())
+                                || removable.contains(c.getUp())
+                                || removable.contains(c.getLeft())
+                                || removable.contains(c.getRight()));
     }
     
     /**

@@ -234,7 +234,7 @@ public class TUIUtils {
         return s;
     }
     
-    private static String generateCommonGoal(int commonGoal1) {
+    public static String generateCommonGoal(int commonGoal1) {
         StringBuilder sb = new StringBuilder();
         
         switch( commonGoal1 ) {
@@ -343,7 +343,7 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    private static String generatePersonalGoal(int personalGoal) {
+    public static String generatePersonalGoal(int personalGoal) {
         StringBuilder sb = new StringBuilder();
         switch( personalGoal ) {
             case 0 -> {

@@ -72,10 +72,9 @@ class TUITest {
     @Test
     void commonGoals() {
         System.out.println(TUIUtils.generateCommonGoal(0));
-        
-        
+        System.out.println("\n\n\n\n");
         System.out.println(TUIUtils.generateCommonGoal(1));
-        
+        System.out.println("\n\n\n\n");
         System.out.println(TUIUtils.generateCommonGoal(2));
         System.out.println("\n\n\n\n");
         System.out.println(TUIUtils.generateCommonGoal(3));
