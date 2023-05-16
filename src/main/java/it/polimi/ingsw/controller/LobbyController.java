@@ -70,8 +70,14 @@ public class LobbyController {
      * @param lobbyID       Unique lobby id
      * @param isRecovery    True if the lobby is a recovery lobby
      */
-    public record Lobby(GameModel model, List<Integer> clientIDs, List<Integer> personalGoals, int lobbySize,
-                        int lobbyID, boolean isRecovery) {
+    public record Lobby(
+            GameModel model,
+            List<Integer> clientIDs,
+            List<Integer> personalGoals,
+            int lobbySize,
+            int lobbyID,
+            boolean isRecovery
+    ) {
         public boolean isEmpty() {
             if( isRecovery ) {
                 return clientIDs.contains(-1);
@@ -108,8 +114,12 @@ public class LobbyController {
     }
     
     // LobbyView is a serializable version of Lobby to be sent to the client for information
-    public record LobbyView(List<String> nicknames, int lobbySize, int lobbyID,
-                            boolean isRecovery) implements Serializable {
+    public record LobbyView(
+            List<String> nicknames,
+            int lobbySize,
+            int lobbyID,
+            boolean isRecovery
+    ) implements Serializable {
         @Override
         public String toString() {
             StringBuilder nickames = new StringBuilder();
@@ -150,6 +160,9 @@ public class LobbyController {
                     lobbyIDCounter,
                     true
             );
+            
+            // Save the model with the new id
+            ResourcesManager.saveModel(model, lobbyIDCounter);
             
             lobbies.put(lobbyIDCounter, lobby);
             lobbyIDCounter++;
@@ -235,10 +248,18 @@ public class LobbyController {
                 .findFirst()
                 .orElse(null);
         
-        if( lobby == null ) {
+        if( lobby == null) {
             // lobby is unavailable/doesn't exist
             client.update(
                     new ServerResponseMessage(Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName())));
+            return;
+        }
+        
+        int index = lobby.model.getNicknames().indexOf(client.nickname());
+        if ( lobby.clientIDs().get(index) != -1 ) {
+            // username is already taken
+            client.update(
+                    new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
             return;
         }
         

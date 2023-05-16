@@ -180,10 +180,12 @@ public class TUIUtils {
     private static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
-        String name = String.format(" * %-18.18s \n", nickname);
+        String name = String.format(" * %-18.18s", nickname);
         if( nickname.equals(model.getCurrentPlayer()) ) {
             name = ANSI_YELLOW_BOLD + name + ANSI_RESET;
         }
+        name += "\n";
+        
         String top = ANSI_BROWN_BOLD + "┌───┬───┬───┬───┬───┐" + ANSI_RESET;
         String bot = ANSI_BROWN_BOLD + "└───┴───┴───┴───┴───┘" + ANSI_RESET;
         

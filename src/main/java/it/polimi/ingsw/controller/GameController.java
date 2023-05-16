@@ -51,6 +51,7 @@ public class GameController {
             model.refillBoard();
         }
         
+        saveModel();
         model.startGame();
     }
     

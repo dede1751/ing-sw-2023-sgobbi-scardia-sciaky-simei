@@ -13,10 +13,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
-/*FIXME know bugs
-    -if the user insert pass before the beginning of the game bad things will happen
-    -the game lets the user insert commands before the beginning of the game, big no no
-*/
 
 public class AppClient {
     
