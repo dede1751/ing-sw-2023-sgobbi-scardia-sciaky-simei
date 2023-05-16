@@ -193,15 +193,21 @@ public class TUI extends View {
                     notifyRecoverLobby();
                     Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
                     
-                    if( r.msg().equals("LobbyUnavailable") ) {
+                    if (r.isOk()) {
+                        return true;
+                    } else if( r.msg().equals("LobbyUnavailable") ) {
                         System.out.println(
                                 "The lobby you are trying to recover is unavailable. Please choose another nickname");
-                        continue;
+                    } else if( r.msg().equals("NicknameTaken") ) {
+                        System.out.println(
+                                "Somebody has already picked that recovery nickname. Please choose another nickname");
+                    } else {
+                        System.out.println(
+                                "Recovery request failed. Please choose another nickname");
                     }
-                    return true;
+                } else {
+                    return false;
                 }
-                
-                return false;
             }
         }
     }
