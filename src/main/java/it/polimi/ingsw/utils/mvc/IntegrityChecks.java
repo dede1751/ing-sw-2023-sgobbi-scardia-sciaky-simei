@@ -38,7 +38,7 @@ public class IntegrityChecks {
         // there must be a tile on the selected coordinate, and at least one side must be free
         for ( Coordinate c : selection ) {
             Tile t = board.getTile(c);
-            if ( t == null || t == Tile.NOTILE ) {
+            if ( t == null || t.equals(Tile.NOTILE) ) {
                 return false;
             }
             
@@ -48,10 +48,10 @@ public class IntegrityChecks {
             Tile right = board.getTile(c.getRight());
             
             // All 4 sides are occupied
-            if ( up != null && up != Tile.NOTILE
-                 && down != null && down != Tile.NOTILE
-                 && left != null && left != Tile.NOTILE
-                 && right != null && right != Tile.NOTILE ) {
+            if ( up != null && !up.equals(Tile.NOTILE)
+                 && down != null && !down.equals(Tile.NOTILE)
+                 && left != null && !left.equals(Tile.NOTILE)
+                 && right != null && !right.equals(Tile.NOTILE)) {
                 return false;
             }
         }

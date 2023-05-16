@@ -65,12 +65,11 @@ public class TUI extends View {
     private void userLogin() {
         Scanner scanner = new Scanner(System.in);
         
-        askNickname();
+        boolean selectedRecovery = askNickname();
         
         main_loop:
-        while( true ) {
-            System.out.println(
-                    "\nDo you want to create your own lobby, join an existing one or recover a crashed lobby? [CREATE/JOIN/RECOVER]");
+        while( !selectedRecovery ) {
+            System.out.println("\nDo you want to create your own lobby or join an existing one? [CREATE/JOIN]");
             System.out.print("\n>>  ");
             String choice = scanner.next().trim();
             
@@ -146,19 +145,7 @@ public class TUI extends View {
                     }
                 }
                 
-                case "RECOVER" -> {
-                    notifyRecoverLobby();
-                    Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
-                    
-                    if( r.isOk() ) {
-                        break main_loop;
-                    }else if( r.msg().equals("LobbyUnavailable") ) {
-                        System.out.println("There is no lobby you can recover. Did you misspell your nickname?");
-                        askNickname();
-                    }
-                }
-                
-                default -> System.out.println("Please choose one of [CREATE/JOIN/RECOVER]");
+                default -> System.out.println("Please choose one of [CREATE/JOIN]");
             }
         }
         
@@ -170,14 +157,17 @@ public class TUI extends View {
     /**
      * Ask the user for a nickname, providing the list of all active lobbies fetched from the server.
      * Does not allow choice of nicknames already present in lobby list.
+     * If a player requests a nickname from a recovery lobby, send the recovery request.
+     *
+     * @return true if the user selected a recovery lobby, false otherwise
      */
-    private void askNickname() {
+    private boolean askNickname() {
         notifyRequestLobby(null);
         waitLobbies();
         
         if( !lobbies.isEmpty() ) {
             System.out.println(
-                    "\nHere are all the currently available lobbies. To recover crashed lobbies, user your old nickname!");
+                    "\nHere are all the currently available lobbies. To recover crashed lobbies, use your old nickname!");
             lobbies.forEach(System.out::print);
         }else {
             System.out.println("\nThere is currently no active lobby!");
@@ -190,11 +180,27 @@ public class TUI extends View {
             System.out.print("\n>>  ");
             String nickname = scanner.next().trim();
             
-            if( !nickname.equals("")
-                && lobbies.stream().noneMatch((l) -> l.nicknames().contains(nickname))
-            ) {
+            if( !nickname.equals("")) {
+                // Nickname is already taken in a non-recovery lobby
+                if ( lobbies.stream().anyMatch((l) -> !l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                    continue;
+                }
+                
                 this.setNickname(nickname);
-                break;
+                
+                // nickname matches a recovery lobby, try connecting to it
+                if ( lobbies.stream().anyMatch((l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                    notifyRecoverLobby();
+                    Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
+                    
+                    if( r.msg().equals("LobbyUnavailable") ) {
+                        System.out.println("The lobby you are trying to recover is unavailable. Please choose another nickname");
+                        continue;
+                    }
+                    return true;
+                }
+                
+                return false;
             }
         }
     }
@@ -242,7 +248,7 @@ public class TUI extends View {
         
         while ( !IntegrityChecks.checkTileSelection(selection, tiles, model.getBoard()) ) {
             if ( tiles != null ) {
-                System.out.print("\nThe order you specified is not valid, try again: \n>> ");
+                System.out.print("\nThe order you specified is not valid, try again: \n\n>> ");
             } else {
                 System.out.print("\nEnter the order you want to insert these tiles in ( e.g. 2 1 3, 2 goes to the bottom ):\n");
                 TUIUtils.printSelection(selection);
@@ -276,9 +282,9 @@ public class TUI extends View {
         
         while ( !IntegrityChecks.checkColumnValidity(tiles, column, model.getShelf(this.nickname)) ) {
             if ( column != -1 ) {
-                System.out.print("\nThe column you specified cannot be filled, choose another one: \n>> ");
+                System.out.print("\nThe column you specified cannot be filled, choose another one:\n\n>> ");
             } else {
-                System.out.print("\nEnter the number of the column you want to insert your tiles into: [0,1,2,3,4]\n>> ");
+                System.out.print("\nEnter the number of the column you want to insert your tiles into: [0,1,2,3,4]\n\n>> ");
             }
             
             // try to parse column
