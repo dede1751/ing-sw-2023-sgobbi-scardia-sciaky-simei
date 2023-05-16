@@ -44,8 +44,10 @@ public class LobbyController {
         }
         
         public static ClientContext getCC(ViewMessage<?> msg) {
-            return new ClientContext(getInstance().clientMapping.get(msg.getClientId()), msg.getPlayerNickname(),
-                                     msg.getClientId());
+            return new ClientContext(
+                    getInstance().clientMapping.get(msg.getClientId()),
+                    msg.getPlayerNickname(),
+                    msg.getClientId());
         }
         
         @Override
@@ -200,7 +202,7 @@ public class LobbyController {
      *
      * @throws RemoteException Unable to set the client's id
      */
-    public void register(Client client) throws RemoteException {
+    public synchronized void register(Client client) throws RemoteException {
         client.setClientID(clientIDCounter);
         this.clientMapping.put(clientIDCounter, client);
         clientIDCounter++;
@@ -213,7 +215,7 @@ public class LobbyController {
      *
      * @param lobbyID Lobby to stop tracking
      */
-    public void endGame(int lobbyID) {
+    public synchronized void endGame(int lobbyID) {
         for( int clientID : lobbies.get(lobbyID).clientIDs ) {
             clientMapping.remove(clientID);
         }
@@ -229,7 +231,7 @@ public class LobbyController {
      * @param requestLobbyMessage Lobby parameters
      */
     @SuppressWarnings("unused")
-    public void onMessage(RequestLobbyMessage requestLobbyMessage) {
+    public synchronized void onMessage(RequestLobbyMessage requestLobbyMessage) {
         ClientContext.getCC(requestLobbyMessage)
                 .update(new AvailableLobbyMessage(this.searchForLobbies(requestLobbyMessage.getPayload())));
     }
@@ -240,7 +242,7 @@ public class LobbyController {
      * @param recoverLobbyMessage Lobby parameters
      */
     @SuppressWarnings("unused")
-    public void onMessage(RecoverLobbyMessage recoverLobbyMessage) {
+    public synchronized void onMessage(RecoverLobbyMessage recoverLobbyMessage) {
         ClientContext client = ClientContext.getCC(recoverLobbyMessage);
         Lobby lobby = lobbies.values()
                 .stream()
@@ -297,7 +299,7 @@ public class LobbyController {
      * @param message Lobby creation message
      */
     @SuppressWarnings("unused")
-    public void onMessage(CreateLobbyMessage message) {
+    public synchronized void onMessage(CreateLobbyMessage message) {
         ClientContext client = ClientContext.getCC(message);
         
         if( this.nicknameTaken(client.nickname()) ) {
@@ -336,7 +338,7 @@ public class LobbyController {
      * @param message Description of lobby to join
      */
     @SuppressWarnings("unused")
-    public void onMessage(JoinLobbyMessage message) {
+    public synchronized void onMessage(JoinLobbyMessage message) {
         ClientContext client = ClientContext.getCC(message);
         Lobby lobby = lobbies.get(message.getPayload());
         

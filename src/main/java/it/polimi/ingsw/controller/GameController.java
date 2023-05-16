@@ -232,7 +232,7 @@ public class GameController {
      * @param chat Message contents
      */
     @SuppressWarnings("unused")
-    public void onMessage(ChatMessage chat) {
+    public synchronized void onMessage(ChatMessage chat) {
         model.chatBroker(chat);
     }
     
@@ -243,7 +243,7 @@ public class GameController {
      * @param msg Move received
      */
     @SuppressWarnings("unused")
-    public void onMessage(MoveMessage msg) {
+    public synchronized void onMessage(MoveMessage msg) {
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
         
         if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
@@ -273,7 +273,7 @@ public class GameController {
     }
     
     @SuppressWarnings("unused")
-    public void onMessage(DebugMessage message) {
+    public synchronized void onMessage(DebugMessage message) {
         System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());
         saveModel();
         
