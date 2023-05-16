@@ -69,12 +69,11 @@ public class TUIUtils {
                 2);
         
         sb.append(generateOtherShelves(nickname))
-                .append("\n\n")
+                .append("\n")
                 .append(boardCg)
-                .append("\n\n\n")
+                .append("\n")
                 .append(player)
-                .append("\n\n");
-        
+                .append("\n");
         System.out.println(sb);
     }
     

@@ -193,6 +193,8 @@ public class GameController {
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
             model.setLastTurn();
         }
+    
+       
     }
     
     /**
@@ -200,7 +202,7 @@ public class GameController {
      */
     public void nextPlayerSetter() {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if( model.isLastTurn() && currentPlayerIndex == 3 ) {
+        if( model.isLastTurn() && currentPlayerIndex == model.getPlayers().size() ) {
             endGame();
         }else {
             currentPlayerIndex = (currentPlayerIndex + 1) % playerNumber;
