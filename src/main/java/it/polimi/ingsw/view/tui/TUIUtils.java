@@ -54,7 +54,6 @@ public class TUIUtils {
                 "\n\n" + generateCommonGoal(model.getCGXindex()),
                 3
         );
-        
         boardCg = concatString(
                 boardCg,
                 "\n\n" + generateCommonGoal(model.getCGYindex()),
@@ -180,10 +179,13 @@ public class TUIUtils {
     private static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
-        String name = String.format(" * %-18.18s", nickname);
+        String name = String.format(" * %-14.14s", nickname);
+        int score = model.getPoints(nickname);
+        
         if( nickname.equals(model.getCurrentPlayer()) ) {
             name = ANSI_YELLOW_BOLD + name + ANSI_RESET;
         }
+        name = name + "(" + score + ")";
         name += "\n";
         
         String top = ANSI_BROWN_BOLD + "┌───┬───┬───┬───┬───┐" + ANSI_RESET;

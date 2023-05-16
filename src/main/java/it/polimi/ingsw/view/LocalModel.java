@@ -26,7 +26,7 @@ public class LocalModel {
     
     private final Map<String, Shelf> shelves = new HashMap<>();
     
-    private final Map<String, Integer> points = new HashMap<>();
+    private Map<String, Integer> points = new HashMap<>();
     
     private final Map<String, Integer> cgScore = new HashMap<>();
     private final Map<String, Integer> pgScore = new HashMap<>();
@@ -133,7 +133,11 @@ public class LocalModel {
     }
     
     public int getPoints(String nickname) {
-        return this.points.get(nickname);
+        if( this.points.get(nickname) == null ) {
+            return 0;
+        }else {
+            return this.points.get(nickname);
+        }
     }
     
     public void setCgScore(Integer points, String nickname) {
