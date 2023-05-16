@@ -64,7 +64,7 @@ public class TUIUtils {
                 generateShelf(nickname),
                 playersb.append("\n\n")
                         .append(generatePersonalGoal(model.getPgid()))
-                        .append(generatePersonalScore()).toString(),
+                        .append(generatePersonalScore(nickname)).toString(),
                 2);
         
         sb.append(generateOtherShelves(nickname))
@@ -316,30 +316,83 @@ public class TUIUtils {
     }
     
     
-    private static String generatePersonalScore() {
+    private static String generatePersonalScore(String nickname) {
         StringBuilder sb = new StringBuilder();
-        String grid = """
-                ───┼───┼───┼───┼───┼───""";
+        String grid = "\n" + """
+                ───┼───┼───┼───┼───┼───
+                """;
         
-        for( int i = 1; i <= 6; i++ ) {
-            sb.append(" ").append(i).append(" ");
-            if( i != 6 )
-                sb.append("│");
-        }
-        sb.append("\n").append(grid).append("\n");
-        for( int i = 1; i <= 6; i++ ) {
-            sb.append(" ");
-            switch( i ) {
-                case 1 -> sb.append(1);
-                case 2 -> sb.append(2);
-                case 3 -> sb.append(4);
-                case 4 -> sb.append(6);
-                case 5 -> sb.append(9);
-                case 6 -> sb.append(12);
-            }
-            sb.append(" ");
-            if( i != 6 )
-                sb.append("│");
+        int pgScore = model.getPgScore(nickname);
+        
+        switch( pgScore ) {
+            case 0 ->
+                    sb.append(" 1 │ 2 │ 3 │ 4 │ 5 │ 6 ")
+                            .append(grid)
+                            .append(" 1 │ 2 │ 4 │ 6 │ 9 │ 12 ");
+            case 1 ->
+                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
+                            .append(" 2 │ 3 │ 4 │ 5 │ 6 ")
+                            .append(grid)
+                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
+                            .append(" 2 │ 4 │ 6 │ 9 │ 12 ");
+            case 2 ->
+                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
+                            .append(" 3 │ 4 │ 5 │ 6 ")
+                            .append(grid)
+                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
+                            .append(" 4 │ 6 │ 9 │ 12 ");
+            case 4 ->
+                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│")
+                            .append(" 4 │ 5 │ 6 ")
+                            .append(grid)
+                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
+                            .append(" 6 │ 9 │ 12 ");
+            case 6 ->
+                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
+                            .append(" 5 │ 6 ")
+                            .append(grid)
+                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
+                            .append(" 9 │ 12 ");
+            case 9 ->
+                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│")
+                            .append(" 6 ")
+                            .append(grid)
+                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│")
+                            .append(" 12 ");
+            case 12 ->
+                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│" +
+                              ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
+                            .append(grid)
+                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│" +
+                                    ANSI_BROWN_BOLD + " 12 " + ANSI_RESET + "│");
         }
         
         return sb.toString();
