@@ -8,6 +8,9 @@ import java.util.List;
  * Bottom row is 0 and top is 8.
  * Leftmost col is 0 and rightmost is 8.
  * This class is immutable.
+ *
+ * @param row coordinate's row
+ * @param col coordinate's column
  */
 public record Coordinate(int row, int col) implements Serializable {
     
@@ -101,7 +104,6 @@ public record Coordinate(int row, int col) implements Serializable {
      *
      * @return the list of all the offset + this
      */
-    
     public List<Coordinate> sumList(List<Coordinate> offset) {
         return offset.stream().map((x) -> x.sum(this)).toList();
     }
@@ -109,9 +111,8 @@ public record Coordinate(int row, int col) implements Serializable {
     /**
      * Return the list of all the adiajent coordinate
      *
-     * @return List<Coordinate> of all the adiajent coordinate
+     * @return The List of Coordinate of all the adiajent coordinate
      */
-    
     public List<Coordinate> sumDir() {
         return this.sumList(List.of(new Coordinate(-1, 0),
                                     new Coordinate(1, 0),

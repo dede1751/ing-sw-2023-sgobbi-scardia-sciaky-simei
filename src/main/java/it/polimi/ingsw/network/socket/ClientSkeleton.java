@@ -11,6 +11,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
+/**
+ * Client class implementation for Server side use in the TCP-IP protocol
+ */
 public class ClientSkeleton implements Client {
     
     private final ObjectOutputStream oos;
@@ -18,6 +21,12 @@ public class ClientSkeleton implements Client {
     
     private int clientID = -1;
     
+    /**
+     * Initialize a ClientSkeleton object with a Socket object
+     * @param socket Socket object
+     * @throws RemoteException If an error occurs while creating the ObjectOutputStream/ObjectInputStream from
+     *                         socket's OutputStream/InputStream
+     */
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
@@ -34,6 +43,11 @@ public class ClientSkeleton implements Client {
         }
     }
     
+    /**
+     * @param clientID The ID number assigned by the server
+     * @throws RemoteException If the client already have an ID <br>
+     *                         If the client id cannot be setted
+     */
     @Override
     public void setClientID(int clientID) throws RemoteException {
         try {
@@ -53,9 +67,7 @@ public class ClientSkeleton implements Client {
     
     /**
      * Reads the input stream for ViewMessages and forwards them to the server
-     *
      * @param server the server to forward the messages to
-     *
      * @throws RemoteException if the message cannot be read or is not a ViewMessage
      */
     public void receive(Server server) throws RemoteException {
@@ -72,6 +84,12 @@ public class ClientSkeleton implements Client {
         
     }
     
+    /**
+     * Send a ModelMessage object to the remote client via TCP-IP socket. <br>
+     * Default java serialization is used.
+     * @param msg Message from the server or describing a model change
+     * @throws RemoteException If an error occur during the TCP-IP communication
+     */
     @Override
     public void update(ModelMessage<?> msg) throws RemoteException {
         try {

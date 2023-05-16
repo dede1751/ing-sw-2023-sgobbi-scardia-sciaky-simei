@@ -381,14 +381,26 @@ public class GameModel {
         }
     }
     
+    /**
+     * Notify all clients of a change in the board. <br>
+     * A new Board object is sent to all clients. For details refer to the network manual.
+     */
     private void notifyBoardChange() {
         notifyAllListeners(new BoardMessage(this));
     }
     
+    /**
+     * Notify all clients when the current player is changed. <br>
+     * The nickname of the new current player is notified to all clients. For details refer to the network manual
+     */
     private void notifyCurrentPlayerChange() {
         notifyAllListeners(new CurrentPlayerMessage(this.getCurrentPlayer().getNickname()));
     }
     
+    /**
+     * Notify all client of a change in the shelf of the current player. <br>
+     * A shelf object is sent
+     */
     private void notifyShelfChange() {
         notifyAllListeners(new ShelfMessage(this.getCurrentPlayer().getShelf(), this.getCurrentPlayer().getNickname()));
     }
@@ -455,6 +467,10 @@ public class GameModel {
         players.add(player);
     }
     
+    
+    /**
+     * GameModel class custom Gson's serializer
+     */
     protected static class ModelSerializer implements JsonSerializer<GameModel> {
         @Override
         public JsonElement serialize(GameModel model, Type typeOfSrc, JsonSerializationContext context) {
@@ -492,11 +508,20 @@ public class GameModel {
         }
     }
     
+    /**
+     * Return the json serialization of the object using Gson library and custom class serializer
+     * @return The state of the GameModel object in a json-formatted string
+     */
     public String toJson() {
         Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new ModelSerializer()).create();
         return gson.toJson(this, GameModel.class);
     }
     
+    /**
+     * toJson overload that write the serialized json string of the object directly to the specified file
+     * @param path The path to file to be written
+     * @throws IOException If an error occur while writing the file
+     */
     public void toJson(String path) throws IOException {
         Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new ModelSerializer()).create();
         FileWriter writer = new FileWriter(path);
@@ -506,6 +531,9 @@ public class GameModel {
         writer.close();
     }
     
+    /**
+     * GameModel class custom Gson's deserializer
+     */
     static public class ModelDeserializer implements JsonDeserializer<GameModel> {
         @Override
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

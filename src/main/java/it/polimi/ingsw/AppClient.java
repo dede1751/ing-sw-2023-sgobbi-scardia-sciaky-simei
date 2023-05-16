@@ -18,8 +18,16 @@ import java.util.Scanner;
     -the game lets the user insert commands before the beginning of the game, big no no
 */
 
+/**
+ * Client main class
+ */
 public class AppClient {
-    
+    /**
+     * Client's entry point
+     * @param args unused
+     * @throws RemoteException Should an error occur in RMI comunication, the program will stop.
+     * @throws NotBoundException If the "server" object is not found in the RMI register.
+     */
     public static void main(String[] args) throws RemoteException, NotBoundException {
         System.out.println("\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\");
         System.out.println("$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|");
@@ -66,7 +74,7 @@ public class AppClient {
         }
     }
     
-    public static void runRMI(View view) throws RemoteException, NotBoundException {
+    private static void runRMI(View view) throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry();
         Server server = (Server) registry.lookup("server");
         
@@ -75,7 +83,7 @@ public class AppClient {
         view.run();
     }
     
-    public static void runSocket(View view) throws RemoteException {
+    private static void runSocket(View view) throws RemoteException {
         ServerStub serverStub = new ServerStub("localhost", 1234);
         LocalClient client = new LocalClient(serverStub, view);
         

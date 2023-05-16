@@ -13,8 +13,15 @@ import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Server main class
+ */
 public class AppServer {
     
+    /**
+     * Server entry point
+     * @param args ignored
+     */
     public static void main(String[] args) {
         Server server;
         try {
@@ -94,5 +101,4 @@ public class AppServer {
             throw new RemoteException("Cannot start socket server", e);
         }
     }
-    
 }
