@@ -82,24 +82,29 @@ public class IntegrityChecks {
     /**
      * Check that an ordered tile list is consistent with the coordinates selected from the board
      *
-     * @param coordinates List of coordinates selected by the player on the board
+     * @param selection List of coordinates selected by the player on the board
      * @param tiles       ordered list of tiles at those coordinates to check
      * @param board       board to check
      *
      * @return true if the tiles are consistent with the coordinates, false otherwise
      */
-    public static boolean checkTileSelection(List<Coordinate> coordinates, List<Tile> tiles, Board board) {
+    public static boolean checkTileSelection(List<Coordinate> selection, List<Tile> tiles, Board board) {
         if( tiles == null
             || tiles.isEmpty()
             || tiles.size() > 3
+            || tiles.size() != selection.size()
             || tiles.contains(Tile.NOTILE) ) {
             return false;
         }
         
         List<Tile> control = new ArrayList<>();
-        coordinates.forEach((x) -> control.add(board.getTile(x)));
-        
-        return new HashSet<>(control).containsAll(tiles) && control.size() == tiles.size();
+        selection.forEach((x) -> control.add(board.getTile(x)));
+        for (Tile t : tiles) {
+            if( !control.remove(t) ) {
+                return false;
+            }
+        }
+        return true;
     }
     
     /**

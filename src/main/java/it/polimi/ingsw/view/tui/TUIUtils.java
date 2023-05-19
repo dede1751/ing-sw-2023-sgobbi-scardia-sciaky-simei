@@ -24,30 +24,49 @@ public class TUIUtils {
     public static final String ANSI_YELLOW_BOLD = "\033[1;33m";
     public static final String ANSI_BROWN_BOLD = "\033[1;38;5;130m";
     public static final String ANSI_DARK_BROWN_BOLD = "\033[1;38;5;94m";
+    public static final String ANSI_RED_BOLD = "\033[1;31m";
+    
+    private static final String TITLE = createBox(
+            ANSI_YELLOW_BOLD + "$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "             $$\\   $$ |" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "             \\$$$$$$  |" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "              \\______/" + ANSI_RESET,
+            ANSI_DARK_BROWN_BOLD);
     
     
-    public static void printStartGame() {
-        String title = ANSI_YELLOW_BOLD +
-                       "\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\\n" +
-                       "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|\n" +
-                       "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\\n" +
-                       "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\\n" +
-                       "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |\n" +
-                       "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|\n" +
-                       "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\\n" +
-                       "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|\n" +
-                       "             $$\\   $$ |\n" +
-                       "             \\$$$$$$  |\n" +
-                       "              \\______/\n" +
-                       ANSI_RESET;
-        
-        System.out.println(title);
+    // Note, this does not interact well with the IDE console
+    public static void clearConsole() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            }
+            else {
+                System.out.print("\033\143");
+            }
+        }
+        catch ( Exception ignored ) {}
     }
     
-    public static void printGame(String nickname) {
-        StringBuilder sb = new StringBuilder();
+    public static void printLoginScreen(String prompt, String error) {
+        clearConsole();
+        System.out.println("\n\n" + TITLE);
+        if (error != null) {
+            System.out.println("\n" + ANSI_RED_BOLD + error + ANSI_RESET);
+        }
+        System.out.println("\n" + prompt);
+        System.out.print("\n>> ");
+    }
+    
+    public static void printGame(String nickname, String prompt, String error) {
+        StringBuilder sb = new StringBuilder("\n\n" + TITLE);
         StringBuilder playersb = new StringBuilder();
-        
         
         String boardCg = concatString(
                 generateBoard(),
@@ -73,15 +92,24 @@ public class TUIUtils {
                 .append("\n")
                 .append(player)
                 .append("\n");
-        System.out.println(sb);
+        
+        
+        if (error != null) {
+            sb.append("\n")
+                    .append(ANSI_RED_BOLD)
+                    .append(error)
+                    .append(ANSI_RESET);
+        }
+        sb.append("\n")
+                .append(prompt)
+                .append("\n>> ");
+        
+        clearConsole();
+        System.out.print(sb);
     }
     
-    public static void printSelection(List<Coordinate> selection) {
+    public static String generateTiles(List<Tile> tiles) {
         StringBuilder sb = new StringBuilder();
-        
-        List<Tile> tiles = selection.stream()
-                .map(c -> model.getBoard().getTile(c))
-                .toList();
         
         for( int i = 0; i < tiles.size(); i++ ) {
             sb.append(i + 1)
@@ -89,8 +117,17 @@ public class TUIUtils {
                     .append(tiles.get(i).toTile())
                     .append(" ");
         }
+        return sb.toString();
+    }
+    
+    public static String generateSelection(List<Coordinate> selection) {
+        StringBuilder sb = new StringBuilder();
         
-        System.out.print(sb);
+        List<Tile> tiles = selection.stream()
+                .map(c -> model.getBoard().getTile(c))
+                .toList();
+        
+        return generateTiles(tiles);
     }
     
     public static String concatString(String s1, String s2, int space) {
@@ -325,74 +362,67 @@ public class TUIUtils {
         int pgScore = model.getPgScore(nickname);
         
         switch( pgScore ) {
-            case 0 ->
-                    sb.append(" 1 │ 2 │ 3 │ 4 │ 5 │ 6 ")
-                            .append(grid)
-                            .append(" 1 │ 2 │ 4 │ 6 │ 9 │ 12 ");
-            case 1 ->
-                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
-                            .append(" 2 │ 3 │ 4 │ 5 │ 6 ")
-                            .append(grid)
-                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
-                            .append(" 2 │ 4 │ 6 │ 9 │ 12 ");
-            case 2 ->
-                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
-                            .append(" 3 │ 4 │ 5 │ 6 ")
-                            .append(grid)
-                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
-                            .append(" 4 │ 6 │ 9 │ 12 ");
-            case 4 ->
-                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│")
-                            .append(" 4 │ 5 │ 6 ")
-                            .append(grid)
-                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
-                            .append(" 6 │ 9 │ 12 ");
-            case 6 ->
-                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
-                            .append(" 5 │ 6 ")
-                            .append(grid)
-                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
-                            .append(" 9 │ 12 ");
-            case 9 ->
-                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│")
-                            .append(" 6 ")
-                            .append(grid)
-                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│")
-                            .append(" 12 ");
-            case 12 ->
-                    sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│" +
-                              ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
-                            .append(grid)
-                            .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│" +
-                                    ANSI_BROWN_BOLD + " 12 " + ANSI_RESET + "│");
+            case 0 -> sb.append(" 1 │ 2 │ 3 │ 4 │ 5 │ 6 ")
+                    .append(grid)
+                    .append(" 1 │ 2 │ 4 │ 6 │ 9 │ 12 ");
+            case 1 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
+                    .append(" 2 │ 3 │ 4 │ 5 │ 6 ")
+                    .append(grid)
+                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
+                    .append(" 2 │ 4 │ 6 │ 9 │ 12 ");
+            case 2 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
+                    .append(" 3 │ 4 │ 5 │ 6 ")
+                    .append(grid)
+                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
+                    .append(" 4 │ 6 │ 9 │ 12 ");
+            case 4 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│")
+                    .append(" 4 │ 5 │ 6 ")
+                    .append(grid)
+                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
+                    .append(" 6 │ 9 │ 12 ");
+            case 6 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
+                    .append(" 5 │ 6 ")
+                    .append(grid)
+                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
+                    .append(" 9 │ 12 ");
+            case 9 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│")
+                    .append(" 6 ")
+                    .append(grid)
+                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│")
+                    .append(" 12 ");
+            case 12 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
+                    .append(grid)
+                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│" +
+                            ANSI_BROWN_BOLD + " 12 " + ANSI_RESET + "│");
         }
         
         return sb.toString();

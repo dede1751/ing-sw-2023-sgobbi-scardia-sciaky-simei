@@ -26,7 +26,7 @@ public class LocalModel {
     
     private final Map<String, Shelf> shelves = new HashMap<>();
     
-    private Map<String, Integer> points = new HashMap<>();
+    private final Map<String, Integer> points = new HashMap<>();
     
     private final Map<String, Integer> cgScore = new HashMap<>();
     private final Map<String, Integer> pgScore = new HashMap<>();
