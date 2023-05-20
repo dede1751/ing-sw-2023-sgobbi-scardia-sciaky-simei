@@ -39,6 +39,11 @@ public class GameModel {
     
     private final TileBag tileBag;
     
+    private boolean gameEnded = false;
+    public void setGameEnded(boolean b) {
+        gameEnded = b;
+    }
+    
     public enum CGType {
         X, Y
     }
@@ -355,6 +360,7 @@ public class GameModel {
     }
     
     private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
+        if(gameEnded) return;
         for( ModelListener listener : this.listeners.values() ) {
             listener.update(msg);
         }
@@ -408,15 +414,23 @@ public class GameModel {
      * Notify the clients that the game is ended by sending a leaderboard.
      */
     public void notifyWinner() {
-        String winner = this.players.stream()
-                .max(Comparator.comparingInt(Player::getScore))
-                .orElseThrow()
-                .getNickname();
+        List<Player> winningPlayers = this.players.stream()
+                //there cannot be any equal element
+                .sorted((x, y) -> {
+                    if( x.getScore() > y.getScore() ) {
+                        return -1;
+                    }else if( x.getScore() == y.getScore() ) {
+                        return this.players.indexOf(x) > this.players.indexOf(y) ? -1 : 1;
+                    }else {
+                        return 1;
+                    }
+                }).toList();
         
-        Map<String, Integer> leaderboard = new HashMap<>();
-        for( Player x : this.getPlayers() ) {
+        Map<String, Integer> leaderboard = new LinkedHashMap<>();
+        for( Player x : winningPlayers ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
+        String winner = winningPlayers.get(0).getNickname();
         notifyAllListeners(new EndGameMessage(winner, leaderboard));
     }
     
@@ -433,11 +447,21 @@ public class GameModel {
     
     // Testing methods
     public int peekStackCGX() {
-        return commonGoalStackX.peek();
+        try {
+            return commonGoalStackX.peek();
+        }
+        catch( EmptyStackException e ) {
+            return 0;
+        }
     }
     
     public int peekStackCGY() {
-        return commonGoalStackY.peek();
+        try {
+            return commonGoalStackY.peek();
+        }
+        catch( EmptyStackException e ) {
+            return 0;
+        }
     }
     
     public Board getBoard() {

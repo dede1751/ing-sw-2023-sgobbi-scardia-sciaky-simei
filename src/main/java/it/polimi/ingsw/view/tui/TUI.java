@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
+import it.polimi.ingsw.utils.files.ClientLogger;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
@@ -11,7 +12,9 @@ import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 
+import java.awt.desktop.SystemEventListener;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 
@@ -27,8 +30,12 @@ public class TUI extends View {
     private String prompt = null;
     private String error = null;
     
+    protected static final AtomicBoolean gameEnded = new AtomicBoolean(false);
+    protected static final AtomicBoolean otherMode = new AtomicBoolean(false);
+    
     @Override
     public void run() {
+        gameEnded.set(false);
         Scanner scanner = new Scanner(System.in);
         userLogin();
         
@@ -36,7 +43,7 @@ public class TUI extends View {
         model.waitStart();
         
         //noinspection InfiniteLoopStatement
-        while( true ) {
+        while( !gameEnded.get() ) {
             prompt = "Please select the action you want to take: [MOVE/CHAT]";
             TUIUtils.printGame(nickname, prompt, error);
             String command = scanner.next().trim();
@@ -391,6 +398,7 @@ public class TUI extends View {
     @Override
     public void onMessage(AvailableLobbyMessage msg) {
         this.lobbies = msg.getPayload().lobbyViewList();
+        ClientLogger.writeMessage(msg);
         synchronized(lobbyLock) {
             newLobbies = true;
             lobbyLock.notifyAll();
@@ -404,15 +412,11 @@ public class TUI extends View {
      */
     @SuppressWarnings("unused")
     @Override
-    public void onMessage(EndGameMessage msg) {
-        var p = msg.getPayload();
-        System.out.println("GAME FINISHED, THE WINNER IS " + p.winner());
-        System.out.println("LEADERBOARD : ");
-        for( var x : p.points().entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList() ) {
-            System.out.println(x.getKey() + " : " + x.getValue());
-        }
-        
-        model.setStarted(false);
+    public void onMessage(EndGameMessage msg){
+        ClientLogger.writeMessage(msg);
+        //FIXME sketchy
+        gameEnded.set(true);
+        TUIUtils.printEndGameScreen(msg.getPayload(), model.getPlayersNicknames().get(0));
     }
     
     /**

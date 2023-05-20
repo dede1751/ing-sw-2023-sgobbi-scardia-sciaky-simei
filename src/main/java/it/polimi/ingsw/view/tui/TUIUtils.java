@@ -4,8 +4,10 @@ import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.messages.EndGameMessage;
 import it.polimi.ingsw.view.LocalModel;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class TUIUtils {
@@ -21,20 +23,39 @@ public class TUIUtils {
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     
+    
+    public static final String ANSI_GOLD_BACKGROUND = "\033[38;5;16;48;5;228m";
+    public static final String ANSI_SILVER_BACKGROUND = "\033[38;5;16;48;5;253m";
+    public static final String ANSI_BRONZE_BACKGROUND = "\033[38;5;16;48;5;166m";
+    public static final String ANSI_DARK_BRONZE_BACKGROUND = "\033[38;5;16;48;5;94m";
+    
     public static final String ANSI_YELLOW_BOLD = "\033[1;33m";
     public static final String ANSI_BROWN_BOLD = "\033[1;38;5;130m";
     public static final String ANSI_DARK_BROWN_BOLD = "\033[1;38;5;94m";
     public static final String ANSI_RED_BOLD = "\033[1;31m";
     
+    
     private static final String TITLE = createBox(
-            ANSI_YELLOW_BOLD + "$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\" + ANSI_RESET + "\n" +
-            ANSI_YELLOW_BOLD + "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|" + ANSI_RESET + "\n" +
-            ANSI_YELLOW_BOLD + "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\" + ANSI_RESET + "\n" +
-            ANSI_YELLOW_BOLD + "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\" + ANSI_RESET + "\n" +
-            ANSI_YELLOW_BOLD + "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |" + ANSI_RESET + "\n" +
-            ANSI_YELLOW_BOLD + "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|" + ANSI_RESET + "\n" +
-            ANSI_YELLOW_BOLD + "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\" + ANSI_RESET + "\n" +
-            ANSI_YELLOW_BOLD + "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD +
+            "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\" + ANSI_RESET +
+            "\n" +
+            ANSI_YELLOW_BOLD +
+            "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\" + ANSI_RESET +
+            "\n" +
+            ANSI_YELLOW_BOLD + "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD +
+            "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\" + ANSI_RESET +
+            "\n" +
+            ANSI_YELLOW_BOLD +
+            "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|" +
+            ANSI_RESET + "\n" +
             ANSI_YELLOW_BOLD + "             $$\\   $$ |" + ANSI_RESET + "\n" +
             ANSI_YELLOW_BOLD + "             \\$$$$$$  |" + ANSI_RESET + "\n" +
             ANSI_YELLOW_BOLD + "              \\______/" + ANSI_RESET,
@@ -44,20 +65,20 @@ public class TUIUtils {
     // Note, this does not interact well with the IDE console
     public static void clearConsole() {
         try {
-            if (System.getProperty("os.name").contains("Windows")) {
+            if( System.getProperty("os.name").contains("Windows") ) {
                 new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            }
-            else {
+            }else {
                 System.out.print("\033\143");
             }
         }
-        catch ( Exception ignored ) {}
+        catch( Exception ignored ) {
+        }
     }
     
     public static void printLoginScreen(String prompt, String error) {
         clearConsole();
         System.out.println("\n\n" + TITLE);
-        if (error != null) {
+        if( error != null ) {
             System.out.println("\n" + ANSI_RED_BOLD + error + ANSI_RESET);
         }
         System.out.println("\n" + prompt);
@@ -65,6 +86,9 @@ public class TUIUtils {
     }
     
     public static void printGame(String nickname, String prompt, String error) {
+        if( TUI.gameEnded.get() ) {
+            return;
+        }
         StringBuilder sb = new StringBuilder("\n\n" + TITLE);
         StringBuilder playersb = new StringBuilder();
         
@@ -94,7 +118,7 @@ public class TUIUtils {
                 .append("\n");
         
         
-        if (error != null) {
+        if( error != null ) {
             sb.append("\n")
                     .append(ANSI_RED_BOLD)
                     .append(error)
@@ -104,6 +128,32 @@ public class TUIUtils {
                 .append(prompt)
                 .append("\n>> ");
         
+        clearConsole();
+        System.out.print(sb);
+    }
+    
+    
+    public static void printEndGameScreen(EndGameMessage.EndGamePayload endgame, String firstPlayer) {
+        
+        List<String> color = List.of(ANSI_GOLD_BACKGROUND, ANSI_SILVER_BACKGROUND, ANSI_BRONZE_BACKGROUND,
+                                     ANSI_DARK_BRONZE_BACKGROUND);
+        
+        StringBuilder header = new StringBuilder(
+                "CONGRATULATION, THE GAME ENDED!\n" +
+                "THE WINNER IS : " + ANSI_YELLOW_BOLD + endgame.winner() + ANSI_RESET +
+                "!\n" +
+                "LEADERBOARD : \n");
+        Iterator<String> iter = color.iterator();
+        for( var x : endgame.points().entrySet() ) {
+            header.append(iter.next());
+            String name = String.format(" * %-14.14s", x.getKey());
+            header.append("\t").append(name).append(" : ").append(x.getValue());
+            header.append(ANSI_RESET);
+            if( x.getKey().equals(firstPlayer) )
+                header.append(" ⑁");
+            header.append("\n");
+        }
+        String sb = "\n\n" + TITLE + header;
         clearConsole();
         System.out.print(sb);
     }

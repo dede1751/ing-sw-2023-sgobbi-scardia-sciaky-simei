@@ -3,6 +3,7 @@ package it.polimi.ingsw.view;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Server;
+import it.polimi.ingsw.utils.files.ClientLogger;
 import it.polimi.ingsw.view.messages.*;
 
 import java.rmi.RemoteException;
@@ -23,6 +24,7 @@ public abstract class View implements Runnable {
     protected String nickname;
     
     protected List<LobbyController.LobbyView> lobbies;
+    
     
     /**
      * Set the client's ID. This method is called by the server when the client connects.

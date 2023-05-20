@@ -218,6 +218,7 @@ public class Board implements Serializable {
         return result;
     }
     
+    
     public static class BoardSerializer implements JsonSerializer<Board> {
         
         @Override

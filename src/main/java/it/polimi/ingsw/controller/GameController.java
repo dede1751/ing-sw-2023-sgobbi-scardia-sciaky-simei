@@ -29,6 +29,8 @@ public class GameController {
     
     private final Integer playerNumber;
     
+
+    
     /**
      * Initialize the controller with the given model and start the game
      *
@@ -203,7 +205,7 @@ public class GameController {
      */
     public void nextPlayerSetter() {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if( model.isLastTurn() && currentPlayerIndex == model.getPlayers().size() ) {
+        if( model.isLastTurn() && currentPlayerIndex == model.getPlayers().size()-1 ) {
             endGame();
         }else {
             currentPlayerIndex = (currentPlayerIndex + 1) % playerNumber;
@@ -215,6 +217,7 @@ public class GameController {
      * Notify the views of the winner and close the lobby
      */
     public void endGame() {
+        this.model.setGameEnded(true);
         model.notifyWinner();
         LobbyController.getInstance().endGame(this.lobbyID);
     }
