@@ -40,9 +40,23 @@ public class GameModel {
     private final TileBag tileBag;
     
     private boolean gameEnded = false;
+    
+    /**
+     *
+     * @param b
+     */
     public void setGameEnded(boolean b) {
         gameEnded = b;
     }
+    
+    /**
+     *
+     * @return
+     */
+    public boolean getGameEnded(){
+        return gameEnded;
+    }
+    
     
     public enum CGType {
         X, Y

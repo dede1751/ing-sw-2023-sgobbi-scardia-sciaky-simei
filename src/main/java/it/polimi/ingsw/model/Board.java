@@ -218,6 +218,11 @@ public class Board implements Serializable {
         return result;
     }
     
+    @Override
+    public String toString(){
+        Gson g = new GsonBuilder().registerTypeAdapter(getClass(), new BoardSerializer()).create();
+        return g.toJson(this, this.getClass());
+    }
     
     public static class BoardSerializer implements JsonSerializer<Board> {
         

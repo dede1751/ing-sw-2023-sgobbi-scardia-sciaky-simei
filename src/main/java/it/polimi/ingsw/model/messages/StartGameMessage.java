@@ -36,6 +36,14 @@ public class StartGameMessage extends ModelMessage<StartGameMessage.StartGamePay
             int CGXIndex, int topCGXScore,
             int CGYIndex, int topCGYScore
     ) implements Serializable {
+        @Override
+        public String toString(){
+            StringBuilder sb = new StringBuilder( "Game started | Players : ");
+            for(var x : players()){
+                sb.append(x.nickname).append(" ");
+            }
+            return sb.toString();
+        }
     }
     
     public StartGameMessage(

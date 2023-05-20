@@ -1,5 +1,6 @@
 package it.polimi.ingsw.utils.files;
 
+import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.messages.ModelMessage;
 
 import java.io.IOException;
@@ -10,19 +11,20 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 public class ClientLogger {
-    private static final FileChannel messageLog;
+    private final FileChannel messageLog;
     
-    
-    static {
+    public ClientLogger(String name) {
+        
         try {
-            messageLog = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/client/messageLog.txt");
+            messageLog = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/client/" + name + ".txt");
         }
         catch( IOException e ) {
             throw new RuntimeException(e);
         }
     }
     
-    private static void writeLog(String s, FileChannel channel) {
+    
+    private void writeLog(String s, FileChannel channel) {
         String logString = Timestamp.from(Instant.now()) + " - " + s + "\n";
         
         try {
@@ -35,7 +37,9 @@ public class ClientLogger {
             e.printStackTrace(System.err);
         }
     }
-    public static void writeMessage(ModelMessage<?> message){
+    
+    public void writeMessage(ModelMessage<?> message) {
+        
         var payload = message.getPayload().toString();
         String logString = Timestamp.from(Instant.now()) + " - " + "\n" + payload + "\n";
         writeLog(logString, messageLog);

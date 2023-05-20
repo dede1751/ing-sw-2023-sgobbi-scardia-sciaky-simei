@@ -217,8 +217,8 @@ public class GameController {
      * Notify the views of the winner and close the lobby
      */
     public void endGame() {
-        this.model.setGameEnded(true);
         model.notifyWinner();
+        this.model.setGameEnded(true);
         LobbyController.getInstance().endGame(this.lobbyID);
     }
     
@@ -226,6 +226,7 @@ public class GameController {
      * Save the model to a file
      */
     private void saveModel() {
+        if(this.model.getGameEnded()) return;
         ResourcesManager.saveModel(model, lobbyID);
     }
     
