@@ -8,9 +8,11 @@ public class ReflectionUtility {
     
     /**
      * Check if the given object has a method with the given name and arguments
-     * @param obj          object to check
-     * @param methodName  name of the method to check
+     *
+     * @param obj        object to check
+     * @param methodName name of the method to check
      * @param args       arguments to pass to the method
+     *
      * @return true if the object has a method with the given name and arguments, false otherwise
      */
     public static boolean hasMethod(Object obj, String methodName, Object... args) {
@@ -27,9 +29,9 @@ public class ReflectionUtility {
     /**
      * Call the method with the given name on the given object, passing the given arguments
      *
-     * @param obj           object on which to call the method
-     * @param methodName    name of the method to call
-     * @param args          arguments to pass to the method
+     * @param obj        object on which to call the method
+     * @param methodName name of the method to call
+     * @param args       arguments to pass to the method
      */
     public static void invokeMethod(Object obj, String methodName, Object... args) throws NoSuchMethodException {
         try {

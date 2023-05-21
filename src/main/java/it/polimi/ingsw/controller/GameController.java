@@ -29,7 +29,6 @@ public class GameController {
     
     private final Integer playerNumber;
     
-
     
     /**
      * Initialize the controller with the given model and start the game
@@ -196,8 +195,8 @@ public class GameController {
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
             model.setLastTurn();
         }
-    
-       
+        
+        
     }
     
     /**
@@ -205,7 +204,7 @@ public class GameController {
      */
     public void nextPlayerSetter() {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if( model.isLastTurn() && currentPlayerIndex == model.getPlayers().size()-1 ) {
+        if( model.isLastTurn() && currentPlayerIndex == model.getPlayers().size() - 1 ) {
             endGame();
         }else {
             currentPlayerIndex = (currentPlayerIndex + 1) % playerNumber;
@@ -226,7 +225,8 @@ public class GameController {
      * Save the model to a file
      */
     private void saveModel() {
-        if(this.model.getGameEnded()) return;
+        if( this.model.getGameEnded() )
+            return;
         ResourcesManager.saveModel(model, lobbyID);
     }
     

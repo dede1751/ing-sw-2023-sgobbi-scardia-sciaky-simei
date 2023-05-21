@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.utils.files.ClientLogger;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
@@ -88,16 +87,16 @@ public class TUI extends View {
                 
                 case "CREATE" -> {
                     int lobbySize;
-
+                    
                     while( true ) {
                         prompt = "Choose the amount of players for the match (2-4): ";
                         TUIUtils.printLoginScreen(prompt, error);
                         
                         try {
                             lobbySize = Integer.parseInt(scanner.next());
-                            if ( lobbySize < 2 || lobbySize > 4) {
+                            if( lobbySize < 2 || lobbySize > 4 ) {
                                 error = "Please choose a number between 2 and 4";
-                            } else {
+                            }else {
                                 error = null;
                                 break;
                             }
@@ -127,8 +126,9 @@ public class TUI extends View {
                         continue;
                     }
                     
-                    StringBuilder joinPrompt = new StringBuilder("Choose one of the following lobbies (avoid ones that are full):");
-                    for ( var l : lobbies) {
+                    StringBuilder joinPrompt =
+                            new StringBuilder("Choose one of the following lobbies (avoid ones that are full):");
+                    for( var l : lobbies ) {
                         joinPrompt.append("\n").append(l.toString());
                     }
                     
@@ -189,8 +189,9 @@ public class TUI extends View {
         
         StringBuilder lobbyPrompt = new StringBuilder();
         if( !lobbies.isEmpty() ) {
-            lobbyPrompt.append("\nHere are all the currently available lobbies. To recover crashed lobbies, use your old nickname!");
-            for ( var l : lobbies) {
+            lobbyPrompt.append(
+                    "\nHere are all the currently available lobbies. To recover crashed lobbies, use your old nickname!");
+            for( var l : lobbies ) {
                 lobbyPrompt.append("\n").append(l.toString());
             }
         }else {
@@ -216,16 +217,16 @@ public class TUI extends View {
                     notifyRecoverLobby();
                     Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
                     
-                    if (r.isOk()) {
+                    if( r.isOk() ) {
                         return true;
-                    } else if( r.msg().equals("LobbyUnavailable") ) {
+                    }else if( r.msg().equals("LobbyUnavailable") ) {
                         prompt = "The lobby you are trying to recover is unavailable. Please choose another nickname";
-                    } else if( r.msg().equals("NicknameTaken") ) {
+                    }else if( r.msg().equals("NicknameTaken") ) {
                         prompt = "Somebody has already picked that recovery nickname. Please choose another nickname";
-                    } else {
+                    }else {
                         prompt = "Recovery request failed. Please choose another nickname";
                     }
-                } else {
+                }else {
                     return false;
                 }
             }
@@ -409,7 +410,7 @@ public class TUI extends View {
      */
     @SuppressWarnings("unused")
     @Override
-    public void onMessage(EndGameMessage msg){
+    public void onMessage(EndGameMessage msg) {
         gameEnded.set(true);
         TUIUtils.printEndGameScreen(msg.getPayload(), model.getPlayersNicknames().get(0));
     }

@@ -10,7 +10,10 @@ import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.files.ServerLogger;
-import it.polimi.ingsw.view.messages.*;
+import it.polimi.ingsw.view.messages.CreateLobbyMessage;
+import it.polimi.ingsw.view.messages.JoinLobbyMessage;
+import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
+import it.polimi.ingsw.view.messages.RequestLobbyMessage;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -126,7 +129,7 @@ public class LobbyController {
             
             // Create a new recovery lobby for the model
             Map<String, Client> clients = new HashMap<>();
-            for (String nickname : model.getNicknames()) {
+            for( String nickname : model.getNicknames() ) {
                 clients.put(nickname, null);
             }
             Lobby lobby = new Lobby(model, clients, null, clients.size(), lobbyID, true);
@@ -182,12 +185,15 @@ public class LobbyController {
      *
      * @param client Client to serve
      */
-    public void setServedClient(Client client) { this.client = client; }
+    public void setServedClient(Client client) {
+        this.client = client;
+    }
     
     /**
      * Simple update function to incorporate logging
+     *
      * @param nickname Client nickname
-     * @param m Message to send
+     * @param m        Message to send
      */
     private void update_client(String nickname, ModelMessage<?> m) {
         try {
@@ -225,15 +231,17 @@ public class LobbyController {
                 .orElse(null);
         
         // lobby is unavailable/doesn't exist
-        if( lobby == null) {
-            update_client(nickname, new ServerResponseMessage(Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName())));
+        if( lobby == null ) {
+            update_client(nickname, new ServerResponseMessage(
+                    Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName())));
             return;
         }
         
         // username is already taken
         int index = lobby.model.getNicknames().indexOf(nickname);
-        if ( lobby.clients.get(nickname) != null ) {
-            update_client(nickname, new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
+        if( lobby.clients.get(nickname) != null ) {
+            update_client(nickname,
+                          new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
             return;
         }
         
@@ -244,7 +252,7 @@ public class LobbyController {
             Map<Client, GameController> mapping = new HashMap<>();
             GameController controller = new GameController(lobby.model, lobby.lobbyID);
             
-            for( Client c: lobby.clients.values() ) {
+            for( Client c : lobby.clients.values() ) {
                 mapping.put(client, controller);
             }
             
@@ -274,7 +282,8 @@ public class LobbyController {
     public void onMessage(CreateLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
         if( nicknameTaken(nickname) ) {
-            update_client(nickname, new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
+            update_client(nickname,
+                          new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
             return;
         }
         
@@ -291,7 +300,7 @@ public class LobbyController {
         
         GameModel model = new GameModel(lobbySize, commonGoalIndices[0], commonGoalIndices[1]);
         Stack<Integer> personalGoals = new Stack<>();
-        for (int i : personalGoalIndices) {
+        for( int i : personalGoalIndices ) {
             personalGoals.push(i);
         }
         
@@ -316,12 +325,14 @@ public class LobbyController {
         Lobby lobby = lobbies.get(msg.getPayload());
         
         if( lobby == null || !lobby.isEmpty() ) {
-            update_client(nickname, new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName())));
+            update_client(nickname,
+                          new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         
         if( nicknameTaken(msg.getPlayerNickname()) ) {
-            update_client(nickname, new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName())));
+            update_client(nickname,
+                          new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         

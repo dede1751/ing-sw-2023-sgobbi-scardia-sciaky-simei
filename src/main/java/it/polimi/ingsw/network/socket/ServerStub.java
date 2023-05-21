@@ -49,7 +49,9 @@ public class ServerStub implements Server {
         
     }
     
-    public void setClient(Client client) throws RemoteException { this.client = client; }
+    public void setClient(Client client) throws RemoteException {
+        this.client = client;
+    }
     
     @Override
     public void update(Client client, ViewMessage<?> message) throws RemoteException {

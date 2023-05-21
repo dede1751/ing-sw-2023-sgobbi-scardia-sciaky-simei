@@ -52,6 +52,7 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     /**
      * Notify the server of a view's message
+     *
      * @param msg the message sent by the view
      */
     public void update(ViewMessage<?> msg) {

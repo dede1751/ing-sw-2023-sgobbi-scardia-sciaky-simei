@@ -12,7 +12,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,16 +49,18 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         LobbyController lobbyController = LobbyController.getInstance();
         
         // First try to see if it's a method handled by the LobbyController
-        if ( ReflectionUtility.hasMethod(lobbyController, "onMessage", message) ) {
+        if( ReflectionUtility.hasMethod(lobbyController, "onMessage", message) ) {
             synchronized(lobbyController) {
                 lobbyController.setServedClient(client);
                 try {
                     ReflectionUtility.invokeMethod(LobbyController.getInstance(), "onMessage", message);
-                } catch( NoSuchMethodException ignored ) {} // impossible
+                }
+                catch( NoSuchMethodException ignored ) {
+                } // impossible
             }
             return;
         }
-
+        
         // Otherwise, try forwarding it to a GameController
         GameController controller = gameControllers.get(client);
         Response r = null;
@@ -69,17 +70,19 @@ public class LocalServer extends UnicastRemoteObject implements Server {
                 ReflectionUtility.invokeMethod(controller, "onMessage", message);
             }
             catch( NoSuchMethodException e ) {
-                r = new Response(-1, "Illegal message, no operation defined. Refer to the network manual", message.getClass().getSimpleName());
+                r = new Response(-1, "Illegal message, no operation defined. Refer to the network manual",
+                                 message.getClass().getSimpleName());
             }
         }else {
             r = new Response(-1, "Ignoring view Events until game is started!", message.getClass().getSimpleName());
         }
         
         // If needed, send error message to client
-        if ( r != null ) {
+        if( r != null ) {
             try {
                 client.update(new ServerResponseMessage(r));
-            } catch ( RemoteException e ) {
+            }
+            catch( RemoteException e ) {
                 ServerLogger.errorLog(e);
             }
         }
