@@ -10,18 +10,13 @@ import java.rmi.RemoteException;
  * Each server must override the register and update methods to handle the client registration and the client actions.
  */
 public interface Server extends Remote {
-    /**
-     * Register a client to the server
-     *
-     * @param client the client to register
-     */
-    void register(Client client) throws RemoteException;
     
     /**
      * Notify the server of a client's message
      *
+     * @param client  the client that sent the message
      * @param message the message sent by the client
      */
-    void update(ViewMessage<?> message) throws RemoteException;
+    void update(Client client, ViewMessage<?> message) throws RemoteException;
     
 }

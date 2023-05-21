@@ -2,11 +2,9 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.utils.files.ClientLogger;
+import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.view.messages.*;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 
@@ -19,30 +17,11 @@ public abstract class View implements Runnable {
     
     protected final LocalModel model = LocalModel.getInstance();
     
-    protected int clientID;
+    protected LocalClient client;
     
     protected String nickname;
     
     protected List<LobbyController.LobbyView> lobbies;
-    
-    
-    /**
-     * Set the client's ID. This method is called by the server when the client connects.
-     *
-     * @param clientID The new client's ID
-     */
-    public void setClientID(int clientID) {
-        this.clientID = clientID;
-    }
-    
-    /**
-     * Get the client's ID
-     *
-     * @return The client's ID
-     */
-    public int getClientID() {
-        return this.clientID;
-    }
     
     /**
      * Set the client's nickname. This method needs to be called by the view.
@@ -63,10 +42,9 @@ public abstract class View implements Runnable {
         return nickname;
     }
     
+    
     @SuppressWarnings("unused")
-    
     public abstract void onMessage(BoardMessage msg);
-    
     
     @SuppressWarnings("unused")
     public abstract void onMessage(AvailableLobbyMessage msg);
@@ -77,38 +55,31 @@ public abstract class View implements Runnable {
     @SuppressWarnings("unused")
     public abstract void onMessage(StartGameMessage msg);
     
+    @SuppressWarnings("unused")
     public abstract void onMessage(ServerResponseMessage msg);
     
+    @SuppressWarnings("unused")
     public abstract void onMessage(ShelfMessage msg);
     
+    @SuppressWarnings("unused")
     public abstract void onMessage(IncomingChatMessage msg);
     
+    @SuppressWarnings("unused")
     public abstract void onMessage(UpdateScoreMessage msg);
     
+    @SuppressWarnings("unused")
     public abstract void onMessage(CommonGoalMessage msg);
     
+    @SuppressWarnings("unused")
     public abstract void onMessage(CurrentPlayerMessage msg);
     
-    
-    private Server server;
-    
     /**
-     * Set the view's server. This method is set at client startup.
+     * Set the view's client. This method is set at client startup.
      *
-     * @param server Upstream server
+     * @param client Client conencting the view to the server
      */
-    public void setServer(Server server) {
-        this.server = server;
-    }
-    
-    private <T extends ViewMessage<?>> void notifyServer(T msg) {
-        try {
-            server.update(msg);
-        }
-        catch( RemoteException e ) {
-            System.err.println("Error notifying server: " + e.getMessage());
-            e.printStackTrace(System.err);
-        }
+    public void setClient(LocalClient client) {
+        this.client = client;
     }
     
     /**
@@ -117,14 +88,14 @@ public abstract class View implements Runnable {
      * @param size Desired lobby size
      */
     protected void notifyRequestLobby(Integer size) {
-        notifyServer(new RequestLobbyMessage(size, this.nickname, this.clientID));
+        client.update(new RequestLobbyMessage(size, this.nickname));
     }
     
     /**
      * Notify the server of a client's request to join a recovering lobby
      */
     protected void notifyRecoverLobby() {
-        notifyServer(new RecoverLobbyMessage(this.nickname, this.clientID));
+        client.update(new RecoverLobbyMessage(this.nickname));
     }
     
     /**
@@ -133,7 +104,7 @@ public abstract class View implements Runnable {
      * @param size The new lobby's number of player
      */
     protected void notifyCreateLobby(Integer size) {
-        notifyServer(new CreateLobbyMessage(size, this.nickname, this.clientID));
+        client.update(new CreateLobbyMessage(size, this.nickname));
     }
     
     /**
@@ -142,7 +113,7 @@ public abstract class View implements Runnable {
      * @param lobbyId The lobby to join's id
      */
     protected void notifyJoinLobby(int lobbyId) {
-        notifyServer(new JoinLobbyMessage(lobbyId, this.nickname, this.clientID));
+        client.update(new JoinLobbyMessage(lobbyId, this.nickname));
     }
     
     /**
@@ -151,7 +122,7 @@ public abstract class View implements Runnable {
      * @param message Message contents
      */
     protected void notifyChatMessage(String message) {
-        notifyServer(new ChatMessage(message, this.nickname, this.clientID));
+        client.update(new ChatMessage(message, this.nickname));
     }
     
     /**
@@ -161,7 +132,7 @@ public abstract class View implements Runnable {
      * @param dst     Message recipient
      */
     protected void notifyChatMessage(String message, String dst) {
-        notifyServer(new ChatMessage(message, this.nickname, dst, this.clientID));
+        client.update(new ChatMessage(message, this.nickname, dst));
     }
     
     /**
@@ -170,11 +141,11 @@ public abstract class View implements Runnable {
      * @param move A move, represented by the selected tiles and how to insert them in the shelf
      */
     protected void notifyMove(Move move) {
-        notifyServer(new MoveMessage(move, this.nickname, this.clientID));
+        client.update(new MoveMessage(move, this.nickname));
     }
     
     protected void notifyDebugMessage(String info) {
-        notifyServer(new DebugMessage(info, this.nickname, this.clientID));
+        client.update(new DebugMessage(info, this.nickname));
     }
     
 }

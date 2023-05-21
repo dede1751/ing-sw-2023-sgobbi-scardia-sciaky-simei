@@ -41,28 +41,26 @@ public class AppClient {
             
             if( input.equals("RMI") ) {
                 runRMI(view);
-                break;
             }else if( input.equals("SOCKET") ) {
                 runSocket(view);
-                break;
             }
         }
     }
     
-    public static void runRMI(View view) throws RemoteException, NotBoundException {
+    private static void runRMI(View view) throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry();
         Server server = (Server) registry.lookup("server");
         
-        LocalClient client = new LocalClient(server, view);
-        client.connectServer();
+        view.setClient(new LocalClient(server, view));
         view.run();
     }
     
-    public static void runSocket(View view) throws RemoteException {
+    private static void runSocket(View view) throws RemoteException {
         ServerStub serverStub = new ServerStub("localhost", 1234);
         LocalClient client = new LocalClient(serverStub, view);
+        view.setClient(client);
+        serverStub.setClient(client);
         
-        client.connectServer();
         new Thread(() -> {
             while( true ) {
                 try {

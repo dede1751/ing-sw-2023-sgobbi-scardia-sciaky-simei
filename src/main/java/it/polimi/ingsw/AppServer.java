@@ -70,7 +70,6 @@ public class AppServer {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
                         
-                        server.register(clientSkeleton);
                         //noinspection InfiniteLoopStatement
                         while( true ) {
                             clientSkeleton.receive(server);

@@ -12,7 +12,6 @@ import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 
-import java.awt.desktop.SystemEventListener;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
@@ -32,8 +31,6 @@ public class TUI extends View {
     
     protected static final AtomicBoolean gameEnded = new AtomicBoolean(false);
     protected static final AtomicBoolean otherMode = new AtomicBoolean(false);
-    
-    private final ClientLogger logger = new ClientLogger(String.valueOf(Thread.currentThread().threadId()));
     
     @Override
     public void run() {
@@ -399,7 +396,6 @@ public class TUI extends View {
     @Override
     public void onMessage(AvailableLobbyMessage msg) {
         this.lobbies = msg.getPayload().lobbyViewList();
-        logger.writeMessage(msg);
         synchronized(lobbyLock) {
             newLobbies = true;
             lobbyLock.notifyAll();
@@ -414,7 +410,6 @@ public class TUI extends View {
     @SuppressWarnings("unused")
     @Override
     public void onMessage(EndGameMessage msg){
-        logger.writeMessage(msg);
         gameEnded.set(true);
         TUIUtils.printEndGameScreen(msg.getPayload(), model.getPlayersNicknames().get(0));
     }
@@ -427,7 +422,6 @@ public class TUI extends View {
     @SuppressWarnings("unused")
     @Override
     public void onMessage(StartGameMessage msg) {
-        logger.writeMessage(msg);
         var payload = msg.getPayload();
         var players = payload.players();
         
@@ -468,7 +462,6 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(ServerResponseMessage msg) {
-        logger.writeMessage(msg);
         Predicate<String> isLoginMessage = x -> {
             String action = msg.getPayload().Action();
             return action.matches("RecoverLobbyMessage|RequestLobbyMessage|JoinLobbyMessage|CreateLobbyMessage");
@@ -492,7 +485,6 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(ShelfMessage msg) {
-        logger.writeMessage(msg);
         this.model.setShelf(msg.getPayload(), msg.getPlayer());
     }
     
@@ -503,7 +495,6 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
-        logger.writeMessage(msg);
         this.model.addChatMessage(msg.getSender(), msg.getPayload());
         if( this.model.isStarted() ) {
             TUIUtils.printGame(nickname, prompt, error);
@@ -517,7 +508,6 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
-        logger.writeMessage(msg);
         this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
     }
     
@@ -528,7 +518,6 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(CommonGoalMessage msg) {
-        logger.writeMessage(msg);
         if( msg.getPayload().type() == GameModel.CGType.Y ) {
             this.model.setTopCGYscore(msg.getPayload().availableTopScore());
         }else {
@@ -543,7 +532,6 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
-        logger.writeMessage(msg);
         this.model.setCurrentPlayer(msg.getPayload());
         
         if( this.model.isStarted() ) {
