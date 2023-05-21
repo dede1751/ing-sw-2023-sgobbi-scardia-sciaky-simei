@@ -11,6 +11,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="ing-sw-2023-sgobbi-scardia-sciaky-simei" target="19" />
+      <module name="softeng-gc05" target="19" />
     </bytecodeTargetLevel>
   </component>
 </project>

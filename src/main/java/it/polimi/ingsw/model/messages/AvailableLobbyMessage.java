@@ -10,14 +10,14 @@ import java.util.function.BinaryOperator;
 public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.AvailableLobbyPayload> {
     
     public record AvailableLobbyPayload(List<LobbyController.LobbyView> lobbyViewList) implements Serializable {
-    
+        
         @Override
-        public String toString(){
+        public String toString() {
             BinaryOperator<String> concatenate = (x, y) ->
-                TUIUtils.concatString(x, y, 4);
+                    TUIUtils.concatString(x, y, 4);
             return lobbyViewList.stream().map(LobbyController.LobbyView::toString).reduce("", concatenate);
         }
-    
+        
     }
     
     public AvailableLobbyMessage(List<LobbyController.LobbyView> p) {

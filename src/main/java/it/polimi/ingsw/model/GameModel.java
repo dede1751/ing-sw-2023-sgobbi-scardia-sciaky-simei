@@ -42,7 +42,6 @@ public class GameModel {
     private boolean gameEnded = false;
     
     /**
-     *
      * @param b
      */
     public void setGameEnded(boolean b) {
@@ -50,10 +49,9 @@ public class GameModel {
     }
     
     /**
-     *
      * @return
      */
-    public boolean getGameEnded(){
+    public boolean getGameEnded() {
         return gameEnded;
     }
     
@@ -374,7 +372,8 @@ public class GameModel {
     }
     
     private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
-        if(gameEnded) return;
+        if( gameEnded )
+            return;
         for( ModelListener listener : this.listeners.values() ) {
             listener.update(msg);
         }

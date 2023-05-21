@@ -55,9 +55,9 @@ public class ServerLogger {
         String s2 = "Cause : " + e.getCause();
         
         if( additionalContext != null ) {
-            ServerLogger.writeLog(s + s1 + s2 + "\n" + additionalContext, errorLog);
+            writeLog(s + s1 + s2 + "\n" + additionalContext, errorLog);
         }else {
-            ServerLogger.writeLog(s + s1 + s2, errorLog);
+            writeLog(s + s1 + s2, errorLog);
         }
     }
     

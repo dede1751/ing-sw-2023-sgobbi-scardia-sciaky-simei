@@ -2,7 +2,6 @@ package it.polimi.ingsw.server;
 
 import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.DebugMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
@@ -20,20 +19,15 @@ public class ServerTest {
         @Test
         public void Test1() {
             try {
-                View tui1 = new TUI();
-                View tui2 = new TUI();
                 LocalServer server = new LocalServer();
-                LocalClient client1 = new LocalClient(server, tui1);
                 
-                client1.connectServer();
+                LocalClient client1 = new LocalClient(server, new TUI());
+                server.update(client1, new CreateLobbyMessage(2, "Roberto"));
                 
-                server.update(new CreateLobbyMessage(2, "Roberto", tui1.getClientID()));
-                LocalClient client2 = new LocalClient(server, tui2);
-                client2.connectServer();
-                server.update(new JoinLobbyMessage(0, "Luca",
-                                                   tui2.getClientID()));
+                LocalClient client2 = new LocalClient(server, new TUI());
+                server.update(client2, new JoinLobbyMessage(0, "Luca"));
                 
-                server.update(new DebugMessage("Paolo", "Roberto", tui1.getClientID()));
+                server.update(client1, new DebugMessage("Paolo", "Roberto"));
             }
             catch( RemoteException e ) {
                 throw new RuntimeException(e);
