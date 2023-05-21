@@ -17,8 +17,8 @@ public class ServerLogger {
     
     static {
         try {
-            log = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/server/log.txt");
-            errorLog = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/server/error_log.txt");
+            log = ResourcesManager.openFileWrite(ResourcesManager.serverLoggerDir, "log.txt");
+            errorLog = ResourcesManager.openFileWrite(ResourcesManager.serverLoggerDir, "error_log.txt");
         }
         catch( IOException e ) {
             throw new RuntimeException(e);

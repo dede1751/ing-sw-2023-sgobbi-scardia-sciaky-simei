@@ -25,7 +25,7 @@ class GameControllerTest {
     private String getResource(String className) throws IOException {
         return Files.readString(
                 Path.of(ResourcesManager.testRootDir,
-                        "it/polimi/ingsw/controller/resources/" + className + "Test.json"),
+                        "controller/resources/" + className + "Test.json"),
                 StandardCharsets.UTF_8);
     }
     

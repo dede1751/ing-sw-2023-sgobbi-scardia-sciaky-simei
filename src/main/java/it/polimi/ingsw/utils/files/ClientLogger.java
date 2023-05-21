@@ -16,7 +16,7 @@ public class ClientLogger {
     public ClientLogger(String name) {
         
         try {
-            messageLog = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/client/" + name + ".txt");
+            messageLog = ResourcesManager.openFileWrite(ResourcesManager.clientLoggerDir, name + ".txt");
         }
         catch( IOException e ) {
             throw new RuntimeException(e);
@@ -44,6 +44,5 @@ public class ClientLogger {
         String logString = Timestamp.from(Instant.now()) + " - " + "\n" + payload + "\n";
         writeLog(logString, messageLog);
     }
-    
     
 }
