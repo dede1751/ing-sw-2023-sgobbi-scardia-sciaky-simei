@@ -35,6 +35,7 @@ public class AppClient {
         }
         
         System.out.println("Choose the type of network protocol: [RMI/SOCKET]");
+        // noinspection InfiniteLoopStatement
         while( true ) {
             System.out.print("\n>>  ");
             String input = scanner.next().trim();
@@ -49,7 +50,7 @@ public class AppClient {
     
     private static void runRMI(View view) throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry();
-        Server server = (Server) registry.lookup("server");
+        Server server = (Server) registry.lookup("myshelfie_server");
         
         view.setClient(new LocalClient(server, view));
         view.run();

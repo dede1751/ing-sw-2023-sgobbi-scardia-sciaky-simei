@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -40,8 +41,17 @@ public class LocalServer extends UnicastRemoteObject implements Server {
      *
      * @param mapping client mapping to add
      */
-    public void addGameController(Map<Client, GameController> mapping) {
+    public void addGameControllers(Map<Client, GameController> mapping) {
         gameControllers.putAll(mapping);
+    }
+    
+    /**
+     * Remove controller mapping from current map for the given clients
+     *
+     * @param clients clients to remove
+     */
+    public void removeGameControllers(List<Client> clients) {
+        clients.forEach(gameControllers.keySet()::remove);
     }
     
     @Override

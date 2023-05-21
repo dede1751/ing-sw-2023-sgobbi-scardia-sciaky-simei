@@ -1,8 +1,10 @@
 package it.polimi.ingsw.network.socket;
 
+import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
+import it.polimi.ingsw.utils.files.ServerLogger;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.io.IOException;
@@ -44,11 +46,12 @@ public class ClientSkeleton implements Client {
         try {
             server.update(this, (ViewMessage<?>) ois.readObject());
         }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot receive message from client", e);
-        }
         catch( ClassNotFoundException | ClassCastException e ) {
             throw new RemoteException("Sent message doesn't have the correct type", e);
+        }
+        catch( IOException e ) {
+            LobbyController.getInstance().disconnectClient(this);
+            ServerLogger.errorLog(e);
         }
         
     }

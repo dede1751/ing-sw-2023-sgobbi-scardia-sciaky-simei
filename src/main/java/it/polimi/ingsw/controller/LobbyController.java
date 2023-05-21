@@ -24,6 +24,9 @@ import java.util.*;
  * Handles registration to multiple lobbies for concurrent play
  * LobbyController receives RequestLobby, RecoverLobby, CreateLobby and JoinLobby messages.
  * It always directly responds to each of these messages with a ServerResponseMessage, both in case of success and failure.
+ * - Synchronization:
+ *      LobbyController constitutes a single synchronization lock, through which all login actions have to go through,
+ *      and also single-handedly controls the controller mapping on the LocalServer.
  */
 public class LobbyController {
     
@@ -67,6 +70,8 @@ public class LobbyController {
                         ServerLogger.messageLog(this.toString(), msg);
                     }
                     catch( RemoteException e ) {
+                        // If the client is disconnected, remove it from the lobby and end the game for everyone
+                        LobbyController.getInstance().disconnectClient(client);
                         ServerLogger.errorLog(e, "Client : " + nickname);
                     }
                 });
@@ -85,7 +90,13 @@ public class LobbyController {
         }
     }
     
-    // LobbyView is a serializable version of Lobby to be sent to the client for information
+    /**
+     * LobbyView is a serializable version of Lobby to be sent to the client for information
+     * @param nicknames List of nicknames
+     * @param lobbySize Lobby size
+     * @param lobbyID Unique lobby id
+     * @param isRecovery True if the lobby is a recovery lobby
+     */
     public record LobbyView(
             List<String> nicknames,
             int lobbySize,
@@ -113,12 +124,12 @@ public class LobbyController {
     
     private static LobbyController INSTANCE;
     
+    // Lobbies are mapped by their unique lobbyID (recovery lobbies have their id's reset)
+    private static final HashMap<Integer, Lobby> lobbies = new HashMap<>();
+    
     private LocalServer server = null;
     
     private Client client = null;
-    
-    // Lobbies are mapped by their unique lobbyID (recovery lobbies have their id's reset)
-    private static final HashMap<Integer, Lobby> lobbies = new HashMap<>();
     
     /**
      * Init LobbyController by reading all the saved models from disk
@@ -170,10 +181,37 @@ public class LobbyController {
      * @param lobbyID Lobby to stop tracking
      */
     public synchronized void endGame(int lobbyID) {
+        List<Client> clients = lobbies.get(lobbyID)
+                .clients
+                .values()
+                .stream()
+                .toList();
+        
+        this.server.removeGameControllers(clients);
         lobbies.remove(lobbyID);
         ResourcesManager.deleteModel(lobbyID);
         
         ServerLogger.log("Game ended, removed lobby : " + lobbyID);
+    }
+    
+    /**
+     * Disconnect a client when a socket is not able to receive anymore (this does not work with RMI)
+     * @param client Client to disconnect (along with the whole lobby)
+     */
+    public synchronized void disconnectClient(Client client) {
+        Lobby lobby = lobbies.values()
+                .stream()
+                .filter(l -> l.clients.containsValue(client))
+                .findFirst()
+                .orElse(null);
+        
+        if( lobby == null ) {
+            ServerLogger.log("Client without an active lobby disconnected");
+            return;
+        }
+        
+        this.endGame(lobby.lobbyID());
+        lobby.model.notifyWinner(); // force game end
     }
     
     /**
@@ -260,7 +298,7 @@ public class LobbyController {
             Lobby newLobby = lobby.recoverLobby();
             lobbies.replace(lobby.lobbyID, newLobby);
             
-            server.addGameController(mapping);
+            server.addGameControllers(mapping);
         }
         
         update_client(nickname, new ServerResponseMessage(Response.Ok(RecoverLobbyMessage.class.getSimpleName())));
@@ -346,7 +384,7 @@ public class LobbyController {
             for( Client c : lobby.clients.values() ) {
                 mapping.put(c, controller);
             }
-            server.addGameController(mapping);
+            server.addGameControllers(mapping);
         }
         update_client(nickname, new ServerResponseMessage(Response.Ok(JoinLobbyMessage.class.getSimpleName())));
     }

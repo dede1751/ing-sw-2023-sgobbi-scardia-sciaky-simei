@@ -40,10 +40,10 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     @Override
     public void update(ModelMessage<?> msg) {
-        ClientLogger.messageLog(msg);
         
         try {
             ReflectionUtility.invokeMethod(view, "onMessage", msg);
+            ClientLogger.messageLog(msg);
         }
         catch( NoSuchMethodException e ) {
             ClientLogger.errorLog(e, "Error invoking method onMessage" + msg.getClass().getSimpleName());

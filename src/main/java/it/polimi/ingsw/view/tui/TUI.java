@@ -12,7 +12,6 @@ import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 
@@ -28,19 +27,16 @@ public class TUI extends View {
     private String prompt = null;
     private String error = null;
     
-    protected static final AtomicBoolean gameEnded = new AtomicBoolean(false);
-    protected static final AtomicBoolean otherMode = new AtomicBoolean(false);
-    
     @Override
     public void run() {
-        gameEnded.set(false);
         Scanner scanner = new Scanner(System.in);
         userLogin();
         
         // wait for the game to start before allowing user input
         model.waitStart();
         
-        while( !gameEnded.get() ) {
+        // noinspection InfiniteLoopStatement
+        while( true ) {
             prompt = "Please select the action you want to take: [MOVE/CHAT]";
             TUIUtils.printGame(nickname, prompt, error);
             String command = scanner.next().trim().toUpperCase();
@@ -411,8 +407,8 @@ public class TUI extends View {
     @SuppressWarnings("unused")
     @Override
     public void onMessage(EndGameMessage msg) {
-        gameEnded.set(true);
         TUIUtils.printEndGameScreen(msg.getPayload(), model.getPlayersNicknames().get(0));
+        System.exit(0);
     }
     
     /**

@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 public class AppServer {
     
     public static void main(String[] args) {
-        Server server;
+        LocalServer server;
         try {
             server = new LocalServer();
         }
@@ -54,13 +54,13 @@ public class AppServer {
         }
     }
     
-    private static void startRMI(Server server) throws RemoteException {
+    private static void startRMI(LocalServer server) throws RemoteException {
         LocateRegistry.createRegistry(1099);
         Registry registry = LocateRegistry.getRegistry();
-        registry.rebind("server", server);
+        registry.rebind("myshelfie_server", server);
     }
     
-    public static void startSocket(Server server) throws RemoteException {
+    public static void startSocket(LocalServer server) throws RemoteException {
         try( ExecutorService executorService = Executors.newCachedThreadPool();
              ServerSocket serverSocket = new ServerSocket(1234) ) {
             //noinspection InfiniteLoopStatement
