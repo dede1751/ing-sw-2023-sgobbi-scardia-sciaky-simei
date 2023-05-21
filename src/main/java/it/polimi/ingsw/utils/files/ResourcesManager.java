@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.GameModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 
 /**
@@ -45,9 +45,12 @@ public final class ResourcesManager {
     
     /**
      * Open a file for writing, creating the directory if necessary
-     * @param dir the directory in which to create the file
+     *
+     * @param dir  the directory in which to create the file
      * @param file the name of the file to create
+     *
      * @return the FileChannel of the created file
+     *
      * @throws IOException if the file cannot be created (not if the directory already exists)
      */
     public static FileChannel openFileWrite(String dir, String file) throws IOException {

@@ -8,7 +8,7 @@ public class CommonGoalMessage extends ModelMessage<CommonGoalMessage.CommonGoal
     
     public record CommonGoalPayload(GameModel.CGType type, int availableTopScore) implements Serializable {
         @Override
-        public String toString(){
+        public String toString() {
             return type().name() + " , " + availableTopScore;
         }
     }

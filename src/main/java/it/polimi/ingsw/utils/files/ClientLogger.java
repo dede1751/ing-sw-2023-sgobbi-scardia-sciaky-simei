@@ -1,6 +1,5 @@
 package it.polimi.ingsw.utils.files;
 
-import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.messages.ModelMessage;
 
 import java.io.IOException;
@@ -11,12 +10,16 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 public class ClientLogger {
-    private final FileChannel messageLog;
     
-    public ClientLogger(String name) {
+    private static final FileChannel messageLog;
+    
+    private static final FileChannel errorLog;
+    
+    static {
         
         try {
-            messageLog = ResourcesManager.openFileWrite(ResourcesManager.clientLoggerDir, name + ".txt");
+            messageLog = ResourcesManager.openFileWrite(ResourcesManager.clientLoggerDir, "log.txt");
+            errorLog = ResourcesManager.openFileWrite(ResourcesManager.serverLoggerDir, "error_log.txt");
         }
         catch( IOException e ) {
             throw new RuntimeException(e);
@@ -24,7 +27,7 @@ public class ClientLogger {
     }
     
     
-    private void writeLog(String s, FileChannel channel) {
+    private static void writeLog(String s, FileChannel channel) {
         String logString = Timestamp.from(Instant.now()) + " - " + s + "\n";
         
         try {
@@ -38,11 +41,26 @@ public class ClientLogger {
         }
     }
     
-    public void writeMessage(ModelMessage<?> message) {
-        
+    public static void messageLog(ModelMessage<?> message) {
         var payload = message.getPayload().toString();
         String logString = Timestamp.from(Instant.now()) + " - " + "\n" + payload + "\n";
         writeLog(logString, messageLog);
+    }
+    
+    public static void errorLog(Exception e, String additionalContext) {
+        String s = "Client encountered exception of type : " + e.getClass() + "\n";
+        String s1 = "Message : " + e.getMessage() + "\n";
+        String s2 = "Cause : " + e.getCause();
+        
+        if( additionalContext != null ) {
+            writeLog(s + s1 + s2 + "\n" + additionalContext, errorLog);
+        }else {
+            writeLog(s + s1 + s2, errorLog);
+        }
+    }
+    
+    public static void errorLog(Exception e) {
+        errorLog(e, null);
     }
     
 }

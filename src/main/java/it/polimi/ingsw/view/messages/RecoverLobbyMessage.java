@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class RecoverLobbyMessage extends ViewMessage<Serializable> {
     
-    public RecoverLobbyMessage(String playerNick, int clientId) {
-        super(null, playerNick, clientId);
+    public RecoverLobbyMessage(String playerNick) {
+        super(null, playerNick);
     }
     
 }

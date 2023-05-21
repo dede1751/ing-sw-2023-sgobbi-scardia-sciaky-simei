@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.view.messages.Move;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -83,8 +82,8 @@ public class IntegrityChecks {
      * Check that an ordered tile list is consistent with the coordinates selected from the board
      *
      * @param selection List of coordinates selected by the player on the board
-     * @param tiles       ordered list of tiles at those coordinates to check
-     * @param board       board to check
+     * @param tiles     ordered list of tiles at those coordinates to check
+     * @param board     board to check
      *
      * @return true if the tiles are consistent with the coordinates, false otherwise
      */
@@ -99,7 +98,7 @@ public class IntegrityChecks {
         
         List<Tile> control = new ArrayList<>();
         selection.forEach((x) -> control.add(board.getTile(x)));
-        for (Tile t : tiles) {
+        for( Tile t : tiles ) {
             if( !control.remove(t) ) {
                 return false;
             }

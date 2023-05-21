@@ -86,4 +86,5 @@ fabric.properties
 **/resources/controller/recovery/[0-9].json
 **/resources/server/error_log.txt
 **/resources/server/log.txt
+resources/
 **/*.iml

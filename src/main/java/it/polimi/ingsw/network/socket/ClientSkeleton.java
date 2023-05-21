@@ -1,8 +1,10 @@
 package it.polimi.ingsw.network.socket;
 
+import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.Server;
+import it.polimi.ingsw.utils.files.ServerLogger;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.io.IOException;
@@ -15,8 +17,6 @@ public class ClientSkeleton implements Client {
     
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
-    
-    private int clientID = -1;
     
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
@@ -34,23 +34,6 @@ public class ClientSkeleton implements Client {
         }
     }
     
-    @Override
-    public void setClientID(int clientID) throws RemoteException {
-        try {
-            if( this.clientID == -1 ) {
-                oos.writeObject(clientID);
-                oos.reset();
-                oos.flush();
-                this.clientID = clientID;
-            }else {
-                throw new RemoteException("ID already setted for this client");
-            }
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot send client id", e);
-        }
-    }
-    
     /**
      * Reads the input stream for ViewMessages and forwards them to the server
      *
@@ -61,13 +44,14 @@ public class ClientSkeleton implements Client {
     public void receive(Server server) throws RemoteException {
         
         try {
-            server.update((ViewMessage<?>) ois.readObject());
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot receive message from client", e);
+            server.update(this, (ViewMessage<?>) ois.readObject());
         }
         catch( ClassNotFoundException | ClassCastException e ) {
             throw new RemoteException("Sent message doesn't have the correct type", e);
+        }
+        catch( IOException e ) {
+            LobbyController.getInstance().disconnectClient(this);
+            ServerLogger.errorLog(e);
         }
         
     }
