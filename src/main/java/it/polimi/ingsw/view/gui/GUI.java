@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
+import javafx.stage.Stage;
 
 
 public class GUI extends View  {
@@ -80,7 +81,13 @@ public class GUI extends View  {
     
     @Override
     public void run() {
-    
+        try {
+            app.start(new Stage());
+        }
+        catch( Exception e ) {
+            throw new RuntimeException(e);
+        }
+        
     }
     
 }
