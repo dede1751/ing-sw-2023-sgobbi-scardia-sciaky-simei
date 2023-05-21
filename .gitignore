@@ -80,6 +80,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 # Project resources dir
+/resources
 **/resources/client/[0-9].txt
 **/resources/recovery/[0-9].json
 **/resources/controller/recovery/[0-9].json
