@@ -39,6 +39,25 @@ public class GameModel {
     
     private final TileBag tileBag;
     
+    private boolean gameEnded = false;
+    
+    /**
+     *
+     * @param b
+     */
+    public void setGameEnded(boolean b) {
+        gameEnded = b;
+    }
+    
+    /**
+     *
+     * @return
+     */
+    public boolean getGameEnded(){
+        return gameEnded;
+    }
+    
+    
     public enum CGType {
         X, Y
     }
@@ -225,10 +244,8 @@ public class GameModel {
      * Adds given score to the current player's score
      *
      * @param score Integer score to give the current player
-     *
-     * @return Total score for current player
      */
-    public int addCurrentPlayerCommongGoalScore(int score, CGType t) {
+    public void addCurrentPlayerCommongGoalScore(int score, CGType t) {
         Player player = this.getCurrentPlayer();
         int i = player.addCommonGoalScore(score);
         switch( t ) {
@@ -242,21 +259,18 @@ public class GameModel {
             }
         }
         notifyAllListeners(new UpdateScoreMessage(i, UpdateScoreMessage.Type.CommonGoal, player.getNickname()));
-        return i;
     }
     
-    public int setCurrentPlayerPersonalScore(int score) {
+    public void setCurrentPlayerPersonalScore(int score) {
         Player player = this.getCurrentPlayer();
-        int i = player.setPersonalGoalScore(score);
+        player.setPersonalGoalScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.PersonalGoal, player.getNickname()));
-        return i;
     }
     
-    public int setCurrentPlayerAdjacencyScore(int score) {
+    public void setCurrentPlayerAdjacencyScore(int score) {
         Player player = this.getCurrentPlayer();
-        int i = player.setAdjacentScore(score);
+        player.setAdjacencyScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.Adjacency, player.getNickname()));
-        return i;
     }
     
     public void refillBoard() {
@@ -360,6 +374,7 @@ public class GameModel {
     }
     
     private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
+        if(gameEnded) return;
         for( ModelListener listener : this.listeners.values() ) {
             listener.update(msg);
         }
@@ -394,15 +409,17 @@ public class GameModel {
     }
     
     private void notifyStartGame() {
-        List<String> nicks = this.getNicknames();
-        List<Shelf> shelves = this.getPlayers().stream().map(Player::getShelf).toList();
-        
+        // we have to create separate messages for each client
         for( Player x : players ) {
             ModelListener playerListener = this.listeners.get(x.getNickname());
             playerListener.update(
                     new StartGameMessage(
-                            nicks, x.getPg(), shelves, this.board,
-                            this.commonGoalNumX, this.peekStackCGX(), this.commonGoalNumY, this.peekStackCGY())
+                            this.players,
+                            x.getPg(),
+                            this.board,
+                            this.commonGoalNumX, this.peekStackCGX(),
+                            this.commonGoalNumY, this.peekStackCGY(),
+                            this.getCurrentPlayer().getNickname())
             );
         }
     }
@@ -411,15 +428,23 @@ public class GameModel {
      * Notify the clients that the game is ended by sending a leaderboard.
      */
     public void notifyWinner() {
-        String winner = this.players.stream()
-                .max(Comparator.comparingInt(Player::getScore))
-                .orElseThrow()
-                .getNickname();
+        List<Player> winningPlayers = this.players.stream()
+                //there cannot be any equal element
+                .sorted((x, y) -> {
+                    if( x.getScore() > y.getScore() ) {
+                        return -1;
+                    }else if( x.getScore() == y.getScore() ) {
+                        return this.players.indexOf(x) > this.players.indexOf(y) ? -1 : 1;
+                    }else {
+                        return 1;
+                    }
+                }).toList();
         
-        Map<String, Integer> leaderboard = new HashMap<>();
-        for( Player x : this.getPlayers() ) {
+        Map<String, Integer> leaderboard = new LinkedHashMap<>();
+        for( Player x : winningPlayers ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
+        String winner = winningPlayers.get(0).getNickname();
         notifyAllListeners(new EndGameMessage(winner, leaderboard));
     }
     
@@ -436,11 +461,21 @@ public class GameModel {
     
     // Testing methods
     public int peekStackCGX() {
-        return commonGoalStackX.peek();
+        try {
+            return commonGoalStackX.peek();
+        }
+        catch( EmptyStackException e ) {
+            return 0;
+        }
     }
     
     public int peekStackCGY() {
-        return commonGoalStackY.peek();
+        try {
+            return commonGoalStackY.peek();
+        }
+        catch( EmptyStackException e ) {
+            return 0;
+        }
     }
     
     public Board getBoard() {

@@ -187,7 +187,7 @@ public class GameModelTest {
             game.addPlayer("Camilla", 8);
             assertDoesNotThrow(() -> {
                 var file = ResourcesManager.openFileWrite(
-                        ResourcesManager.testRootDir + "/it/polimi/ingsw/resources/volatile/SaveFile.json");
+                        ResourcesManager.testRootDir + "/resources/volatile", "SaveFile.json");
                 var saveState = game.toJson();
                 ByteBuffer buf = ByteBuffer.allocate(saveState.length());
                 buf.put(saveState.getBytes());

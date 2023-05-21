@@ -25,10 +25,6 @@ import java.util.*;
  */
 public class LobbyController {
     
-    private static LobbyController INSTANCE;
-    
-    private LocalServer server = null;
-    
     /**
      * Client context derived from a received message
      * Can be used as a model listener, which simply calls the client's update method and logs messages/errors
@@ -44,8 +40,10 @@ public class LobbyController {
         }
         
         public static ClientContext getCC(ViewMessage<?> msg) {
-            return new ClientContext(getInstance().clientMapping.get(msg.getClientId()), msg.getPlayerNickname(),
-                                     msg.getClientId());
+            return new ClientContext(
+                    clientMapping.get(msg.getClientId()),
+                    msg.getPlayerNickname(),
+                    msg.getClientId());
         }
         
         @Override
@@ -70,8 +68,14 @@ public class LobbyController {
      * @param lobbyID       Unique lobby id
      * @param isRecovery    True if the lobby is a recovery lobby
      */
-    public record Lobby(GameModel model, List<Integer> clientIDs, List<Integer> personalGoals, int lobbySize,
-                        int lobbyID, boolean isRecovery) {
+    public record Lobby(
+            GameModel model,
+            List<Integer> clientIDs,
+            List<Integer> personalGoals,
+            int lobbySize,
+            int lobbyID,
+            boolean isRecovery
+    ) {
         public boolean isEmpty() {
             if( isRecovery ) {
                 return clientIDs.contains(-1);
@@ -108,8 +112,12 @@ public class LobbyController {
     }
     
     // LobbyView is a serializable version of Lobby to be sent to the client for information
-    public record LobbyView(List<String> nicknames, int lobbySize, int lobbyID,
-                            boolean isRecovery) implements Serializable {
+    public record LobbyView(
+            List<String> nicknames,
+            int lobbySize,
+            int lobbyID,
+            boolean isRecovery
+    ) implements Serializable {
         @Override
         public String toString() {
             StringBuilder nickames = new StringBuilder();
@@ -129,30 +137,34 @@ public class LobbyController {
         }
     }
     
+    private static LobbyController INSTANCE;
+    
+    private LocalServer server = null;
+    
     // Lobbies are mapped by their unique lobbyID (recovery lobbies have their id's reset)
-    private final HashMap<Integer, Lobby> lobbies = new HashMap<>();
-    private int lobbyIDCounter = 0;
+    private static final HashMap<Integer, Lobby> lobbies = new HashMap<>();
     
     // Clients are mapped by their unique clientID
-    private final HashMap<Integer, Client> clientMapping = new HashMap<>();
-    private int clientIDCounter = 0;
+    private static final HashMap<Integer, Client> clientMapping = new HashMap<>();
     
     /**
      * Init LobbyController by reading all the saved models from disk
      */
     private LobbyController() {
         for( GameModel model : ResourcesManager.getSavedModels() ) {
+            int lobbyID = lobbies.size();
             Lobby lobby = new Lobby(
                     model,
                     new ArrayList<>(Collections.nCopies(model.getNumPlayers(), -1)),
                     null,
                     model.getNumPlayers(),
-                    lobbyIDCounter,
+                    lobbyID,
                     true
             );
             
-            lobbies.put(lobbyIDCounter, lobby);
-            lobbyIDCounter++;
+            // Save the model with the new id
+            ResourcesManager.saveModel(model, lobbyID);
+            lobbies.put(lobbyID, lobby);
         }
     }
     
@@ -187,12 +199,12 @@ public class LobbyController {
      *
      * @throws RemoteException Unable to set the client's id
      */
-    public void register(Client client) throws RemoteException {
-        client.setClientID(clientIDCounter);
-        this.clientMapping.put(clientIDCounter, client);
-        clientIDCounter++;
+    public synchronized void register(Client client) throws RemoteException {
+        int clientID = clientMapping.size();
+        client.setClientID(clientID);
+        clientMapping.put(clientID, client);
         
-        ServerLogger.log("Registered new Client with id : " + clientIDCounter);
+        ServerLogger.log("Registered new Client with id : " + clientID);
     }
     
     /**
@@ -200,11 +212,11 @@ public class LobbyController {
      *
      * @param lobbyID Lobby to stop tracking
      */
-    public void endGame(int lobbyID) {
+    public synchronized void endGame(int lobbyID) {
         for( int clientID : lobbies.get(lobbyID).clientIDs ) {
             clientMapping.remove(clientID);
         }
-        this.lobbies.remove(lobbyID);
+        lobbies.remove(lobbyID);
         ResourcesManager.deleteModel(lobbyID);
         
         ServerLogger.log("Game ended, removed lobby : " + lobbyID);
@@ -216,9 +228,10 @@ public class LobbyController {
      * @param requestLobbyMessage Lobby parameters
      */
     @SuppressWarnings("unused")
-    public void onMessage(RequestLobbyMessage requestLobbyMessage) {
+    public synchronized void onMessage(RequestLobbyMessage requestLobbyMessage) {
+        List<LobbyView> lobbies = searchForLobbies(requestLobbyMessage.getPayload());
         ClientContext.getCC(requestLobbyMessage)
-                .update(new AvailableLobbyMessage(this.searchForLobbies(requestLobbyMessage.getPayload())));
+                .update(new AvailableLobbyMessage(lobbies));
     }
     
     /**
@@ -227,7 +240,7 @@ public class LobbyController {
      * @param recoverLobbyMessage Lobby parameters
      */
     @SuppressWarnings("unused")
-    public void onMessage(RecoverLobbyMessage recoverLobbyMessage) {
+    public synchronized void onMessage(RecoverLobbyMessage recoverLobbyMessage) {
         ClientContext client = ClientContext.getCC(recoverLobbyMessage);
         Lobby lobby = lobbies.values()
                 .stream()
@@ -235,10 +248,18 @@ public class LobbyController {
                 .findFirst()
                 .orElse(null);
         
-        if( lobby == null ) {
+        if( lobby == null) {
             // lobby is unavailable/doesn't exist
             client.update(
                     new ServerResponseMessage(Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName())));
+            return;
+        }
+        
+        int index = lobby.model.getNicknames().indexOf(client.nickname());
+        if ( lobby.clientIDs().get(index) != -1 ) {
+            // username is already taken
+            client.update(
+                    new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
             return;
         }
         
@@ -276,10 +297,10 @@ public class LobbyController {
      * @param message Lobby creation message
      */
     @SuppressWarnings("unused")
-    public void onMessage(CreateLobbyMessage message) {
+    public synchronized void onMessage(CreateLobbyMessage message) {
         ClientContext client = ClientContext.getCC(message);
         
-        if( this.nicknameTaken(client.nickname()) ) {
+        if( nicknameTaken(client.nickname()) ) {
             client.update(new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
             return;
         }
@@ -291,6 +312,7 @@ public class LobbyController {
         }
         
         // initialize lobby and model
+        int lobbyID = lobbies.size();
         int[] commonGoalIndices = randDistinctIndices(2);
         int[] personalGoalIndices = randDistinctIndices(lobbySize);
         Lobby lobby = new Lobby(
@@ -298,13 +320,12 @@ public class LobbyController {
                 new ArrayList<>(),
                 new ArrayList<>(Arrays.stream(personalGoalIndices).boxed().toList()),
                 lobbySize,
-                lobbyIDCounter,
+                lobbyID,
                 false
         );
         
         lobby.addClient(client);
-        lobbies.put(lobbyIDCounter, lobby);
-        lobbyIDCounter++;
+        lobbies.put(lobbyID, lobby);
         
         client.update(new ServerResponseMessage(Response.Ok(CreateLobbyMessage.class.getSimpleName())));
     }
@@ -315,7 +336,7 @@ public class LobbyController {
      * @param message Description of lobby to join
      */
     @SuppressWarnings("unused")
-    public void onMessage(JoinLobbyMessage message) {
+    public synchronized void onMessage(JoinLobbyMessage message) {
         ClientContext client = ClientContext.getCC(message);
         Lobby lobby = lobbies.get(message.getPayload());
         
@@ -324,7 +345,7 @@ public class LobbyController {
             return;
         }
         
-        if( this.nicknameTaken(message.getPlayerNickname()) ) {
+        if( nicknameTaken(message.getPlayerNickname()) ) {
             client.update(new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
@@ -353,8 +374,8 @@ public class LobbyController {
      *
      * @return a list of lobbyView of all the lobbies that match info parameters
      */
-    private List<LobbyView> searchForLobbies(Integer size) {
-        return this.lobbies.values()
+    private static List<LobbyView> searchForLobbies(Integer size) {
+        return lobbies.values()
                 .stream()
                 .filter((x) -> size == null || (size.equals(x.lobbySize())))
                 .map(Lobby::getLobbyView)
@@ -368,7 +389,7 @@ public class LobbyController {
      *
      * @return True if the nickname is already present in any lobby
      */
-    private boolean nicknameTaken(String nickname) {
+    private static boolean nicknameTaken(String nickname) {
         return lobbies.values()
                 .stream()
                 .anyMatch((l) -> l.model.getNicknames().contains(nickname));

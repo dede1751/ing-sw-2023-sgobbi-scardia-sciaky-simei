@@ -7,6 +7,10 @@ import java.io.Serializable;
 public class CommonGoalMessage extends ModelMessage<CommonGoalMessage.CommonGoalPayload> {
     
     public record CommonGoalPayload(GameModel.CGType type, int availableTopScore) implements Serializable {
+        @Override
+        public String toString(){
+            return type().name() + " , " + availableTopScore;
+        }
     }
     
     public CommonGoalMessage(GameModel.CGType type, Integer topScoreAvailable) {

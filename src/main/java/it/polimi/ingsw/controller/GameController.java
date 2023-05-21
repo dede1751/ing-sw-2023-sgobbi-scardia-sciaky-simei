@@ -12,7 +12,10 @@ import it.polimi.ingsw.view.messages.DebugMessage;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.MoveMessage;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * GameController, responsible for modifying the model according to the input from the player views
@@ -25,6 +28,8 @@ public class GameController {
     private final int lobbyID;
     
     private final Integer playerNumber;
+    
+
     
     /**
      * Initialize the controller with the given model and start the game
@@ -40,14 +45,37 @@ public class GameController {
         // Reset PersonalGoal/Adjacency scores (this is used because the model could be a recovery one)
         for( Player p : model.getPlayers() ) {
             p.setPersonalGoalScore(PersonalGoal.getPersonalGoal(p.getPg()).checkGoal(p.getShelf()));
-            p.setAdjacentScore(calculateAdjacency(p.getShelf()));
+            p.setAdjacencyScore(calculateAdjacency(p.getShelf()));
+            p.setBonusScore(0); //FIXME
         }
         // Refill the board (recovery boards may not need refilling
         if( needRefill() ) {
             model.refillBoard();
         }
         
+        saveModel();
         model.startGame();
+    }
+    
+    /**
+     * Mock GameController class for testing purposes.
+     * This hooks empty listeners to the model to avoid problems when it tries to send data to a client
+     *
+     * @param model Model instance to run
+     */
+    public GameController(GameModel model) {
+        this.model = model;
+        this.lobbyID = 0;
+        this.playerNumber = model.getPlayers().size();
+        
+        for( Player p : model.getPlayers() ) {
+            try {
+                model.addListener(p.getNickname(), (m) -> {
+                });
+            }
+            catch( Exception ignored ) {
+            }
+        }
     }
     
     /**
@@ -56,19 +84,34 @@ public class GameController {
      * @return True if a refill is needed, false otherwise
      */
     public boolean needRefill() {
-        Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
+        Board board = model.getBoard();
         
-        for( var entry : toBeChecked.entrySet() ) {
-            if( !(entry.getValue().equals(Tile.NOTILE)) ) {
-                if( !(model.getBoard().getTile(entry.getKey().getDown()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getUp()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getLeft()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getRight()) == Tile.NOTILE) ) {
-                    return false;
-                }
-            }
+        // get all coordinates with at least one empty side
+        List<Coordinate> removable = board.getTiles()
+                .keySet()
+                .stream()
+                .filter(c -> !board.getTile(c).equals(Tile.NOTILE)
+                             && (board.getTile(c.getDown()) == null
+                                 || board.getTile(c.getDown()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getUp()) == null
+                                 || board.getTile(c.getUp()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getLeft()) == null
+                                 || board.getTile(c.getLeft()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getRight()) == null
+                                 || board.getTile(c.getRight()).equals(Tile.NOTILE)))
+                .toList();
+        
+        // Handle empty boards
+        if( removable.isEmpty() ) {
+            return true;
         }
-        return true;
+        
+        // check if there is at least one where an adjacent coordinate is also removable
+        return removable.stream()
+                .noneMatch(c -> removable.contains(c.getDown())
+                                || removable.contains(c.getUp())
+                                || removable.contains(c.getLeft())
+                                || removable.contains(c.getRight()));
     }
     
     /**
@@ -153,6 +196,8 @@ public class GameController {
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
             model.setLastTurn();
         }
+    
+       
     }
     
     /**
@@ -160,7 +205,7 @@ public class GameController {
      */
     public void nextPlayerSetter() {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if( model.isLastTurn() && currentPlayerIndex == 3 ) {
+        if( model.isLastTurn() && currentPlayerIndex == model.getPlayers().size()-1 ) {
             endGame();
         }else {
             currentPlayerIndex = (currentPlayerIndex + 1) % playerNumber;
@@ -173,6 +218,7 @@ public class GameController {
      */
     public void endGame() {
         model.notifyWinner();
+        this.model.setGameEnded(true);
         LobbyController.getInstance().endGame(this.lobbyID);
     }
     
@@ -180,6 +226,7 @@ public class GameController {
      * Save the model to a file
      */
     private void saveModel() {
+        if(this.model.getGameEnded()) return;
         ResourcesManager.saveModel(model, lobbyID);
     }
     
@@ -189,7 +236,7 @@ public class GameController {
      * @param chat Message contents
      */
     @SuppressWarnings("unused")
-    public void onMessage(ChatMessage chat) {
+    public synchronized void onMessage(ChatMessage chat) {
         model.chatBroker(chat);
     }
     
@@ -200,7 +247,7 @@ public class GameController {
      * @param msg Move received
      */
     @SuppressWarnings("unused")
-    public void onMessage(MoveMessage msg) {
+    public synchronized void onMessage(MoveMessage msg) {
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
         
         if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
@@ -230,7 +277,7 @@ public class GameController {
     }
     
     @SuppressWarnings("unused")
-    public void onMessage(DebugMessage message) {
+    public synchronized void onMessage(DebugMessage message) {
         System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());
         saveModel();
         

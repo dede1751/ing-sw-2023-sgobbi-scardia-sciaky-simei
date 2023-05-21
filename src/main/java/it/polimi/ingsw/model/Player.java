@@ -21,7 +21,7 @@ public class Player implements Serializable {
     
     private int personalGoalScore;
     
-    private int adjacentScore;
+    private int adjacencyScore;
     
     private int bonusScore = 0;//is the 1 point given to the first who finishes the shelf
     
@@ -66,9 +66,8 @@ public class Player implements Serializable {
      * @return Integer player score
      */
     public int getScore() {
-        return this.commonGoalScore + this.personalGoalScore + this.adjacentScore + this.bonusScore;
+        return this.commonGoalScore + this.personalGoalScore + this.adjacencyScore + this.bonusScore;
     }
-    
     
     /**
      * Get the player's personal goal id
@@ -104,21 +103,21 @@ public class Player implements Serializable {
         return this.commonGoalScore;
     }
     
-    public int setPersonalGoalScore(int score) {
+    public void setPersonalGoalScore(int score) {
         this.personalGoalScore = score;
-        
-        return this.personalGoalScore;
     }
     
     public int getPersonalGoalScore() {
         return this.personalGoalScore;
     }
     
-    public int setAdjacentScore(int score) {
-        this.adjacentScore = score;
-        return this.adjacentScore;
+    public int getAdjacencyScore() {
+        return adjacencyScore;
     }
     
+    public void setAdjacencyScore(int score) {
+        this.adjacencyScore = score;
+    }
     
     public boolean isCompletedGoalX() {
         return completedGoalX;
@@ -145,6 +144,7 @@ public class Player implements Serializable {
     }
     
     
+    // TODO Add bonus score to json for persistence
     protected static class PlayerSerializer implements JsonSerializer<Player> {
         @Override
         public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {

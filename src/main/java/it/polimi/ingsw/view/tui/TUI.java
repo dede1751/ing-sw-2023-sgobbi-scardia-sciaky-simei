@@ -4,6 +4,7 @@ import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
+import it.polimi.ingsw.utils.files.ClientLogger;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
@@ -11,8 +12,11 @@ import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 
+import java.awt.desktop.SystemEventListener;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
+
 
 public class TUI extends View {
     
@@ -22,39 +26,47 @@ public class TUI extends View {
     
     private final Object lobbyLock = new Object();
     protected boolean newLobbies = false;
-    private Boolean yourTurnFlag = false;
     
+    private String prompt = null;
+    private String error = null;
+    
+    protected static final AtomicBoolean gameEnded = new AtomicBoolean(false);
+    protected static final AtomicBoolean otherMode = new AtomicBoolean(false);
+    
+    private final ClientLogger logger = new ClientLogger(String.valueOf(Thread.currentThread().threadId()));
     
     @Override
     public void run() {
+        gameEnded.set(false);
         Scanner scanner = new Scanner(System.in);
         userLogin();
         
-        //noinspection InfiniteLoopStatement
-        while( true ) {
+        // wait for the game to start before allowing user input
+        model.waitStart();
+        
+        while( !gameEnded.get() ) {
+            prompt = "Please select the action you want to take: [MOVE/CHAT]";
+            TUIUtils.printGame(nickname, prompt, error);
+            String command = scanner.next().trim().toUpperCase();
             
-            System.out.print("\n>>  ");
-            String command = scanner.next().trim();
             switch( command ) {
-                case "-H":
-                    System.out.println("to make a move write MOVE\nto chat with other players write CHAT\n");
-                case "MOVE":
-                    if( yourTurnFlag ) {
-                        List<Coordinate> sel = askSelection();
-                        List<Tile> tiles = getTiles(sel);
-                        int col = askColumn();
-                        Move move = new Move(sel, tiles, col);
+                case "MOVE" -> {
+                    if( model.getCurrentPlayer().equals(this.nickname) ) {
+                        List<Coordinate> selection = askSelection();
+                        List<Tile> tiles = askSelectionOrder(selection);
+                        int column = askColumn(tiles);
+                        
+                        Move move = new Move(selection, tiles, column);
                         notifyMove(move);
-                        System.out.println("Move sent");
+                        
+                        error = null;
                     }else {
-                        System.out.println("WAIT FOR YOUR TURN!");
+                        error = "Please, wait for your turn to make moves!";
                     }
-                    yourTurnFlag = false;
+                }
                 
-                case "CHAT":
+                case "CHAT" -> error = "To be implemented"; //TODO
             }
-            
-            System.out.println("Insert command");
         }
     }
     
@@ -65,28 +77,36 @@ public class TUI extends View {
     private void userLogin() {
         Scanner scanner = new Scanner(System.in);
         
-        askNickname();
+        boolean selectedRecovery = askNickname(null);
         
         main_loop:
-        while( true ) {
-            System.out.println(
-                    "\nDo you want to create your own lobby, join an existing one or recover a crashed lobby? [CREATE/JOIN/RECOVER]");
-            System.out.print("\n>>  ");
-            String choice = scanner.next().trim();
+        while( !selectedRecovery ) {
+            prompt = "Do you want to create your own lobby or join an existing one? [CREATE/JOIN]";
+            TUIUtils.printLoginScreen(prompt, error);
+            error = null;
+            
+            String choice = scanner.next().trim().toUpperCase();
             
             switch( choice ) {
                 
                 case "CREATE" -> {
-                    int lobbySize = -1;
-                    System.out.println("\nChoose the amount of players for the match (2-4): ");
-                    
-                    while( !(lobbySize >= 2 && lobbySize <= 4) ) {
-                        System.out.print("\n>>  ");
+                    int lobbySize;
+
+                    while( true ) {
+                        prompt = "Choose the amount of players for the match (2-4): ";
+                        TUIUtils.printLoginScreen(prompt, error);
+                        
                         try {
                             lobbySize = Integer.parseInt(scanner.next());
+                            if ( lobbySize < 2 || lobbySize > 4) {
+                                error = "Please choose a number between 2 and 4";
+                            } else {
+                                error = null;
+                                break;
+                            }
                         }
                         catch( NumberFormatException e ) {
-                            System.out.println("Please write a number");
+                            error = "Please write a number";
                         }
                     }
                     
@@ -96,8 +116,7 @@ public class TUI extends View {
                     if( r.isOk() ) {
                         break main_loop;
                     }else if( r.msg().equals("NicknameTaken") ) {
-                        System.out.println("Your nickname has been taken!. Please choose another one");
-                        askNickname();
+                        askNickname("Your nickname has been taken!");
                     }
                 }
                 
@@ -105,17 +124,22 @@ public class TUI extends View {
                     // fetch all lobbies from the server
                     notifyRequestLobby(null);
                     waitLobbies();
+                    
                     if( lobbies.stream().noneMatch((l) -> l.nicknames().size() < l.lobbySize()) ) {
-                        System.out.println("\nNo lobbies are currently available, please create a new one");
+                        error = "No lobbies are currently available, please create a new one";
                         continue;
                     }
                     
-                    System.out.println("\nChoose one of the following lobbies (avoid ones that are full): ");
-                    lobbies.forEach(System.out::print);
+                    StringBuilder joinPrompt = new StringBuilder("Choose one of the following lobbies (avoid ones that are full):");
+                    for ( var l : lobbies) {
+                        joinPrompt.append("\n").append(l.toString());
+                    }
                     
                     // ask the user to select a lobby
                     while( true ) {
-                        System.out.print("\n>>  ");
+                        prompt = joinPrompt.toString();
+                        TUIUtils.printLoginScreen(prompt, error);
+                        
                         try {
                             int lobbyId = Integer.parseInt(scanner.next());
                             boolean valid_lobby = lobbies.stream()
@@ -126,144 +150,194 @@ public class TUI extends View {
                                 Response r = waitLoginResponse(JoinLobbyMessage.class.getSimpleName());
                                 
                                 if( r.isOk() ) {
+                                    error = null;
                                     break main_loop;
                                 }else if( r.msg().equals("NicknameTaken") ) {
-                                    System.out.println("Your nickname has been taken!. Please choose another one");
-                                    askNickname();
+                                    askNickname("Your nickname has been taken!. Please choose another one");
                                 }else if( r.msg().equals("LobbyUnvailable") ) {
-                                    System.out.println("Please choose a viable lobby!");
+                                    error = "Lobby is not available!";
                                 }
                                 
                                 // if we encounter an error, let the user choose what login action to take
                                 break;
                             }else {
-                                System.out.println("Please select a valid lobby identifier");
+                                error = "Please choose a valid lobby ID";
                             }
                         }
                         catch( NumberFormatException e ) {
-                            System.out.println("Please write a number");
+                            error = "Please write a number";
                         }
                     }
                 }
                 
-                case "RECOVER" -> {
-                    notifyRecoverLobby();
-                    Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
-                    
-                    if( r.isOk() ) {
-                        break main_loop;
-                    }else if( r.msg().equals("LobbyUnavailable") ) {
-                        System.out.println("There is no lobby you can recover. Did you misspell your nickname?");
-                        askNickname();
-                    }
-                }
-                
-                default -> System.out.println("Please choose one of [CREATE/JOIN/RECOVER]");
+                default -> error = "Please choose one of [CREATE/JOIN]";
             }
         }
         
         if( !model.isStarted() ) {
-            System.out.println("\nSuccesfully logged in to server. Awaiting game start... ");
+            TUIUtils.printLoginScreen("Succesfully logged in to server. Awaiting game start... ", null);
         }
     }
     
     /**
      * Ask the user for a nickname, providing the list of all active lobbies fetched from the server.
      * Does not allow choice of nicknames already present in lobby list.
+     * If a player requests a nickname from a recovery lobby, send the recovery request.
+     *
+     * @return true if the user selected a recovery lobby, false otherwise
      */
-    private void askNickname() {
+    private boolean askNickname(String error) {
         notifyRequestLobby(null);
         waitLobbies();
         
+        StringBuilder lobbyPrompt = new StringBuilder();
         if( !lobbies.isEmpty() ) {
-            System.out.println(
-                    "\nHere are all the currently available lobbies. To recover crashed lobbies, user your old nickname!");
-            lobbies.forEach(System.out::print);
+            lobbyPrompt.append("\nHere are all the currently available lobbies. To recover crashed lobbies, use your old nickname!");
+            for ( var l : lobbies) {
+                lobbyPrompt.append("\n").append(l.toString());
+            }
         }else {
-            System.out.println("\nThere is currently no active lobby!");
+            lobbyPrompt.append("\nThere is currently no active lobby!");
         }
         
         Scanner scanner = new Scanner(System.in);
-        System.out.println("\nChoose the nickname you'll be using in game: (avoid those present in other lobbies)");
-        
+        String prompt = "Choose the nickname you'll be using in game: (avoid those present in other lobbies)";
         while( true ) {
-            System.out.print("\n>>  ");
+            TUIUtils.printLoginScreen(prompt + lobbyPrompt, error);
             String nickname = scanner.next().trim();
             
-            if( !nickname.equals("")
-                && lobbies.stream().noneMatch((l) -> l.nicknames().contains(nickname))
-            ) {
+            if( !nickname.equals("") ) {
+                // Nickname is already taken in a non-recovery lobby
+                if( lobbies.stream().anyMatch((l) -> !l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                    continue;
+                }
+                
                 this.setNickname(nickname);
-                break;
+                
+                // nickname matches a recovery lobby, try connecting to it
+                if( lobbies.stream().anyMatch((l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                    notifyRecoverLobby();
+                    Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
+                    
+                    if (r.isOk()) {
+                        return true;
+                    } else if( r.msg().equals("LobbyUnavailable") ) {
+                        prompt = "The lobby you are trying to recover is unavailable. Please choose another nickname";
+                    } else if( r.msg().equals("NicknameTaken") ) {
+                        prompt = "Somebody has already picked that recovery nickname. Please choose another nickname";
+                    } else {
+                        prompt = "Recovery request failed. Please choose another nickname";
+                    }
+                } else {
+                    return false;
+                }
             }
         }
     }
     
-    //TODO add tile order selection
-    //FIXME checks on input should ALL be done with IntegrityChecks !!!!
-    public List<Coordinate> askSelection() {
-        
+    /**
+     * Ask the user to select a list of tiles from the board.
+     *
+     * @return a list of coordinates representing the tiles selected by the user
+     */
+    private List<Coordinate> askSelection() {
         Scanner scanner = new Scanner(System.in);
-        List<Coordinate> selection = new ArrayList<>();
-        System.out.print("Enter number of coordinates (1-3): ");
-        int numCoordinates = scanner.nextInt();
-        scanner.nextLine();
+        List<Coordinate> selection = null;
         
-        while( numCoordinates > 3 || numCoordinates < 1 ) {//check if the number of coordinates is right
-            System.out.print("The number must be between 1 and 3, try again: ");
-            numCoordinates = scanner.nextInt();
-            scanner.nextLine();
-        }
-        //todo add checks ora è solo per prova
-        //le coordinate devono essere da 0 a 8
-        // do {
-        for( int i = 0; i < numCoordinates; i++ ) {
-            // boolean validCoordinate = false;
-            // while( !validCoordinate ) {
-            //     if( model.getBoard().getTile(coordinate) == Tile.NOTILE ||
-            //         model.getBoard().getTile(coordinate) == null ) {
-            //         validCoordinate = true;
-            //     }
-            //     coordinate = getCoordinate();
-            // }
+        while( !IntegrityChecks.checkSelectionForm(selection, model.getBoard(), model.getShelf(this.nickname)) ) {
+            if( selection != null ) {
+                error = "Coordinates are not valid";
+            }
+            prompt = "Enter the ROW,COL coordinates of the tiles you want to select (e.g. 1,2 2,2):";
+            TUIUtils.printGame(nickname, prompt, error);
             
-            selection.add(getCoordinate());
-            scanner.nextLine(); // consume the newline character
-            
+            // try to parse selection
+            selection = Arrays.stream(
+                            scanner.nextLine()
+                                    .split(" "))
+                    .map((s) -> {
+                        String[] coordinates = s.split(",");
+                        try {
+                            return new Coordinate(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
+                        }
+                        catch( Exception e ) {
+                            return new Coordinate(-1, -1); // this will invalidate the selection
+                        }
+                    }).toList();
         }
-        //}
-        //while( IntegrityChecks.checkSelectionForm(selection) );
-        System.out.println("Entered coordinates: " + selection);
+        
+        error = null;
         return selection;
-        
     }
     
-    public List<Tile> getTiles(List<Coordinate> selection) {
-        List<Tile> tiles = new LinkedList<>();
-        for( Coordinate coordinate : selection ) {
-            tiles.add(model.getBoard().getTile(coordinate));
+    /**
+     * Ask the user to pick the order in which the tiles get put on the shelf.
+     *
+     * @param selection the list of coordinates already selected by the player
+     *
+     * @return the ordered list of tiles at those coordinates picked by the player
+     */
+    private List<Tile> askSelectionOrder(List<Coordinate> selection) {
+        Scanner scanner = new Scanner(System.in);
+        List<Tile> tiles = null;
+        
+        while( !IntegrityChecks.checkTileSelection(selection, tiles, model.getBoard()) ) {
+            if( tiles != null ) {
+                error = "The order specified is invalid!";
+            }
+            
+            prompt = "Enter the order you want to insert these tiles in ( e.g. 2 1 3, 2 goes to the bottom ):\n" +
+                     TUIUtils.generateSelection(selection);
+            TUIUtils.printGame(nickname, prompt, error);
+            
+            // try to parse selection
+            tiles = new LinkedList<>();
+            for( String s : scanner.nextLine().split(" ") ) {
+                try {
+                    Tile newTile = model.getBoard().getTile(selection.get(Integer.parseInt(s) - 1));
+                    tiles.add(newTile);
+                    
+                }
+                catch( Exception e ) {
+                    tiles.add(Tile.NOTILE); // this will invalidate the selection
+                }
+            }
         }
+        
+        error = null;
         return tiles;
     }
     
-    public int askColumn() {
+    /**
+     * Ask the user to pick a column in the shelf to put the tiles in.
+     *
+     * @param tiles the list of tiles to be put on the shelf
+     *
+     * @return the column number picked by the user
+     */
+    public int askColumn(List<Tile> tiles) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the column in which you want to place your selection: ");
-        int column = scanner.nextInt();
-        scanner.nextLine();
-        return column;
-    }
-    
-    
-    //TODO integrity check for the coordinates
-    private Coordinate getCoordinate() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter x-coordinate: ");
-        int x = scanner.nextInt();
+        int column = -1;
         
-        System.out.print("Enter y-coordinate: ");
-        int y = scanner.nextInt();
-        return new Coordinate(x, y);
+        while( !IntegrityChecks.checkColumnValidity(tiles, column, model.getShelf(this.nickname)) ) {
+            if( column != -1 ) {
+                error = "The column you specified cannot be filled by this selection!";
+            }
+            prompt = "Enter the number of the column you want to insert your tiles into: [0,1,2,3,4]\n" +
+                     TUIUtils.generateTiles(tiles);
+            TUIUtils.printGame(nickname, prompt, error);
+            
+            // try to parse column
+            try {
+                column = Integer.parseInt(scanner.nextLine());
+            }
+            catch( Exception e ) {
+                column = -1; // this will invalidate the selection
+            }
+        }
+        
+        error = null;
+        return column;
     }
     
     /**
@@ -313,10 +387,6 @@ public class TUI extends View {
     @Override
     public void onMessage(BoardMessage msg) {
         this.model.setBoard(msg.getPayload());
-        
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
-        }
     }
     
     /**
@@ -329,6 +399,7 @@ public class TUI extends View {
     @Override
     public void onMessage(AvailableLobbyMessage msg) {
         this.lobbies = msg.getPayload().lobbyViewList();
+        logger.writeMessage(msg);
         synchronized(lobbyLock) {
             newLobbies = true;
             lobbyLock.notifyAll();
@@ -342,15 +413,10 @@ public class TUI extends View {
      */
     @SuppressWarnings("unused")
     @Override
-    public void onMessage(EndGameMessage msg) {
-        var p = msg.getPayload();
-        System.out.println("GAME FINISHED, THE WINNER IS " + p.winner());
-        System.out.println("LEADERBOARD : ");
-        for( var x : p.points().entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue)).toList() ) {
-            System.out.println(x.getKey() + " : " + x.getValue());
-        }
-        
-        model.setStarted(false);
+    public void onMessage(EndGameMessage msg){
+        logger.writeMessage(msg);
+        gameEnded.set(true);
+        TUIUtils.printEndGameScreen(msg.getPayload(), model.getPlayersNicknames().get(0));
     }
     
     /**
@@ -361,9 +427,24 @@ public class TUI extends View {
     @SuppressWarnings("unused")
     @Override
     public void onMessage(StartGameMessage msg) {
+        logger.writeMessage(msg);
         var payload = msg.getPayload();
+        var players = payload.players();
         
-        model.setPlayersNicknames(payload.nicknames());
+        model.setPlayersNicknames(
+                players.stream().map(StartGameMessage.PlayerRecord::nickname).toList()
+        );
+        
+        List<String> nicknames = new LinkedList<>();
+        for( var p : players ) {
+            nicknames.add(p.nickname());
+            model.setShelf(p.shelf(), p.nickname());
+            model.setCgScore(p.commonGoalScore(), p.nickname());
+            model.setPgScore(p.personalGoalScore(), p.nickname());
+            model.setAdjacencyScore(p.adjacencyScore(), p.nickname());
+            model.setBonusScore(p.bonusScore(), p.nickname());
+        }
+        model.setPlayersNicknames(nicknames);
         
         model.setPgid(payload.personalGoalId());
         model.setCGXindex(payload.CGXIndex());
@@ -372,19 +453,9 @@ public class TUI extends View {
         model.setTopCGYscore(payload.topCGYScore());
         
         model.setBoard(payload.board());
-        model.setCurrentPlayer(payload.nicknames().get(0));
-        for( int i = 0; i < payload.nicknames().size(); i++ ) {
-            model.setShelf(payload.shelves().get(i), payload.nicknames().get(i));
-        }
+        model.setCurrentPlayer(payload.currentPlayer());
         
-        TUIUtils.printStartGame();
-        //brutto
-        if( nickname.equals(model.getCurrentPlayer()) ) {
-            yourTurnFlag = true;
-            System.out.println("it's your turn");
-        }
-        
-        TUIUtils.printGame(nickname);
+        TUIUtils.printGame(nickname, prompt, null);
         model.setStarted(true);
     }
     
@@ -397,6 +468,7 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(ServerResponseMessage msg) {
+        logger.writeMessage(msg);
         Predicate<String> isLoginMessage = x -> {
             String action = msg.getPayload().Action();
             return action.matches("RecoverLobbyMessage|RequestLobbyMessage|JoinLobbyMessage|CreateLobbyMessage");
@@ -420,10 +492,8 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(ShelfMessage msg) {
+        logger.writeMessage(msg);
         this.model.setShelf(msg.getPayload(), msg.getPlayer());
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
-        }
     }
     
     /**
@@ -433,9 +503,10 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
+        logger.writeMessage(msg);
         this.model.addChatMessage(msg.getSender(), msg.getPayload());
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
+            TUIUtils.printGame(nickname, prompt, error);
         }
     }
     
@@ -446,10 +517,8 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
+        logger.writeMessage(msg);
         this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
-        }
     }
     
     /**
@@ -459,14 +528,11 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(CommonGoalMessage msg) {
+        logger.writeMessage(msg);
         if( msg.getPayload().type() == GameModel.CGType.Y ) {
             this.model.setTopCGYscore(msg.getPayload().availableTopScore());
         }else {
             this.model.setTopCGXscore(msg.getPayload().availableTopScore());
-        }
-        
-        if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
         }
     }
     
@@ -477,16 +543,11 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
+        logger.writeMessage(msg);
         this.model.setCurrentPlayer(msg.getPayload());
         
-        //brutto
-        if( nickname.equals(msg.getPayload()) ) {
-            yourTurnFlag = true;
-            System.out.println("it's your turn");
-        }
         if( this.model.isStarted() ) {
-            TUIUtils.printGame(nickname);
+            TUIUtils.printGame(nickname, prompt, error);
         }
     }
-    
 }

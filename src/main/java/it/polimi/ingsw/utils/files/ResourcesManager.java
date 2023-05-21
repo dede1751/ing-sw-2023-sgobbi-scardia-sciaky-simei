@@ -24,11 +24,16 @@ import static java.nio.file.StandardOpenOption.*;
  */
 public final class ResourcesManager {
     
-    public static final String mainResourcesDir = Paths.get("").toAbsolutePath() + "/src/main/resources";
-    public static final String mainRootDir = Paths.get("").toAbsolutePath() + "/src/main/java";
-    public static final String testRootDir = Paths.get("").toAbsolutePath() + "/src/test/java";
+    public static final String testRootDir = Paths.get("src/test/java/it/polimi/ingsw").toString();
     
-    public static final String recoveryDir = mainResourcesDir + "/controller/recovery";
+    public static final String mainResourcesDir = Paths.get("resources").toString();
+    
+    public static final String recoveryDir = mainResourcesDir + "/recovery";
+    
+    public static final String serverLoggerDir = mainResourcesDir + "/server";
+    
+    public static final String clientLoggerDir = mainResourcesDir + "/client";
+    
     
     /**
      * @return the name of the method from which it was called
@@ -38,16 +43,16 @@ public final class ResourcesManager {
         return walker.walk((x) -> x.toList().get(1).getMethodName());
     }
     
-    public static FileChannel openFileWrite(String path) throws IOException {
-        return FileChannel.open(Path.of(path), CREATE, WRITE);
-    }
-    
-    public static FileChannel openFileRead(String path) throws IOException {
-        return FileChannel.open(Path.of(path), READ);
-    }
-    
-    public static void closeChannel(Channel c) throws IOException {
-        c.close();
+    /**
+     * Open a file for writing, creating the directory if necessary
+     * @param dir the directory in which to create the file
+     * @param file the name of the file to create
+     * @return the FileChannel of the created file
+     * @throws IOException if the file cannot be created (not if the directory already exists)
+     */
+    public static FileChannel openFileWrite(String dir, String file) throws IOException {
+        Files.createDirectories(Paths.get(dir));
+        return FileChannel.open(Path.of(dir, file), CREATE, WRITE);
     }
     
     private static File getRecoveryDir() {

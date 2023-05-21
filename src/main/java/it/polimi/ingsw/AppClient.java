@@ -13,27 +13,10 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
-/*FIXME know bugs
-    -if the user insert pass before the beginning of the game bad things will happen
-    -the game lets the user insert commands before the beginning of the game, big no no
-*/
 
 public class AppClient {
     
     public static void main(String[] args) throws RemoteException, NotBoundException {
-        System.out.println("\n\n$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\");
-        System.out.println("$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|");
-        System.out.println("$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\");
-        System.out.println("$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\");
-        System.out.println("$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |");
-        System.out.println("$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|");
-        System.out.println("$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\");
-        System.out.println(
-                "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|");
-        System.out.println("             $$\\   $$ |");
-        System.out.println("             \\$$$$$$  |");
-        System.out.println("              \\______/\n");
-        
         Scanner scanner = new Scanner(System.in);
         View view;
         

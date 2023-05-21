@@ -9,6 +9,10 @@ public class UpdateScoreMessage extends ModelMessage<UpdateScoreMessage.UpdateSc
     }
     
     public record UpdateScorePayload(Type type, int score, String player) implements Serializable {
+        @Override
+        public String toString(){
+            return "Update Score : " + type.name() + " " + score + " " + player;
+        }
     }
     
     public UpdateScoreMessage(Integer score, Type type, String nickname) {

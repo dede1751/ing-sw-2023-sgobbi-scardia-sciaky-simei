@@ -13,10 +13,11 @@ import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LocalServer extends UnicastRemoteObject implements Server {
     
-    private final Map<Integer, GameController> gameControllers = new HashMap<>();
+    private final Map<Integer, GameController> gameControllers = new ConcurrentHashMap<>();
     
     public LocalServer() throws RemoteException {
         super();
@@ -35,7 +36,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
     }
     
     @Override
-    public synchronized void register(Client client) throws RemoteException {
+    public void register(Client client) throws RemoteException {
         LobbyController.getInstance().register(client);
     }
     

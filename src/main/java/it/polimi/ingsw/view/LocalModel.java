@@ -1,6 +1,5 @@
 package it.polimi.ingsw.view;
 
-import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.messages.UpdateScoreMessage;
@@ -18,6 +17,7 @@ public class LocalModel {
     
     private static LocalModel INSTANCE;
     
+    private final Object startLock = new Object();
     private boolean started = false;
     
     private List<String> playersNicknames;
@@ -58,12 +58,31 @@ public class LocalModel {
         return INSTANCE;
     }
     
+    /**
+     * Wait for the game to be started by a StartGameMessage.
+     */
+    public void waitStart() {
+        synchronized(startLock) {
+            while( !started ) {
+                try {
+                    startLock.wait();
+                }
+                catch( InterruptedException e ) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+    
     public boolean isStarted() {
         return started;
     }
     
     public void setStarted(boolean started) {
-        this.started = started;
+        synchronized(startLock) {
+            this.started = started;
+            startLock.notifyAll();
+        }
     }
     
     public void addChatMessage(String nickname, String message) {
@@ -94,27 +113,27 @@ public class LocalModel {
      */
     public void setPoints(UpdateScoreMessage.Type type, String nickname, int score) {
         switch( type ) {
-            case Adjacency:
-                setadjacencyScore(score, nickname);
-            case CommonGoal:
-                setCgScore(score, nickname);
-            case PersonalGoal:
-                setPgScore(score, nickname);
-            case Bonus:
-                setBonusScore(score, nickname);
+            case Adjacency -> setAdjacencyScore(score, nickname);
+            case CommonGoal -> setCgScore(score, nickname);
+            case PersonalGoal -> setPgScore(score, nickname);
+            case Bonus -> setBonusScore(score, nickname);
         }
         
-        int points =
-                getadjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
+        int point =
+                getAdjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
         if( this.points.containsKey(nickname) ) {
-            this.points.replace(nickname, points);
+            this.points.replace(nickname, point);
         }else {
-            this.cgScore.put(nickname, points);
+            this.points.put(nickname, point);
         }
     }
     
     public int getPoints(String nickname) {
-        return this.points.get(nickname);
+        if( this.points.get(nickname) == null ) {
+            return 0;
+        }else {
+            return this.points.get(nickname);
+        }
     }
     
     public void setCgScore(Integer points, String nickname) {
@@ -136,25 +155,21 @@ public class LocalModel {
         }else {
             this.pgScore.put(nickname, points);
         }
-        
-        
     }
     
     public int getPgScore(String nickname) {
         return this.pgScore.get(nickname);
     }
     
-    public void setadjacencyScore(Integer points, String nickname) {
+    public void setAdjacencyScore(Integer points, String nickname) {
         if( this.adjacencyScore.containsKey(nickname) ) {
             this.adjacencyScore.replace(nickname, points);
         }else {
             this.adjacencyScore.put(nickname, points);
         }
-        
-        
     }
     
-    public int getadjacencyScore(String nickname) {
+    public int getAdjacencyScore(String nickname) {
         return this.adjacencyScore.get(nickname);
     }
     
@@ -164,8 +179,6 @@ public class LocalModel {
         }else {
             this.bonusScore.put(nickname, points);
         }
-        
-        
     }
     
     public int getBonusScore(String nickname) {
