@@ -124,12 +124,13 @@ public class TUIUtils {
                     .append(error)
                     .append(ANSI_RESET);
         }
+        sb = new StringBuilder(createBox(sb.toString(),ANSI_YELLOW_BOLD));
         sb.append("\n")
                 .append(prompt)
                 .append("\n>> ");
-        
+    
         clearConsole();
-        System.out.print(sb);
+        System.out.print(sb );
     }
     
     
