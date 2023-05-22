@@ -79,28 +79,30 @@ public class TUI extends View {
     
     private String askMsgType() {
         Scanner scanner = new Scanner(System.in);
-    
-        String choice;
-        do {
+        String choice = "";
+        
+        while( true ) {
             prompt = "Do you want to send a broadcast message? [Y/N]";
-            System.out.println("\n" + prompt);
-            System.out.print("\n>> ");
             TUIUtils.printGame(nickname, prompt, error);
-            
-            choice = scanner.next().trim().toUpperCase();
-        }
-        while( !choice.equals("Y") && !choice.equals("N") );
-        return choice;
     
+            choice = scanner.next().trim().toUpperCase();
+            if( choice.equals("Y") || choice.equals("N") ) {
+                error = null;
+                break;
+            }else {
+                error = "Please, answer if you want to send a broadcast message or not [Y/N]";
+            }
+        }
+        
+        return choice;
     }
     
     private String askBroadcastMessage() {
         Scanner scanner = new Scanner(System.in);
     
         prompt = "Please, enter your message:";
-        System.out.println("\n" + prompt);
-        System.out.print("\n>> ");
         TUIUtils.printGame(nickname, prompt, error);
+        error = null;
         
         return scanner.nextLine();
     }
@@ -109,38 +111,30 @@ public class TUI extends View {
         Scanner scanner = new Scanner(System.in);
     
         prompt = "Please, enter your message:";
-        System.out.println("\n" + prompt);
-        System.out.print("\n>> ");
         TUIUtils.printGame(nickname, prompt, error);
-        
+        error = null;
+    
         var msg = scanner.nextLine();
     
-        prompt = "Enter the nickname of the player you want to send your message:";
-        System.out.println("\n" + prompt);
-        System.out.print("\n>> ");
-        TUIUtils.printGame(nickname, prompt, error);
+        String player;
+        while( true ) {
+            prompt = "Enter the nickname of the player you want to send your message:";
+            TUIUtils.printGame(nickname, prompt, error);
         
-        var player = scanner.next().trim();
-        
-        if( !model.getPlayersNicknames().contains(player) ) {
-            while( true ) {
-                prompt = "Player not existing, please, choose another nickname:";
-                System.out.println("\n" + prompt);
-                System.out.print("\n>> ");
-                TUIUtils.printGame(nickname, prompt, error);
-                var nick = scanner.next().trim();
-                    if( model.getPlayersNicknames().contains(nick) ) {
-                        player = nick;
-                        break;
-                    }
+            player = scanner.next().trim();
+            if( model.getPlayersNicknames().contains(player) ) {
+                error = null;
+                break;
+            }else {
+                error = "Player not existing, please, choose another nickname";
             }
         }
-        
+    
         ArrayList<String> result = new ArrayList<String>();
         result.add(msg);
         result.add(player);
         return result;
-        
+    
     }
     
     
