@@ -390,7 +390,7 @@ public class GameModel {
         if( chat.getDestination().equals("BROADCAST") ) {
             notifyAllListeners(message);
         }else {
-            ModelListener targetListener = this.listeners.get(chat.getPlayerNickname());
+            ModelListener targetListener = this.listeners.get(chat.getDestination());
             targetListener.update(message);
         }
     }
