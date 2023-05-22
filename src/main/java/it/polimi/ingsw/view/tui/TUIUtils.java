@@ -75,6 +75,12 @@ public class TUIUtils {
         }
     }
     
+    public static String generateChat() {
+        var chat = model.getChat();
+        chat = createBox(chat, ANSI_YELLOW_BOLD);
+        return chat;
+    }
+    
     public static void printLoginScreen(String prompt, String error) {
         clearConsole();
         System.out.println("\n\n" + TITLE);
@@ -125,9 +131,11 @@ public class TUIUtils {
         sb.append("\n")
                 .append(prompt)
                 .append("\n>> ");
+        
+        var output = concatString(sb.toString(), generateChat(), 4);
     
         clearConsole();
-        System.out.print(sb );
+        System.out.print(output );
     }
     
     

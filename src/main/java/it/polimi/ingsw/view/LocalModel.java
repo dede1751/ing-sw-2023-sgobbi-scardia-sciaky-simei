@@ -33,6 +33,7 @@ public class LocalModel {
     private final Map<String, Integer> adjacencyScore = new HashMap<>();
     private final Map<String, Integer> bonusScore = new HashMap<>();
     
+    private ArrayList<String> chat = new ArrayList<String>(10);
     
     private int pgid = 0;
     
@@ -43,8 +44,6 @@ public class LocalModel {
     private int topCGYscore = 0;
     
     private Board board;
-    
-    private final List<String> chat = new ArrayList<>();
     
     
     private LocalModel() {
@@ -86,13 +85,20 @@ public class LocalModel {
     }
     
     public void addChatMessage(String nickname, String message) {
+        if( chat.size() == 10) {
+            chat.remove(0);
+            for( String msg : chat ) {
+                chat.set( chat.indexOf(msg)-1, msg);
+            }
+            chat.remove(10);
+        }
         chat.add(nickname + " -> " + message + "\n");
     }
     
     public String getChat() {
         StringBuilder sb = new StringBuilder();
         for( String s : chat ) {
-            sb.append(s);
+            sb.append(s).append("\n");
         }
         return sb.toString();
     }

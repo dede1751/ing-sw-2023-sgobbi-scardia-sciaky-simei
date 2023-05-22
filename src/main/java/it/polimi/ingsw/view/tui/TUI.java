@@ -6,12 +6,11 @@ import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.messages.CreateLobbyMessage;
-import it.polimi.ingsw.view.messages.JoinLobbyMessage;
-import it.polimi.ingsw.view.messages.Move;
-import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
+import it.polimi.ingsw.view.messages.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
@@ -57,9 +56,83 @@ public class TUI extends View {
                     }
                 }
                 
-                case "CHAT" -> error = "To be implemented"; //TODO
+                case "CHAT" -> {
+                    var choice = askMsgType();
+                    switch( choice ) {
+                        case "Y" -> {
+                            var msg = askBroadcastMessage();
+                            ChatMessage chatMessage = new ChatMessage(msg, model.getCurrentPlayer());
+                            notifyChatMessage(msg);
+                        }
+                        case "N" -> {
+                            var msg = askChatMessage();
+                            ChatMessage chatMessage = new ChatMessage(
+                                    msg.get(1), model.getCurrentPlayer(), msg.get(0));
+                            notifyChatMessage(msg.get(1), msg.get(0));
+                        }
+                    }
+                }
             }
         }
+    }
+    
+    
+    private String askMsgType() {
+        Scanner scanner = new Scanner(System.in);
+    
+        String choice;
+        do {
+            prompt = "Do you want to send a broadcast message? [Y/N]";
+            System.out.println("\n" + prompt);
+            System.out.print("\n>> ");
+            choice = scanner.next().trim().toUpperCase();
+        }
+        while( !choice.equals("Y") && !choice.equals("N") );
+        return choice;
+    
+    }
+    
+    private String askBroadcastMessage() {
+        Scanner scanner = new Scanner(System.in);
+    
+        prompt = "Please, enter your message:";
+        System.out.println("\n" + prompt);
+        System.out.print("\n>> ");
+        
+        return scanner.next().trim();
+    }
+    
+    private ArrayList<String> askChatMessage() {
+        Scanner scanner = new Scanner(System.in);
+    
+        prompt = "Please, enter your message:";
+        System.out.println("\n" + prompt);
+        System.out.print("\n>> ");
+        var msg = scanner.next().trim();
+    
+        prompt = "Enter the nickname of the player you want to send your message:";
+        System.out.println("\n" + prompt);
+        System.out.print("\n>> ");
+        var player = scanner.next().trim();
+        
+        if( !model.getPlayersNicknames().contains(player) ) {
+            while( true ) {
+                prompt = "Player not existing, please, choose another nickname:";
+                System.out.println("\n" + prompt);
+                System.out.print("\n>> ");
+                var nick = scanner.next().trim();
+                    if( model.getPlayersNicknames().contains(nick) ) {
+                        player = nick;
+                        break;
+                    }
+            }
+        }
+        
+        ArrayList<String> result = new ArrayList<String>();
+        result.add(msg);
+        result.add(player);
+        return result;
+        
     }
     
     /**
@@ -228,6 +301,7 @@ public class TUI extends View {
             }
         }
     }
+    
     
     /**
      * Ask the user to select a list of tiles from the board.
