@@ -185,9 +185,18 @@ public final class ResourcesManager {
     
     public static class GraphicalResources {
         
-        public static final String graphicalAssetDir = Paths.get("src/main/resources/gui/assert").toAbsolutePath().toString();
+        public static final String graphicalAssetDir =
+                Paths.get("src/main/resources/gui/assert").toAbsolutePath().toString();
         public static final String FXMLDir = Paths.get("src/main/resources/gui/javafx").toAbsolutePath().toString();
         
+        /**
+         * Get the valid URL object of the indicated fxml file. <br>
+         * The name must have the format [name].fxml. The method throws a RuntimeException if the file doesn't exist or the name is malformed.
+         *
+         * @param name Name of the .fxml file
+         *
+         * @return The absolute URL referencing the [name].fxml file
+         */
         public static URL getFXML(String name) {
             try {
                 return Paths.get(FXMLDir + "/" + name).toUri().toURL();
