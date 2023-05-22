@@ -385,15 +385,17 @@ public class GameModel {
      * @param chat Message to be sent
      */
     public void chatBroker(ChatMessage chat) {
-        
+    
         IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
         if( chat.getDestination().equals("BROADCAST") ) {
             notifyAllListeners(message);
         }else {
             ModelListener targetListener = this.listeners.get(chat.getDestination());
             targetListener.update(message);
+            this.listeners.get(chat.getPlayerNickname()).update(message);
         }
     }
+    
     
     private void notifyBoardChange() {
         notifyAllListeners(new BoardMessage(this));
