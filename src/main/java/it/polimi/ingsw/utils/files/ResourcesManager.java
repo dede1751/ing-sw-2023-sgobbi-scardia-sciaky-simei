@@ -5,6 +5,11 @@ import it.polimi.ingsw.model.GameModel;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Parameter;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -175,6 +180,22 @@ public final class ResourcesManager {
                     throw new JsonParseException("Json object doesn't have this attribute : " + attribute);
             }else
                 throw new JsonParseException("Json element is not an object");
+        }
+    }
+    
+    public static class GraphicalResources {
+        
+        public static final String graphicalAssetDir = Paths.get("src/main/resources/gui/assert").toAbsolutePath().toString();
+        public static final String FXMLDir = Paths.get("src/main/resources/gui/javafx").toAbsolutePath().toString();
+        
+        public static URL getFXML(String name) {
+            try {
+                return Paths.get(FXMLDir + "/" + name).toUri().toURL();
+            }
+            //FIXME
+            catch( MalformedURLException e ) {
+                throw new RuntimeException(e);
+            }
         }
     }
     

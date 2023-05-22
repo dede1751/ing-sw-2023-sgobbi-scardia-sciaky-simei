@@ -1,15 +1,13 @@
 package it.polimi.ingsw.view.gui;
 
+import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
+import javafx.application.Application;
 import javafx.stage.Stage;
 
 
 public class GUI extends View  {
-    
-    
-    
-    private GUIApp app = new GUIApp(this);
     
     @Override
     public void onMessage(BoardMessage msg) {
@@ -82,7 +80,7 @@ public class GUI extends View  {
     @Override
     public void run() {
         try {
-            app.start(new Stage());
+            Application.launch(GUIApp.class);
         }
         catch( Exception e ) {
             throw new RuntimeException(e);
