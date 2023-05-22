@@ -85,6 +85,8 @@ public class TUI extends View {
             prompt = "Do you want to send a broadcast message? [Y/N]";
             System.out.println("\n" + prompt);
             System.out.print("\n>> ");
+            TUIUtils.printGame(nickname, prompt, error);
+            
             choice = scanner.next().trim().toUpperCase();
         }
         while( !choice.equals("Y") && !choice.equals("N") );
@@ -98,8 +100,9 @@ public class TUI extends View {
         prompt = "Please, enter your message:";
         System.out.println("\n" + prompt);
         System.out.print("\n>> ");
+        TUIUtils.printGame(nickname, prompt, error);
         
-        return scanner.next().trim();
+        return scanner.nextLine();
     }
     
     private ArrayList<String> askChatMessage() {
@@ -108,11 +111,15 @@ public class TUI extends View {
         prompt = "Please, enter your message:";
         System.out.println("\n" + prompt);
         System.out.print("\n>> ");
-        var msg = scanner.next().trim();
+        TUIUtils.printGame(nickname, prompt, error);
+        
+        var msg = scanner.nextLine();
     
         prompt = "Enter the nickname of the player you want to send your message:";
         System.out.println("\n" + prompt);
         System.out.print("\n>> ");
+        TUIUtils.printGame(nickname, prompt, error);
+        
         var player = scanner.next().trim();
         
         if( !model.getPlayersNicknames().contains(player) ) {
@@ -120,6 +127,7 @@ public class TUI extends View {
                 prompt = "Player not existing, please, choose another nickname:";
                 System.out.println("\n" + prompt);
                 System.out.print("\n>> ");
+                TUIUtils.printGame(nickname, prompt, error);
                 var nick = scanner.next().trim();
                     if( model.getPlayersNicknames().contains(nick) ) {
                         player = nick;
@@ -134,6 +142,7 @@ public class TUI extends View {
         return result;
         
     }
+    
     
     /**
      * Take care of user login to a lobby on the server

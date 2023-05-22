@@ -75,11 +75,22 @@ public class TUIUtils {
         }
     }
     
+    
     public static String generateChat() {
+        StringBuilder sb = new StringBuilder();
+        
         var chat = model.getChat();
-        chat = createBox(chat, ANSI_YELLOW_BOLD);
-        return chat;
+        for( String s : chat ) {
+            sb.append(s).append("\n");
+        }
+        
+        if( chat.size() > 0) {
+            return createBox(sb.toString(), ANSI_YELLOW_BOLD);
+        }else {
+            return " ";
+        }
     }
+    
     
     public static void printLoginScreen(String prompt, String error) {
         clearConsole();
