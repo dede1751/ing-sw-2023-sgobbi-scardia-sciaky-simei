@@ -392,7 +392,6 @@ public class GameModel {
         }else {
             ModelListener targetListener = this.listeners.get(chat.getDestination());
             targetListener.update(message);
-            this.listeners.get(chat.getPlayerNickname()).update(message);
         }
     }
     
