@@ -23,10 +23,11 @@ public class GUIApp extends Application {
         stage.setTitle("My Shelfie");
         stage.setScene(new Scene(root));
         stage.show();
+        
     }
     
     @Override
-    public void init(){
+    public void init() {
     
     }
     

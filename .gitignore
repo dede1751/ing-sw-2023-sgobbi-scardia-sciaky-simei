@@ -97,5 +97,5 @@ resources/
 /resources
 
 
-
+!src/main/resources/gui/*
 /*.iml

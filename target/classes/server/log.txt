@@ -1,0 +1,83 @@
+2023-05-15 21:38:19.2506352 - Registered new Client with id : 1
+2023-05-15 21:38:19.2826337 - Updated Client : null , 0 with message type : AvailableLobbyMessage
+
+2023-05-15 21:38:26.7878907 - Updated Client : DOF , 0 with message type : ServerResponseMessage
+
+2023-05-15 21:38:31.307955 - Registered new Client with id : 2
+2023-05-15 21:38:31.3289312 - Updated Client : null , 1 with message type : AvailableLobbyMessage
+
+2023-05-15 21:38:37.3307672 - Updated Client : ODO , 1 with message type : AvailableLobbyMessage
+
+2023-05-15 21:38:40.0330729 - Updated Client : DOF , 0 with message type : BoardMessage
+
+2023-05-15 21:38:40.0512027 - Updated Client : ODO , 1 with message type : BoardMessage
+
+2023-05-15 21:38:40.0728578 - Updated Client : DOF , 0 with message type : StartGameMessage
+
+2023-05-15 21:38:40.0908574 - Updated Client : ODO , 1 with message type : StartGameMessage
+
+2023-05-15 21:38:40.0958601 - Updated Client : ODO , 1 with message type : ServerResponseMessage
+
+2023-05-15 21:38:57.1734419 - Updated Client : DOF , 0 with message type : ServerResponseMessage
+
+20:17.3156357 - Updated Client : null , 2 with message type : AvailableLobbyMessage
+
+2023-05-15 21:20:21.4125312 - Updated Client : DOFK , 2 with message type : ServerResponseMessage
+
+2023-05-15 21:20:29.9826786 - Registered new Client with id : 4
+2023-05-15 21:20:30.0006789 - Updated Client : null , 3 with message type : AvailableLobbyMessage
+
+2023-05-15 21:20:35.0617974 - Updated Client : PIPPO , 3 with message type : AvailableLobbyMessage
+
+2023-05-15 21:20:36.7152679 - Updated Client : DOFK , 2 with message type : BoardMessage
+
+2023-05-15 21:20:36.7331534 - Updated Client : PIPPO , 3 with message type : BoardMessage
+
+2023-05-15 21:20:36.7511527 - Updated Client : DOFK , 2 with message type : StartGameMessage
+
+2023-05-15 21:20:36.7691528 - Updated Client : PIPPO , 3 with message type : StartGameMessage
+
+2023-05-15 21:20:36.774153 - Updated Client : PIPPO , 3 with message type : ServerResponseMessage
+
+2023-05-15 21:24:25.9907557 - Registered new Client with id : 5
+2023-05-15 21:24:26.0097561 - Updated Client : null , 4 with message type : AvailableLobbyMessage
+
+2023-05-15 21:24:39.7147134 - Updated Client : DS , 4 with message type : ServerResponseMessage
+
+2023-05-15 21:24:45.1910611 - Registered new Client with id : 6
+2023-05-15 21:24:45.2090574 - Updated Client : null , 5 with message type : AvailableLobbyMessage
+
+2023-05-15 21:24:49.4367633 - Updated Client : OSDK , 5 with message type : AvailableLobbyMessage
+
+2023-05-15 21:24:51.8992671 - Updated Client : OSDK , 5 with message type : BoardMessage
+
+2023-05-15 21:24:51.9210803 - Updated Client : DS , 4 with message type : BoardMessage
+
+2023-05-15 21:24:51.9390833 - Updated Client : DS , 4 with message type : StartGameMessage
+
+2023-05-15 21:24:51.9570801 - Updated Client : OSDK , 5 with message type : StartGameMessage
+
+2023-05-15 21:24:51.9620802 - Updated Client : OSDK , 5 with message type : ServerResponseMessage
+
+2023-05-15 21:28:19.5628964 - Registered new Client with id : 7
+2023-05-15 21:28:19.5828981 - Updated Client : null , 6 with message type : AvailableLobbyMessage
+
+2023-05-15 21:28:26.185745 - Updated Client : LUCA , 6 with message type : ServerResponseMessage
+
+2023-05-15 21:28:32.0876458 - Registered new Client with id : 8
+2023-05-15 21:28:32.1076462 - Updated Client : null , 7 with message type : AvailableLobbyMessage
+
+2023-05-15 21:28:39.6040633 - Updated Client : PAOLO , 7 with message type : AvailableLobbyMessage
+
+2023-05-15 21:28:42.0247487 - Updated Client : LUCA , 6 with message type : BoardMessage
+
+2023-05-15 21:28:42.0437483 - Updated Client : PAOLO , 7 with message type : BoardMessage
+
+2023-05-15 21:28:42.0647484 - Updated Client : LUCA , 6 with message type : StartGameMessage
+
+2023-05-15 21:28:42.0837486 - Updated Client : PAOLO , 7 with message type : StartGameMessage
+
+2023-05-15 21:28:42.0887508 - Updated Client : PAOLO , 7 with message type : ServerResponseMessage
+
+2023-05-15 21:29:14.8581614 - Updated Client : LUCA , 6 with message type : ServerResponseMessage
+
