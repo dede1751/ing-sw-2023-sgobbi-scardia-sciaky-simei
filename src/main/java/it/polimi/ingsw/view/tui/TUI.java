@@ -68,7 +68,7 @@ public class TUI extends View {
                             var msg = askChatMessage();
                             ChatMessage chatMessage = new ChatMessage(
                                     msg.get(1), model.getCurrentPlayer(), msg.get(0));
-                            notifyChatMessage(msg.get(1), msg.get(0));
+                            notifyChatMessage(msg.get(0), msg.get(1));
                         }
                     }
                 }
