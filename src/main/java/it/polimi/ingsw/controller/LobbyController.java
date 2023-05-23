@@ -7,7 +7,6 @@ import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.files.ServerLogger;
 import it.polimi.ingsw.view.messages.CreateLobbyMessage;
@@ -63,22 +62,18 @@ public class LobbyController {
                 this.model.addPlayer(nickname, this.personalGoals.pop());
             }
             
-            try {
-                this.model.addListener(nickname, (msg) -> {
-                    try {
-                        client.update(msg);
-                        ServerLogger.messageLog(this.toString(), msg);
-                    }
-                    catch( RemoteException e ) {
-                        // If the client is disconnected, remove it from the lobby and end the game for everyone
-                        LobbyController.getInstance().disconnectClient(client);
-                        ServerLogger.errorLog(e, "Client : " + nickname);
-                    }
-                });
-            }
-            catch( DuplicateListener e ) {
-                ServerLogger.errorLog(e, "Client : " + client);
-            }
+            this.model.addListener(nickname, (msg) -> {
+                try {
+                    client.update(msg);
+                    ServerLogger.messageLog(this.toString(), msg);
+                }
+                catch( RemoteException e ) {
+                    // If the client is disconnected, remove it from the lobby and end the game for everyone
+                    this.model.addListener(nickname, (m) -> {}); // Stop this listener
+                    LobbyController.getInstance().disconnectClient(this);
+                    ServerLogger.errorLog(e, "Client disconnected: " + nickname);
+                }
+            });
         }
         
         public Lobby recoverLobby() {
@@ -182,6 +177,15 @@ public class LobbyController {
     }
     
     /**
+     * Disconnect a client when it's impossible to update it (ends the game for everyone)
+     */
+    private synchronized void disconnectClient(Lobby lobby) {
+        lobby.model.notifyWinner(); // we can safely modify this since we are still sync'd on the controller
+        lobby.model.setGameEnded(true); // force game end
+        this.endGame(lobby.lobbyID());
+    }
+    
+    /**
      * End a game, removing the lobby from the tracked list of lobbies
      *
      * @param lobbyID Lobby to stop tracking
@@ -198,26 +202,6 @@ public class LobbyController {
         ResourcesManager.deleteModel(lobbyID);
         
         ServerLogger.log("Game ended, removed lobby : " + lobbyID);
-    }
-    
-    /**
-     * Disconnect a client when a socket is not able to receive anymore (this does not work with RMI)
-     * @param client Client to disconnect (along with the whole lobby)
-     */
-    public synchronized void disconnectClient(Client client) {
-        Lobby lobby = lobbies.values()
-                .stream()
-                .filter(l -> l.clients.containsValue(client))
-                .findFirst()
-                .orElse(null);
-        
-        if( lobby == null ) {
-            ServerLogger.log("Client without an active lobby disconnected");
-            return;
-        }
-        
-        this.endGame(lobby.lobbyID());
-        lobby.model.notifyWinner(); // force game end
     }
     
     /**
@@ -239,7 +223,7 @@ public class LobbyController {
      * @param nickname Client nickname
      * @param m        Message to send
      */
-    private void update_client(String nickname, ModelMessage<?> m) {
+    private void updateClient(String nickname, ModelMessage<?> m) {
         try {
             client.update(m);
             ServerLogger.messageLog(nickname, m);
@@ -257,7 +241,7 @@ public class LobbyController {
     @SuppressWarnings("unused")
     public void onMessage(RequestLobbyMessage msg) {
         List<LobbyView> lobbies = searchForLobbies(msg.getPayload());
-        update_client(msg.getPlayerNickname(), new AvailableLobbyMessage(lobbies));
+        updateClient(msg.getPlayerNickname(), new AvailableLobbyMessage(lobbies));
     }
     
     /**
@@ -276,7 +260,7 @@ public class LobbyController {
         
         // lobby is unavailable/doesn't exist
         if( lobby == null ) {
-            update_client(nickname, new ServerResponseMessage(
+            updateClient(nickname, new ServerResponseMessage(
                     Response.LobbyUnavailable(RecoverLobbyMessage.class.getSimpleName())));
             return;
         }
@@ -284,7 +268,7 @@ public class LobbyController {
         // username is already taken
         int index = lobby.model.getNicknames().indexOf(nickname);
         if( lobby.clients.get(nickname) != null ) {
-            update_client(nickname,
+            updateClient(nickname,
                           new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
             return;
         }
@@ -307,7 +291,7 @@ public class LobbyController {
             server.addGameControllers(mapping);
         }
         
-        update_client(nickname, new ServerResponseMessage(Response.Ok(RecoverLobbyMessage.class.getSimpleName())));
+        updateClient(nickname, new ServerResponseMessage(Response.Ok(RecoverLobbyMessage.class.getSimpleName())));
     }
     
     private static int[] randDistinctIndices(int count) {
@@ -326,14 +310,14 @@ public class LobbyController {
     public void onMessage(CreateLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
         if( nicknameTaken(nickname) ) {
-            update_client(nickname,
+            updateClient(nickname,
                           new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
             return;
         }
         
         int lobbySize = msg.getPayload();
         if( lobbySize < 2 || lobbySize > 4 ) {
-            update_client(nickname, new ServerResponseMessage(Response.InvalidLobbySize()));
+            updateClient(nickname, new ServerResponseMessage(Response.InvalidLobbySize()));
             return;
         }
         
@@ -353,7 +337,7 @@ public class LobbyController {
         lobby.addClient(client, nickname);
         lobbies.put(lobbyID, lobby);
         
-        update_client(
+        updateClient(
                 nickname,
                 new ServerResponseMessage(Response.Ok(CreateLobbyMessage.class.getSimpleName())));
     }
@@ -369,13 +353,13 @@ public class LobbyController {
         Lobby lobby = lobbies.get(msg.getPayload());
         
         if( lobby == null || !lobby.isEmpty() ) {
-            update_client(nickname,
+            updateClient(nickname,
                           new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         
         if( nicknameTaken(msg.getPlayerNickname()) ) {
-            update_client(nickname,
+            updateClient(nickname,
                           new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
@@ -392,7 +376,7 @@ public class LobbyController {
             }
             server.addGameControllers(mapping);
         }
-        update_client(nickname, new ServerResponseMessage(Response.Ok(JoinLobbyMessage.class.getSimpleName())));
+        updateClient(nickname, new ServerResponseMessage(Response.Ok(JoinLobbyMessage.class.getSimpleName())));
     }
     
     /**

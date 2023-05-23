@@ -1,8 +1,8 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.socket.ClientSkeleton;
+import it.polimi.ingsw.utils.files.ServerLogger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -76,14 +76,14 @@ public class AppServer {
                         }
                     }
                     catch( RemoteException e ) {
-                        System.err.println("Cannot receive from client. Closing this connection...");
+                        ServerLogger.errorLog(e, "Cannot receive from client. Closing this connection...");
                     }
                     finally {
                         try {
                             socket.close();
                         }
                         catch( IOException e ) {
-                            System.err.println("Cannot close socket");
+                            ServerLogger.errorLog (e, "Cannot close socket");
                         }
                     }
                 });

@@ -35,7 +35,7 @@ public class TUIUtils {
     public static final String ANSI_RED_BOLD = "\033[1;31m";
     
     
-    private static final String TITLE = createBox(
+    private static final String TITLE = "\n" + createBox(
             ANSI_YELLOW_BOLD + "$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\" +
             ANSI_RESET + "\n" +
             ANSI_YELLOW_BOLD + "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|" +
@@ -74,22 +74,6 @@ public class TUIUtils {
         catch( Exception ignored ) {
         }
     }
-    
-    public static String generateChat() {
-        StringBuilder sb = new StringBuilder();
-        
-        var chat = model.getChat();
-        for( String s : chat ) {
-            sb.append(s).append("\n");
-        }
-        
-        if( chat.size() > 0) {
-            return createBox(sb.toString(), ANSI_YELLOW_BOLD);
-        }else {
-            return " ";
-        }
-    }
-    
     
     public static void printLoginScreen(String prompt, String error) {
         clearConsole();
@@ -153,44 +137,28 @@ public class TUIUtils {
         List<String> color = List.of(ANSI_GOLD_BACKGROUND, ANSI_SILVER_BACKGROUND, ANSI_BRONZE_BACKGROUND,
                                      ANSI_DARK_BRONZE_BACKGROUND);
         
-        StringBuilder header = new StringBuilder(
-                "CONGRATULATION, THE GAME ENDED!\n" +
-                "THE WINNER IS : " + ANSI_YELLOW_BOLD + endgame.winner() + ANSI_RESET +
-                "!\n" +
-                "LEADERBOARD : \n");
+        StringBuilder sb = new StringBuilder(TITLE + "\n");
+        sb.append("CONGRATULATION, THE GAME ENDED!\n")
+                .append("THE WINNER IS : ")
+                .append(ANSI_YELLOW_BOLD)
+                .append(endgame.winner())
+                .append(ANSI_RESET)
+                .append("!\n")
+                .append("LEADERBOARD : \n");
+        
         Iterator<String> iter = color.iterator();
         for( var x : endgame.points().entrySet() ) {
-            header.append(iter.next());
+            sb.append(iter.next());
             String name = String.format(" * %-14.14s", x.getKey());
-            header.append("\t").append(name).append(" : ").append(x.getValue());
-            header.append(ANSI_RESET);
+            sb.append("\t").append(name).append(" : ").append(x.getValue());
+            sb.append(ANSI_RESET);
             if( x.getKey().equals(firstPlayer) )
-                header.append(" ⑁");
-            header.append("\n");
+                sb.append(" ⑁");
+            sb.append("\n");
         }
-        String sb = "\n\n" + TITLE + header;
+        
         clearConsole();
         System.out.print(sb);
-    }
-    
-    public static String generateTiles(List<Tile> tiles) {
-        StringBuilder sb = new StringBuilder();
-        
-        for( int i = 0; i < tiles.size(); i++ ) {
-            sb.append(i + 1)
-                    .append(": ")
-                    .append(tiles.get(i).toTile())
-                    .append(" ");
-        }
-        return sb.toString();
-    }
-    
-    public static String generateSelection(List<Coordinate> selection) {
-        List<Tile> tiles = selection.stream()
-                .map(c -> model.getBoard().getTile(c))
-                .toList();
-        
-        return generateTiles(tiles);
     }
     
     public static String concatString(String s1, String s2, int space) {
@@ -248,6 +216,41 @@ public class TUIUtils {
         
         output.append(bottom);
         return output.toString();
+    }
+    
+    public static String generateTiles(List<Tile> tiles) {
+        StringBuilder sb = new StringBuilder();
+        
+        for( int i = 0; i < tiles.size(); i++ ) {
+            sb.append(i + 1)
+                    .append(": ")
+                    .append(tiles.get(i).toTile())
+                    .append(" ");
+        }
+        return sb.toString();
+    }
+    
+    public static String generateSelection(List<Coordinate> selection) {
+        List<Tile> tiles = selection.stream()
+                .map(c -> model.getBoard().getTile(c))
+                .toList();
+        
+        return generateTiles(tiles);
+    }
+    
+    public static String generateChat() {
+        StringBuilder sb = new StringBuilder();
+        
+        var chat = model.getChat();
+        for( String s : chat ) {
+            sb.append(s).append("\n");
+        }
+        
+        if( chat.size() > 0) {
+            return createBox(sb.toString(), ANSI_YELLOW_BOLD);
+        }else {
+            return " ";
+        }
     }
     
     private static String generateBoard() {

@@ -64,7 +64,7 @@ public class TUI extends View {
                     if (choice.equals("Y")) {
                         askBroadcastMessage();
                     } else {
-                        askChatMessage();
+                        askPrivateMessage();
                     }
                 }
                 
@@ -81,6 +81,7 @@ public class TUI extends View {
         Scanner scanner = new Scanner(System.in);
         String choice;
         
+        error = null;
         while( true ) {
             prompt = "Do you want to send a broadcast message? [Y/N]";
             TUIUtils.printGame(nickname, prompt, error);
@@ -101,14 +102,14 @@ public class TUI extends View {
         Scanner scanner = new Scanner(System.in);
     
         prompt = "Please, enter your message:";
-        TUIUtils.printGame(nickname, prompt, error);
-        String msg = scanner.nextLine();
+        error = null;
+        TUIUtils.printGame(nickname, prompt, null);
+        String msg = scanner.next().trim();
         
         notifyChatMessage(msg);
-        error = null;
     }
     
-    private void askChatMessage() {
+    private void askPrivateMessage() {
         Scanner scanner = new Scanner(System.in);
     
         String player;
@@ -125,11 +126,11 @@ public class TUI extends View {
         }
         
         prompt = "Please, enter your message:";
-        TUIUtils.printGame(nickname, prompt, error);
-        String msg = scanner.nextLine();
+        error = null;
+        TUIUtils.printGame(nickname, prompt, null);
+        String msg = scanner.next().trim();
         
         notifyChatMessage(msg, player);
-        error = null;
     }
     
     
