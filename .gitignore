@@ -34,14 +34,14 @@
 # When using Gradle or Maven with auto-import, you should exclude module files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
-# .idea/artifacts
-# .idea/compiler.xml
-# .idea/jarRepositories.xml
+.idea/artifacts
+.idea/compiler.xml
+.idea/jarRepositories.xml
 .idea/modules.xml
 .idea/*.iml
-# .idea/modules
+.idea/modules
 *.iml
-# *.ipr
+*.ipr
 
 # CMake
 cmake-build-*/
@@ -85,17 +85,4 @@ fabric.properties
 **/resources/controller/recovery/[0-9].json
 **/resources/server/error_log.txt
 **/rsesources/server/log.txt
-resources/
 **/*.iml
-
-
-/resources/client/[0-9].txt
-/resources/recovery/[0-9].json
-/resources/controller/recovery/[0-9].json
-/resources/server/error_log.txt
-/rsesources/server/log.txt
-/resources
-
-
-!src/main/resources/gui/*
-/*.iml
