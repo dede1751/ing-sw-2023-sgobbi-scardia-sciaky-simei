@@ -65,7 +65,7 @@ public class LobbyController {
             this.model.addListener(nickname, (msg) -> {
                 try {
                     client.update(msg);
-                    ServerLogger.messageLog(this.toString(), msg);
+                    ServerLogger.messageLog(nickname, msg);
                 }
                 catch( RemoteException e ) {
                     // If the client is disconnected, remove it from the lobby and end the game for everyone
@@ -191,8 +191,12 @@ public class LobbyController {
      * @param lobbyID Lobby to stop tracking
      */
     public synchronized void endGame(int lobbyID) {
-        List<Client> clients = lobbies.get(lobbyID)
-                .clients
+        Lobby lobby = lobbies.get(lobbyID);
+        if (lobby == null) {
+            return;
+        }
+        
+        List<Client> clients = lobby.clients
                 .values()
                 .stream()
                 .toList();
@@ -266,7 +270,6 @@ public class LobbyController {
         }
         
         // username is already taken
-        int index = lobby.model.getNicknames().indexOf(nickname);
         if( lobby.clients.get(nickname) != null ) {
             updateClient(nickname,
                           new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
@@ -281,7 +284,7 @@ public class LobbyController {
             GameController controller = new GameController(lobby.model, lobby.lobbyID);
             
             for( Client c : lobby.clients.values() ) {
-                mapping.put(client, controller);
+                mapping.put(c, controller);
             }
             
             // set the lobby as fully recovered
