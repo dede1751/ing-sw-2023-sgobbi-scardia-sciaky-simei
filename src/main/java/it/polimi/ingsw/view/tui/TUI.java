@@ -569,7 +569,7 @@ public class TUI extends View {
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
-        this.model.addChatMessage(msg.getSender(), msg.getPayload());
+        this.model.addChatMessage(msg.getSender(), msg.getPayload(), msg.getDestination());
         if( this.model.isStarted() ) {
             TUIUtils.printGame(nickname, prompt, error);
         }

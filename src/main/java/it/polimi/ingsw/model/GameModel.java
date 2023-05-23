@@ -386,12 +386,14 @@ public class GameModel {
      */
     public void chatBroker(ChatMessage chat) {
     
-        IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
-        if( chat.getDestination().equals("BROADCAST") ) {
+        IncomingChatMessage message = new IncomingChatMessage(
+                chat.getPayload(), chat.getPlayerNickname(), chat.getDestination());
+        if( chat.getDestination().equals("ALL") ) {
             notifyAllListeners(message);
         }else {
             ModelListener targetListener = this.listeners.get(chat.getDestination());
             targetListener.update(message);
+            this.listeners.get(chat.getPlayerNickname()).update(message);
         }
     }
     
