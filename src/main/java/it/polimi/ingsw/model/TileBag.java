@@ -15,7 +15,7 @@ public class TileBag {
     
     private final Map<Tile, Integer> bag;
     
-    protected TileBag() {
+    public TileBag() {
         this.bag = new HashMap<>();
         
         for( Tile tile : Tile.ALL_TILES ) {
