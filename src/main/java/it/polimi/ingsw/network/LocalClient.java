@@ -60,7 +60,8 @@ public class LocalClient extends UnicastRemoteObject implements Client {
             server.update(this, msg);
         }
         catch( RemoteException e ) {
-            ClientLogger.errorLog(e, "Error notifying server");
+            ClientLogger.errorLog(e, "Error notifying server, shutting down!");
+            System.exit(1); // kill client when server becomes unreachable
         }
     }
     
