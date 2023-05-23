@@ -11,7 +11,6 @@ public class GUI extends View  {
     
     @Override
     public void onMessage(BoardMessage msg) {
-    
     }
     
     @Override

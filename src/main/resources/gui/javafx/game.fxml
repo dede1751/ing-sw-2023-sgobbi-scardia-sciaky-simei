@@ -7,17 +7,12 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="976.0" prefWidth="1467.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1138.0" prefWidth="2031.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <stylesheets>
       <URL value="@Style.css" />
    </stylesheets>
    <children>
-      <ImageView fitHeight="977.0" fitWidth="1149.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../assets/misc/sfondo_parquet.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="985.0" fitWidth="977.0" layoutX="977.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="2209.0" fitWidth="2033.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/misc/sfondo_parquet.png" />
          </image>
@@ -35,6 +30,16 @@
       </AnchorPane>
       <AnchorPane layoutX="389.0" layoutY="14.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="458.0" prefWidth="840.0">
          <fx:include source="board.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      </AnchorPane>
+      <AnchorPane layoutX="400.0" layoutY="488.0" prefHeight="479.0" prefWidth="832.0">
+         <children>
+            <fx:include source="localPlayer.fxml" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="1232.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <fx:include source="chat.fxml" />
+         </children>
       </AnchorPane>
    </children>
 </Pane>
