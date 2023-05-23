@@ -120,6 +120,12 @@ public class LobbyController {
                        + nickames;
             }
         }
+        
+        /**
+         * Check if the lobby is full
+         * @return True if the lobby is full
+         */
+        public boolean isFull() { return nicknames.size() == lobbySize; }
     }
     
     private static LobbyController INSTANCE;

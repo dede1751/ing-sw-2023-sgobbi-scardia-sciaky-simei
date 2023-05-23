@@ -1,5 +1,6 @@
 package it.polimi.ingsw.view.tui;
 
+import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
@@ -26,6 +27,9 @@ public class TUI extends View {
     private String prompt = null;
     private String error = null;
     
+    /**
+     * Runs the main TUI thread.
+     */
     @Override
     public void run() {
         Scanner scanner = new Scanner(System.in);
@@ -38,9 +42,8 @@ public class TUI extends View {
         while( true ) {
             prompt = "Please select the action you want to take: [MOVE/CHAT]";
             TUIUtils.printGame(nickname, prompt, error);
-            String command = scanner.next().trim().toUpperCase();
             
-            switch( command ) {
+            switch( scanner.next().trim().toUpperCase() ) {
                 case "MOVE" -> {
                     if( model.getCurrentPlayer().equals(this.nickname) ) {
                         List<Coordinate> selection = askSelection();
@@ -57,29 +60,26 @@ public class TUI extends View {
                 }
                 
                 case "CHAT" -> {
-                    var choice = askMsgType();
-                    switch( choice ) {
-                        case "Y" -> {
-                            var msg = askBroadcastMessage();
-                            ChatMessage chatMessage = new ChatMessage(msg, model.getCurrentPlayer());
-                            notifyChatMessage(msg);
-                        }
-                        case "N" -> {
-                            var msg = askChatMessage();
-                            ChatMessage chatMessage = new ChatMessage(
-                                    msg.get(1), model.getCurrentPlayer(), msg.get(0));
-                            notifyChatMessage(msg.get(0), msg.get(1));
-                        }
+                    String choice = askMsgType();
+                    if (choice.equals("Y")) {
+                        askBroadcastMessage();
+                    } else {
+                        askChatMessage();
                     }
                 }
+                
+                default -> error = "Invalid command!";
             }
         }
     }
     
-    
+    /**
+     * Ask the user what type of chat message they would like to send
+     * @return "Y" for broadcast message, "N" for private message
+     */
     private String askMsgType() {
         Scanner scanner = new Scanner(System.in);
-        String choice = "";
+        String choice;
         
         while( true ) {
             prompt = "Do you want to send a broadcast message? [Y/N]";
@@ -87,34 +87,29 @@ public class TUI extends View {
     
             choice = scanner.next().trim().toUpperCase();
             if( choice.equals("Y") || choice.equals("N") ) {
-                error = null;
                 break;
             }else {
-                error = "Please, answer if you want to send a broadcast message or not [Y/N]";
+                error = "Invalid command!";
             }
         }
         
+        error = null;
         return choice;
     }
     
-    private String askBroadcastMessage() {
+    private void askBroadcastMessage() {
         Scanner scanner = new Scanner(System.in);
     
         prompt = "Please, enter your message:";
         TUIUtils.printGame(nickname, prompt, error);
-        error = null;
+        String msg = scanner.nextLine();
         
-        return scanner.nextLine();
+        notifyChatMessage(msg);
+        error = null;
     }
     
-    private ArrayList<String> askChatMessage() {
+    private void askChatMessage() {
         Scanner scanner = new Scanner(System.in);
-    
-        prompt = "Please, enter your message:";
-        TUIUtils.printGame(nickname, prompt, error);
-        error = null;
-    
-        var msg = scanner.nextLine();
     
         String player;
         while( true ) {
@@ -123,18 +118,18 @@ public class TUI extends View {
         
             player = scanner.next().trim();
             if( model.getPlayersNicknames().contains(player) ) {
-                error = null;
                 break;
             }else {
-                error = "Player not existing, please, choose another nickname";
+                error = "Player does not exist!";
             }
         }
-    
-        ArrayList<String> result = new ArrayList<String>();
-        result.add(msg);
-        result.add(player);
-        return result;
-    
+        
+        prompt = "Please, enter your message:";
+        TUIUtils.printGame(nickname, prompt, error);
+        String msg = scanner.nextLine();
+        
+        notifyChatMessage(msg, player);
+        error = null;
     }
     
     
@@ -145,21 +140,20 @@ public class TUI extends View {
     private void userLogin() {
         Scanner scanner = new Scanner(System.in);
         
-        boolean selectedRecovery = askNickname(null);
+        error = null;
+        boolean selectedRecovery = askNickname();
         
         main_loop:
         while( !selectedRecovery ) {
             prompt = "Do you want to create your own lobby or join an existing one? [CREATE/JOIN]";
             TUIUtils.printLoginScreen(prompt, error);
-            error = null;
             
-            String choice = scanner.next().trim().toUpperCase();
-            
-            switch( choice ) {
+            switch( scanner.next().trim().toUpperCase() ) {
                 
                 case "CREATE" -> {
                     int lobbySize;
                     
+                    error = null;
                     while( true ) {
                         prompt = "Choose the amount of players for the match (2-4): ";
                         TUIUtils.printLoginScreen(prompt, error);
@@ -184,7 +178,8 @@ public class TUI extends View {
                     if( r.isOk() ) {
                         break main_loop;
                     }else if( r.msg().equals("NicknameTaken") ) {
-                        askNickname("Your nickname has been taken!");
+                        error = "Your nickname has been taken!";
+                        askNickname();
                     }
                 }
                 
@@ -193,15 +188,19 @@ public class TUI extends View {
                     notifyRequestLobby(null);
                     waitLobbies();
                     
-                    if( lobbies.stream().noneMatch((l) -> l.nicknames().size() < l.lobbySize()) ) {
-                        error = "No lobbies are currently available, please create a new one";
+                    if( lobbies.stream().allMatch(LobbyController.LobbyView::isFull) ) {
+                        error = "No lobbies are currently available!";
                         continue;
+                    } else {
+                        error = null;
                     }
                     
                     StringBuilder joinPrompt =
-                            new StringBuilder("Choose one of the following lobbies (avoid ones that are full):");
+                            new StringBuilder("Choose one of the following lobbies:");
                     for( var l : lobbies ) {
-                        joinPrompt.append("\n").append(l.toString());
+                        if ( !l.isRecovery() && !l.isFull()) {
+                            joinPrompt.append("\n").append(l);
+                        }
                     }
                     
                     // ask the user to select a lobby
@@ -212,7 +211,7 @@ public class TUI extends View {
                         try {
                             int lobbyId = Integer.parseInt(scanner.next());
                             boolean valid_lobby = lobbies.stream()
-                                    .anyMatch((l) -> l.lobbyID() == lobbyId && l.nicknames().size() < l.lobbySize());
+                                    .anyMatch((l) -> l.lobbyID() == lobbyId && !l.isFull());
                             
                             if( valid_lobby ) {
                                 notifyJoinLobby(lobbyId);
@@ -222,7 +221,8 @@ public class TUI extends View {
                                     error = null;
                                     break main_loop;
                                 }else if( r.msg().equals("NicknameTaken") ) {
-                                    askNickname("Your nickname has been taken!. Please choose another one");
+                                    error = "Your nickname has been taken!";
+                                    askNickname();
                                 }else if( r.msg().equals("LobbyUnvailable") ) {
                                     error = "Lobby is not available!";
                                 }
@@ -230,11 +230,11 @@ public class TUI extends View {
                                 // if we encounter an error, let the user choose what login action to take
                                 break;
                             }else {
-                                error = "Please choose a valid lobby ID";
+                                error = "Invalid lobby ID!";
                             }
                         }
                         catch( NumberFormatException e ) {
-                            error = "Please write a number";
+                            error = "Please write a number!";
                         }
                     }
                 }
@@ -255,7 +255,7 @@ public class TUI extends View {
      *
      * @return true if the user selected a recovery lobby, false otherwise
      */
-    private boolean askNickname(String error) {
+    private boolean askNickname() {
         notifyRequestLobby(null);
         waitLobbies();
         
@@ -271,14 +271,15 @@ public class TUI extends View {
         }
         
         Scanner scanner = new Scanner(System.in);
-        String prompt = "Choose the nickname you'll be using in game: (avoid those present in other lobbies)";
+        prompt = "Choose the nickname you'll be using in game (avoid those present in other lobbies):" + lobbyPrompt;
         while( true ) {
-            TUIUtils.printLoginScreen(prompt + lobbyPrompt, error);
+            TUIUtils.printLoginScreen(prompt, error);
             String nickname = scanner.next().trim();
             
             if( !nickname.equals("") ) {
                 // Nickname is already taken in a non-recovery lobby
                 if( lobbies.stream().anyMatch((l) -> !l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                    error = "Nickname already taken!";
                     continue;
                 }
                 
@@ -290,17 +291,21 @@ public class TUI extends View {
                     Response r = waitLoginResponse(RecoverLobbyMessage.class.getSimpleName());
                     
                     if( r.isOk() ) {
+                        error = null;
                         return true;
                     }else if( r.msg().equals("LobbyUnavailable") ) {
-                        prompt = "The lobby you are trying to recover is unavailable. Please choose another nickname";
+                        error = "The lobby you are trying to recover is unavailable!";
                     }else if( r.msg().equals("NicknameTaken") ) {
-                        prompt = "Somebody has already picked that recovery nickname. Please choose another nickname";
+                        error = "Somebody has already picked that recovery nickname!";
                     }else {
-                        prompt = "Recovery request failed. Please choose another nickname";
+                        error = "Recovery request failed!";
                     }
                 }else {
+                    error = null;
                     return false;
                 }
+            } else {
+                error = "Please choose a valid nickname!";
             }
         }
     }

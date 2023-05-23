@@ -23,7 +23,7 @@ public class AppClient {
         System.out.println("Choose the type of user interface: [GUI/TUI]");
         while( true ) {
             System.out.print("\n>>  ");
-            String input = scanner.next().trim();
+            String input = scanner.next().trim().toUpperCase();
             
             if( input.equals("GUI") ) {
                 view = new GUI();
@@ -38,7 +38,7 @@ public class AppClient {
         // noinspection InfiniteLoopStatement
         while( true ) {
             System.out.print("\n>>  ");
-            String input = scanner.next().trim();
+            String input = scanner.next().trim().toUpperCase();
             
             if( input.equals("RMI") ) {
                 runRMI(view);

@@ -75,7 +75,6 @@ public class TUIUtils {
         }
     }
     
-    
     public static String generateChat() {
         StringBuilder sb = new StringBuilder();
         
@@ -94,16 +93,16 @@ public class TUIUtils {
     
     public static void printLoginScreen(String prompt, String error) {
         clearConsole();
-        System.out.println("\n\n" + TITLE);
+        System.out.println(TITLE + "\n");
         if( error != null ) {
-            System.out.println("\n" + ANSI_RED_BOLD + error + ANSI_RESET);
+            System.out.println(ANSI_RED_BOLD + error + ANSI_RESET);
         }
-        System.out.println("\n" + prompt);
-        System.out.print("\n>> ");
+        System.out.println(prompt);
+        System.out.print(">> ");
     }
     
     public static void printGame(String nickname, String prompt, String error) {
-        StringBuilder sb = new StringBuilder("\n\n" + TITLE);
+        StringBuilder sb = new StringBuilder(TITLE);
         StringBuilder playersb = new StringBuilder();
         
         String boardCg = concatString(
@@ -131,22 +130,21 @@ public class TUIUtils {
                 .append(player)
                 .append("\n");
         
+        String tui = concatString(createBox(sb.toString(),ANSI_YELLOW_BOLD), generateChat(), 4);
         
+        sb = new StringBuilder(tui);
         if( error != null ) {
             sb.append("\n")
                     .append(ANSI_RED_BOLD)
                     .append(error)
                     .append(ANSI_RESET);
         }
-        sb = new StringBuilder(createBox(sb.toString(),ANSI_YELLOW_BOLD));
         sb.append("\n")
                 .append(prompt)
                 .append("\n>> ");
         
-        var output = concatString(sb.toString(), generateChat(), 4);
-    
         clearConsole();
-        System.out.print(output );
+        System.out.print(sb);
     }
     
     
