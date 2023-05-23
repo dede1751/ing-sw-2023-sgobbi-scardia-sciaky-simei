@@ -85,7 +85,7 @@ public class LocalModel {
     }
     
     public void addChatMessage(String nickname, String message, String destination) {
-        chat.add(nickname + " [" + destination + "]" + " -> " + message);
+        chat.add( nickname + " [" + destination + "]" + " -> " + message );
     }
     
     public List<String> getChat() { return this.chat; }

@@ -242,6 +242,14 @@ public class TUIUtils {
         StringBuilder sb = new StringBuilder();
         
         var chat = model.getChat();
+        if( chat.size() == 55 ) {
+            for( int i = 1; i < chat.size(); i++ ) {
+                chat.set( i - 1, chat.get(i) );
+            }
+            chat.set( 0, " ... ");
+            chat.remove(54);
+        }
+        
         for( String s : chat ) {
             sb.append(s).append("\n");
         }

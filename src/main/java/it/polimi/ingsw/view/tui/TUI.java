@@ -104,7 +104,7 @@ public class TUI extends View {
         prompt = "Please, enter your message:";
         error = null;
         TUIUtils.printGame(nickname, prompt, null);
-        String msg = scanner.next().trim();
+        String msg = scanner.nextLine();
         
         notifyChatMessage(msg);
     }
@@ -118,17 +118,19 @@ public class TUI extends View {
             TUIUtils.printGame(nickname, prompt, error);
         
             player = scanner.next().trim();
-            if( model.getPlayersNicknames().contains(player) ) {
-                break;
-            }else {
+            if( !model.getPlayersNicknames().contains(player) ) {
                 error = "Player does not exist!";
+            }else if( player.equals(nickname) ){
+                error = "Choose another player's nickname!";
+            }else {
+                break;
             }
         }
         
         prompt = "Please, enter your message:";
         error = null;
         TUIUtils.printGame(nickname, prompt, null);
-        String msg = scanner.next().trim();
+        String msg = scanner.nextLine();
         
         notifyChatMessage(msg, player);
     }
