@@ -21,6 +21,7 @@ public class boardController {
     
     @FXML
     private void boardButton(ActionEvent event)  {
+        System.out.println("CIAO");
         
         Board board = new Board(3);
         TileBag tileBag = new TileBag();
