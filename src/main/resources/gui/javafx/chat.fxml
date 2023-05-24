@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.TextFlow?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="809.0" prefWidth="498.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TextField layoutX="14.0" layoutY="734.0" prefHeight="71.0" prefWidth="475.0" text="CHAT MESSAGE" />
+      <TextField layoutX="14.0" layoutY="702.0" prefHeight="26.0" prefWidth="475.0" text="PLAYER NAME" />
+      <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="679.0" prefWidth="475.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="687.0" prefWidth="463.0">
+               <children>
+                  <TextFlow prefHeight="679.0" prefWidth="564.0" />
+               </children>
+            </AnchorPane>
+        </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>
