@@ -1,9 +1,11 @@
-package it.polimi.ingsw.view.gui;
+package it.polimi.ingsw.view.gui.controllers;
 
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.TileBag;
+import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -19,9 +21,9 @@ public class boardController {
     private GridPane gridPane;
     
     @FXML
-    private void boardButton(ActionEvent event) {
+    private void boardButton(ActionEvent event)  {
         
-        Board board = new Board(2);
+        Board board = new Board(3);
         TileBag tileBag = new TileBag();
         board.refill(tileBag);
         updateBoard(board);
