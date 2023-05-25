@@ -1,9 +1,6 @@
 package it.polimi.ingsw.view.gui.controllers;
 
-import it.polimi.ingsw.model.Board;
-import it.polimi.ingsw.model.Coordinate;
-import it.polimi.ingsw.model.Tile;
-import it.polimi.ingsw.model.TileBag;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import javafx.event.ActionEvent;
@@ -13,6 +10,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class boardController {
