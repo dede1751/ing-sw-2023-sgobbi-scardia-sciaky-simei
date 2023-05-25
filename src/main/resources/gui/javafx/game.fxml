@@ -21,9 +21,9 @@
          <children>
             <VBox layoutX="14.0" layoutY="14.0" prefHeight="978.0" prefWidth="400.0" AnchorPane.bottomAnchor="-218.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <fx:include source="otherShelfs.fxml" />
-                  <fx:include source="otherShelfs.fxml" />
-                  <fx:include source="otherShelfs.fxml" />
+                  <fx:include fx:id="otherShelf1" source="otherShelfs.fxml" />
+                  <fx:include  fx:id="otherShelf2"  source="otherShelfs.fxml" />
+                  <fx:include fx:id="otherShelf3"  source="otherShelfs.fxml" />
                </children>
             </VBox>
          </children>

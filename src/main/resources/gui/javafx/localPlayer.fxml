@@ -29,11 +29,6 @@
           <RowConstraints maxHeight="66.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" opacity="0.38" prefHeight="379.0" prefWidth="88.0" text="Button" GridPane.rowSpan="6" />
-            <Button layoutX="10.0" layoutY="14.0" mnemonicParsing="false" onAction="#shelfColumnButton" opacity="0.38" prefHeight="379.0" prefWidth="76.0" text="Button" GridPane.columnIndex="1" GridPane.rowSpan="6" />
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#shelfColumnButton" opacity="0.38" prefHeight="389.0" prefWidth="67.0" text="Button" GridPane.columnIndex="2" GridPane.rowSpan="6" />
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#shelfColumnButton" opacity="0.38" prefHeight="388.0" prefWidth="67.0" text="Button" GridPane.columnIndex="3" GridPane.rowSpan="6" />
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#shelfColumnButton" opacity="0.38" prefHeight="382.0" prefWidth="67.0" text="Button" GridPane.columnIndex="4" GridPane.rowSpan="6" />
 
          </children>
       </GridPane>

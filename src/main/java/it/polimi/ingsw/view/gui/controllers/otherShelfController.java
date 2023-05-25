@@ -1,48 +1,28 @@
 package it.polimi.ingsw.view.gui.controllers;
 
 
-import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
-import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
-import javafx.event.ActionEvent;
+import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.Tile;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class otherShelfController {
     @FXML
     private GridPane gridPane1;
+  
+    @FXML
+    private Text playerName;
     
+    @FXML
+    private Text score;
     
-    
-     @FXML
-    public void boardButton1(ActionEvent event) {
-         ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + "Trofei1.1.png"));
-         imageView.setFitHeight(20);
-         imageView.setFitWidth(20);
-         GridPane.setConstraints(imageView, 2, 2);
-         gridPane1.getChildren().add(imageView);
-         Button button = (Button) event.getSource();
-         int row = GridPane.getRowIndex(button);
-         int column = GridPane.getColumnIndex(button);
-         button.setDisable(true);
-         
-         
-       Shelf shelf=new Shelf();
-       List<Tile> tile= new ArrayList<>();
-       tile.add(new Tile(Tile.Type.CATS, Tile.Sprite.TWO));
-       tile.add(new Tile(Tile.Type.TROPHIES, Tile.Sprite.TWO));
-       shelf.addTiles(tile,0);
-       updateOtherShelf(shelf);
-    
-       
-    }
+   
     
     
     void updateOtherShelf(Shelf shelf) {
@@ -72,9 +52,9 @@ public class otherShelfController {
                     }
                     if( matrix[i][j]!=null) {
                         ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + sb.toString()));
-                        imageView.setFitHeight(20);
-                       imageView.setFitWidth(20);
-                       GridPane.setConstraints(imageView, i, j);
+                        imageView.setFitHeight(30);
+                       imageView.setFitWidth(30);
+                       GridPane.setConstraints(imageView, j, -(i-Shelf.N_COL));
                        gridPane1.getChildren().add(imageView);
                     }
                 }
@@ -87,4 +67,17 @@ public class otherShelfController {
         
     }
     
+    @FXML
+    private void initialize() {
+        Shelf shelf = new Shelf();
+        List<Tile> list = new ArrayList<Tile>();
+        list.add(new Tile(Tile.Type.TROPHIES, Tile.Sprite.TWO));
+        list.add(new Tile(Tile.Type.TROPHIES, Tile.Sprite.TWO));
+        list.add(new Tile(Tile.Type.TROPHIES, Tile.Sprite.TWO));
+        shelf.addTiles(list, 0);
+        updateOtherShelf(shelf);
+    }
+    
+    
+
 }

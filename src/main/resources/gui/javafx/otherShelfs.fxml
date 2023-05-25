@@ -46,10 +46,10 @@
             </AnchorPane>
          </center>
          <top>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="26.130001068115234" BorderPane.alignment="CENTER" />
+            <Text fx:id="playerName" strokeType="OUTSIDE" strokeWidth="0.0" text="Player Name" wrappingWidth="26.130001068115234" BorderPane.alignment="CENTER" />
          </top>
          <left>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="104.63000106811523" BorderPane.alignment="CENTER" />
+            <Text fx:id="score"  strokeType="OUTSIDE" strokeWidth="0.0" text="Score:" wrappingWidth="104.63000106811523" BorderPane.alignment="CENTER" />
          </left>
       </BorderPane>
    </children>
