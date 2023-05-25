@@ -25,7 +25,6 @@ public class AppClient {
     
     public static void main(String[] args) throws RemoteException, NotBoundException {
         Scanner scanner = new Scanner(System.in);
-        View view;
         
         System.out.println("Choose the type of user interface: [GUI/TUI]");
         while( true ) {

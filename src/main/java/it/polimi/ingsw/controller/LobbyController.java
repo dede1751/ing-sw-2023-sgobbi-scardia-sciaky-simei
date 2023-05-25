@@ -25,8 +25,8 @@ import java.util.*;
  * LobbyController receives RequestLobby, RecoverLobby, CreateLobby and JoinLobby messages.
  * It always directly responds to each of these messages with a ServerResponseMessage, both in case of success and failure.
  * - Synchronization:
- *      LobbyController constitutes a single synchronization lock, through which all login actions have to go through,
- *      and also single-handedly controls the controller mapping on the LocalServer.
+ * LobbyController constitutes a single synchronization lock, through which all login actions have to go through,
+ * and also single-handedly controls the controller mapping on the LocalServer.
  */
 public class LobbyController {
     
@@ -92,9 +92,10 @@ public class LobbyController {
     
     /**
      * LobbyView is a serializable version of Lobby to be sent to the client for information
-     * @param nicknames List of nicknames
-     * @param lobbySize Lobby size
-     * @param lobbyID Unique lobby id
+     *
+     * @param nicknames  List of nicknames
+     * @param lobbySize  Lobby size
+     * @param lobbyID    Unique lobby id
      * @param isRecovery True if the lobby is a recovery lobby
      */
     public record LobbyView(
@@ -196,6 +197,7 @@ public class LobbyController {
     
     /**
      * Disconnect a client when a socket is not able to receive anymore (this does not work with RMI)
+     *
      * @param client Client to disconnect (along with the whole lobby)
      */
     public synchronized void disconnectClient(Client client) {
@@ -262,6 +264,12 @@ public class LobbyController {
     @SuppressWarnings("unused")
     public void onMessage(RecoverLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
+        if( nickname == null ) {
+            update_client(nickname,
+                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
+            return;
+        }
+        
         Lobby lobby = lobbies.values()
                 .stream()
                 .filter((l) -> l.isRecovery && l.model.getNicknames().contains(nickname))
@@ -319,12 +327,17 @@ public class LobbyController {
     @SuppressWarnings("unused")
     public void onMessage(CreateLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
+        if( nickname == null ) {
+            update_client(nickname,
+                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
+            return;
+        }
+        
         if( nicknameTaken(nickname) ) {
             update_client(nickname,
                           new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
             return;
         }
-        
         int lobbySize = msg.getPayload();
         if( lobbySize < 2 || lobbySize > 4 ) {
             update_client(nickname, new ServerResponseMessage(Response.InvalidLobbySize()));
@@ -365,6 +378,12 @@ public class LobbyController {
         if( lobby == null || !lobby.isEmpty() ) {
             update_client(nickname,
                           new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName())));
+            return;
+        }
+        
+        if( msg.getPlayerNickname() == null ) {
+            update_client(nickname,
+                          new ServerResponseMessage(Response.NicknameNull(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         

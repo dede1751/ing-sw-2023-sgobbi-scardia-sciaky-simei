@@ -81,8 +81,9 @@ fabric.properties
 
 # Project resources dir
 **/resources/client/[0-9].txt
+**/resources/client/log.txt
 **/resources/recovery/[0-9].json
 **/resources/controller/recovery/[0-9].json
 **/resources/server/error_log.txt
-**/rsesources/server/log.txt
+**/resources/server/log.txt
 **/*.iml

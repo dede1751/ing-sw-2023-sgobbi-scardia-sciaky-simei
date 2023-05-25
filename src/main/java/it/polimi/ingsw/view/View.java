@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.view.messages.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,7 +22,7 @@ public abstract class View implements Runnable {
     
     protected String nickname;
     
-    protected List<LobbyController.LobbyView> lobbies;
+    protected List<LobbyController.LobbyView> lobbies = new ArrayList<>();
     
     /**
      * Set the client's nickname. This method needs to be called by the view.
@@ -40,6 +41,11 @@ public abstract class View implements Runnable {
      */
     public String getNickname() {
         return nickname;
+    }
+    
+    
+    public List<LobbyController.LobbyView> getLobbies(){
+        return lobbies;
     }
     
     
@@ -87,14 +93,14 @@ public abstract class View implements Runnable {
      *
      * @param size Desired lobby size
      */
-    protected void notifyRequestLobby(Integer size) {
+    public void notifyRequestLobby(Integer size) {
         client.update(new RequestLobbyMessage(size, this.nickname));
     }
     
     /**
      * Notify the server of a client's request to join a recovering lobby
      */
-    protected void notifyRecoverLobby() {
+    public void notifyRecoverLobby() {
         client.update(new RecoverLobbyMessage(this.nickname));
     }
     
@@ -103,7 +109,7 @@ public abstract class View implements Runnable {
      *
      * @param size The new lobby's number of player
      */
-    protected void notifyCreateLobby(Integer size) {
+    public void notifyCreateLobby(Integer size) {
         client.update(new CreateLobbyMessage(size, this.nickname));
     }
     
@@ -112,7 +118,7 @@ public abstract class View implements Runnable {
      *
      * @param lobbyId The lobby to join's id
      */
-    protected void notifyJoinLobby(int lobbyId) {
+    public void notifyJoinLobby(int lobbyId) {
         client.update(new JoinLobbyMessage(lobbyId, this.nickname));
     }
     
@@ -121,7 +127,7 @@ public abstract class View implements Runnable {
      *
      * @param message Message contents
      */
-    protected void notifyChatMessage(String message) {
+    public void notifyChatMessage(String message) {
         client.update(new ChatMessage(message, this.nickname));
     }
     
@@ -131,7 +137,7 @@ public abstract class View implements Runnable {
      * @param message Message contents
      * @param dst     Message recipient
      */
-    protected void notifyChatMessage(String message, String dst) {
+    public void notifyChatMessage(String message, String dst) {
         client.update(new ChatMessage(message, this.nickname, dst));
     }
     
@@ -140,11 +146,11 @@ public abstract class View implements Runnable {
      *
      * @param move A move, represented by the selected tiles and how to insert them in the shelf
      */
-    protected void notifyMove(Move move) {
+    public void notifyMove(Move move) {
         client.update(new MoveMessage(move, this.nickname));
     }
     
-    protected void notifyDebugMessage(String info) {
+    public void notifyDebugMessage(String info) {
         client.update(new DebugMessage(info, this.nickname));
     }
     

@@ -2,6 +2,7 @@ package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.utils.files.ResourcesManager.GraphicalResources;
 import it.polimi.ingsw.view.LocalModel;
+import it.polimi.ingsw.view.gui.controllers.LoginController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +14,9 @@ import java.io.IOException;
 public class GUIApp extends Application {
     
     
+    private static Stage mainStage;
+    private static LoginController loginControllerInstance;
+    
     /**
      * @param stage
      *
@@ -20,16 +24,27 @@ public class GUIApp extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(GraphicalResources.getFXML("main.fxml"));
+        mainStage = stage;
+        FXMLLoader fxmlLoader = new FXMLLoader(GraphicalResources.getFXML("login.fxml"));
+        Parent root = fxmlLoader.load();
+        loginControllerInstance = fxmlLoader.getController();
         stage.setTitle("My Shelfie");
         stage.setScene(new Scene(root));
         stage.show();
-        
     }
     
     @Override
     public void init() {
     
     }
+    
+    public static Stage getMainStage() {
+        return mainStage;
+    }
+    
+    public static LoginController getLoginController() {
+        return loginControllerInstance;
+    }
+    
     
 }

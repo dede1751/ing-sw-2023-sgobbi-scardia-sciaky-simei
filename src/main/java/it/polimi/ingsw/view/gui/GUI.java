@@ -1,10 +1,13 @@
 package it.polimi.ingsw.view.gui;
 
-import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
 import javafx.application.Application;
+import javafx.scene.control.Label;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+
+import static javafx.application.Platform.*;
 
 
 public class GUI extends View  {
@@ -15,7 +18,8 @@ public class GUI extends View  {
     
     @Override
     public void onMessage(AvailableLobbyMessage msg) {
-    
+        this.lobbies = msg.getPayload().lobbyViewList();
+        runLater(() -> GUIApp.getLoginController().updateLobbies(msg.getPayload().lobbyViewList()));
     }
     
     @Override
@@ -33,7 +37,16 @@ public class GUI extends View  {
      */
     @Override
     public void onMessage(ServerResponseMessage msg) {
-    
+        if(!msg.getPayload().isOk()) {
+            runLater(() -> {
+                Stage s = GUIApp.getMainStage();
+                Popup p = new Popup();
+                Label label = new Label(msg.getPayload().msg() + " from action : " + msg.getPayload().Action());
+                label.setStyle(" -fx-background-color: white;");
+                p.getContent().add(label);
+                p.show(s);
+            });
+        }
     }
     
     /**
