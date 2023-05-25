@@ -16,6 +16,13 @@ import java.util.Scanner;
 
 public class AppClient {
     
+    
+    private static View view;
+    
+    public static View getViewInstance(){
+        return view;
+    }
+    
     public static void main(String[] args) throws RemoteException, NotBoundException {
         Scanner scanner = new Scanner(System.in);
         View view;
