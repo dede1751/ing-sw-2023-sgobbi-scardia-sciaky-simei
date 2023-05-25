@@ -50,9 +50,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
      *
      * @param clients clients to remove
      */
-    public void removeGameControllers(List<Client> clients) {
-        clients.forEach(gameControllers.keySet()::remove);
-    }
+    public void removeGameControllers(List<Client> clients) { clients.forEach(gameControllers.keySet()::remove); }
     
     @Override
     public void update(Client client, ViewMessage<?> message) {

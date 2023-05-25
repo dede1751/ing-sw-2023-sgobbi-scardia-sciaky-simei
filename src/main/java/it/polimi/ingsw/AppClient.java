@@ -26,10 +26,10 @@ public class AppClient {
     public static void main(String[] args) throws RemoteException, NotBoundException {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("Choose the type of user interface: [GUI/TUI]");
+        System.out.print("Choose the type of user interface: [GUI/TUI]");
         while( true ) {
             System.out.print("\n>>  ");
-            String input = scanner.next().trim();
+            String input = scanner.next().trim().toUpperCase();
             
             if( input.equals("GUI") ) {
                 view = new GUI();
@@ -40,11 +40,11 @@ public class AppClient {
             }
         }
         
-        System.out.println("Choose the type of network protocol: [RMI/SOCKET]");
+        System.out.print("Choose the type of network protocol: [RMI/SOCKET]");
         // noinspection InfiniteLoopStatement
         while( true ) {
             System.out.print("\n>>  ");
-            String input = scanner.next().trim();
+            String input = scanner.next().trim().toUpperCase();
             
             if( input.equals("RMI") ) {
                 runRMI(view);

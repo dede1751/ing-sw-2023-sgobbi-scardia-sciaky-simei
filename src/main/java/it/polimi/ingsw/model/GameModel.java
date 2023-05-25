@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
@@ -41,21 +40,15 @@ public class GameModel {
     
     private boolean gameEnded = false;
     
-    /**
-     * @param b
-     */
     public void setGameEnded(boolean b) {
         gameEnded = b;
     }
     
-    /**
-     * @return
-     */
     public boolean getGameEnded() {
         return gameEnded;
     }
     
-    
+
     public enum CGType {
         X, Y
     }
@@ -354,21 +347,15 @@ public class GameModel {
     }
     
     /**
-     * Add a listener to the model.
+     * Add a listener to the model (or reset the listener with the given name)
      * At least one listener for each player should be supplied.
      * It is necessary for the correct functioning of the networking communication.
      *
      * @param name     Listener name, should be the nickname for listeners relaying information to clients
      * @param listener Reference to the listener
-     *
-     * @throws DuplicateListener if a listener with the given name already exists
      */
-    public void addListener(String name, ModelListener listener) throws DuplicateListener {
-        if( this.listeners.containsKey(name) ) {
-            throw new DuplicateListener(name);
-        }else {
-            this.listeners.put(name, listener);
-        }
+    public void addListener(String name, ModelListener listener) {
+        this.listeners.put(name, listener);
     }
     
     private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
@@ -385,13 +372,15 @@ public class GameModel {
      * @param chat Message to be sent
      */
     public void chatBroker(ChatMessage chat) {
-        
-        IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
-        if( chat.getDestination().equals("BROADCAST") ) {
+    
+        IncomingChatMessage message = new IncomingChatMessage(
+                chat.getPayload(), chat.getPlayerNickname(), chat.getDestination());
+        if( chat.getDestination().equals("ALL") ) {
             notifyAllListeners(message);
-        }else {
-            ModelListener targetListener = this.listeners.get(chat.getPlayerNickname());
+        }else if (this.listeners.containsKey(chat.getDestination())) {
+            ModelListener targetListener = this.listeners.get(chat.getDestination());
             targetListener.update(message);
+            this.listeners.get(chat.getPlayerNickname()).update(message);
         }
     }
     

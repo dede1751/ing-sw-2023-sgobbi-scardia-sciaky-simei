@@ -6,7 +6,7 @@ public class ChatMessage extends ViewMessage<String> {
     
     public ChatMessage(String s, String playerNick) {
         super(s, playerNick);
-        dest = "BROADCAST";
+        dest = "ALL";
     }
     
     public ChatMessage(String s, String PlayerNick, String playerDestination) {
