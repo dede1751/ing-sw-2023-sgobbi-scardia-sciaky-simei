@@ -8,7 +8,7 @@
     <Tab text="Game">
       <content>
         <!--> game content  </!-->
-        <fx:include fx:id="gameInterface" source="GameInterface.fxml"/>
+        <fx:include fx:id="gameInterface" source="gameInterface.fxml"/>
       </content>
     </Tab>
   </tabs>

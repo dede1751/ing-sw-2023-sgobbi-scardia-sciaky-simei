@@ -66,7 +66,7 @@ public class GUIApp extends Application {
         loginRoot = loginLoader.load();
         loginControllerInstance = loginLoader.getController();
         //load main game page
-        FXMLLoader mainLoader = new FXMLLoader(GraphicalResources.getFXML("Main.fxml"));
+        FXMLLoader mainLoader = new FXMLLoader(GraphicalResources.getFXML("main.fxml"));
         mainRoot = mainLoader.load();
         mainControllerInstance = mainLoader.getController();
         

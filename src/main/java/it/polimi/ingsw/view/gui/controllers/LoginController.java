@@ -21,9 +21,7 @@ public class LoginController {
     
     private static final View gui = AppClient.getViewInstance();
     
-    private boolean updatedLobbies = false;
     private int playerNSelected = 2;
-    private boolean gameBegan = false;
     
     @FXML
     private VBox lobbyViewList;
@@ -77,8 +75,6 @@ public class LoginController {
     
     @FXML
     public void updateLobbies(List<LobbyView> lobbyViewList){
-        if(gameBegan) return;
-        updatedLobbies = true;
         this.lobbyViewList.getChildren().clear();
         int color = 0;
         for(var l : lobbyViewList){
@@ -89,9 +85,6 @@ public class LoginController {
     
     @FXML
     public void setNickname(ActionEvent event){
-        if(gameBegan){
-            return;
-        }
         String nickname = this.nickname.getText();
         gui.setNickname(nickname);
         if( gui.getLobbies().stream().anyMatch((l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
