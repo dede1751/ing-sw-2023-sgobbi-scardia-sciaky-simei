@@ -99,17 +99,26 @@ public class TUI extends View {
     private void askBroadcastMessage() {
         Scanner scanner = new Scanner(System.in);
     
-        prompt = "Please, enter your message:";
-        error = null;
-        TUIUtils.printGame(nickname, prompt, null);
-        String msg = scanner.nextLine();
+        String msg;
+        while( true ) {
+            prompt = "Please, enter your message:";
+            TUIUtils.printGame(nickname, prompt, error);
         
+            msg = scanner.nextLine();
+            if( msg.length() > 70 ) {
+                error = "Message too long!";
+            }else {
+                error = null;
+                break;
+            }
+        }
+    
         notifyChatMessage(msg);
     }
     
     private void askPrivateMessage() {
         Scanner scanner = new Scanner(System.in);
-    
+        
         String player;
         while( true ) {
             prompt = "Enter the nickname of the player you want to send your message:";
@@ -121,14 +130,23 @@ public class TUI extends View {
             }else if( player.equals(nickname) ){
                 error = "Choose another player's nickname!";
             }else {
+                error = null;
                 break;
             }
         }
+    
+        String msg;
+        while( true ) {
+            prompt = "Please, enter your message:";
+            TUIUtils.printGame(nickname, prompt, error);
         
-        prompt = "Please, enter your message:";
-        error = null;
-        TUIUtils.printGame(nickname, prompt, null);
-        String msg = scanner.nextLine();
+            msg = scanner.nextLine();
+            if( msg.length() > 70 ) {
+                error = "Message too long!";
+            }else {
+                break;
+            }
+        }
         
         notifyChatMessage(msg, player);
     }
