@@ -6,165 +6,67 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane fx:controller="it.polimi.ingsw.view.gui.controllers.BoardController" maxHeight="-Infinity" maxWidth="-Infinity"
-            minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="840.0" stylesheets="@Style.css"
-            AnchorPane.bottomAnchor="173.0" AnchorPane.leftAnchor="173.0" AnchorPane.rightAnchor="181.0"
-            xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="840.0" stylesheets="@Style.css" AnchorPane.bottomAnchor="173.0" AnchorPane.leftAnchor="173.0" AnchorPane.rightAnchor="181.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.BoardController">
     <children>
         <AnchorPane prefHeight="446.0" prefWidth="446.0">
             <children>
-                <ImageView fitHeight="446.0" fitWidth="446.0" pickOnBounds="true" preserveRatio="true"
-                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                           AnchorPane.topAnchor="0.0">
+                <ImageView fitHeight="446.0" fitWidth="446.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <image>
-                        <Image url="@../assets/boards/livingroom.png"/>
+                        <Image url="@../assets/boards/livingroom.png" />
                     </image>
                 </ImageView>
-                <GridPane fx:id="gridPane" layoutX="19.0" layoutY="19.0" prefHeight="406.0" prefWidth="406.0"
-                          AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="21.0"
-                          AnchorPane.topAnchor="19.0">
+                <GridPane fx:id="gridPane" layoutX="19.0" layoutY="19.0" prefHeight="406.0" prefWidth="406.0" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="19.0">
                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
                     <rowConstraints>
-                        <RowConstraints maxHeight="44.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="68.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="65.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="58.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES"/>
+                        <RowConstraints maxHeight="44.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="57.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="70.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="83.0" minHeight="10.0" prefHeight="44.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="96.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="68.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="65.0" minHeight="10.0" prefHeight="46.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="58.0" minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                    <children>
-                        <Button fx:id="button" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.rowIndex="5"/>
-                        <Button fx:id="button2" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
-                        <Button fx:id="button3" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
-                        <Button fx:id="button4" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3" GridPane.rowIndex="7"/>
-                        <Button fx:id="button5" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="8"/>
-                        <Button fx:id="button6" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="8"/>
-                        <Button fx:id="button7" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="7"/>
-                        <Button fx:id="button8" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="6" GridPane.rowIndex="6"/>
-                        <Button fx:id="button9" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="7" GridPane.rowIndex="5"/>
-                        <Button fx:id="button10" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="8" GridPane.rowIndex="4"/>
-                        <Button fx:id="button11" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="8" GridPane.rowIndex="3"/>
-                        <Button fx:id="button12" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="7" GridPane.rowIndex="3"/>
-                        <Button fx:id="button13" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="6" GridPane.rowIndex="2"/>
-                        <Button fx:id="button14" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
-                        <Button fx:id="button15" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4"/>
-                        <Button fx:id="button16" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3"/>
-                        <Button fx:id="button17" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
-                        <Button fx:id="button18" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-                        <Button fx:id="button19" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                        <Button fx:id="button161" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
-                        <Button fx:id="button162" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
-                        <Button fx:id="button163" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="2"/>
-                        <Button fx:id="button164" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="2"/>
-                        <Button fx:id="button165" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
-                        <Button fx:id="button166" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
-                        <Button fx:id="button167" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="3"/>
-                        <Button fx:id="button168" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="6" GridPane.rowIndex="3"/>
-                        <Button fx:id="button169" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="3"/>
-                        <Button fx:id="button1610" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1611" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1612" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1613" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1614" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1615" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="6" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1616" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="7" GridPane.rowIndex="4"/>
-                        <Button fx:id="button1617" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="6" GridPane.rowIndex="5"/>
-                        <Button fx:id="button1618" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="5"/>
-                        <Button fx:id="button1619" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="5"/>
-                        <Button fx:id="button1620" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3" GridPane.rowIndex="5"/>
-                        <Button fx:id="button1621" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
-                        <Button fx:id="button1622" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="3" GridPane.rowIndex="6"/>
-                        <Button fx:id="button1623" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="6"/>
-                        <Button fx:id="button1624" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="5" GridPane.rowIndex="6"/>
-                        <Button fx:id="button1625" mnemonicParsing="false" onAction="#boardButton" opacity="0.0"
-                                text="Button" GridPane.columnIndex="4" GridPane.rowIndex="7"/>
-                    </children>
                 </GridPane>
             </children>
         </AnchorPane>
-        <ImageView fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="31.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/scoring_tokens/scoring_8.png"/>
+                <Image url="@../assets/scoring_tokens/scoring_8.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="223.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="223.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/scoring_tokens/scoring_8.png"/>
+                <Image url="@../assets/scoring_tokens/scoring_8.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="144.0" fitWidth="207.0" layoutX="619.0" layoutY="31.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="144.0" fitWidth="207.0" layoutX="619.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/common_goal_cards/10.png"/>
+                <Image url="@../assets/common_goal_cards/10.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="623.0" layoutY="225.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="623.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/common_goal_cards/12.png"/>
+                <Image url="@../assets/common_goal_cards/12.png" />
             </image>
         </ImageView>
+      <HBox fx:id="selection" layoutX="467.0" layoutY="372.0" prefHeight="60.0" prefWidth="357.0">
+
+      </HBox>
     </children>
 </AnchorPane>

@@ -1,10 +1,11 @@
 package it.polimi.ingsw.view.gui;
 
-import it.polimi.ingsw.model.Coordinate;
+import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.gui.controllers.BoardController;
+import it.polimi.ingsw.view.messages.Move;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -13,7 +14,6 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static javafx.application.Platform.*;
 
@@ -21,8 +21,18 @@ import static javafx.application.Platform.*;
 public class GUI extends View {
     
     
+    private List<String> otherPlayersNicks = new ArrayList<>(3);
+    
     @Override
     public void onMessage(BoardMessage msg) {
+        runLater(() ->
+                 {
+                     BoardController boardController =
+                             GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();
+                     boardController.resetSelected();
+                     boardController.updateBoard(msg.getPayload());
+                     
+                 });
     }
     
     @Override
@@ -40,21 +50,24 @@ public class GUI extends View {
     public void onMessage(StartGameMessage msg) {
         model.setModel(msg);
         model.setStarted(true);
-        List<String> otherPlayersNicks = new ArrayList<>(3);
-        List<Shelf> otherPlayerShelf = new ArrayList<>(3);
-        List<Integer> scores = new ArrayList<>(3);
-        for( var x : model.getPlayersNicknames() ) {
-            if( !x.equals(this.getNickname()) ) {
-                otherPlayersNicks.add(x);
-                otherPlayerShelf.add(model.getShelf(x));
-                scores.add(model.getPoints(x));
-            }
-        }
         runLater(() -> {
+            List<Shelf> otherPlayerShelf = new ArrayList<>(3);
+            List<Integer> scores = new ArrayList<>(3);
+            for( var x : model.getPlayersNicknames() ) {
+                if( !x.equals(this.getNickname()) ) {
+                    otherPlayersNicks.add(x);
+                    otherPlayerShelf.add(model.getShelf(x));
+                    scores.add(model.getPoints(x));
+                }
+            }
+            GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
+                    model.getShelf(nickname));
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
                                                                                               otherPlayerShelf,
                                                                                               scores);
             GUIApp.getMainStage().setScene(new Scene(GUIApp.getMainRoot()));
+            GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController().updateBoard(
+                    model.getBoard());
         });
     }
     
@@ -71,6 +84,7 @@ public class GUI extends View {
                 label.setStyle(" -fx-background-color: #eee69b;");
                 p.getContent().add(label);
                 p.show(s);
+                GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController().resetSelected();
             });
         }
     }
@@ -85,8 +99,11 @@ public class GUI extends View {
                              GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
                                      msg.getPayload())
             );
-        }else{
-            //FIXME update other shelves
+        }else {
+            runLater(() ->
+                             GUIApp.getMainControllerInstance().getGameInterfaceController().updateShelf(
+                                     msg.getPayload(), msg.getPlayer())
+            );
         }
     }
     

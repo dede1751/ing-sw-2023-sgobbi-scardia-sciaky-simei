@@ -18,6 +18,8 @@ public class Board implements Serializable {
     
     private final Map<Coordinate, Tile> tileOccupancy;
     
+    public static final int maxSize = 9;
+    
     /**
      * Initialize board for the given number of players
      * The player number cannot change dynamically throughout the game

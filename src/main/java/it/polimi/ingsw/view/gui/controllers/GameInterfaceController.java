@@ -9,6 +9,10 @@ import java.util.List;
 
 public class GameInterfaceController {
     @FXML
+    private AnchorPane board;
+    @FXML
+    private BoardController boardController;
+    @FXML
     private Pane otherShelf1;
     @FXML
     private Pane otherShelf2;
@@ -21,6 +25,7 @@ public class GameInterfaceController {
     @FXML
     private OtherShelfController otherShelf3Controller;
     
+    
     @FXML
     private AnchorPane localPlayer;
     
@@ -30,8 +35,9 @@ public class GameInterfaceController {
     
     private List<OtherShelfController> shelfControllerList;
     private List<Pane> shelfList;
+    
     @FXML
-    public void initialize(){
+    public void initialize() {
         otherShelf1.setOpacity(0);
         otherShelf2.setOpacity(0);
         otherShelf3.setOpacity(0);
@@ -41,12 +47,13 @@ public class GameInterfaceController {
     
     /**
      * Initialize shelves
+     *
      * @param nicknames Ordered list of all other players
      * @param shelves
      * @param scores
      */
-    public void initializeShelves(List<String> nicknames, List<Shelf> shelves, List<Integer> scores){
-        for(int i = 0; i < nicknames.size(); i++){
+    public void initializeShelves(List<String> nicknames, List<Shelf> shelves, List<Integer> scores) {
+        for( int i = 0; i < nicknames.size(); i++ ) {
             shelfControllerList.get(i).setPlayerName(nicknames.get(i));
             shelfControllerList.get(i).updateOtherShelf(shelves.get(i));
             shelfControllerList.get(i).setScore(scores.get(i));
@@ -54,16 +61,25 @@ public class GameInterfaceController {
         }
     }
     
+    public void updateShelf(Shelf shelf, String nickname) {
+        shelfControllerList.stream().filter((x) -> x.getPlayerNickname().equals(nickname)).forEach(
+                (x) -> x.updateOtherShelf(shelf));
+    }
+    
+    
     /**
-     *
      * @param score
      * @param playerNumber
      */
-    public void updateScore(int score, int playerNumber){
+    public void updateScore(int score, int playerNumber) {
         shelfControllerList.get(playerNumber).setScore(score);
     }
     
     public LocalPlayerController getLocalPlayerController() {
         return localPlayerController;
+    }
+    
+    public BoardController getBoardController() {
+        return boardController;
     }
 }

@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.view.gui.GUIApp;
 import it.polimi.ingsw.view.messages.Move;
 import javafx.fxml.FXML;
+import javafx.geometry.VPos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,18 +29,14 @@ public class LocalPlayerController {
     
     @FXML
     public void initialize() {
-    
-        b0.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 0))));
         
-        b1.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 1))));
+        b0.setOnAction(event -> buttonAction(0));
+        b1.setOnAction(event -> buttonAction(1));
+        b2.setOnAction(event -> buttonAction(2));
+        b3.setOnAction(event -> buttonAction(3));
+        b4.setOnAction(event -> buttonAction(4));
         
-        b2.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 2))));
-        
-        b3.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 3))));
-        b4.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 4))));
     }
-    
-    
     @FXML
     public void updateShelf(Shelf shelf) {
         
@@ -68,6 +65,7 @@ public class LocalPlayerController {
                         ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + sb));
                         imageView.setFitHeight(60);
                         imageView.setFitWidth(60);
+                        GridPane.setValignment(imageView, VPos.CENTER);
                         GridPane.setConstraints(imageView, j, -(i-Shelf.N_COL));
                         localPlayerGrid.getChildren().add(imageView);
                     }
@@ -76,5 +74,11 @@ public class LocalPlayerController {
             }
         }
     }
+    
+    private void buttonAction(int column){
+        AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), column));
+    }
+    
+    
     
 }
