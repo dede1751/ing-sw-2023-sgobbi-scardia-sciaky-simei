@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-public class otherShelfController {
+public class OtherShelfController {
     @FXML
     private GridPane gridPane1;
   
@@ -22,19 +22,25 @@ public class otherShelfController {
     @FXML
     private Text score;
     
-   
+    @FXML
+    public void setPlayerName(String name){
+        playerName.setText(name);
+    }
     
+    @FXML
+    public void setScore(int score){
+        this.score.setText(String.valueOf(score));
+    }
     
+    @FXML
     void updateOtherShelf(Shelf shelf) {
        
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();
-            
-            
-            
             for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
                 for( int j = 0; j < Shelf.N_COL; j++ ) {
                     StringBuilder sb=new StringBuilder();
+                    
                     switch( matrix[i][j].type() ) {
                         case TROPHIES -> sb.append("Trofei1.");
                         case CATS -> sb.append("Gatti1.");
@@ -50,6 +56,7 @@ public class otherShelfController {
                         case TWO -> sb.append("2.png");
                         case THREE -> sb.append("3.png");
                     }
+                    
                     if( matrix[i][j]!=null) {
                         ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + sb.toString()));
                         imageView.setFitHeight(30);
@@ -61,10 +68,6 @@ public class otherShelfController {
                 
             }
         }
-        
-        
-        
-        
     }
     
     @FXML

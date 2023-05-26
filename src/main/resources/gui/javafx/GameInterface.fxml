@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1138.0" prefWidth="2031.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:controller="it.polimi.ingsw.view.gui.controllers.GameInterfaceController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1138.0" prefWidth="2031.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <stylesheets>
       <URL value="@Style.css" />
    </stylesheets>
@@ -22,8 +22,8 @@
             <VBox layoutX="14.0" layoutY="14.0" prefHeight="978.0" prefWidth="400.0" AnchorPane.bottomAnchor="-218.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <fx:include fx:id="otherShelf1" source="otherShelfs.fxml" />
-                  <fx:include  fx:id="otherShelf2"  source="otherShelfs.fxml" />
-                  <fx:include fx:id="otherShelf3"  source="otherShelfs.fxml" />
+                  <fx:include fx:id="otherShelf2" source="otherShelfs.fxml" />
+                  <fx:include fx:id="otherShelf3" source="otherShelfs.fxml" />
                </children>
             </VBox>
          </children>
@@ -33,7 +33,7 @@
       </AnchorPane>
       <AnchorPane layoutX="400.0" layoutY="488.0" prefHeight="479.0" prefWidth="832.0">
          <children>
-            <fx:include source="localPlayer.fxml" />
+            <fx:include fx:id="localPlayer" source="localPlayer.fxml" />
          </children>
       </AnchorPane>
       <AnchorPane layoutX="1232.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0">

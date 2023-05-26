@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.gui.controllers;
 import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.controller.LobbyController.LobbyView;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.gui.GUIApp;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -71,6 +72,7 @@ public class LoginController {
             playerNSelected = nPlayerChoice.getSelectionModel().getSelectedItem();
         }));
         createLobbyButton.setOnAction(event -> gui.notifyCreateLobby(playerNSelected));
+        AppClient.getViewInstance().notifyRequestLobby(null);
     }
     
     @FXML
@@ -87,7 +89,7 @@ public class LoginController {
     
     @FXML
     public void setNickname(ActionEvent event){
-        if(!updatedLobbies || gameBegan){
+        if(gameBegan){
             return;
         }
         String nickname = this.nickname.getText();
@@ -100,5 +102,11 @@ public class LoginController {
     public void refreshLobbies(ActionEvent event){
         gui.notifyRequestLobby(null);
     }
+    
+    
+    
+    
+    
+    
     
 }

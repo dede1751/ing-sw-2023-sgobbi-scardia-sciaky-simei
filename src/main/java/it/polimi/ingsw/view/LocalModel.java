@@ -2,12 +2,10 @@ package it.polimi.ingsw.view;
 
 import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.model.messages.StartGameMessage;
 import it.polimi.ingsw.model.messages.UpdateScoreMessage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Local model representation used by the running view.
@@ -33,7 +31,7 @@ public class LocalModel {
     private final Map<String, Integer> adjacencyScore = new HashMap<>();
     private final Map<String, Integer> bonusScore = new HashMap<>();
     
-    private final ArrayList<String> chat = new ArrayList<String>();
+    private final ArrayList<String> chat = new ArrayList<>();
     
     private int pgid = 0;
     
@@ -55,6 +53,40 @@ public class LocalModel {
         }
         
         return INSTANCE;
+    }
+    
+    /**
+     * Set the model from a StartGameMessage object
+     * @param msg StartGameMessage objet to initialize the model
+     */
+    public void setModel(StartGameMessage msg){
+        
+        var payload = msg.getPayload();
+        var players = payload.players();
+        
+        this.setPlayersNicknames(
+                players.stream().map(StartGameMessage.PlayerRecord::nickname).toList()
+        );
+        
+        List<String> nicknames = new LinkedList<>();
+        for( var p : players ) {
+            nicknames.add(p.nickname());
+            this.setShelf(p.shelf(), p.nickname());
+            this.setCgScore(p.commonGoalScore(), p.nickname());
+            this.setPgScore(p.personalGoalScore(), p.nickname());
+            this.setAdjacencyScore(p.adjacencyScore(), p.nickname());
+            this.setBonusScore(p.bonusScore(), p.nickname());
+        }
+        this.setPlayersNicknames(nicknames);
+        
+        this.setPgid(payload.personalGoalId());
+        this.setCGXindex(payload.CGXIndex());
+        this.setTopCGXscore(payload.topCGXScore());
+        this.setCGYindex(payload.CGYIndex());
+        this.setTopCGYscore(payload.topCGYScore());
+        
+        this.setBoard(payload.board());
+        this.setCurrentPlayer(payload.currentPlayer());
     }
     
     /**

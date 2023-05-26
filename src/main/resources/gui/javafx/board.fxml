@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<AnchorPane fx:controller="it.polimi.ingsw.view.gui.controllers.boardController" maxHeight="-Infinity" maxWidth="-Infinity"
+<AnchorPane fx:controller="it.polimi.ingsw.view.gui.controllers.BoardController" maxHeight="-Infinity" maxWidth="-Infinity"
             minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="840.0" stylesheets="@Style.css"
             AnchorPane.bottomAnchor="173.0" AnchorPane.leftAnchor="173.0" AnchorPane.rightAnchor="181.0"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">

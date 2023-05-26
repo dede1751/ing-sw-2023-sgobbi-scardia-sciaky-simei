@@ -1,55 +1,50 @@
 package it.polimi.ingsw.view.gui.controllers;
 
+import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.view.gui.GUIApp;
+import it.polimi.ingsw.view.messages.Move;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-public class localPlayerController {
+public class LocalPlayerController {
+    
+    @FXML
+    private Button b0;
+    @FXML
+    private Button b1;
+    @FXML
+    private Button b2;
+    @FXML
+    private Button b3;
+    @FXML
+    private Button b4;
+    
     @FXML
     private GridPane localPlayerGrid;
     
-    
-    
-    
-    
-    
-    
     @FXML
-    private void initialize() {
+    public void initialize() {
     
-        int rows = localPlayerGrid.getRowCount();
-        int columns = localPlayerGrid.getColumnCount();
-    
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                Button button = new Button("Button"+col);
-                button.setOnAction(event -> shelfColumnButton());
-                localPlayerGrid.add(button, col,0);
-            }
-        }
-    
-    
-    
-       // Shelf shelf = new Shelf();
-       // List<Tile> list = new ArrayList<Tile>();
-       // list.add(new Tile(Tile.Type.TROPHIES, Tile.Sprite.TWO));
-       // shelf.addTiles(list, 0);
-       // shelf.addTiles(list, 0);
-       // shelf.addTiles(list, 0);
-       // updateShelf(shelf);
+        b0.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 0))));
+        
+        b1.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 1))));
+        
+        b2.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 2))));
+        
+        b3.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 3))));
+        b4.setOnAction((event -> AppClient.getViewInstance().notifyMove(new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), 4))));
     }
     
     
-    
-    void updateShelf(Shelf shelf) {
+    @FXML
+    public void updateShelf(Shelf shelf) {
         
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();
-            
-            
             
             for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
                 for( int j = 0; j < Shelf.N_COL; j++ ) {
@@ -70,7 +65,7 @@ public class localPlayerController {
                         case THREE -> sb.append("3.png");
                     }
                     if( matrix[i][j]!=null) {
-                        ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + sb.toString()));
+                        ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + sb));
                         imageView.setFitHeight(60);
                         imageView.setFitWidth(60);
                         GridPane.setConstraints(imageView, j, -(i-Shelf.N_COL));
@@ -80,20 +75,6 @@ public class localPlayerController {
                 
             }
         }
-        
-        
-        
-        
     }
-    public void shelfColumnButton() {
-        System.out.println("CIAO");
-        ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + "Trofei1.1.png"));
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        GridPane.setConstraints(imageView, 2, 2);
-        localPlayerGrid.getChildren().add(imageView);
-       
-        
-        
-    }
+    
 }

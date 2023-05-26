@@ -9,9 +9,7 @@ import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.*;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
@@ -147,6 +145,7 @@ public class TUI extends View {
         boolean selectedRecovery = askNickname();
         
         main_loop:
+        //noinspection LoopConditionNotUpdatedInsideLoop
         while( !selectedRecovery ) {
             prompt = "Do you want to create your own lobby or join an existing one? [CREATE/JOIN]";
             TUIUtils.printLoginScreen(prompt, error);
@@ -504,33 +503,7 @@ public class TUI extends View {
     @SuppressWarnings("unused")
     @Override
     public void onMessage(StartGameMessage msg) {
-        var payload = msg.getPayload();
-        var players = payload.players();
-        
-        model.setPlayersNicknames(
-                players.stream().map(StartGameMessage.PlayerRecord::nickname).toList()
-        );
-        
-        List<String> nicknames = new LinkedList<>();
-        for( var p : players ) {
-            nicknames.add(p.nickname());
-            model.setShelf(p.shelf(), p.nickname());
-            model.setCgScore(p.commonGoalScore(), p.nickname());
-            model.setPgScore(p.personalGoalScore(), p.nickname());
-            model.setAdjacencyScore(p.adjacencyScore(), p.nickname());
-            model.setBonusScore(p.bonusScore(), p.nickname());
-        }
-        model.setPlayersNicknames(nicknames);
-        
-        model.setPgid(payload.personalGoalId());
-        model.setCGXindex(payload.CGXIndex());
-        model.setTopCGXscore(payload.topCGXScore());
-        model.setCGYindex(payload.CGYIndex());
-        model.setTopCGYscore(payload.topCGYScore());
-        
-        model.setBoard(payload.board());
-        model.setCurrentPlayer(payload.currentPlayer());
-        
+        model.setModel(msg);
         TUIUtils.printGame(nickname, prompt, null);
         model.setStarted(true);
     }

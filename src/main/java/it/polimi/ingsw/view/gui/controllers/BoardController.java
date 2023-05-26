@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 
 import java.util.Map;
 
-public class boardController {
+public class BoardController {
     
     @FXML
     private GridPane gridPane;
