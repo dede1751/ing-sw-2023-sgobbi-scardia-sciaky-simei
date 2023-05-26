@@ -45,22 +45,22 @@
                 </GridPane>
             </children>
         </AnchorPane>
-        <ImageView fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="commonGoalXStack" fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../assets/scoring_tokens/scoring_8.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="223.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="commonGoalYStack" fitHeight="136.0" fitWidth="136.0" layoutX="467.0" layoutY="223.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../assets/scoring_tokens/scoring_8.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="144.0" fitWidth="207.0" layoutX="619.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="commonGoalX" fitHeight="144.0" fitWidth="207.0" layoutX="619.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../assets/common_goal_cards/10.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="623.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="commonGoalY" fitHeight="150.0" fitWidth="200.0" layoutX="623.0" layoutY="225.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../assets/common_goal_cards/12.png" />
             </image>

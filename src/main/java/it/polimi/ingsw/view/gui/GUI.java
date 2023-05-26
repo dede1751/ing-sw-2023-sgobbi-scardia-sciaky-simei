@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.polimi.ingsw.model.messages.CommonGoalMessage.*;
 import static javafx.application.Platform.*;
 
 
@@ -62,12 +63,24 @@ public class GUI extends View {
             }
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
                     model.getShelf(nickname));
+            GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setPersonalGoal(
+                    model.getPgid());
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
                                                                                               otherPlayerShelf,
                                                                                               scores);
-            GUIApp.getMainStage().setScene(new Scene(GUIApp.getMainRoot()));
-            GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController().updateBoard(
+            
+            BoardController boardController =
+                    GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();
+            boardController.updateBoard(
                     model.getBoard());
+            
+            boardController.setCommonGoalX(model.getCGXindex());
+            boardController.setCommonGoalY(model.getCGYindex());
+            boardController.setCommonGoalXStack(model.getTopCGXscore());
+            boardController.setCommonGoalYStack(model.getTopCGYscore());
+            
+            
+            GUIApp.getMainStage().setScene(new Scene(GUIApp.getMainRoot()));
         });
     }
     
@@ -80,11 +93,18 @@ public class GUI extends View {
             runLater(() -> {
                 Stage s = GUIApp.getMainStage();
                 Popup p = new Popup();
+                p.setAutoHide(true);
+                p.setAutoFix(true);
+                
                 Label label = new Label(msg.getPayload().msg() + " from action : " + msg.getPayload().Action());
                 label.setStyle(" -fx-background-color: #eee69b;");
                 p.getContent().add(label);
                 p.show(s);
-                GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController().resetSelected();
+                if( model.isStarted() ) {
+                    GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController().resetSelected();
+                }else if(msg.getPayload().Action().matches("RecoverLobbyMessage|RequestLobbyMessage|JoinLobbyMessage|CreateLobbyMessage")){
+                    GUIApp.getLoginController().setWaitToJoin(false);
+                }
             });
         }
     }
@@ -112,7 +132,8 @@ public class GUI extends View {
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
-    
+        //TODO
+        
     }
     
     /**
@@ -120,7 +141,8 @@ public class GUI extends View {
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
-    
+        //TODO
+        
     }
     
     /**
@@ -128,7 +150,16 @@ public class GUI extends View {
      */
     @Override
     public void onMessage(CommonGoalMessage msg) {
-    
+        CommonGoalPayload p = msg.getPayload();
+        runLater(() -> {
+                     BoardController boardController =
+                             GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();
+                     switch( p.type() ) {
+                         case Y -> boardController.setCommonGoalYStack(p.availableTopScore());
+                         case X -> boardController.setCommonGoalXStack(p.availableTopScore());
+                     }
+                 }
+        );
     }
     
     /**
@@ -136,7 +167,9 @@ public class GUI extends View {
      */
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
-    
+        model.setCurrentPlayer(msg.getPayload());
+        //TODO
+        
     }
     
     @Override

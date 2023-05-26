@@ -45,7 +45,7 @@ public class GameController {
         for( Player p : model.getPlayers() ) {
             p.setPersonalGoalScore(PersonalGoal.getPersonalGoal(p.getPg()).checkGoal(p.getShelf()));
             p.setAdjacencyScore(calculateAdjacency(p.getShelf()));
-            p.setBonusScore(0); //FIXME
+            p.setBonusScore(0);
         }
         // Refill the board (recovery boards may not need refilling
         if( needRefill() ) {

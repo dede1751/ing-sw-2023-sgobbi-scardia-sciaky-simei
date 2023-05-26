@@ -23,6 +23,30 @@ public class BoardController {
     
     @FXML
     public HBox selection;
+    @FXML
+    private ImageView commonGoalXStack;
+    @FXML
+    private ImageView commonGoalYStack;
+    @FXML
+    private ImageView commonGoalX;
+    @FXML
+    private ImageView commonGoalY;
+    
+    public void setCommonGoalXStack(int id) {
+        this.commonGoalXStack.setImage(new Image("gui/assets/common_goal_cards/" + id + ".png"));
+    }
+    
+    public void setCommonGoalYStack(int id) {
+        this.commonGoalYStack.setImage(new Image("gui/assets/common_goal_cards/" + id + ".png"));
+    }
+    
+    public void setCommonGoalX(int score) {
+        this.commonGoalX.setImage(new Image("gui/assets/scoring_tokens/scoring_" + score + ".png"));
+    }
+    
+    public void setCommonGoalY(int score) {
+        this.commonGoalY.setImage(new Image("gui/assets/scoring_tokens/scoring_" + score + ".png"));
+    }
     
     private record TileElement(Button button, ImageView imageView) {
     }
@@ -72,7 +96,7 @@ public class BoardController {
             selected.remove(coord);
             List<Coordinate> fixedCoord =
                     selected.stream().map((x) -> new Coordinate(Board.maxSize - x.row() - 1, x.col())).toList();
-            GUIApp.setCoordinateSelection( fixedCoord);
+            GUIApp.setCoordinateSelection(fixedCoord);
             GUIApp.setTileSelection(
                     fixedCoord.stream().map((x) -> LocalModel.getInstance().getBoard().getTile(x)).toList()
             );
@@ -83,7 +107,7 @@ public class BoardController {
             selected.add(coord);
             List<Coordinate> fixedCoord =
                     selected.stream().map((x) -> new Coordinate(Board.maxSize - x.row() - 1, x.col())).toList();
-            GUIApp.setCoordinateSelection( fixedCoord);
+            GUIApp.setCoordinateSelection(fixedCoord);
             GUIApp.setTileSelection(
                     fixedCoord.stream().map((x) -> LocalModel.getInstance().getBoard().getTile(x)).toList()
             );
@@ -106,9 +130,9 @@ public class BoardController {
         }
     }
     
-    public void resetSelected(){
+    public void resetSelected() {
         selection.getChildren().clear();
-        for(var x : selected){
+        for( var x : selected ) {
             boardMap.get(x).button().setOpacity(0);
             boardMap.get(x).button().setBackground(null);
         }
@@ -147,7 +171,7 @@ public class BoardController {
                 image.setImage(new Image("gui/assets/item_tiles/" + sb));
                 image.setFitHeight(42);
                 image.setFitWidth(42);
-            }else{
+            }else {
                 image.setImage(null);
             }
             

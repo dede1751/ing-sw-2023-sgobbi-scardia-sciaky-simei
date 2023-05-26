@@ -33,13 +33,13 @@
                 <Image url="@../assets/boards/bookshelf.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="236.0" fitWidth="313.0" layoutX="505.0" layoutY="36.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="36.0">
+        <ImageView fx:id="personalGoal" fitHeight="236.0" fitWidth="313.0" layoutX="505.0" layoutY="36.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="36.0">
             <image>
                 <Image url="@../assets/personal_goal_cards/Personal_Goals10.png" />
             </image>
         </ImageView>
         <Text layoutX="515.0" layoutY="308.0" strokeType="OUTSIDE" strokeWidth="0.0" text="POINTS" />
-        <ImageView fitHeight="87.0" fitWidth="79.0" layoutX="505.0" layoutY="354.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="87.0" fitWidth="79.0" layoutX="505.0" layoutY="354.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../assets/misc/firstplayertoken.png" />
             </image>
@@ -56,11 +56,11 @@
           <RowConstraints maxHeight="363.0" minHeight="10.0" prefHeight="363.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="b0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.43" text="Button" />
-            <Button fx:id="b1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.28" text="Button" GridPane.columnIndex="1" />
-            <Button fx:id="b2" layoutX="82.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.24" text="Button" GridPane.columnIndex="2" />
-            <Button fx:id="b3" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.29" text="Button" GridPane.columnIndex="3" />
-            <Button fx:id="b4" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.25" prefHeight="363.0" prefWidth="80.0" text="Button" GridPane.columnIndex="4" />
+            <Button fx:id="b0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" />
+            <Button fx:id="b1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" GridPane.columnIndex="1" />
+            <Button fx:id="b2" layoutX="82.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" GridPane.columnIndex="2" />
+            <Button fx:id="b3" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" GridPane.columnIndex="3" />
+            <Button fx:id="b4" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" prefHeight="363.0" prefWidth="80.0" GridPane.columnIndex="4" />
          </children>
       </GridPane>
     </children>

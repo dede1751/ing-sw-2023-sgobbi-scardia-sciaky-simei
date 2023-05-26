@@ -14,6 +14,8 @@ import javafx.scene.layout.GridPane;
 public class LocalPlayerController {
     
     @FXML
+    private ImageView personalGoal;
+    @FXML
     private Button b0;
     @FXML
     private Button b1;
@@ -80,5 +82,7 @@ public class LocalPlayerController {
     }
     
     
-    
+    public void setPersonalGoal(int id) {
+        this.personalGoal.setImage(new Image("gui/assets/personal_goal_cards/Personal_Goals" + id +".png" ));
+    }
 }
