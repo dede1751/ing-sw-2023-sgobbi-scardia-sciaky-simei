@@ -115,7 +115,7 @@ public class TUI extends View {
             prompt = "Enter the nickname of the player you want to send your message:";
             TUIUtils.printGame(nickname, prompt, error);
         
-            player = scanner.next().trim();
+            player = scanner.nextLine().trim();
             if( !model.getPlayersNicknames().contains(player) ) {
                 error = "Player does not exist!";
             }else if( player.equals(nickname) ){

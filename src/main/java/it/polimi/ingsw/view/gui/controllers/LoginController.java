@@ -96,10 +96,4 @@ public class LoginController {
         gui.notifyRequestLobby(null);
     }
     
-    
-    
-    
-    
-    
-    
 }
