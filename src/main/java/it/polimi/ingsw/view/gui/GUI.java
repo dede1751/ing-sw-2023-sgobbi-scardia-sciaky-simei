@@ -109,21 +109,22 @@ public class GUI extends View {
             p.getContent().add(label);
             runLater(() -> p.show(s));
             new Thread(() -> {
-                Object object = new Object();
-                synchronized(object) {
-                    try {
-                        object.wait(2000);
-                        if( p.isShowing() ) {
-                            runLater(p::hide);
-                        }
+                try {
+                    Thread.sleep(2000);
+                    if( p.isShowing() ) {
+                        runLater(p::hide);
                     }
-                    catch( InterruptedException e ) {
-                        if( p.isShowing() ) {
-                            runLater(p::hide);
-                        }
+                }
+                catch( InterruptedException e ) {
+                    if( p.isShowing() ) {
+                        runLater(p::hide);
                     }
                 }
             }).start();
+        }else if( msg.getPayload().Action().matches(
+                "RecoverLobbyMessage|JoinLobbyMessage|CreateLobbyMessage") ) {
+            new Thread(() ->
+                               GUIApp.getLoginController().waitingGameAnimation()).start();
         }
     }
     

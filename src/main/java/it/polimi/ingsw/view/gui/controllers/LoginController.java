@@ -4,8 +4,6 @@ import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.controller.LobbyController.LobbyView;
 import it.polimi.ingsw.view.LocalModel;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.gui.GUIApp;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,20 +15,29 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import javafx.scene.paint.Paint;
-
 import java.util.List;
 
 public class LoginController {
     
     private static final View gui = AppClient.getViewInstance();
-    public DialogPane dialogPane;
-    public Text selectNumberBanner;
-    public Text createLobbiesBanner;
-    public Text joinLobbiesBanner;
-    public Text orBanner;
-    public Text insertNicknameBanner;
-    public ScrollPane scrollPaneLobbies;
+    @FXML
+    private Text nicknameConfirmBanner;
+    @FXML
+    private DialogPane dialogPane;
+    @FXML
+    private Text selectNumberBanner;
+    @FXML
+    private Text createLobbiesBanner;
+    @FXML
+    private Text joinLobbiesBanner;
+    @FXML
+    private Text orBanner;
+    @FXML
+    private Text insertNicknameBanner;
+    @FXML
+    private ScrollPane scrollPaneLobbies;
+    @FXML
+    private Text gameWaitingText;
     
     private boolean waitToJoin = false;
     
@@ -83,12 +90,12 @@ public class LoginController {
     
     @FXML
     public void initialize() {
+        nicknameConfirmBanner.setOpacity(0);
+        gameWaitingText.setOpacity(0);
         nPlayerChoice.getItems().add(2);
         nPlayerChoice.getItems().add(3);
         nPlayerChoice.getItems().add(4);
-        nPlayerChoice.setOnAction((event -> {
-            playerNSelected = nPlayerChoice.getSelectionModel().getSelectedItem();
-        }));
+        nPlayerChoice.setOnAction((event -> playerNSelected = nPlayerChoice.getSelectionModel().getSelectedItem()));
         createLobbyButton.setOnAction(event -> {
             if( waitToJoin )
                 return;
@@ -110,13 +117,15 @@ public class LoginController {
                 joinLobbiesBanner.setFont(new Font("Noto Sans", 15));
                 insertNicknameBanner.setFill(Color.LIGHTGRAY);
                 insertNicknameBanner.setFont(new Font("Noto Sans", 15));
+                gameWaitingText.setFill(Color.LIGHTGRAY);
+                nicknameConfirmBanner.setFill(Color.LIGHTGRAY);
             });
             int i = 0;
             synchronized(obj) {
                 while( !LocalModel.getInstance().isStarted() ) {
                     
-
-                    int j = i+1;
+                    
+                    int j = i + 1;
                     dialogPane.setBackground(new Background(
                             new BackgroundImage(new Image("gui/assets/Publisher_material/Display_" + j + ".jpg"),
                                                 BackgroundRepeat.SPACE, BackgroundRepeat.REPEAT,
@@ -128,7 +137,7 @@ public class LoginController {
                     }
                     catch( InterruptedException ignored ) {
                     }
-                    i = (i+1)%5;
+                    i = (i + 1) % 5;
                 }
             }
         }).start();
@@ -147,7 +156,12 @@ public class LoginController {
     
     @FXML
     public void setNickname(ActionEvent event) {
+        if( waitToJoin )
+            return;
         String nickname = this.nickname.getText();
+        nicknameConfirmBanner.setText("Nickname :" + nickname);
+        nicknameConfirmBanner.setOpacity(1);
+        this.nickname.setText("");
         gui.setNickname(nickname);
         if( gui.getLobbies().stream().anyMatch((l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
             gui.notifyRecoverLobby();
@@ -157,6 +171,30 @@ public class LoginController {
     @FXML
     public void refreshLobbies(ActionEvent event) {
         gui.notifyRequestLobby(null);
+    }
+    
+    public void waitingGameAnimation() {
+        try {
+            int i = 0;
+            Platform.runLater(() -> {
+                gameWaitingText.setOpacity(1);
+                gameWaitingText.setFill(Color.DARKBLUE);
+                
+            });
+            while( !LocalModel.getInstance().isStarted() ) {
+                
+                String waiting = "Waiting for other players";
+                String points = " .";
+                String repeated = new String(new char[i * 2]).replace("\0", points);
+                Platform.runLater(() -> gameWaitingText.setText(waiting + repeated));
+                i = (i + 1) % 4;
+                //noinspection BusyWait
+                Thread.sleep(800);
+            }
+        }
+        catch( InterruptedException ignored ) {
+        
+        }
     }
     
 }
