@@ -83,6 +83,7 @@ public class LocalPlayerController {
     
     
     public void setPersonalGoal(int id) {
+        id = id+1;
         this.personalGoal.setImage(new Image("gui/assets/personal_goal_cards/Personal_Goals" + id +".png" ));
     }
 }

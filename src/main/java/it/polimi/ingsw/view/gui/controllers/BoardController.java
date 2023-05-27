@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
@@ -32,19 +33,21 @@ public class BoardController {
     @FXML
     private ImageView commonGoalY;
     
-    public void setCommonGoalXStack(int id) {
+    public void setCommonGoalX(int id) {
+        id = id+1;
         this.commonGoalXStack.setImage(new Image("gui/assets/common_goal_cards/" + id + ".png"));
     }
     
-    public void setCommonGoalYStack(int id) {
+    public void setCommonGoalY(int id) {
+        id = id+1;
         this.commonGoalYStack.setImage(new Image("gui/assets/common_goal_cards/" + id + ".png"));
     }
     
-    public void setCommonGoalX(int score) {
+    public void setCommonGoalXStack(int score) {
         this.commonGoalX.setImage(new Image("gui/assets/scoring_tokens/scoring_" + score + ".png"));
     }
     
-    public void setCommonGoalY(int score) {
+    public void setCommonGoalYStack(int score) {
         this.commonGoalY.setImage(new Image("gui/assets/scoring_tokens/scoring_" + score + ".png"));
     }
     
@@ -71,6 +74,8 @@ public class BoardController {
                 
                 Button button = new Button(row + "," + col);
                 button.setOnAction(this::boardButton);
+                button.setOnMouseEntered(this::onMouseOverEnter);
+                button.setOnMouseExited(this::onMouseOverExit);
                 button.setMaxWidth(Double.MAX_VALUE);
                 button.setMaxHeight(Double.MAX_VALUE);
                 button.setOpacity(0);
@@ -85,11 +90,34 @@ public class BoardController {
     }
     
     @FXML
+    private void onMouseOverEnter(MouseEvent event) {
+        Button button = (Button) event.getSource();
+        Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
+        if( selected.contains(coord) ||
+            LocalModel.getInstance().getBoard().getTile(modelCoordinateTrasform(coord)) == null )
+            return;
+        button.setBackground(mouseOverBackgound);
+        button.setOpacity(0.35);
+    }
+    
+    private void onMouseOverExit(MouseEvent event) {
+        Button button = (Button) event.getSource();
+        Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
+        if( selected.contains(coord) ||
+            LocalModel.getInstance().getBoard().getTile(modelCoordinateTrasform(coord)) == null )
+            return;
+        button.setBackground(null);
+        button.setOpacity(0);
+    }
+    
+    @FXML
     private void boardButton(Event event) {
         
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
-        
+        Tile tile = LocalModel.getInstance().getBoard().getTile(modelCoordinateTrasform(coord));
+        if( tile == null || tile.equals(Tile.NOTILE) )
+            return;
         if( selected.contains(coord) ) {
             button.setBackground(null);
             button.setOpacity(0);
@@ -115,8 +143,14 @@ public class BoardController {
             button.setBackground(selectedBackground);
             button.setOpacity(0.4);
         }
-        System.out.println("Pressed " + coord.row() + coord.col());
-        
+    }
+    
+    private Coordinate guiCoordinateTransform(Coordinate coordinate) {
+        return new Coordinate(-(coordinate.row() - Board.maxSize + 1), coordinate.col());
+    }
+    
+    private Coordinate modelCoordinateTrasform(Coordinate coordinate) {
+        return new Coordinate(Board.maxSize - coordinate.row() - 1, coordinate.col());
     }
     
     private void updateSelected() {
