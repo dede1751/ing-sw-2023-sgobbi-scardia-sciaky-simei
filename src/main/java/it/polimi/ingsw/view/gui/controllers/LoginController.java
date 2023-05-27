@@ -2,16 +2,19 @@ package it.polimi.ingsw.view.gui.controllers;
 
 import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.controller.LobbyController.LobbyView;
+import it.polimi.ingsw.view.LocalModel;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.GUIApp;
+import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import javafx.scene.paint.Paint;
@@ -21,6 +24,13 @@ import java.util.List;
 public class LoginController {
     
     private static final View gui = AppClient.getViewInstance();
+    public DialogPane dialogPane;
+    public Text selectNumberBanner;
+    public Text createLobbiesBanner;
+    public Text joinLobbiesBanner;
+    public Text orBanner;
+    public Text insertNicknameBanner;
+    public ScrollPane scrollPaneLobbies;
     
     private boolean waitToJoin = false;
     
@@ -46,7 +56,7 @@ public class LoginController {
     
     private final List<Color> backgroundColorArray = List.of(Color.CYAN, Color.LIGHTBLUE);
     
-    public void setWaitToJoin(boolean b){
+    public void setWaitToJoin(boolean b) {
         waitToJoin = b;
     }
     
@@ -58,7 +68,8 @@ public class LoginController {
             
             Button joinButton = new Button("JOIN");
             joinButton.setOnAction(actionEvent -> {
-                if(waitToJoin) return;
+                if( waitToJoin )
+                    return;
                 waitToJoin = true;
                 gui.notifyJoinLobby(lobbyView.lobbyID());
             });
@@ -84,7 +95,44 @@ public class LoginController {
             waitToJoin = true;
             gui.notifyCreateLobby(playerNSelected);
         });
+        scrollPaneLobbies.setOpacity(0.90);
         AppClient.getViewInstance().notifyRequestLobby(null);
+        new Thread(() -> {
+            Object obj = new Object();
+            Platform.runLater(() -> {
+                selectNumberBanner.setFill(Color.LIGHTGRAY);
+                selectNumberBanner.setFont(new Font("Noto Sans", 15));
+                createLobbiesBanner.setFill(Color.LIGHTGRAY);
+                createLobbiesBanner.setFont(new Font("Noto Sans", 15));
+                orBanner.setFill(Color.LIGHTGRAY);
+                orBanner.setFont(new Font("Noto Sans", 15));
+                joinLobbiesBanner.setFill(Color.LIGHTGRAY);
+                joinLobbiesBanner.setFont(new Font("Noto Sans", 15));
+                insertNicknameBanner.setFill(Color.LIGHTGRAY);
+                insertNicknameBanner.setFont(new Font("Noto Sans", 15));
+            });
+            int i = 0;
+            synchronized(obj) {
+                while( !LocalModel.getInstance().isStarted() ) {
+                    
+
+                    int j = i+1;
+                    dialogPane.setBackground(new Background(
+                            new BackgroundImage(new Image("gui/assets/Publisher_material/Display_" + j + ".jpg"),
+                                                BackgroundRepeat.SPACE, BackgroundRepeat.REPEAT,
+                                                BackgroundPosition.DEFAULT,
+                                                BackgroundSize.DEFAULT)));
+                    
+                    try {
+                        obj.wait(10000);
+                    }
+                    catch( InterruptedException ignored ) {
+                    }
+                    i = (i+1)%5;
+                }
+            }
+        }).start();
+        
     }
     
     @FXML

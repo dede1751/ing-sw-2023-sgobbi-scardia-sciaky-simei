@@ -9,12 +9,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<DialogPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.LoginController">
+<DialogPane fx:id="dialogPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="467.0" prefWidth="850.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.LoginController">
     <content>
         <AnchorPane prefHeight="200.0" prefWidth="200.0">
             <children>
                 <TextField fx:id="nickname" layoutX="48.0" layoutY="52.0" prefHeight="26.0" prefWidth="230.0" />
-                <ScrollPane layoutX="48.0" layoutY="152.0" prefHeight="282.0" prefWidth="324.0">
+                <ScrollPane fx:id="scrollPaneLobbies" layoutX="48.0" layoutY="152.0" prefHeight="282.0" prefWidth="324.0">
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="636.0" prefWidth="307.0">
                             <children>
@@ -23,13 +23,13 @@
                         </AnchorPane>
                     </content>
                 </ScrollPane>
-                <Text layoutX="48.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert your Nickname (max 14 char)" />
+                <Text fx:id="insertNicknameBanner" layoutX="48.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Insert your Nickname (max 14 char)" />
                 <Button fx:id="nicknameButton" layoutX="278.0" layoutY="52.0" mnemonicParsing="false" onAction="#setNickname" text=" Set Nick" />
-                <Text layoutX="144.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="JOIN LOBBIES" />
-                <Text layoutX="425.0" layoutY="236.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OR" wrappingWidth="42.23900032043457" />
-                <Text layoutX="510.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CREATE LOBBIES" />
+                <Text fx:id="joinLobbiesBanner" layoutX="144.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="JOIN LOBBIES" />
+                <Text fx:id="orBanner" layoutX="425.0" layoutY="236.0" strokeType="OUTSIDE" strokeWidth="0.0" text="OR" wrappingWidth="42.23900032043457" />
+                <Text fx:id="createLobbiesBanner" layoutX="510.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CREATE LOBBIES" />
                 <Button fx:id="createLobbyButton" layoutX="510.0" layoutY="218.0" mnemonicParsing="false" text="CREATE" />
-                <Text layoutX="511.0" layoutY="166.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select number of players" />
+                <Text fx:id="selectNumberBanner" layoutX="511.0" layoutY="166.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select number of players" />
             <Button fx:id="refreshLobbies" layoutX="248.0" layoutY="113.0" mnemonicParsing="false" onAction="#refreshLobbies" text="Refresh Lobbies" />
             <ChoiceBox fx:id="nPlayerChoice" layoutX="511.0" layoutY="179.0" prefWidth="150.0" />
             </children>
