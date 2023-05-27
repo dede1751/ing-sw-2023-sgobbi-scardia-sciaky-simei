@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.view.LocalModel;
 import it.polimi.ingsw.view.gui.GUIApp;
+import it.polimi.ingsw.view.gui.GUIUtils;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -72,6 +73,7 @@ public class BoardController {
         for( int row = 0; row < Board.maxSize; row++ ) {
             for( int col = 0; col < Board.maxSize; col++ ) {
                 
+                //setting buttons
                 Button button = new Button(row + "," + col);
                 button.setOnAction(this::boardButton);
                 button.setOnMouseEntered(this::onMouseOverEnter);
@@ -79,10 +81,15 @@ public class BoardController {
                 button.setMaxWidth(Double.MAX_VALUE);
                 button.setMaxHeight(Double.MAX_VALUE);
                 button.setOpacity(0);
+                
+                //setting images
                 ImageView imageView = new ImageView();
                 boardMap.put(new Coordinate(row, col), new TileElement(button, imageView));
+                //set dimensions
                 imageView.setFitHeight(42);
                 imageView.setFitWidth(42);
+                
+                //add image and buttons
                 gridPane.add(imageView, col, row);
                 gridPane.add(button, col, row);
             }
@@ -94,7 +101,7 @@ public class BoardController {
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
         if( selected.contains(coord) ||
-            LocalModel.getInstance().getBoard().getTile(modelCoordinateTrasform(coord)) == null )
+            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) == null )
             return;
         button.setBackground(mouseOverBackgound);
         button.setOpacity(0.35);
@@ -104,7 +111,7 @@ public class BoardController {
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
         if( selected.contains(coord) ||
-            LocalModel.getInstance().getBoard().getTile(modelCoordinateTrasform(coord)) == null )
+            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) == null )
             return;
         button.setBackground(null);
         button.setOpacity(0);
@@ -115,7 +122,7 @@ public class BoardController {
         
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
-        Tile tile = LocalModel.getInstance().getBoard().getTile(modelCoordinateTrasform(coord));
+        Tile tile = LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize));
         if( tile == null || tile.equals(Tile.NOTILE) )
             return;
         if( selected.contains(coord) ) {
@@ -145,13 +152,6 @@ public class BoardController {
         }
     }
     
-    private Coordinate guiCoordinateTransform(Coordinate coordinate) {
-        return new Coordinate(-(coordinate.row() - Board.maxSize + 1), coordinate.col());
-    }
-    
-    private Coordinate modelCoordinateTrasform(Coordinate coordinate) {
-        return new Coordinate(Board.maxSize - coordinate.row() - 1, coordinate.col());
-    }
     
     private void updateSelected() {
         selection.getChildren().clear();

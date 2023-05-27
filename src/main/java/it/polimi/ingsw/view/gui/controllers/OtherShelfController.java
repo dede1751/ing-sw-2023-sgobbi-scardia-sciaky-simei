@@ -1,9 +1,12 @@
 package it.polimi.ingsw.view.gui.controllers;
 
 
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.view.gui.GUIUtils;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -11,7 +14,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OtherShelfController {
     @FXML
@@ -23,12 +28,14 @@ public class OtherShelfController {
     @FXML
     private Text score;
     
+    private Map<Coordinate, ImageView> imageMap = new HashMap<>();
+    
     @FXML
     public void setPlayerName(String name) {
         playerName.setText(name);
     }
     
-    public String getPlayerNickname(){
+    public String getPlayerNickname() {
         return playerName.getText();
     }
     
@@ -39,45 +46,22 @@ public class OtherShelfController {
     
     @FXML
     void updateOtherShelf(Shelf shelf) {
-        
-        if( shelf != null ) {
-            var matrix = shelf.getAllShelf();
-            for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
-                for( int j = 0; j < Shelf.N_COL; j++ ) {
-                    StringBuilder sb = new StringBuilder();
-                    
-                    switch( matrix[i][j].type() ) {
-                        case TROPHIES -> sb.append("Trofei1.");
-                        case CATS -> sb.append("Gatti1.");
-                        case BOOKS -> sb.append("Libri1.");
-                        case PLANTS -> sb.append("Piante1.");
-                        case FRAMES -> sb.append("Cornici1.");
-                        case GAMES -> sb.append("Giochi1.");
-                        
-                    }
-                    
-                    switch( matrix[i][j].sprite() ) {
-                        case ONE -> sb.append("1.png");
-                        case TWO -> sb.append("2.png");
-                        case THREE -> sb.append("3.png");
-                    }
-                    
-                    if( matrix[i][j] != null ) {
-                        ImageView imageView = new ImageView(new Image("gui/assets/item_tiles/" + sb.toString()));
-                        imageView.setPreserveRatio(true);
-                        imageView.setFitWidth(40);
-                        gridPane1.getChildren().add(imageView);
-                        GridPane.setConstraints(imageView, j, -(i - Shelf.N_COL));
-                        GridPane.setValignment(imageView, VPos.CENTER);
-                    }
-                }
-                
-            }
-        }
+        GUIUtils.updateShelf(shelf, imageMap);
     }
     
     @FXML
     private void initialize() {
+        for( int i = 0; i < Shelf.N_ROW; i++ ) {
+            for( int j = 0; j < Shelf.N_COL; j++ ) {
+                ImageView imageView = new ImageView();
+                imageView.setPreserveRatio(true);
+                imageView.setFitHeight(36);
+                gridPane1.add(imageView, j, i);
+                imageMap.put(new Coordinate(i, j), imageView);
+                GridPane.setValignment(imageView, VPos.CENTER);
+                GridPane.setHalignment(imageView, HPos.CENTER);
+            }
+        }
     }
     
     

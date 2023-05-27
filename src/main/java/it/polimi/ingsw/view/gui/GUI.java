@@ -1,24 +1,20 @@
 package it.polimi.ingsw.view.gui;
 
-import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.controllers.BoardController;
-import it.polimi.ingsw.view.messages.Move;
-import javafx.animation.PauseTransition;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
 
 import static it.polimi.ingsw.model.messages.CommonGoalMessage.*;
 import static javafx.application.Platform.*;
@@ -98,7 +94,7 @@ public class GUI extends View {
         if( !msg.getPayload().isOk() ) {
             if( model.isStarted() ) {
                 runLater(() ->
-                GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController().resetSelected());
+                                 GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController().resetSelected());
             }else if( msg.getPayload().Action().matches(
                     "RecoverLobbyMessage|JoinLobbyMessage|CreateLobbyMessage") ) {
                 GUIApp.getLoginController().setWaitToJoin(false);
@@ -108,9 +104,26 @@ public class GUI extends View {
             p.setAutoHide(true);
             p.setAutoFix(true);
             Label label = new Label(msg.getPayload().msg() + " from action : " + msg.getPayload().Action());
-            label.setStyle(" -fx-background-color: #eee69b;");
+            label.setStyle(" -fx-background-color: #b06b51;");
+            label.setFont(new Font("Noto Sans", 16));
             p.getContent().add(label);
             runLater(() -> p.show(s));
+            new Thread(() -> {
+                Object object = new Object();
+                synchronized(object) {
+                    try {
+                        object.wait(2000);
+                        if( p.isShowing() ) {
+                            runLater(p::hide);
+                        }
+                    }
+                    catch( InterruptedException e ) {
+                        if( p.isShowing() ) {
+                            runLater(p::hide);
+                        }
+                    }
+                }
+            }).start();
         }
     }
     
