@@ -434,64 +434,33 @@ public class TUIUtils {
                 """;
         
         int pgScore = model.getPgScore(nickname);
+    
+        sb.append(" 1 │ 2 │ 3 │ 4 │ 5 │ 6 ")
+                .append(grid);
         
         switch( pgScore ) {
-            case 0 -> sb.append(" 1 │ 2 │ 3 │ 4 │ 5 │ 6 ")
-                    .append(grid)
-                    .append(" 1 │ 2 │ 4 │ 6 │ 9 │ 12 ");
+            case 0 -> sb.append(" 1 │ 2 │ 4 │ 6 │ 9 │ 12 ");
             case 1 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
-                    .append(" 2 │ 3 │ 4 │ 5 │ 6 ")
-                    .append(grid)
-                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
                     .append(" 2 │ 4 │ 6 │ 9 │ 12 ");
             case 2 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
-                    .append(" 3 │ 4 │ 5 │ 6 ")
-                    .append(grid)
-                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
                     .append(" 4 │ 6 │ 9 │ 12 ");
             case 4 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│")
-                    .append(" 4 │ 5 │ 6 ")
-                    .append(grid)
-                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
                     .append(" 6 │ 9 │ 12 ");
             case 6 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
-                    .append(" 5 │ 6 ")
-                    .append(grid)
-                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
                     .append(" 9 │ 12 ");
             case 9 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
-                                ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│")
-                    .append(" 6 ")
-                    .append(grid)
-                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│")
                     .append(" 12 ");
             case 12 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
-                                 ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
-                                 ANSI_BROWN_BOLD + " 3 " + ANSI_RESET + "│" +
-                                 ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
-                                 ANSI_BROWN_BOLD + " 5 " + ANSI_RESET + "│" +
-                                 ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
-                    .append(grid)
-                    .append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
                             ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +

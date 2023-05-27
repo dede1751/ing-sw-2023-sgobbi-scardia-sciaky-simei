@@ -469,6 +469,101 @@ class GameControllerTest {
             }
         }
         
-        //TODO setAdjacentScore testing
+    }
+    
+    
+    @Tag("calculateAdjency")
+    @Nested
+    class calculateAdjencyTest {
+        
+        @Test
+        public void calculateAdjencyTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+                
+                int score = model.getCurrentPlayer().getScore();
+                int adjencyScore = controller.calculateAdjacency( model.getCurrentPlayer().getShelf() );
+                
+                controller.turnManager();
+                int newScore = model.getCurrentPlayer().getScore();
+                
+                assertEquals( score + adjencyScore, newScore );
+                assertEquals( adjencyScore, 3 );
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    
+        @Test
+        public void calculateAdjencyFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+            
+                int score = model.getCurrentPlayer().getScore();
+                int adjencyScore = controller.calculateAdjacency( model.getCurrentPlayer().getShelf() );
+            
+                controller.turnManager();
+                int newScore = model.getCurrentPlayer().getScore();
+            
+                assertNotEquals( score + 5, newScore );
+                assertNotEquals( adjencyScore, 5 );
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    }
+    
+    
+    @Tag("setNextPlayer")
+    @Nested
+    class setNextPlayerTest {
+        
+        
+        @Test
+        public void setNextPlayerTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson =
+                        new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                              new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+        
+                var currentPlayerIndex = model.getCurrentPlayerIndex();
+                
+                controller.nextPlayerSetter();
+                
+                var newCurrentPlayerIndex = model.getCurrentPlayerIndex();
+                var newCurrentPlayer = model.getCurrentPlayer();
+                
+                assertEquals( currentPlayerIndex + 1, newCurrentPlayerIndex );
+                assertEquals( model.getPlayers().get(currentPlayerIndex + 1), newCurrentPlayer );
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+        
     }
 }
