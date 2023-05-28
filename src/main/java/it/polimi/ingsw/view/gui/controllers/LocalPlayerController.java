@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,8 @@ public class LocalPlayerController {
     private Button b3;
     @FXML
     private Button b4;
+    @FXML
+    private Text score;
     
     @FXML
     private GridPane localPlayerGrid;
@@ -65,6 +68,10 @@ public class LocalPlayerController {
         GUIUtils.threadPool.submit(() -> GUIUtils.updateShelf(shelf, imageMap));
     }
     
+    @FXML
+    public void setScore(int score) {
+        this.score.setText("Score: " + score);
+    }
     private void buttonAction(int column) {
         AppClient.getViewInstance().notifyMove(
                 new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), column));

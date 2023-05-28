@@ -41,7 +41,7 @@ public class OtherShelfController {
     
     @FXML
     public void setScore(int score) {
-        this.score.setText(String.valueOf(score));
+        this.score.setText("Score: " + score);
     }
     
     @FXML
@@ -63,6 +63,8 @@ public class OtherShelfController {
             }
         }
     }
+    
+    
     
     
 }

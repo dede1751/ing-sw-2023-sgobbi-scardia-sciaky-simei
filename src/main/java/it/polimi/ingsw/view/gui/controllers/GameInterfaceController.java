@@ -5,7 +5,9 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
+import java.sql.Struct;
 import java.util.List;
+import java.util.Objects;
 
 public class GameInterfaceController {
     @FXML
@@ -57,8 +59,10 @@ public class GameInterfaceController {
             shelfControllerList.get(i).setPlayerName(nicknames.get(i));
             shelfControllerList.get(i).updateOtherShelf(shelves.get(i));
             shelfControllerList.get(i).setScore(scores.get(i));
+            
             shelfList.get(i).setOpacity(1);
         }
+        localPlayerController.setScore(0);
     }
     
     public void updateShelf(Shelf shelf, String nickname) {
@@ -69,10 +73,23 @@ public class GameInterfaceController {
     
     /**
      * @param score
-     * @param playerNumber
+     * @param nickname
      */
-    public void updateScore(int score, int playerNumber) {
-        shelfControllerList.get(playerNumber).setScore(score);
+    public void updateScore(int score, String nickname) {
+        
+        Boolean flag=true;
+        for( OtherShelfController otherShelfController : shelfControllerList ) {
+            if( Objects.equals(otherShelfController.getPlayerNickname(), nickname) ) {
+                otherShelfController.setScore(score);
+                flag=false;
+            }
+            
+        }
+        if(flag){
+            localPlayerController.setScore(score);
+        }
+       
+        
     }
     
     public LocalPlayerController getLocalPlayerController() {
