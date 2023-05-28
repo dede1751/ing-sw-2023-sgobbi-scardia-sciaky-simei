@@ -38,7 +38,7 @@
       </AnchorPane>
       <AnchorPane layoutX="1232.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0">
          <children>
-            <fx:include source="chat.fxml" />
+            <fx:include  fx:id="chat" source="chat.fxml" />
          </children>
       </AnchorPane>
    </children>

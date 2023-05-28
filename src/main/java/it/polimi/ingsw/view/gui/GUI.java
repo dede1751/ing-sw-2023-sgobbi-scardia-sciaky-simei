@@ -6,6 +6,7 @@ import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.controllers.BoardController;
 
 import it.polimi.ingsw.view.gui.controllers.OtherShelfController;
+import it.polimi.ingsw.view.tui.TUIUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -152,7 +153,16 @@ public class GUI extends View {
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
-        //TODO
+        this.model.addChatMessage(msg.getSender(), msg.getPayload(), msg.getDestination());
+        if( this.model.isStarted() ) {
+            runLater(()->{
+                
+                GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
+                        msg.getSender()+": "+msg.getPayload());
+                
+                
+            });
+        }
         
     }
     
@@ -161,7 +171,7 @@ public class GUI extends View {
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
-        //TODO
+        
         this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
         
         

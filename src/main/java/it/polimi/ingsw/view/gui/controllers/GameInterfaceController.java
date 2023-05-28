@@ -11,6 +11,12 @@ import java.util.Objects;
 
 public class GameInterfaceController {
     @FXML
+    public AnchorPane chat;
+    
+    @FXML
+    public ChatController chatController;
+    
+    @FXML
     private AnchorPane board;
     @FXML
     private BoardController boardController;
@@ -26,6 +32,8 @@ public class GameInterfaceController {
     private OtherShelfController otherShelf2Controller;
     @FXML
     private OtherShelfController otherShelf3Controller;
+    
+   
     
     
     @FXML
@@ -98,5 +106,9 @@ public class GameInterfaceController {
     
     public BoardController getBoardController() {
         return boardController;
+    }
+    
+    public ChatController getChatController(){
+        return chatController;
     }
 }
