@@ -10,11 +10,18 @@ public class MainController {
     private GameInterfaceController gameInterfaceController;
     
     @FXML
+    public ChatController chatController;
+    
+    @FXML
     public void initialize(){
     
     }
     
     public GameInterfaceController getGameInterfaceController() {
         return gameInterfaceController;
+    }
+    
+    public ChatController getChatController(){
+        return chatController;
     }
 }

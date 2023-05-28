@@ -157,8 +157,8 @@ public class GUI extends View {
         if( this.model.isStarted() ) {
             runLater(()->{
                 
-                GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                        msg.getSender()+": "+msg.getPayload());
+                GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                          msg.getSender() +": "+msg.getPayload());
                 
                 
             });

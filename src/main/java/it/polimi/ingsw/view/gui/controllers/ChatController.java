@@ -50,6 +50,6 @@ public class ChatController {
     }
     public void writeChatMessage(String message){
         
-        chatBox.getChildren().add(new Text("\n"+message));
+        chatBox.getChildren().add(new Text(" " +message+"\n"));
     }
 }

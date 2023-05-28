@@ -91,6 +91,7 @@ public class LoginController {
     
     @FXML
     public void initialize() {
+        
         nicknameConfirmBanner.setOpacity(0);
         gameWaitingText.setOpacity(0);
         nPlayerChoice.getItems().add(2);

@@ -13,8 +13,7 @@ public class GameInterfaceController {
     @FXML
     public AnchorPane chat;
     
-    @FXML
-    public ChatController chatController;
+   
     
     @FXML
     private AnchorPane board;
@@ -108,7 +107,5 @@ public class GameInterfaceController {
         return boardController;
     }
     
-    public ChatController getChatController(){
-        return chatController;
-    }
+    
 }

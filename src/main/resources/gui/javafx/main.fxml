@@ -11,5 +11,11 @@
         <fx:include fx:id="gameInterface" source="gameInterface.fxml"/>
       </content>
     </Tab>
+    <Tab text="Chat">
+
+      <content>
+        <fx:include  fx:id="chat" source="chat.fxml" />
+      </content>
+    </Tab>
   </tabs>
 </TabPane>
