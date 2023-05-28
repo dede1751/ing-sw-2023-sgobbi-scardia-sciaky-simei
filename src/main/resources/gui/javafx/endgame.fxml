@@ -39,7 +39,7 @@
       </ImageView>
       <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="274.0" layoutY="203.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../assets/endgame/3Player_chair.gif" />
+            <Image url="@../assets/endgame/3Player.gif" />
          </image>
       </ImageView>
       <ImageView fitHeight="86.0" fitWidth="77.0" layoutX="410.0" layoutY="401.0" pickOnBounds="true" preserveRatio="true">
