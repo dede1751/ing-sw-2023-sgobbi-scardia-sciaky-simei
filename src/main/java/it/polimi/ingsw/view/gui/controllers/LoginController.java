@@ -4,6 +4,7 @@ import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.controller.LobbyController.LobbyView;
 import it.polimi.ingsw.view.LocalModel;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.gui.GUIUtils;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -95,52 +96,59 @@ public class LoginController {
         nPlayerChoice.getItems().add(2);
         nPlayerChoice.getItems().add(3);
         nPlayerChoice.getItems().add(4);
+        
         nPlayerChoice.setOnAction((event -> playerNSelected = nPlayerChoice.getSelectionModel().getSelectedItem()));
+        
         createLobbyButton.setOnAction(event -> {
             if( waitToJoin )
                 return;
             waitToJoin = true;
             gui.notifyCreateLobby(playerNSelected);
         });
+        
         scrollPaneLobbies.setOpacity(0.90);
         AppClient.getViewInstance().notifyRequestLobby(null);
-        new Thread(() -> {
-            Object obj = new Object();
-            Platform.runLater(() -> {
-                selectNumberBanner.setFill(Color.LIGHTGRAY);
-                selectNumberBanner.setFont(new Font("Noto Sans", 15));
-                createLobbiesBanner.setFill(Color.LIGHTGRAY);
-                createLobbiesBanner.setFont(new Font("Noto Sans", 15));
-                orBanner.setFill(Color.LIGHTGRAY);
-                orBanner.setFont(new Font("Noto Sans", 15));
-                joinLobbiesBanner.setFill(Color.LIGHTGRAY);
-                joinLobbiesBanner.setFont(new Font("Noto Sans", 15));
-                insertNicknameBanner.setFill(Color.LIGHTGRAY);
-                insertNicknameBanner.setFont(new Font("Noto Sans", 15));
-                gameWaitingText.setFill(Color.LIGHTGRAY);
-                nicknameConfirmBanner.setFill(Color.LIGHTGRAY);
-            });
-            int i = 0;
-            synchronized(obj) {
-                while( !LocalModel.getInstance().isStarted() ) {
-                    
-                    
-                    int j = i + 1;
-                    dialogPane.setBackground(new Background(
-                            new BackgroundImage(new Image("gui/assets/Publisher_material/Display_" + j + ".jpg"),
-                                                BackgroundRepeat.SPACE, BackgroundRepeat.REPEAT,
-                                                BackgroundPosition.DEFAULT,
-                                                BackgroundSize.DEFAULT)));
-                    
-                    try {
-                        obj.wait(10000);
-                    }
-                    catch( InterruptedException ignored ) {
-                    }
-                    i = (i + 1) % 5;
-                }
-            }
-        }).start();
+        
+        selectNumberBanner.setFill(Color.LIGHTGRAY);
+        selectNumberBanner.setFont(new Font("Noto Sans", 15));
+        
+        createLobbiesBanner.setFill(Color.LIGHTGRAY);
+        createLobbiesBanner.setFont(new Font("Noto Sans", 15));
+        
+        orBanner.setFill(Color.LIGHTGRAY);
+        orBanner.setFont(new Font("Noto Sans", 15));
+        
+        joinLobbiesBanner.setFill(Color.LIGHTGRAY);
+        joinLobbiesBanner.setFont(new Font("Noto Sans", 15));
+        
+        insertNicknameBanner.setFill(Color.LIGHTGRAY);
+        insertNicknameBanner.setFont(new Font("Noto Sans", 15));
+        
+        gameWaitingText.setFill(Color.LIGHTGRAY);
+        nicknameConfirmBanner.setFill(Color.LIGHTGRAY);
+        
+        //Update background thread
+        GUIUtils.threadPool.submit(() -> {
+                                       int i = 0;
+                                       while( !LocalModel.getInstance().isStarted() ) {
+                                           
+                                           int j = i + 1;
+                                           dialogPane.setBackground(new Background(
+                                                   new BackgroundImage(new Image("gui/assets/Publisher_material/Display_" + j + ".jpg"),
+                                                                       BackgroundRepeat.SPACE, BackgroundRepeat.REPEAT,
+                                                                       BackgroundPosition.DEFAULT,
+                                                                       BackgroundSize.DEFAULT)));
+                                           
+                                           //noinspection BusyWait
+                                           try {
+                                               Thread.sleep(10000);
+                                           }
+                                           catch( InterruptedException ignored ) {
+                                           }
+                                           i = (i + 1) % 5;
+                                       }
+                                   }
+        );
         
     }
     
@@ -156,16 +164,26 @@ public class LoginController {
     
     @FXML
     public void setNickname(ActionEvent event) {
-        if( waitToJoin )
-            return;
-        String nickname = this.nickname.getText();
-        nicknameConfirmBanner.setText("Nickname :" + nickname);
-        nicknameConfirmBanner.setOpacity(1);
-        this.nickname.setText("");
-        gui.setNickname(nickname);
-        if( gui.getLobbies().stream().anyMatch((l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
-            gui.notifyRecoverLobby();
-        }
+        GUIUtils
+                .threadPool
+                .submit(() -> {
+                            if( waitToJoin )
+                                return;
+                            String nickname = this.nickname.getText();
+                            if( nickname == null || nickname.equals(""))
+                                return;
+                            Platform.runLater(() -> {
+                                nicknameConfirmBanner.setText("Nickname :" + nickname);
+                                nicknameConfirmBanner.setOpacity(1);
+                                this.nickname.setText("");
+                                gui.setNickname(nickname);
+                            });
+                            if( gui.getLobbies().stream().anyMatch(
+                                    (l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                                gui.notifyRecoverLobby();
+                            }
+                        }
+                );
     }
     
     @FXML

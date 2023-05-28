@@ -59,12 +59,15 @@ public class GUIApp extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        
         //set main stage
         mainStage = stage;
+        
         //load login page
         FXMLLoader loginLoader = new FXMLLoader(GraphicalResources.getFXML("login.fxml"));
         loginRoot = loginLoader.load();
         loginControllerInstance = loginLoader.getController();
+        
         //load main game page
         FXMLLoader mainLoader = new FXMLLoader(GraphicalResources.getFXML("main.fxml"));
         mainRoot = mainLoader.load();

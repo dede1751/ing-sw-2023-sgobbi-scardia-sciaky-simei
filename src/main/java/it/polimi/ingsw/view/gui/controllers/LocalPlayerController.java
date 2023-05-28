@@ -62,8 +62,7 @@ public class LocalPlayerController {
     
     @FXML
     public void updateShelf(Shelf shelf) {
-        
-       GUIUtils.updateShelf(shelf, imageMap);
+        GUIUtils.threadPool.submit(() -> GUIUtils.updateShelf(shelf, imageMap));
     }
     
     private void buttonAction(int column) {

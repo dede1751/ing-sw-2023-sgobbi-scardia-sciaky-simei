@@ -28,7 +28,7 @@ public class OtherShelfController {
     @FXML
     private Text score;
     
-    private Map<Coordinate, ImageView> imageMap = new HashMap<>();
+    private final Map<Coordinate, ImageView> imageMap = new HashMap<>();
     
     @FXML
     public void setPlayerName(String name) {
@@ -46,7 +46,7 @@ public class OtherShelfController {
     
     @FXML
     void updateOtherShelf(Shelf shelf) {
-        GUIUtils.updateShelf(shelf, imageMap);
+       GUIUtils.threadPool.submit(() -> GUIUtils.updateShelf(shelf, imageMap));
     }
     
     @FXML

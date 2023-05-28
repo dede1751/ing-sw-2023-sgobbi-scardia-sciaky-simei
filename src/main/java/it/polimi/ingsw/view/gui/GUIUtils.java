@@ -1,14 +1,19 @@
 package it.polimi.ingsw.view.gui;
 
-import it.polimi.ingsw.model.Board;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GUIUtils {
+    
+    
+    public static final ExecutorService threadPool = Executors.newCachedThreadPool();
     
     public static Coordinate guiCoordinateTransform(Coordinate coordinate, int maxColSize) {
         return new Coordinate(-(coordinate.row() - maxColSize + 1), coordinate.col());
@@ -18,7 +23,7 @@ public class GUIUtils {
         return new Coordinate(maxColSize - coordinate.row() - 1, coordinate.col());
     }
     
-    public static void updateShelf(Shelf shelf, Map<Coordinate, ImageView> imageMap){
+    public static void updateShelf(Shelf shelf, Map<Coordinate, ImageView> imageMap) {
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();
             
@@ -27,10 +32,7 @@ public class GUIUtils {
                     if( matrix[i][j] != null ) {
                         Coordinate guiCoord = GUIUtils.guiCoordinateTransform(new Coordinate(i, j), Shelf.N_ROW);
                         ImageView image = imageMap.get(guiCoord);
-                        /*
-                        if( image.getImage() != null )
-                            continue;
-                        */
+                        
                         StringBuilder sb = new StringBuilder();
                         
                         switch( matrix[i][j].type() ) {
@@ -48,7 +50,7 @@ public class GUIUtils {
                             case TWO -> sb.append("2.png");
                             case THREE -> sb.append("3.png");
                         }
-                        image.setImage(new Image("gui/assets/item_tiles/" + sb.toString()));
+                        Platform.runLater(() -> image.setImage(new Image("gui/assets/item_tiles/" + sb)));
                     }
                 }
                 

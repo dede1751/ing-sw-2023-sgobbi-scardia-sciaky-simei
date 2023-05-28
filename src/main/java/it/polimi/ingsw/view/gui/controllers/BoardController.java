@@ -6,6 +6,7 @@ import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.view.LocalModel;
 import it.polimi.ingsw.view.gui.GUIApp;
 import it.polimi.ingsw.view.gui.GUIUtils;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -35,12 +36,12 @@ public class BoardController {
     private ImageView commonGoalY;
     
     public void setCommonGoalX(int id) {
-        id = id+1;
+        id = id + 1;
         this.commonGoalXStack.setImage(new Image("gui/assets/common_goal_cards/" + id + ".png"));
     }
     
     public void setCommonGoalY(int id) {
-        id = id+1;
+        id = id + 1;
         this.commonGoalYStack.setImage(new Image("gui/assets/common_goal_cards/" + id + ".png"));
     }
     
@@ -101,7 +102,8 @@ public class BoardController {
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
         if( selected.contains(coord) ||
-            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) == null )
+            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) ==
+            null )
             return;
         button.setBackground(mouseOverBackgound);
         button.setOpacity(0.35);
@@ -111,7 +113,8 @@ public class BoardController {
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
         if( selected.contains(coord) ||
-            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) == null )
+            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) ==
+            null )
             return;
         button.setBackground(null);
         button.setOpacity(0);
@@ -177,40 +180,48 @@ public class BoardController {
     
     
     public void updateBoard(Board board) {
-        Map<Coordinate, Tile> tiles = board.getTiles();
-        for( Coordinate coordinate : tiles.keySet() ) {
-            StringBuilder sb = new StringBuilder();
-            boolean noTileFlag = false;
-            // Access each coordinate
-            int x = coordinate.row();
-            int y = coordinate.col();
-            switch( tiles.get(coordinate).type() ) {
-                case TROPHIES -> sb.append("Trofei1.");
-                case CATS -> sb.append("Gatti1.");
-                case BOOKS -> sb.append("Libri1.");
-                case PLANTS -> sb.append("Piante1.");
-                case FRAMES -> sb.append("Cornici1.");
-                case GAMES -> sb.append("Giochi1.");
-                case NOTILE -> noTileFlag = true;
-            }
-            
-            switch( tiles.get(coordinate).sprite() ) {
-                case ONE -> sb.append("1.png");
-                case TWO -> sb.append("2.png");
-                case THREE -> sb.append("3.png");
-            }
-            Coordinate fixedCoord = new Coordinate(-(x - Board.maxSize + 1), y);
-            ImageView image = boardMap.get(fixedCoord).imageView();
-            if( !noTileFlag ) {
-                image.setImage(new Image("gui/assets/item_tiles/" + sb));
-                image.setFitHeight(42);
-                image.setFitWidth(42);
-            }else {
-                image.setImage(null);
-            }
-            
-        }
-        
+        GUIUtils.threadPool
+                .submit(() -> {
+                            Map<Coordinate, Tile> tiles = board.getTiles();
+                            for( Coordinate coordinate : tiles.keySet() ) {
+                                StringBuilder sb = new StringBuilder();
+                                boolean noTileFlag = false;
+                                // Access each coordinate
+                                int x = coordinate.row();
+                                int y = coordinate.col();
+                                //select correct image
+                                switch( tiles.get(coordinate).type() ) {
+                                    case TROPHIES -> sb.append("Trofei1.");
+                                    case CATS -> sb.append("Gatti1.");
+                                    case BOOKS -> sb.append("Libri1.");
+                                    case PLANTS -> sb.append("Piante1.");
+                                    case FRAMES -> sb.append("Cornici1.");
+                                    case GAMES -> sb.append("Giochi1.");
+                                    case NOTILE -> noTileFlag = true;
+                                }
+                                
+                                switch( tiles.get(coordinate).sprite() ) {
+                                    case ONE -> sb.append("1.png");
+                                    case TWO -> sb.append("2.png");
+                                    case THREE -> sb.append("3.png");
+                                }
+                                
+                                Coordinate fixedCoord = new Coordinate(-(x - Board.maxSize + 1), y);
+                                ImageView image = boardMap.get(fixedCoord).imageView();
+                                boolean finalNoTileFlag = noTileFlag;
+                                //Update images
+                                Platform.runLater(() -> {
+                                    if( !finalNoTileFlag ) {
+                                        image.setImage(new Image("gui/assets/item_tiles/" + sb));
+                                        image.setFitHeight(42);
+                                        image.setFitWidth(42);
+                                    }else {
+                                        image.setImage(null);
+                                    }
+                                });
+                            }
+                        }
+                );
     }
 }
 
