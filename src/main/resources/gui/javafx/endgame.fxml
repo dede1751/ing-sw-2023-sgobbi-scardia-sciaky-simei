@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="1045.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:controller="it.polimi.ingsw.view.gui.controllers.EndgameController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="1045.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <ImageView fitHeight="610.0" fitWidth="1077.0" layoutX="-8.0" layoutY="-5.0" pickOnBounds="true" preserveRatio="true">
          <image>
@@ -17,49 +16,49 @@
             <Image url="@../assets/endgame/VictoryRoyaleSlate.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="276.0" fitWidth="364.0" layoutX="419.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="PC1" fitHeight="276.0" fitWidth="364.0" layoutX="419.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/endgame/1Player_chair.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="200.0" fitWidth="207.0" layoutX="348.0" layoutY="386.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="PC4" fitHeight="200.0" fitWidth="207.0" layoutX="348.0" layoutY="386.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/endgame/4Player_chair.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="207.0" fitWidth="182.0" layoutX="266.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="PC3" fitHeight="207.0" fitWidth="182.0" layoutX="266.0" layoutY="220.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/endgame/3Player_chair.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="182.0" fitWidth="155.0" layoutX="610.0" layoutY="286.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="PC2" fitHeight="182.0" fitWidth="155.0" layoutX="610.0" layoutY="286.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/endgame/2Player_chair.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="274.0" layoutY="203.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="P3" fitHeight="150.0" fitWidth="200.0" layoutX="274.0" layoutY="203.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/endgame/3Player.gif" />
          </image>
       </ImageView>
-      <ImageView fitHeight="86.0" fitWidth="77.0" layoutX="410.0" layoutY="401.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="P4" fitHeight="86.0" fitWidth="77.0" layoutX="410.0" layoutY="401.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/endgame/4Player.gif" />
          </image>
       </ImageView>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="570.0" layoutY="236.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="P2" fitHeight="150.0" fitWidth="200.0" layoutX="570.0" layoutY="236.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@../assets/endgame/2player.gif" />
+            <Image url="@../assets/endgame/2Player.gif" />
          </image>
       </ImageView>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="430.0" layoutY="174.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="P1" fitHeight="150.0" fitWidth="200.0" layoutX="430.0" layoutY="174.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../assets/endgame/1Player.gif" />
          </image>
       </ImageView>
-      <Text layoutX="300.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 3" />
-      <Text layoutX="494.0" layoutY="391.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 1" />
-      <Text layoutX="721.0" layoutY="268.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 2" />
-      <Text layoutX="518.0" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 4" />
+      <Text fx:id="player3" layoutX="300.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 3" />
+      <Text fx:id="player1" layoutX="494.0" layoutY="391.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 1" />
+      <Text fx:id="player2" layoutX="721.0" layoutY="268.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 2" />
+      <Text fx:id="player4" layoutX="518.0" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 4" />
    </children>
 </Pane>
