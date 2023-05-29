@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.HashMap;
@@ -70,6 +71,7 @@ public class LocalPlayerController {
     
     @FXML
     public void setScore(int score) {
+        this.score.setFont(new Font("Noto Sans", 25));
         this.score.setText("Score: " + score);
     }
     private void buttonAction(int column) {

@@ -3,19 +3,16 @@ package it.polimi.ingsw.view.gui.controllers;
 
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.view.gui.GUIUtils;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class OtherShelfController {
@@ -32,6 +29,7 @@ public class OtherShelfController {
     
     @FXML
     public void setPlayerName(String name) {
+        playerName.setFont(new Font("Noto Sans", 20));
         playerName.setText(name);
     }
     
@@ -41,6 +39,7 @@ public class OtherShelfController {
     
     @FXML
     public void setScore(int score) {
+        this.score.setFont(new Font("Noto Sans", 20));
         this.score.setText("Score: " + score);
     }
     
