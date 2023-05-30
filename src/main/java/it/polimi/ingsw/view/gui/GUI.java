@@ -2,15 +2,24 @@ package it.polimi.ingsw.view.gui;
 
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.messages.*;
+import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.controllers.BoardController;
+<<<<<<< HEAD
+=======
+
+import it.polimi.ingsw.view.gui.controllers.EndgameController;
+>>>>>>> 836a194b2579f32f53884cf89020095a12336268
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +53,20 @@ public class GUI extends View {
     
     @Override
     public void onMessage(EndGameMessage msg) {
-    
+        try {
+            FXMLLoader endgame = new FXMLLoader(ResourcesManager.GraphicalResources.getFXML("endgame.fxml"));
+            EndgameController.setEndgame(msg.getPayload());
+            Parent root = endgame.load();
+            runLater(() -> {
+                         GUIApp.getMainStage().setScene(new Scene(root));
+                         GUIApp.getMainStage().setTitle("The winner is : " + msg.getPayload().winner());
+                     }
+            );
+        }
+        catch( IOException e ) {
+            throw new RuntimeException(e);
+        }
+        
     }
     
     @Override
@@ -61,6 +83,7 @@ public class GUI extends View {
             }
         }
         runLater(() -> {
+            GUIApp.getMainControllerInstance().getGameTab().setText(nickname);
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
                     model.getShelf(nickname));
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setPersonalGoal(
@@ -153,10 +176,10 @@ public class GUI extends View {
     public void onMessage(IncomingChatMessage msg) {
         this.model.addChatMessage(msg.getSender(), msg.getPayload(), msg.getDestination());
         if( this.model.isStarted() ) {
-            runLater(()->{
+            runLater(() -> {
                 
                 GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
-                          msg.getSender() +": "+msg.getPayload());
+                        msg.getSender() + ": " + msg.getPayload());
                 
                 
             });
@@ -173,9 +196,10 @@ public class GUI extends View {
         this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
         
         
-        runLater(()->{
+        runLater(() -> {
             
-                GUIApp.getMainControllerInstance().getGameInterfaceController().updateScore(this.model.getPoints(msg.getPayload().player()),msg.getPayload().player());
+            GUIApp.getMainControllerInstance().getGameInterfaceController().updateScore(
+                    this.model.getPoints(msg.getPayload().player()), msg.getPayload().player());
             
             
         });
@@ -210,8 +234,7 @@ public class GUI extends View {
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
-        //TODO
-        
+        runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(nickname + "| current --> " + msg.getPayload() ));
     }
     
     @Override

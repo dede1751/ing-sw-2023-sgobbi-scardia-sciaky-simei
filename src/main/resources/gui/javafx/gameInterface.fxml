@@ -8,9 +8,6 @@
 <?import javafx.scene.layout.VBox?>
 
 <Pane fx:controller="it.polimi.ingsw.view.gui.controllers.GameInterfaceController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1138.0" prefWidth="2031.0"  xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
-   <stylesheets>
-      <URL value="@Style.css" />
-   </stylesheets>
    <children>
       <ImageView fitHeight="2209.0" fitWidth="2033.0" pickOnBounds="true" preserveRatio="true">
          <image>

@@ -1,11 +1,14 @@
 package it.polimi.ingsw.view.gui.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.Pane;
 
 public class MainController {
     @FXML
-    public Pane gameInterface;
+    private Pane gameInterface;
+    @FXML
+    private Tab gameTab;
     @FXML
     private GameInterfaceController gameInterfaceController;
     
@@ -25,5 +28,8 @@ public class MainController {
         return chatController;
     }
     
-    
+
+    public Tab getGameTab() {
+        return gameTab;
+    }
 }

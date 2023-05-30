@@ -239,14 +239,26 @@ public class GameModel {
     public void addCurrentPlayerCommongGoalScore(int score, CGType t) {
         Player player = this.getCurrentPlayer();
         int i = player.addCommonGoalScore(score);
+        int newScore;
         switch( t ) {
             case X -> {
                 player.setCompletedGoalX(true);
-                notifyAllListeners(new CommonGoalMessage(CGType.X, this.commonGoalStackX.peek()));
+                try{
+                    newScore = this.commonGoalStackX.peek();
+                }catch( EmptyStackException e ){
+                    newScore = 0;
+                }
+                    notifyAllListeners(new CommonGoalMessage(CGType.X, newScore));
             }
             case Y -> {
                 player.setCompletedGoalY(true);
-                notifyAllListeners(new CommonGoalMessage(CGType.Y, this.commonGoalStackY.peek()));
+                
+                try{
+                    newScore = this.commonGoalStackY.peek();
+                }catch( EmptyStackException e ){
+                    newScore = 0;
+                }
+                notifyAllListeners(new CommonGoalMessage(CGType.Y, newScore));
             }
         }
         notifyAllListeners(new UpdateScoreMessage(i, UpdateScoreMessage.Type.CommonGoal, player.getNickname()));
