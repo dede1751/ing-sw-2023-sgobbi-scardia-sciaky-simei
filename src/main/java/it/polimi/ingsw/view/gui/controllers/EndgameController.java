@@ -1,18 +1,13 @@
 package it.polimi.ingsw.view.gui.controllers;
 
 import it.polimi.ingsw.AppClient;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.messages.EndGameMessage;
-import it.polimi.ingsw.network.LocalClient;
-import it.polimi.ingsw.view.LocalModel;
-import it.polimi.ingsw.view.gui.GUIApp;
 import it.polimi.ingsw.view.gui.GUIUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 

@@ -73,7 +73,8 @@ public class LoginController {
         
         public LobbyViewGraphical(LobbyView lobbyView, Color color) {
             this.getChildren().add(new Text(lobbyView.toString()));
-            if(!lobbyView.isRecovery()) {
+            
+            if( !lobbyView.isRecovery() ) {
                 Button joinButton = new Button("JOIN");
                 joinButton.setOnAction(actionEvent -> {
                     if( waitToJoin )
@@ -85,6 +86,7 @@ public class LoginController {
                 joinButton.setLayoutX(this.getHeight() / 2);
                 this.getChildren().add(joinButton);
             }
+            
             this.setSpacing(20);
             this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(1), new Insets(1))));
         }

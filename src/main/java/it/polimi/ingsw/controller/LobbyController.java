@@ -9,10 +9,8 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.files.ServerLogger;
-import it.polimi.ingsw.view.messages.CreateLobbyMessage;
-import it.polimi.ingsw.view.messages.JoinLobbyMessage;
-import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
-import it.polimi.ingsw.view.messages.RequestLobbyMessage;
+import it.polimi.ingsw.utils.mvc.ReflectionUtility;
+import it.polimi.ingsw.view.messages.*;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -69,7 +67,8 @@ public class LobbyController {
                 }
                 catch( RemoteException e ) {
                     // If the client is disconnected, remove it from the lobby and end the game for everyone
-                    this.model.addListener(nickname, (m) -> {}); // Stop this listener
+                    this.model.addListener(nickname, (m) -> {
+                    }); // Stop this listener
                     LobbyController.getInstance().disconnectClient(this);
                     ServerLogger.errorLog(e, "Client disconnected: " + nickname);
                 }
@@ -119,9 +118,12 @@ public class LobbyController {
         
         /**
          * Check if the lobby is full
+         *
          * @return True if the lobby is full
          */
-        public boolean isFull() { return nicknames.size() == lobbySize; }
+        public boolean isFull() {
+            return nicknames.size() == lobbySize;
+        }
     }
     
     private static LobbyController INSTANCE;
@@ -193,7 +195,7 @@ public class LobbyController {
      */
     public synchronized void endGame(int lobbyID) {
         Lobby lobby = lobbies.get(lobbyID);
-        if (lobby == null) {
+        if( lobby == null ) {
             return;
         }
         
@@ -210,16 +212,28 @@ public class LobbyController {
     }
     
     /**
-     * Set the client being currently served.
-     * This method is only used due to Idiosyncrasies with Reflection. Since Clients are classes implementing a common
-     * interface, we can't simply have a onMessage(Client, Msg) method, since reflection will wind up using the client's
-     * dynamic type, so we have to set the served client first instead.
-     * This needs to always be called in conjunction with an onMessage method, with proper synchronization.
+     * Forward a ViewMessage to the LobbyController
+     * Message handling is synchronized on the full controller
      *
-     * @param client Client to serve
+     * @param client Client that sent the message
+     * @param msg    Message to forward
+     *
+     * @return True if the message was forwarded successfully, false otherwise
      */
-    public void setServedClient(Client client) {
-        this.client = client;
+    public boolean update(Client client, ViewMessage<?> msg) {
+        if( !ReflectionUtility.hasMethod(this, "onMessage", msg) ) {
+            return false;
+        }
+        
+        synchronized(this) {
+            this.client = client;
+            try {
+                ReflectionUtility.invokeMethod(this, "onMessage", msg);
+            }
+            catch( NoSuchMethodException ignored ) {
+            } // impossible
+        }
+        return true;
     }
     
     /**
@@ -258,8 +272,8 @@ public class LobbyController {
     public void onMessage(RecoverLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
         if( nickname == null ) {
-            updateClient(nickname,
-                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
+            updateClient("No Nickname",
+                         new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
             return;
         }
         
@@ -279,7 +293,7 @@ public class LobbyController {
         // username is already taken
         if( lobby.clients.get(nickname) != null ) {
             updateClient(nickname,
-                          new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
+                         new ServerResponseMessage(Response.NicknameTaken(RecoverLobbyMessage.class.getSimpleName())));
             return;
         }
         
@@ -320,14 +334,14 @@ public class LobbyController {
     public void onMessage(CreateLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
         if( nickname == null ) {
-            updateClient(nickname,
-                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
+            updateClient("No Nickname",
+                         new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
             return;
         }
         
         if( nicknameTaken(nickname) ) {
             updateClient(nickname,
-                          new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
+                         new ServerResponseMessage(Response.NicknameTaken(CreateLobbyMessage.class.getSimpleName())));
             return;
         }
         int lobbySize = msg.getPayload();
@@ -369,19 +383,19 @@ public class LobbyController {
         
         if( lobby == null || !lobby.isEmpty() ) {
             updateClient(nickname,
-                          new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName())));
+                         new ServerResponseMessage(Response.LobbyUnavailable(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         
         if( msg.getPlayerNickname() == null ) {
             updateClient(nickname,
-                          new ServerResponseMessage(Response.NicknameNull(JoinLobbyMessage.class.getSimpleName())));
+                         new ServerResponseMessage(Response.NicknameNull(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         
         if( nicknameTaken(msg.getPlayerNickname()) ) {
             updateClient(nickname,
-                          new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName())));
+                         new ServerResponseMessage(Response.NicknameTaken(JoinLobbyMessage.class.getSimpleName())));
             return;
         }
         

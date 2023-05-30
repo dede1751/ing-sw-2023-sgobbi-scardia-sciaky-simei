@@ -16,7 +16,7 @@ public class MainController {
     public ChatController chatController;
     
     @FXML
-    public void initialize(){
+    public void initialize() {
     
     }
     
@@ -24,9 +24,10 @@ public class MainController {
         return gameInterfaceController;
     }
     
-    public ChatController getChatController(){
+    public ChatController getChatController() {
         return chatController;
     }
+    
     
     public Tab getGameTab() {
         return gameTab;

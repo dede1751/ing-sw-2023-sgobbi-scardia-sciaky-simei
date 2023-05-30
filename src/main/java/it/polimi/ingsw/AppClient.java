@@ -19,7 +19,7 @@ public class AppClient {
     
     private static View view;
     
-    public static View getViewInstance(){
+    public static View getViewInstance() {
         return view;
     }
     

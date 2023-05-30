@@ -57,9 +57,10 @@ public class LocalModel {
     
     /**
      * Set the model from a StartGameMessage object
+     *
      * @param msg StartGameMessage objet to initialize the model
      */
-    public void setModel(StartGameMessage msg){
+    public void setModel(StartGameMessage msg) {
         
         var payload = msg.getPayload();
         var players = payload.players();
@@ -117,10 +118,12 @@ public class LocalModel {
     }
     
     public void addChatMessage(String nickname, String message, String destination) {
-        chat.add( nickname + " [" + destination + "]" + " -> " + message );
+        chat.add(nickname + " [" + destination + "]" + " -> " + message);
     }
     
-    public List<String> getChat() { return this.chat; }
+    public List<String> getChat() {
+        return this.chat;
+    }
     
     
     public void setBoard(Board board) {

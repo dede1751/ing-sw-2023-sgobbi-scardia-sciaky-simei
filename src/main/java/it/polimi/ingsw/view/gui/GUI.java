@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.controllers.BoardController;
-
 import it.polimi.ingsw.view.gui.controllers.EndgameController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,9 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static it.polimi.ingsw.model.messages.CommonGoalMessage.*;
-import static javafx.application.Platform.*;
+import static it.polimi.ingsw.model.messages.CommonGoalMessage.CommonGoalPayload;
+import static javafx.application.Platform.runLater;
 
 
 public class GUI extends View {
@@ -89,6 +87,9 @@ public class GUI extends View {
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
                                                                                               otherPlayerShelf,
                                                                                               scores);
+            GUIApp.getMainControllerInstance().getGameTab().setText(this.nickname + "| --> " + model.getCurrentPlayer());
+            GUIApp.getMainControllerInstance().getChatController().setRecipientName();
+            
             
             BoardController boardController =
                     GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();
@@ -230,7 +231,8 @@ public class GUI extends View {
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
-        runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(nickname + "| current --> " + msg.getPayload() ));
+        runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(
+                nickname + "| current --> " + msg.getPayload()));
     }
     
     @Override
