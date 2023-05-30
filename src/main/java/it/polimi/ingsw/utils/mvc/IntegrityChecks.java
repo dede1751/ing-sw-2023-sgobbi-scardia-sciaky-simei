@@ -64,7 +64,7 @@ public class IntegrityChecks {
             sorted.sort(Comparator.comparingInt(Coordinate::row));
             
             Coordinate reference = sorted.get(0);
-
+            
             int r1 = reference.row();
             int r2 = sorted.size() > 1 ? sorted.get(1).row() : r1 + 1;
             int r3 = sorted.size() > 2 ? sorted.get(2).row() : 2 * r2 - r1;

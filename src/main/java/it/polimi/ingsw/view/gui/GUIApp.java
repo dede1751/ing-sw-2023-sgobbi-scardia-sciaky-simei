@@ -3,9 +3,9 @@ package it.polimi.ingsw.view.gui;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.utils.files.ResourcesManager.GraphicalResources;
+import it.polimi.ingsw.view.gui.controllers.LocalPlayerController;
 import it.polimi.ingsw.view.gui.controllers.LoginController;
 import it.polimi.ingsw.view.gui.controllers.MainController;
-import it.polimi.ingsw.view.gui.controllers.LocalPlayerController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -83,11 +83,12 @@ public class GUIApp extends Application {
     public void init() {
     
     }
+    
     public static Parent getMainRoot() {
         return mainRoot;
     }
+    
     /**
-     *
      * @return
      */
     public static Stage getMainStage() {
@@ -95,7 +96,6 @@ public class GUIApp extends Application {
     }
     
     /**
-     *
      * @return
      */
     public static LoginController getLoginController() {

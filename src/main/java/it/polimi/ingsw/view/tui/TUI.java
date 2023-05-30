@@ -7,7 +7,10 @@ import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
 import it.polimi.ingsw.view.View;
-import it.polimi.ingsw.view.messages.*;
+import it.polimi.ingsw.view.messages.CreateLobbyMessage;
+import it.polimi.ingsw.view.messages.JoinLobbyMessage;
+import it.polimi.ingsw.view.messages.Move;
+import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -59,9 +62,9 @@ public class TUI extends View {
                 
                 case "CHAT" -> {
                     String choice = askMsgType();
-                    if (choice.equals("Y")) {
+                    if( choice.equals("Y") ) {
                         askBroadcastMessage();
-                    } else {
+                    }else {
                         askPrivateMessage();
                     }
                 }
@@ -73,6 +76,7 @@ public class TUI extends View {
     
     /**
      * Ask the user what type of chat message they would like to send
+     *
      * @return "Y" for broadcast message, "N" for private message
      */
     private String askMsgType() {
@@ -83,7 +87,7 @@ public class TUI extends View {
         while( true ) {
             prompt = "Do you want to send a broadcast message? [Y/N]";
             TUIUtils.printGame(nickname, prompt, error);
-    
+            
             choice = scanner.next().trim().toUpperCase();
             if( choice.equals("Y") || choice.equals("N") ) {
                 break;
@@ -98,12 +102,12 @@ public class TUI extends View {
     
     private void askBroadcastMessage() {
         Scanner scanner = new Scanner(System.in);
-    
+        
         String msg;
         while( true ) {
             prompt = "Please, enter your message:";
             TUIUtils.printGame(nickname, prompt, error);
-        
+            
             msg = scanner.nextLine();
             if( msg.length() > 70 ) {
                 error = "Message too long!";
@@ -112,7 +116,7 @@ public class TUI extends View {
                 break;
             }
         }
-    
+        
         notifyChatMessage(msg);
     }
     
@@ -123,23 +127,23 @@ public class TUI extends View {
         while( true ) {
             prompt = "Enter the nickname of the player you want to send your message:";
             TUIUtils.printGame(nickname, prompt, error);
-        
+            
             player = scanner.nextLine().trim();
             if( !model.getPlayersNicknames().contains(player) ) {
                 error = "Player does not exist!";
-            }else if( player.equals(nickname) ){
+            }else if( player.equals(nickname) ) {
                 error = "Choose another player's nickname!";
             }else {
                 error = null;
                 break;
             }
         }
-    
+        
         String msg;
         while( true ) {
             prompt = "Please, enter your message:";
             TUIUtils.printGame(nickname, prompt, error);
-        
+            
             msg = scanner.nextLine();
             if( msg.length() > 70 ) {
                 error = "Message too long!";
@@ -211,14 +215,14 @@ public class TUI extends View {
                     if( lobbies.stream().allMatch(LobbyController.LobbyView::isFull) ) {
                         error = "No lobbies are currently available!";
                         continue;
-                    } else {
+                    }else {
                         error = null;
                     }
                     
                     StringBuilder joinPrompt =
                             new StringBuilder("Choose one of the following lobbies:");
                     for( var l : lobbies ) {
-                        if ( !l.isRecovery() && !l.isFull()) {
+                        if( !l.isRecovery() && !l.isFull() ) {
                             joinPrompt.append("\n").append(l);
                         }
                     }
@@ -324,7 +328,7 @@ public class TUI extends View {
                     error = null;
                     return false;
                 }
-            } else {
+            }else {
                 error = "Please choose a valid nickname!";
             }
         }

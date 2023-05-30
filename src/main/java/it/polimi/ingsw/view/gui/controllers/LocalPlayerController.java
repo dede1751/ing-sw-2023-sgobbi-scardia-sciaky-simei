@@ -39,7 +39,7 @@ public class LocalPlayerController {
     @FXML
     private GridPane localPlayerGrid;
     
-    private Map<Coordinate, ImageView> imageMap = new HashMap<>();
+    private final Map<Coordinate, ImageView> imageMap = new HashMap<>();
     
     @FXML
     public void initialize() {
@@ -74,6 +74,7 @@ public class LocalPlayerController {
         this.score.setFont(new Font("Noto Sans", 25));
         this.score.setText("Score: " + score);
     }
+    
     private void buttonAction(int column) {
         AppClient.getViewInstance().notifyMove(
                 new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), column));

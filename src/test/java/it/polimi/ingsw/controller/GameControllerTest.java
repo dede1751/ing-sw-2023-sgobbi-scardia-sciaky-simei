@@ -7,9 +7,7 @@ import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.utils.files.ResourcesManager;
-import it.polimi.ingsw.view.messages.ViewMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -38,8 +36,9 @@ class GameControllerTest {
         public mockupServer() throws RemoteException {
             super();
         }
+        
         @Override
-        public void removeGameControllers(List<Client> clients){
+        public void removeGameControllers(List<Client> clients) {
         
         }
     }

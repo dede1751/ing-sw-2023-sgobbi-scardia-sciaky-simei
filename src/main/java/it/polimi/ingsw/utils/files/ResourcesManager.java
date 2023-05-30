@@ -5,10 +5,7 @@ import it.polimi.ingsw.model.GameModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Parameter;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
