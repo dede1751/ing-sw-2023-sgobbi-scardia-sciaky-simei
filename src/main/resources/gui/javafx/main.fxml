@@ -2,20 +2,21 @@
 
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<TabPane fx:controller="it.polimi.ingsw.view.gui.controllers.MainController" maxHeight="-Infinity" maxWidth="-Infinity"
+         minHeight="-Infinity" minWidth="-Infinity" prefHeight="870.0" prefWidth="1090.0" tabClosingPolicy="UNAVAILABLE"
+         xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16">
+    <tabs>
+        <Tab fx:id="gameTab" text="Game">
+            <content>
+                <!--> game content  </!-->
+                <fx:include fx:id="gameInterface" source="gameInterface.fxml"/>
+            </content>
+        </Tab>
+        <Tab text="Chat">
 
-<TabPane fx:controller="it.polimi.ingsw.view.gui.controllers.MainController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="870.0" prefWidth="1090.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/16">
-  <tabs>
-    <Tab fx:id="gameTab" text="Game">
-      <content>
-        <!--> game content  </!-->
-        <fx:include fx:id="gameInterface" source="gameInterface.fxml"/>
-      </content>
-    </Tab>
-    <Tab text="Chat">
-
-      <content>
-        <fx:include  fx:id="chat" source="chat.fxml" />
-      </content>
-    </Tab>
-  </tabs>
+            <content>
+                <fx:include fx:id="chat" source="chat.fxml"/>
+            </content>
+        </Tab>
+    </tabs>
 </TabPane>

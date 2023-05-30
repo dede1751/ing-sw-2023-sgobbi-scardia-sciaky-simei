@@ -48,7 +48,7 @@ public class GameModel {
         return gameEnded;
     }
     
-
+    
     public enum CGType {
         X, Y
     }
@@ -243,19 +243,21 @@ public class GameModel {
         switch( t ) {
             case X -> {
                 player.setCompletedGoalX(true);
-                try{
+                try {
                     newScore = this.commonGoalStackX.peek();
-                }catch( EmptyStackException e ){
+                }
+                catch( EmptyStackException e ) {
                     newScore = 0;
                 }
-                    notifyAllListeners(new CommonGoalMessage(CGType.X, newScore));
+                notifyAllListeners(new CommonGoalMessage(CGType.X, newScore));
             }
             case Y -> {
                 player.setCompletedGoalY(true);
                 
-                try{
+                try {
                     newScore = this.commonGoalStackY.peek();
-                }catch( EmptyStackException e ){
+                }
+                catch( EmptyStackException e ) {
                     newScore = 0;
                 }
                 notifyAllListeners(new CommonGoalMessage(CGType.Y, newScore));
@@ -384,12 +386,12 @@ public class GameModel {
      * @param chat Message to be sent
      */
     public void chatBroker(ChatMessage chat) {
-    
+        
         IncomingChatMessage message = new IncomingChatMessage(
                 chat.getPayload(), chat.getPlayerNickname(), chat.getDestination());
         if( chat.getDestination().equals("ALL") ) {
             notifyAllListeners(message);
-        }else if (this.listeners.containsKey(chat.getDestination())) {
+        }else if( this.listeners.containsKey(chat.getDestination()) ) {
             ModelListener targetListener = this.listeners.get(chat.getDestination());
             targetListener.update(message);
             this.listeners.get(chat.getPlayerNickname()).update(message);

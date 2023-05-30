@@ -43,7 +43,7 @@ public record Response(int status, String msg, String Action) implements Seriali
         return new Response(-2, "Server is acting up, please be patient...", Action);
     }
     
-    public static Response NicknameNull(String Action){
+    public static Response NicknameNull(String Action) {
         return new Response(-1, "Nickname is null", Action);
     }
     

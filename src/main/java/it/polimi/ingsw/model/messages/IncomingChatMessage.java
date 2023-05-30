@@ -15,6 +15,8 @@ public class IncomingChatMessage extends ModelMessage<String> {
         return sender;
     }
     
-    public String getDestination() { return destination; }
+    public String getDestination() {
+        return destination;
+    }
     
 }

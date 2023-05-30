@@ -73,7 +73,7 @@ public class LoginController {
         
         public LobbyViewGraphical(LobbyView lobbyView, Color color) {
             this.getChildren().add(new Text(lobbyView.toString()));
-            if(!lobbyView.isRecovery()) {
+            if( !lobbyView.isRecovery() ) {
                 Button joinButton = new Button("JOIN");
                 joinButton.setOnAction(actionEvent -> {
                     if( waitToJoin )

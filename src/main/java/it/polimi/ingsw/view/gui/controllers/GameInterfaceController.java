@@ -5,7 +5,6 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
-import java.sql.Struct;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,7 +12,6 @@ public class GameInterfaceController {
     @FXML
     public AnchorPane chat;
     
-   
     
     @FXML
     private AnchorPane board;
@@ -31,8 +29,6 @@ public class GameInterfaceController {
     private OtherShelfController otherShelf2Controller;
     @FXML
     private OtherShelfController otherShelf3Controller;
-    
-   
     
     
     @FXML
@@ -84,18 +80,18 @@ public class GameInterfaceController {
      */
     public void updateScore(int score, String nickname) {
         
-        Boolean flag=true;
+        Boolean flag = true;
         for( OtherShelfController otherShelfController : shelfControllerList ) {
             if( Objects.equals(otherShelfController.getPlayerNickname(), nickname) ) {
                 otherShelfController.setScore(score);
-                flag=false;
+                flag = false;
             }
             
         }
-        if(flag){
+        if( flag ) {
             localPlayerController.setScore(score);
         }
-       
+        
         
     }
     

@@ -489,20 +489,20 @@ class GameControllerTest {
                 var controller = new GameController(model);
                 
                 int score = model.getCurrentPlayer().getScore();
-                int adjencyScore = controller.calculateAdjacency( model.getCurrentPlayer().getShelf() );
+                int adjencyScore = controller.calculateAdjacency(model.getCurrentPlayer().getShelf());
                 
                 controller.turnManager();
                 int newScore = model.getCurrentPlayer().getScore();
                 
-                assertEquals( score + adjencyScore, newScore );
-                assertEquals( adjencyScore, 3 );
+                assertEquals(score + adjencyScore, newScore);
+                assertEquals(adjencyScore, 3);
             }
             catch( IOException e ) {
                 e.printStackTrace();
                 fail();
             }
         }
-    
+        
         @Test
         public void calculateAdjencyFalse() {
             var name = ResourcesManager.getCurrentMethod();
@@ -514,15 +514,15 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
-            
+                
                 int score = model.getCurrentPlayer().getScore();
-                int adjencyScore = controller.calculateAdjacency( model.getCurrentPlayer().getShelf() );
-            
+                int adjencyScore = controller.calculateAdjacency(model.getCurrentPlayer().getShelf());
+                
                 controller.turnManager();
                 int newScore = model.getCurrentPlayer().getScore();
-            
-                assertNotEquals( score + 5, newScore );
-                assertNotEquals( adjencyScore, 5 );
+                
+                assertNotEquals(score + 5, newScore);
+                assertNotEquals(adjencyScore, 5);
             }
             catch( IOException e ) {
                 e.printStackTrace();
@@ -548,7 +548,7 @@ class GameControllerTest {
                                                               new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
-        
+                
                 var currentPlayerIndex = model.getCurrentPlayerIndex();
                 
                 controller.nextPlayerSetter();
@@ -556,8 +556,8 @@ class GameControllerTest {
                 var newCurrentPlayerIndex = model.getCurrentPlayerIndex();
                 var newCurrentPlayer = model.getCurrentPlayer();
                 
-                assertEquals( currentPlayerIndex + 1, newCurrentPlayerIndex );
-                assertEquals( model.getPlayers().get(currentPlayerIndex + 1), newCurrentPlayer );
+                assertEquals(currentPlayerIndex + 1, newCurrentPlayerIndex);
+                assertEquals(model.getPlayers().get(currentPlayerIndex + 1), newCurrentPlayer);
             }
             catch( IOException e ) {
                 e.printStackTrace();

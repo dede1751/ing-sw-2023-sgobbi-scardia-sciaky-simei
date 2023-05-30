@@ -7,10 +7,8 @@ import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
-import it.polimi.ingsw.view.messages.ChatMessage;
-import it.polimi.ingsw.view.messages.DebugMessage;
-import it.polimi.ingsw.view.messages.Move;
-import it.polimi.ingsw.view.messages.MoveMessage;
+import it.polimi.ingsw.utils.mvc.ReflectionUtility;
+import it.polimi.ingsw.view.messages.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -231,12 +229,38 @@ public class GameController {
     }
     
     /**
+     * Forward a ViewMessage to the GameController
+     * Message handling is synchronized on the full controller
+     *
+     * @param msg Message to forward
+     *
+     * @return true if the message was forwarded, false otherwise
+     */
+    public boolean update(ViewMessage<?> msg) {
+        if( !ReflectionUtility.hasMethod(this, "onMessage", msg) ) {
+            return false;
+        }
+        
+        synchronized(this) {
+            if ( !this.model.getGameEnded() ) { // don't update controllers after game ends
+                try {
+                    ReflectionUtility.invokeMethod(this, "onMessage", msg);
+                }
+                catch( NoSuchMethodException ignored ) {
+                } // impossible
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
      * Respond to a chat message received from a client
      *
      * @param chat Message contents
      */
     @SuppressWarnings("unused")
-    public synchronized void onMessage(ChatMessage chat) {
+    public void onMessage(ChatMessage chat) {
         model.chatBroker(chat);
     }
     
@@ -247,7 +271,7 @@ public class GameController {
      * @param msg Move received
      */
     @SuppressWarnings("unused")
-    public synchronized void onMessage(MoveMessage msg) {
+    public void onMessage(MoveMessage msg) {
         String currentPlayerNick = model.getCurrentPlayer().getNickname();
         
         if( !msg.getPlayerNickname().equals(currentPlayerNick) ) {
@@ -277,7 +301,7 @@ public class GameController {
     }
     
     @SuppressWarnings("unused")
-    public synchronized void onMessage(DebugMessage message) {
+    public void onMessage(DebugMessage message) {
         System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());
         saveModel();
         
