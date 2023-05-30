@@ -24,4 +24,6 @@ public class MainController {
     public ChatController getChatController(){
         return chatController;
     }
+    
+    
 }

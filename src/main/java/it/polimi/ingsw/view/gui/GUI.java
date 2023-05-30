@@ -4,9 +4,6 @@ import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.controllers.BoardController;
-
-import it.polimi.ingsw.view.gui.controllers.OtherShelfController;
-import it.polimi.ingsw.view.tui.TUIUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -17,9 +14,8 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static it.polimi.ingsw.model.messages.CommonGoalMessage.*;
-import static javafx.application.Platform.*;
+import static it.polimi.ingsw.model.messages.CommonGoalMessage.CommonGoalPayload;
+import static javafx.application.Platform.runLater;
 
 
 public class GUI extends View {
@@ -72,6 +68,8 @@ public class GUI extends View {
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
                                                                                               otherPlayerShelf,
                                                                                               scores);
+            GUIApp.getMainControllerInstance().getChatController().setRecipientName();
+           
             
             BoardController boardController =
                     GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();

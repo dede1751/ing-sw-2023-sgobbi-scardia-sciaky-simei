@@ -80,6 +80,7 @@ public class LoginController {
                     return;
                 waitToJoin = true;
                 gui.notifyJoinLobby(lobbyView.lobbyID());
+                
             });
             joinButton.setLayoutY(20);
             joinButton.setLayoutX(this.getHeight() / 2);
