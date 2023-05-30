@@ -45,7 +45,7 @@ public class OtherShelfController {
     
     @FXML
     void updateOtherShelf(Shelf shelf) {
-       GUIUtils.threadPool.submit(() -> GUIUtils.updateShelf(shelf, imageMap));
+        GUIUtils.threadPool.submit(() -> GUIUtils.updateShelf(shelf, imageMap));
     }
     
     @FXML
@@ -62,8 +62,6 @@ public class OtherShelfController {
             }
         }
     }
-    
-    
     
     
 }

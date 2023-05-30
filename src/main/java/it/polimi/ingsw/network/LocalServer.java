@@ -5,7 +5,6 @@ import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.utils.files.ServerLogger;
-import it.polimi.ingsw.utils.mvc.ReflectionUtility;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.rmi.RemoteException;
@@ -50,22 +49,15 @@ public class LocalServer extends UnicastRemoteObject implements Server {
      *
      * @param clients clients to remove
      */
-    public void removeGameControllers(List<Client> clients) { clients.forEach(gameControllers.keySet()::remove); }
+    public void removeGameControllers(List<Client> clients) {
+        clients.forEach(gameControllers.keySet()::remove);
+    }
     
     @Override
     public void update(Client client, ViewMessage<?> message) {
-        LobbyController lobbyController = LobbyController.getInstance();
         
         // First try to see if it's a method handled by the LobbyController
-        if( ReflectionUtility.hasMethod(lobbyController, "onMessage", message) ) {
-            synchronized(lobbyController) {
-                lobbyController.setServedClient(client);
-                try {
-                    ReflectionUtility.invokeMethod(LobbyController.getInstance(), "onMessage", message);
-                }
-                catch( NoSuchMethodException ignored ) {
-                } // impossible
-            }
+        if( LobbyController.getInstance().update(client, message) ) {
             return;
         }
         
@@ -74,10 +66,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         Response r = null;
         
         if( controller != null ) {
-            try {
-                ReflectionUtility.invokeMethod(controller, "onMessage", message);
-            }
-            catch( NoSuchMethodException e ) {
+            if( !controller.update(message) ) {
                 r = new Response(-1, "Illegal message, no operation defined. Refer to the network manual",
                                  message.getClass().getSimpleName());
             }

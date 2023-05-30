@@ -83,7 +83,7 @@ public class AppServer {
                             socket.close();
                         }
                         catch( IOException e ) {
-                            ServerLogger.errorLog (e, "Cannot close socket");
+                            ServerLogger.errorLog(e, "Cannot close socket");
                         }
                     }
                 });

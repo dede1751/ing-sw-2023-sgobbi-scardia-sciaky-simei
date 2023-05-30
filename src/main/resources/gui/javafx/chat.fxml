@@ -16,7 +16,7 @@
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="687.0" prefWidth="463.0">
                     <children>
-<VBox fx:id="chatBox"/>
+                        <VBox fx:id="chatBox"/>
                     </children>
                 </AnchorPane>
             </content>

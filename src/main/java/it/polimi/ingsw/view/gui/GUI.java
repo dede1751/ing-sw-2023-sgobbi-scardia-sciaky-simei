@@ -234,7 +234,8 @@ public class GUI extends View {
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
-        runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(nickname + "| current --> " + msg.getPayload() ));
+        runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(
+                nickname + "| current --> " + msg.getPayload()));
     }
     
     @Override

@@ -44,7 +44,7 @@ public abstract class View implements Runnable {
     }
     
     
-    public List<LobbyController.LobbyView> getLobbies(){
+    public List<LobbyController.LobbyView> getLobbies() {
         return lobbies;
     }
     
