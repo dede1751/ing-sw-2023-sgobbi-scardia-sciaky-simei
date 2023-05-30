@@ -242,7 +242,7 @@ public class GameController {
         }
         
         synchronized(this) {
-            if ( !this.model.getGameEnded() ) { // don't update controllers after game ends
+            if( !this.model.getGameEnded() ) { // don't update controllers after game ends
                 try {
                     ReflectionUtility.invokeMethod(this, "onMessage", msg);
                 }

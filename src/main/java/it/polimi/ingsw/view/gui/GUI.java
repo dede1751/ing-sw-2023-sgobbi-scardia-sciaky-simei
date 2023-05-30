@@ -5,11 +5,7 @@ import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.controllers.BoardController;
-<<<<<<< HEAD
-=======
-
 import it.polimi.ingsw.view.gui.controllers.EndgameController;
->>>>>>> 836a194b2579f32f53884cf89020095a12336268
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -92,7 +88,7 @@ public class GUI extends View {
                                                                                               otherPlayerShelf,
                                                                                               scores);
             GUIApp.getMainControllerInstance().getChatController().setRecipientName();
-           
+            
             
             BoardController boardController =
                     GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();

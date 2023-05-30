@@ -28,7 +28,7 @@ public class MainController {
         return chatController;
     }
     
-
+    
     public Tab getGameTab() {
         return gameTab;
     }

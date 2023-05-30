@@ -19,7 +19,7 @@ public class ChatController {
     public ScrollPane readChat;
     @FXML
     public TextField writeMessage;
-   
+    
     @FXML
     public VBox chatBox;
     public ChoiceBox recipientChoiceBox;
@@ -27,28 +27,29 @@ public class ChatController {
     private TextFlow writeChat;
     
     private TextArea messageArea;
-    String recipientName ="Everyone";
+    String recipientName = "Everyone";
     
     
     @FXML
-    public void  setRecipientName(){
-       
-            
-                recipientChoiceBox.getItems().add("Everyone");
-                for( int i = 0; i < LocalModel.getInstance().getPlayersNicknames().size(); i++ ) {
-                    recipientChoiceBox.getItems().add(LocalModel.getInstance().getPlayersNicknames().get(i));
+    public void setRecipientName() {
         
-                }
-                recipientChoiceBox.setOnAction(
-                        (event -> recipientName = (String) recipientChoiceBox.getSelectionModel().getSelectedItem()));
-    
-   
+        
+        recipientChoiceBox.getItems().add("Everyone");
+        for( int i = 0; i < LocalModel.getInstance().getPlayersNicknames().size(); i++ ) {
+            recipientChoiceBox.getItems().add(LocalModel.getInstance().getPlayersNicknames().get(i));
+            
+        }
+        recipientChoiceBox.setOnAction(
+                (event -> recipientName = (String) recipientChoiceBox.getSelectionModel().getSelectedItem()));
+        
+        
     }
+    
     public void handleEnterPressed(ActionEvent event) {
         String enteredText = writeMessage.getText();
         
-        if(LocalModel.getInstance().getPlayersNicknames().contains(recipientName)){
-            AppClient.getViewInstance().notifyChatMessage(enteredText,recipientName);
+        if( LocalModel.getInstance().getPlayersNicknames().contains(recipientName) ) {
+            AppClient.getViewInstance().notifyChatMessage(enteredText, recipientName);
             writeMessage.clear();
         }else {
             AppClient.getViewInstance().notifyChatMessage(enteredText);
@@ -58,11 +59,10 @@ public class ChatController {
         
     }
     
- 
     
-    public void writeChatMessage(String message){
-        chatBox.getChildren().add(new Text(" " +message+"\n"));
+    public void writeChatMessage(String message) {
+        chatBox.getChildren().add(new Text(" " + message + "\n"));
     }
     
-
+    
 }
