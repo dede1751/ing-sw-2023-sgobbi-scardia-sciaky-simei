@@ -14,11 +14,7 @@
                 <ScrollPane fx:id="scrollPaneLobbies" layoutX="48.0" layoutY="161.0" prefHeight="282.0"
                             prefWidth="324.0">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="280.0" prefWidth="307.0">
-                            <children>
-                                <VBox fx:id="lobbyViewList" prefHeight="279.0" prefWidth="306.0"/>
-                            </children>
-                        </AnchorPane>
+                        <VBox fx:id="lobbyViewList" prefHeight="279.0" prefWidth="306.0"/>
                     </content>
                 </ScrollPane>
                 <Text fx:id="insertNicknameBanner" layoutX="48.0" layoutY="48.0" strokeType="OUTSIDE" strokeWidth="0.0"
