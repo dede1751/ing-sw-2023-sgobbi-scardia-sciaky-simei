@@ -2,6 +2,7 @@ package it.polimi.ingsw.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
@@ -9,6 +10,8 @@ import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.view.messages.Move;
+import it.polimi.ingsw.view.messages.MoveMessage;
 import it.polimi.ingsw.view.messages.ViewMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -587,6 +591,54 @@ class GameControllerTest {
                 controller.endGame();
                 
                 assertTrue(model.getGameEnded());
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    }
+    
+    @Tag("onMessage")
+    @Nested
+    class onMessageTest {
+        
+        @Test
+        public void onMessageMoveTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+    
+                List<Coordinate> selection = new ArrayList<>();
+                Coordinate coordinate = new Coordinate(4, 0 );
+                selection.add( coordinate );
+                var tiles = model.getTile( selection.get(0) );
+                int column = 0;
+                String playerNick = "Luca";
+                
+                assertEquals( model.getPlayers()
+                                      .stream()
+                                      .filter( (x) -> x.getNickname().equals(playerNick) )
+                                      .toList().get(0)
+                                      .getShelf().getTile( 0, 0),
+                              Tile.NOTILE );
+                
+                var move = new Move(selection, Collections.singletonList(tiles), column );
+                var moveMessage = new MoveMessage( move, playerNick );
+                
+                controller.onMessage( moveMessage );
+                
+                assertEquals( model.getPlayers()
+                                      .stream()
+                                      .filter( (x) -> x.getNickname().equals(playerNick) )
+                                      .toList().get(0)
+                                      .getShelf().getTile( 0, 0 ),
+                              tiles );
             }
             catch( IOException e ) {
                 e.printStackTrace();
