@@ -73,17 +73,18 @@ public class LoginController {
         
         public LobbyViewGraphical(LobbyView lobbyView, Color color) {
             this.getChildren().add(new Text(lobbyView.toString()));
-            
-            Button joinButton = new Button("JOIN");
-            joinButton.setOnAction(actionEvent -> {
-                if( waitToJoin )
-                    return;
-                waitToJoin = true;
-                gui.notifyJoinLobby(lobbyView.lobbyID());
-            });
-            joinButton.setLayoutY(20);
-            joinButton.setLayoutX(this.getHeight() / 2);
-            this.getChildren().add(joinButton);
+            if(!lobbyView.isRecovery()) {
+                Button joinButton = new Button("JOIN");
+                joinButton.setOnAction(actionEvent -> {
+                    if( waitToJoin )
+                        return;
+                    waitToJoin = true;
+                    gui.notifyJoinLobby(lobbyView.lobbyID());
+                });
+                joinButton.setLayoutY(20);
+                joinButton.setLayoutX(this.getHeight() / 2);
+                this.getChildren().add(joinButton);
+            }
             this.setSpacing(20);
             this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(1), new Insets(1))));
         }
@@ -171,16 +172,17 @@ public class LoginController {
                             if( waitToJoin )
                                 return;
                             String nickname = this.nickname.getText();
-                            if( nickname == null || nickname.equals(""))
+                            if( nickname == null || nickname.equals("") )
                                 return;
+                            gui.setNickname(nickname);
                             Platform.runLater(() -> {
                                 nicknameConfirmBanner.setText("Nickname :" + nickname);
                                 nicknameConfirmBanner.setOpacity(1);
                                 this.nickname.setText("");
-                                gui.setNickname(nickname);
                             });
                             if( gui.getLobbies().stream().anyMatch(
                                     (l) -> l.isRecovery() && l.nicknames().contains(nickname)) ) {
+                                waitToJoin = true;
                                 gui.notifyRecoverLobby();
                             }
                         }

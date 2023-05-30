@@ -7,8 +7,6 @@ import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.controllers.BoardController;
 
 import it.polimi.ingsw.view.gui.controllers.EndgameController;
-import it.polimi.ingsw.view.gui.controllers.OtherShelfController;
-import it.polimi.ingsw.view.tui.TUIUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -83,6 +81,7 @@ public class GUI extends View {
             }
         }
         runLater(() -> {
+            GUIApp.getMainControllerInstance().getGameTab().setText(nickname);
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
                     model.getShelf(nickname));
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setPersonalGoal(
@@ -231,8 +230,7 @@ public class GUI extends View {
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
-        //TODO
-        
+        runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(nickname + "| current --> " + msg.getPayload() ));
     }
     
     @Override

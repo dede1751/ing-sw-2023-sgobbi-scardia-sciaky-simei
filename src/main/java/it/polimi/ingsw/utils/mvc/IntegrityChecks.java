@@ -7,6 +7,7 @@ import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.view.messages.Move;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -58,18 +59,27 @@ public class IntegrityChecks {
         }
         
         // Check that the coordinates are in a continuous line, and that there are no duplicates
-        Coordinate reference = selection.get(0);
-        if( selection.stream().allMatch((x) -> reference.col() == x.col()) ) {
+        if( selection.stream().allMatch((x) -> selection.get(0).col() == x.col()) ) {
+            ArrayList<Coordinate> sorted = new ArrayList<>(selection);
+            sorted.sort(Comparator.comparingInt(Coordinate::row));
+            
+            Coordinate reference = sorted.get(0);
+
             int r1 = reference.row();
-            int r2 = selection.size() > 1 ? selection.get(1).row() : r1 + 1;
-            int r3 = selection.size() > 2 ? selection.get(2).row() : 2 * r2 - r1;
+            int r2 = sorted.size() > 1 ? sorted.get(1).row() : r1 + 1;
+            int r3 = sorted.size() > 2 ? sorted.get(2).row() : 2 * r2 - r1;
             
             return r1 - r2 == r2 - r3 && Math.abs(r1 - r2) == 1;
             
-        }else if( selection.stream().allMatch((x) -> reference.row() == x.row()) ) {
+        }else if( selection.stream().allMatch((x) -> selection.get(0).row() == x.row()) ) {
+            
+            ArrayList<Coordinate> sorted = new ArrayList<>(selection);
+            sorted.sort(Comparator.comparingInt(Coordinate::col));
+            
+            Coordinate reference = sorted.get(0);
             int c1 = reference.col();
-            int c2 = selection.size() > 1 ? selection.get(1).col() : c1 + 1;
-            int c3 = selection.size() > 2 ? selection.get(2).col() : 2 * c2 - c1;
+            int c2 = sorted.size() > 1 ? sorted.get(1).col() : c1 + 1;
+            int c3 = sorted.size() > 2 ? sorted.get(2).col() : 2 * c2 - c1;
             
             return c1 - c2 == c2 - c3 && Math.abs(c1 - c2) == 1;
             
