@@ -113,6 +113,7 @@ public class LoginController {
         scrollPaneLobbies.setOpacity(0.90);
         AppClient.getViewInstance().notifyRequestLobby(null);
         
+            
         selectNumberBanner.setFill(Color.LIGHTGRAY);
         selectNumberBanner.setFont(new Font("Noto Sans", 15));
         

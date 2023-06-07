@@ -10,6 +10,8 @@ import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Class LocalClient is the main network interface for the client application.
@@ -19,6 +21,9 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     private final Server server;
     private final View view;
+    
+    
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
     
     public LocalClient(Server server, View view) throws RemoteException {
         super();
@@ -40,14 +45,15 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     @Override
     public void update(ModelMessage<?> msg) {
-        
-        try {
-            ReflectionUtility.invokeMethod(view, "onMessage", msg);
-            ClientLogger.messageLog(msg);
-        }
-        catch( NoSuchMethodException e ) {
-            ClientLogger.errorLog(e, "Error invoking method onMessage" + msg.getClass().getSimpleName());
-        }
+        threadPool.submit(() -> {
+            try {
+                ReflectionUtility.invokeMethod(view, "onMessage", msg);
+                ClientLogger.messageLog(msg);
+            }
+            catch( NoSuchMethodException e ) {
+                ClientLogger.errorLog(e, "Error invoking method onMessage" + msg.getClass().getSimpleName());
+            }
+        });
     }
     
     /**
@@ -56,13 +62,16 @@ public class LocalClient extends UnicastRemoteObject implements Client {
      * @param msg the message sent by the view
      */
     public void update(ViewMessage<?> msg) {
-        try {
-            server.update(this, msg);
-        }
-        catch( RemoteException e ) {
-            ClientLogger.errorLog(e, "Error notifying server, shutting down!");
-            System.exit(1); // kill client when server becomes unreachable
-        }
+        threadPool.submit(() -> {
+            try {
+                server.update(this, msg);
+            }
+            catch( RemoteException e ) {
+                ClientLogger.errorLog(e, "Error notifying server, shutting down!");
+                System.exit(1); // kill client when server becomes unreachable
+            }
+            
+        });
     }
     
 }
