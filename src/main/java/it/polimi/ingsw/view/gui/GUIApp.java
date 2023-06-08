@@ -76,6 +76,8 @@ public class GUIApp extends Application {
         //set and show stage
         stage.setTitle("My Shelfie");
         stage.setScene(new Scene(loginRoot));
+        stage.setMaxHeight(490.0);
+        stage.setMaxWidth(936.0);
         stage.show();
     }
     

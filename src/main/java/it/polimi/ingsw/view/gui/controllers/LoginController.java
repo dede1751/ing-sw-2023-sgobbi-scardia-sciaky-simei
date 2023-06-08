@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -100,7 +101,7 @@ public class LoginController {
         nPlayerChoice.getItems().add(2);
         nPlayerChoice.getItems().add(3);
         nPlayerChoice.getItems().add(4);
-        
+        nPlayerChoice.setValue(2);
         nPlayerChoice.setOnAction((event -> playerNSelected = nPlayerChoice.getSelectionModel().getSelectedItem()));
         
         createLobbyButton.setOnAction(event -> {
@@ -121,7 +122,9 @@ public class LoginController {
         createLobbiesBanner.setFont(new Font("Noto Sans", 15));
         
         orBanner.setFill(Color.LIGHTGRAY);
-        orBanner.setFont(new Font("Noto Sans", 15));
+        orBanner.setFont(new Font("Noto Sans", 20));
+        orBanner.setStroke(Color.BLACK);
+        orBanner.setStrokeWidth(0.7);
         
         joinLobbiesBanner.setFill(Color.LIGHTGRAY);
         joinLobbiesBanner.setFont(new Font("Noto Sans", 15));
@@ -144,8 +147,8 @@ public class LoginController {
                                                                        BackgroundPosition.DEFAULT,
                                                                        BackgroundSize.DEFAULT)));
                                            
-                                           //noinspection BusyWait
                                            try {
+                                               //noinspection BusyWait
                                                Thread.sleep(10000);
                                            }
                                            catch( InterruptedException ignored ) {
@@ -203,6 +206,8 @@ public class LoginController {
             Platform.runLater(() -> {
                 gameWaitingText.setOpacity(1);
                 gameWaitingText.setFill(Color.DARKBLUE);
+                gameWaitingText.setStroke(Color.LAVENDER);
+                gameWaitingText.setStrokeWidth(0.5);
                 
             });
             while( !LocalModel.getInstance().isStarted() ) {

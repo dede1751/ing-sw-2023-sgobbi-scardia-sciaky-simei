@@ -183,7 +183,7 @@ public final class ResourcesManager {
     public static class GraphicalResources {
         
         public static final String graphicalAssetDir =
-                Paths.get("src/main/resources/gui/assert").toAbsolutePath().toString();
+                Paths.get("src/main/resources/gui/assets").toAbsolutePath().toString();
         public static final String FXMLDir = Paths.get("src/main/resources/gui/javafx").toAbsolutePath().toString();
         
         /**
@@ -197,6 +197,16 @@ public final class ResourcesManager {
         public static URL getFXML(String name) {
             try {
                 return Paths.get(FXMLDir + "/" + name).toUri().toURL();
+            }
+            //FIXME
+            catch( MalformedURLException e ) {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        public static String getGraphicalAsset(String name){
+            try {
+                return Paths.get(graphicalAssetDir+ "/" + name).toUri().toURL().toString();
             }
             //FIXME
             catch( MalformedURLException e ) {

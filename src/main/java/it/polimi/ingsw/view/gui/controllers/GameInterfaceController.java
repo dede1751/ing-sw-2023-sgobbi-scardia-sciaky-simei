@@ -1,9 +1,10 @@
 package it.polimi.ingsw.view.gui.controllers;
 
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.utils.files.ResourcesManager;
 import javafx.fxml.FXML;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,6 +12,8 @@ import java.util.Objects;
 public class GameInterfaceController {
     @FXML
     public AnchorPane chat;
+    @FXML
+    private HBox rootHBox;
     
     
     @FXML
@@ -48,6 +51,9 @@ public class GameInterfaceController {
         otherShelf3.setOpacity(0);
         shelfList = List.of(otherShelf1, otherShelf2, otherShelf3);
         shelfControllerList = List.of(otherShelf1Controller, otherShelf2Controller, otherShelf3Controller);
+        rootHBox.setBackground(new Background(new BackgroundImage(
+                new Image(ResourcesManager.GraphicalResources.getGraphicalAsset("misc/sfondo_parquet.png")),
+                BackgroundRepeat.SPACE, BackgroundRepeat.ROUND, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
     }
     
     /**

@@ -1,36 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<?import javafx.scene.layout.HBox?>
-
-<?import javafx.scene.layout.StackPane?>
-
-    <AnchorPane  xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.GameInterfaceController" >
-
-        <children>
-            <VBox layoutX="39.0" layoutY="41.0" prefHeight="978.0" prefWidth="400.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                <children>
-                    <fx:include fx:id="otherShelf1" source="otherShelfs.fxml" />
-                    <fx:include fx:id="otherShelf2" source="otherShelfs.fxml" />
-                    <fx:include fx:id="otherShelf3" source="otherShelfs.fxml" />
-                </children>
-            </VBox>
-
-
-            <fx:include fx:id="board" source="board.fxml" AnchorPane.topAnchor="0.0"  AnchorPane.rightAnchor="0"/>
-            <fx:include fx:id="localPlayer" source="localPlayer.fxml" AnchorPane.bottomAnchor="0.0"  AnchorPane.rightAnchor="0" />
-
-
-
-        </children>
-
-    </AnchorPane>
-
-
-
+<HBox fx:id="rootHBox" cache="true" cacheHint="SCALE" minHeight="-Infinity" minWidth="-Infinity" prefHeight="929.0"
+      prefWidth="1104.0"
+      xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="it.polimi.ingsw.view.gui.controllers.GameInterfaceController">
+    <children>
+        <VBox prefHeight="978.0" prefWidth="400.0" HBox.hgrow="ALWAYS">
+            <children>
+                <fx:include fx:id="otherShelf1" source="otherShelfs.fxml" VBox.vgrow="ALWAYS"/>
+                <fx:include fx:id="otherShelf2" source="otherShelfs.fxml" VBox.vgrow="ALWAYS"/>
+                <fx:include fx:id="otherShelf3" source="otherShelfs.fxml" VBox.vgrow="ALWAYS"/>
+            </children>
+        </VBox>
+        <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+            <children>
+                <fx:include fx:id="board" source="board.fxml" VBox.vgrow="ALWAYS"/>
+                <fx:include fx:id="localPlayer" source="localPlayer.fxml" VBox.vgrow="ALWAYS"/>
+            </children>
+            <padding>
+                <Insets top="20.0"/>
+            </padding>
+        </VBox>
+    </children>
+</HBox>

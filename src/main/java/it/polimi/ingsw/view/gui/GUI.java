@@ -54,6 +54,8 @@ public class GUI extends View {
             EndgameController.setEndgame(msg.getPayload());
             Parent root = endgame.load();
             runLater(() -> {
+                         GUIApp.getMainStage().setMaxHeight(593.0);
+                         GUIApp.getMainStage().setMaxWidth(1045.0);
                          GUIApp.getMainStage().setScene(new Scene(root));
                          GUIApp.getMainStage().setTitle("The winner is : " + msg.getPayload().winner());
                      }
@@ -87,7 +89,8 @@ public class GUI extends View {
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
                                                                                               otherPlayerShelf,
                                                                                               scores);
-            GUIApp.getMainControllerInstance().getGameTab().setText(this.nickname + "| --> " + model.getCurrentPlayer());
+            GUIApp.getMainControllerInstance().getGameTab().setText(
+                    this.nickname + "| --> " + model.getCurrentPlayer());
             GUIApp.getMainControllerInstance().getChatController().setRecipientName();
             
             
@@ -102,6 +105,8 @@ public class GUI extends View {
             boardController.setCommonGoalYStack(model.getTopCGYscore());
             
             
+            GUIApp.getMainStage().setMaxHeight(Double.MAX_VALUE);
+            GUIApp.getMainStage().setMaxWidth(Double.MAX_VALUE);
             GUIApp.getMainStage().setScene(new Scene(GUIApp.getMainRoot()));
         });
     }
@@ -173,13 +178,8 @@ public class GUI extends View {
     public void onMessage(IncomingChatMessage msg) {
         this.model.addChatMessage(msg.getSender(), msg.getPayload(), msg.getDestination());
         if( this.model.isStarted() ) {
-            runLater(() -> {
-                
-                GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
-                        msg.getSender() + ": " + msg.getPayload());
-                
-                
-            });
+            runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                    msg.getSender() + ": " + msg.getPayload()));
         }
         
     }
@@ -193,13 +193,8 @@ public class GUI extends View {
         this.model.setPoints(msg.getPayload().type(), msg.getPayload().player(), msg.getPayload().score());
         
         
-        runLater(() -> {
-            
-            GUIApp.getMainControllerInstance().getGameInterfaceController().updateScore(
-                    this.model.getPoints(msg.getPayload().player()), msg.getPayload().player());
-            
-            
-        });
+        runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().updateScore(
+                this.model.getPoints(msg.getPayload().player()), msg.getPayload().player()));
     }
     
     /**
