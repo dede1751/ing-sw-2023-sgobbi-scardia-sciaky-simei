@@ -2,9 +2,19 @@ package it.polimi.ingsw.view.gui.controllers;
 
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.view.gui.GUIApp;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.control.Slider;
+import javafx.event.ActionEvent;
+import javafx.scene.transform.Scale;
+import java.util.concurrent.TimeUnit;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +25,13 @@ public class GameInterfaceController {
     @FXML
     private HBox rootHBox;
     
+    
+    @FXML
+    private Button x1;
+    @FXML
+    private Button x125;
+    @FXML
+    private Button x150;
     
     @FXML
     private AnchorPane board;
@@ -33,6 +50,7 @@ public class GameInterfaceController {
     @FXML
     private OtherShelfController otherShelf3Controller;
     
+
     
     @FXML
     private AnchorPane localPlayer;
@@ -46,6 +64,9 @@ public class GameInterfaceController {
     
     @FXML
     public void initialize() {
+        x1.setOnAction(event -> changeSize(1));
+        x125.setOnAction(event -> changeSize(1.25));
+        x150.setOnAction(event -> changeSize(1.5));
         otherShelf1.setOpacity(0);
         otherShelf2.setOpacity(0);
         otherShelf3.setOpacity(0);
@@ -54,7 +75,17 @@ public class GameInterfaceController {
         rootHBox.setBackground(new Background(new BackgroundImage(
                 new Image(ResourcesManager.GraphicalResources.getGraphicalAsset("misc/sfondo_parquet.png")),
                 BackgroundRepeat.SPACE, BackgroundRepeat.ROUND, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+   
+        
+       
+   
     }
+    
+
+    
+    
+    
+    
     
     /**
      * Initialize shelves
@@ -79,6 +110,19 @@ public class GameInterfaceController {
                 (x) -> x.updateOtherShelf(shelf));
     }
     
+    
+    private void changeSize(double x){
+        Scale scale = new Scale();
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+        scale.setX(x);
+        scale.setY(x);
+        Pane gameInterface=GUIApp.getMainControllerInstance().getGameInterface();
+        gameInterface.getTransforms().setAll(scale);
+        double contentWidth = gameInterface.getBoundsInLocal().getWidth();
+        double contentHeight = gameInterface.getBoundsInLocal().getHeight();
+        GUIApp.getMainControllerInstance().setScrollPane(contentWidth,contentHeight);
+    }
     
     /**
      * @param score

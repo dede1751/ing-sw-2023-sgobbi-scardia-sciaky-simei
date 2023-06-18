@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.Scale;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class LocalPlayerController {
     private Button b3;
     @FXML
     private Button b4;
+
     @FXML
     private Text score;
     
@@ -49,6 +51,7 @@ public class LocalPlayerController {
         b2.setOnAction(event -> buttonAction(2));
         b3.setOnAction(event -> buttonAction(3));
         b4.setOnAction(event -> buttonAction(4));
+        
         for( int i = 0; i < Shelf.N_ROW; i++ ) {
             for( int j = 0; j < Shelf.N_COL; j++ ) {
                 ImageView imageView = new ImageView();
@@ -80,6 +83,7 @@ public class LocalPlayerController {
                 new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), column));
     }
     
+  
     
     public void setPersonalGoal(int id) {
         id = id + 1;
