@@ -22,7 +22,6 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     private final Server server;
     private final View view;
     
-    
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
     
     public LocalClient(Server server, View view) throws RemoteException {

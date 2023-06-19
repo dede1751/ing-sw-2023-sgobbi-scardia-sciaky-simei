@@ -55,14 +55,13 @@ public class AppServer {
     }
     
     private static void startRMI(LocalServer server) throws RemoteException {
-        LocateRegistry.createRegistry(1099);
-        Registry registry = LocateRegistry.getRegistry();
+        Registry registry = LocateRegistry.createRegistry(1099);
         registry.rebind("myshelfie_server", server);
     }
     
     public static void startSocket(LocalServer server) throws RemoteException {
         try( ExecutorService executorService = Executors.newCachedThreadPool();
-             ServerSocket serverSocket = new ServerSocket(1234) ) {
+             ServerSocket serverSocket = new ServerSocket(23456) ) {
             //noinspection InfiniteLoopStatement
             while( true ) {
                 Socket socket = serverSocket.accept();

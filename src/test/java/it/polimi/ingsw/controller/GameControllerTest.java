@@ -9,12 +9,9 @@ import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.utils.files.ResourcesManager;
-<<<<<<< HEAD
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.MoveMessage;
-import it.polimi.ingsw.view.messages.ViewMessage;
-=======
->>>>>>> refs/remotes/origin/gui
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
