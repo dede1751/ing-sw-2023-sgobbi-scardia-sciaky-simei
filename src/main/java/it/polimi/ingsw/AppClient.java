@@ -7,6 +7,8 @@ import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.gui.GUI;
 import it.polimi.ingsw.view.tui.TUI;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -27,7 +29,8 @@ public class AppClient {
     
     // Regex for IPv4 address, 4 repeats of '(?:\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])' which matches 0-255
     private static final String byteRegex = "(?:\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])";
-    private static final Pattern ipv4Pattern = Pattern.compile(String.format("%s\\.%s\\.%s\\.%s", byteRegex, byteRegex, byteRegex, byteRegex));
+    private static final Pattern ipv4Pattern =
+            Pattern.compile(String.format("%s\\.%s\\.%s\\.%s", byteRegex, byteRegex, byteRegex, byteRegex));
     
     public static void main(String[] args) throws RemoteException, NotBoundException {
         Scanner scanner = new Scanner(System.in);
@@ -51,6 +54,15 @@ public class AppClient {
         while( true ) {
             System.out.print("\n>>  ");
             ip = scanner.next().trim().toUpperCase();
+            if( ip.equals("LOCALHOST") ) {
+                try {
+                    ip = Inet4Address.getLocalHost().getHostAddress();
+                }
+                catch( UnknownHostException e ) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            }
             Matcher matcher = ipv4Pattern.matcher(ip);
             
             if( matcher.matches() ) {

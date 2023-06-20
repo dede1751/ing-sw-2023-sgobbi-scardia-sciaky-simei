@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -80,6 +81,7 @@ public class GUI extends View {
                 scores.add(model.getPoints(x));
             }
         }
+        
         runLater(() -> {
             GUIApp.getMainControllerInstance().getGameTab().setText(nickname);
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
@@ -90,9 +92,13 @@ public class GUI extends View {
                                                                                               otherPlayerShelf,
                                                                                               scores);
             GUIApp.getMainControllerInstance().getGameTab().setText(
-                    this.nickname + "| --> " + model.getCurrentPlayer());
+                    this.nickname + "| current --> " + model.getCurrentPlayer());
             GUIApp.getMainControllerInstance().getChatController().setRecipientName();
             
+            if( model.getPlayersNicknames().get(0).equals(nickname) ) {
+                GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setChairOpacity(
+                        1.0);
+            }
             
             BoardController boardController =
                     GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();
@@ -177,9 +183,20 @@ public class GUI extends View {
     @Override
     public void onMessage(IncomingChatMessage msg) {
         this.model.addChatMessage(msg.getSender(), msg.getPayload(), msg.getDestination());
+        
         if( this.model.isStarted() ) {
-            runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
-                    msg.getSender() + ": " + msg.getPayload()));
+            if(msg.getDestination().equals(nickname)){
+                
+                runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                        msg.getSender() + ": " + msg.getPayload(), Color.BLUEVIOLET));
+            }else if(msg.getSender().equals(nickname)){
+                runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                        msg.getSender() + ": " + msg.getPayload(), Color.INDIGO));
+            }else {
+                runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                        msg.getSender() + ": " + msg.getPayload(), Color.BLACK));
+            }
+            
         }
         
     }
@@ -197,9 +214,6 @@ public class GUI extends View {
                 this.model.getPoints(msg.getPayload().player()), msg.getPayload().player()));
     }
     
-    /**
-     * @param msg
-     */
     @Override
     public void onMessage(CommonGoalMessage msg) {
         CommonGoalPayload p = msg.getPayload();

@@ -115,10 +115,10 @@ public class LoginController {
         AppClient.getViewInstance().notifyRequestLobby(null);
         
             
-        selectNumberBanner.setFill(Color.LIGHTGRAY);
+        selectNumberBanner.setFill(Color.BLACK);
         selectNumberBanner.setFont(new Font("Noto Sans", 15));
         
-        createLobbiesBanner.setFill(Color.LIGHTGRAY);
+        createLobbiesBanner.setFill(Color.BLACK);
         createLobbiesBanner.setFont(new Font("Noto Sans", 15));
         
         orBanner.setFill(Color.LIGHTGRAY);
@@ -126,10 +126,10 @@ public class LoginController {
         orBanner.setStroke(Color.BLACK);
         orBanner.setStrokeWidth(0.7);
         
-        joinLobbiesBanner.setFill(Color.LIGHTGRAY);
+        joinLobbiesBanner.setFill(Color.BLACK);
         joinLobbiesBanner.setFont(new Font("Noto Sans", 15));
         
-        insertNicknameBanner.setFill(Color.LIGHTGRAY);
+        insertNicknameBanner.setFill(Color.BLACK);
         insertNicknameBanner.setFont(new Font("Noto Sans", 15));
         
         gameWaitingText.setFill(Color.LIGHTGRAY);

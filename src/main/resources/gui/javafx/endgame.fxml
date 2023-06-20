@@ -1,79 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.image.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<Pane fx:controller="it.polimi.ingsw.view.gui.controllers.EndgameController" maxHeight="-Infinity" maxWidth="-Infinity"
-      minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="1045.0"
-      xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1">
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="1045.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.EndgameController">
     <children>
-        <ImageView fitHeight="610.0" fitWidth="1077.0" layoutX="-8.0" layoutY="-5.0" pickOnBounds="true"
-                   preserveRatio="true">
+        <ImageView fitHeight="610.0" fitWidth="1077.0" layoutX="-8.0" layoutY="-5.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/endgame_background.png"/>
+                <Image url="@../assets/endgame/endgame_background.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="victoryRoyale" opacity="0" fitHeight="423.0" fitWidth="406.0" layoutX="328.0" layoutY="-138.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="victoryRoyale" fitHeight="423.0" fitWidth="406.0" layoutX="328.0" layoutY="-138.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/VictoryRoyaleSlate.png"/>
+                <Image url="@../assets/endgame/VictoryRoyaleSlate.png" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="PC1" fitHeight="276.0" fitWidth="364.0" layoutX="419.0" layoutY="125.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="PC1" fitHeight="276.0" fitWidth="364.0" layoutX="419.0" layoutY="125.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/1Player_chair.png"/>
+                <Image url="@../assets/endgame/1Player_chair.png" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="PC4" fitHeight="200.0" fitWidth="207.0" layoutX="348.0" layoutY="386.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="PC4" fitHeight="200.0" fitWidth="207.0" layoutX="310.0" layoutY="401.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/4Player_chair.png"/>
+                <Image url="@../assets/endgame/4Player_chair.png" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="PC3" fitHeight="207.0" fitWidth="182.0" layoutX="266.0" layoutY="220.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="PC3" fitHeight="207.0" fitWidth="182.0" layoutX="184.0" layoutY="221.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/3Player_chair.png"/>
+                <Image url="@../assets/endgame/3Player_chair.png" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="PC2" fitHeight="182.0" fitWidth="155.0" layoutX="610.0" layoutY="286.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="PC2" fitHeight="182.0" fitWidth="155.0" layoutX="680.0" layoutY="292.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/2Player_chair.png"/>
+                <Image url="@../assets/endgame/2Player_chair.png" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="P3" fitHeight="150.0" fitWidth="200.0" layoutX="274.0" layoutY="203.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="P3" fitHeight="150.0" fitWidth="200.0" layoutX="192.0" layoutY="201.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/3Player.gif"/>
+                <Image url="@../assets/endgame/3Player.gif" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="P4" fitHeight="86.0" fitWidth="77.0" layoutX="410.0" layoutY="401.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="P4" fitHeight="86.0" fitWidth="77.0" layoutX="381.0" layoutY="419.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/4Player.gif"/>
+                <Image url="@../assets/endgame/4Player.gif" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="P2" fitHeight="150.0" fitWidth="200.0" layoutX="570.0" layoutY="236.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="P2" fitHeight="150.0" fitWidth="200.0" layoutX="626.0" layoutY="242.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/2Player.gif"/>
+                <Image url="@../assets/endgame/2Player.gif" />
             </image>
         </ImageView>
-        <ImageView opacity="0" fx:id="P1" fitHeight="150.0" fitWidth="200.0" layoutX="430.0" layoutY="174.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="P1" fitHeight="150.0" fitWidth="200.0" layoutX="430.0" layoutY="174.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/endgame/1Player.gif"/>
+                <Image url="@../assets/endgame/1Player.gif" />
             </image>
         </ImageView>
-        <Text opacity="0" fx:id="player3" layoutX="300.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="PLAYER 3"/>
-        <Text opacity="0" fx:id="player1" layoutX="494.0" layoutY="391.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="PLAYER 1"/>
-        <Text opacity="0" fx:id="player2" layoutX="721.0" layoutY="268.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="PLAYER 2"/>
-        <Text opacity="0" fx:id="player4" layoutX="518.0" layoutY="491.0" strokeType="OUTSIDE" strokeWidth="0.0"
-              text="PLAYER 4"/>
+        <Text fx:id="player3" fill="#cd7f32" layoutX="223.0" layoutY="208.0" opacity="0.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.2" text="PLAYER 3">
+         <font>
+            <Font size="20.0" />
+         </font></Text>
+        <Text fx:id="player1" fill="#f2eb1e" layoutX="475.0" layoutY="411.0" opacity="0.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.1" text="PLAYER 1">
+         <font>
+            <Font name="Noto Music Regular" size="20.0" />
+         </font></Text>
+        <Text fx:id="player2" fill="#aaa9ad" layoutX="810.0" layoutY="270.0" opacity="0.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.1" text="PLAYER 2">
+         <font>
+            <Font size="20.0" />
+         </font></Text>
+        <Text fx:id="player4" fill="#7b5804" layoutX="479.0" layoutY="522.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 4">
+         <font>
+            <Font size="20.0" />
+         </font></Text>
     </children>
 </Pane>

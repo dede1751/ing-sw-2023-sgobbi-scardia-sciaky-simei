@@ -15,13 +15,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LocalPlayerController {
     
+    @FXML
+    private ImageView chairImage;
     @FXML
     private ImageView personalGoal;
     @FXML
@@ -34,7 +35,7 @@ public class LocalPlayerController {
     private Button b3;
     @FXML
     private Button b4;
-
+    
     @FXML
     private Text score;
     
@@ -83,10 +84,14 @@ public class LocalPlayerController {
                 new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), column));
     }
     
-  
     
     public void setPersonalGoal(int id) {
         id = id + 1;
         this.personalGoal.setImage(new Image("gui/assets/personal_goal_cards/Personal_Goals" + id + ".png"));
     }
+    
+    public void setChairOpacity(double opacity) {
+        chairImage.setOpacity(opacity);
+    }
+    
 }

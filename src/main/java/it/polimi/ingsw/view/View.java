@@ -7,8 +7,6 @@ import it.polimi.ingsw.view.messages.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 
 /**
@@ -50,34 +48,74 @@ public abstract class View implements Runnable {
         return lobbies;
     }
     
-    
+    /**
+     * Define view behaviour upon receiving a BoardMessage
+     * @param msg received BoardMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(BoardMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a AvailableLobbyMessage
+     * @param msg received AvailableLobbyMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(AvailableLobbyMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a EndGameMessage
+     * @param msg received EndGameMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(EndGameMessage msg);
     
+    
+    /**
+     * Define view behaviour upon receiving a StartGameMessage
+     * @param msg received StartGameMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(StartGameMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a ServerResponseMessage
+     * @param msg received ServerResponseMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(ServerResponseMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a ShelfMessage
+     * @param msg received StartGameMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(ShelfMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a IncomingChatMessage
+     * @param msg received IncomingChatMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(IncomingChatMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a UpdateScoreMessage
+     * @param msg received UpdateScoreMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(UpdateScoreMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a CommonGoalMessage
+     * @param msg received CommonGoalMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(CommonGoalMessage msg);
     
+    /**
+     * Define view behaviour upon receiving a CurrentPlayerMessage
+     * @param msg received CurrentPlayerMessage
+     */
     @SuppressWarnings("unused")
     public abstract void onMessage(CurrentPlayerMessage msg);
     
