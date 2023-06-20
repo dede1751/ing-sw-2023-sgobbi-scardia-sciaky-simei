@@ -14,6 +14,8 @@ import javafx.scene.layout.*;
 import javafx.scene.control.Slider;
 import javafx.event.ActionEvent;
 import javafx.scene.transform.Scale;
+
+import javax.annotation.processing.Generated;
 import java.util.concurrent.TimeUnit;
 
 import java.util.List;
@@ -21,7 +23,9 @@ import java.util.Objects;
 
 public class GameInterfaceController {
     @FXML
-    public AnchorPane chat;
+    private AnchorPane chat;
+    @FXML
+    private Button x075;
     @FXML
     private HBox rootHBox;
     
@@ -44,7 +48,7 @@ public class GameInterfaceController {
     @FXML
     private Pane otherShelf3;
     @FXML
-    public OtherShelfController otherShelf1Controller;
+    private OtherShelfController otherShelf1Controller;
     @FXML
     private OtherShelfController otherShelf2Controller;
     @FXML
@@ -64,6 +68,7 @@ public class GameInterfaceController {
     
     @FXML
     public void initialize() {
+        x075.setOnAction(event -> changeSize(0.75));
         x1.setOnAction(event -> changeSize(1));
         x125.setOnAction(event -> changeSize(1.25));
         x150.setOnAction(event -> changeSize(1.5));
