@@ -107,6 +107,7 @@ public class GUI extends View {
             
             boardController.setCommonGoalX(model.getCGXindex());
             boardController.setCommonGoalY(model.getCGYindex());
+            System.out.println(model.getCGXindex()+ " <-x  y->"+ model.getCGYindex());//levare
             boardController.setCommonGoalXStack(model.getTopCGXscore());
             boardController.setCommonGoalYStack(model.getTopCGYscore());
             
