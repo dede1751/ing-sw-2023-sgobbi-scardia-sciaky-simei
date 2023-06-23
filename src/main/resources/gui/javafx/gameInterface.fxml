@@ -37,5 +37,15 @@
                 <Insets top="20.0"/>
             </padding>
         </VBox>
+
+        <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+
+
+
+                <fx:include fx:id="chat" source="chat.fxml" VBox.vgrow="ALWAYS"/>
+
+
+
+        </VBox>
     </children>
 </HBox>

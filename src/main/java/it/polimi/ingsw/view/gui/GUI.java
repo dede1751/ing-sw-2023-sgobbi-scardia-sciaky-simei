@@ -83,7 +83,9 @@ public class GUI extends View {
         }
         
         runLater(() -> {
-            GUIApp.getMainControllerInstance().getGameTab().setText(nickname);
+            //
+            //
+            // GUIApp.getMainControllerInstance().getGameTab().setText(nickname);
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
                     model.getShelf(nickname));
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setPersonalGoal(
@@ -91,10 +93,10 @@ public class GUI extends View {
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
                                                                                               otherPlayerShelf,
                                                                                               scores);
-            GUIApp.getMainControllerInstance().getGameTab().setText(
-                    this.nickname + "| current --> " + model.getCurrentPlayer());
-            GUIApp.getMainControllerInstance().getChatController().setRecipientName();
-            
+          //  GUIApp.getMainControllerInstance().getGameTab().setText(
+            //           this.nickname + "| current --> " + model.getCurrentPlayer());
+            ///   in teoria da togliere  GUIApp.getMainControllerInstance().getChatController().setRecipientName();
+            GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().setRecipientName();
             if( model.getPlayersNicknames().get(0).equals(nickname) ) {
                 GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setChairOpacity(
                         1.0);
@@ -188,13 +190,13 @@ public class GUI extends View {
         if( this.model.isStarted() ) {
             if(msg.getDestination().equals(nickname)){
                 
-                runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
                         msg.getSender() + ": " + msg.getPayload(), Color.BLUEVIOLET));
             }else if(msg.getSender().equals(nickname)){
-                runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
                         msg.getSender() + ": " + msg.getPayload(), Color.INDIGO));
             }else {
-                runLater(() -> GUIApp.getMainControllerInstance().getChatController().writeChatMessage(
+                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
                         msg.getSender() + ": " + msg.getPayload(), Color.BLACK));
             }
             
@@ -241,8 +243,8 @@ public class GUI extends View {
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
-        runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(
-                nickname + "| current --> " + msg.getPayload()));
+      ///  runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(
+       //         nickname + "| current --> " + msg.getPayload()));
     }
     
     @Override

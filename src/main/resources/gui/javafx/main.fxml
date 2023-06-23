@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="953.0"
+      prefWidth="1198.0" xmlns="http://javafx.com/javafx/16"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.MainController">
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="953.0"
-         prefWidth="1198.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/16"
-         xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.MainController">
-    <tabs>
-        <Tab fx:id="gameTab" text="Game">
-            <content>
                 <HBox prefHeight="1038.0" prefWidth="1306.0">
                     <children>
                         <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="956.0"
@@ -22,12 +18,5 @@
                         </ScrollPane>
                     </children>
                 </HBox>
-            </content>
-        </Tab>
-        <Tab text="Chat">
-            <content>
-                <fx:include fx:id="chat" source="chat.fxml"/>
-            </content>
-        </Tab>
-    </tabs>
-</TabPane>
+
+</Pane>

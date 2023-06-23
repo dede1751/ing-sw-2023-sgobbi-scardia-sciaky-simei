@@ -4,7 +4,6 @@ import it.polimi.ingsw.utils.files.ResourcesManager;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 
@@ -14,13 +13,11 @@ public class MainController {
     private ScrollPane scrollPane;
     @FXML
     private Pane gameInterface;
-    @FXML
-    private Tab gameTab;
+ 
     @FXML
     private GameInterfaceController gameInterfaceController;
     
-    @FXML
-    public ChatController chatController;
+    
     
     @FXML
     public void initialize() {
@@ -34,9 +31,7 @@ public class MainController {
         return gameInterfaceController;
     }
     
-    public ChatController getChatController() {
-        return chatController;
-    }
+
     
     public Pane getGameInterface(){
         return gameInterface;
@@ -52,7 +47,5 @@ public class MainController {
         scrollPane.setPrefViewportHeight(y);
     }
     
-    public Tab getGameTab() {
-        return gameTab;
-    }
+
 }

@@ -3,27 +3,18 @@ package it.polimi.ingsw.view.gui.controllers;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.gui.GUIApp;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.control.Slider;
-import javafx.event.ActionEvent;
 import javafx.scene.transform.Scale;
-
-import javax.annotation.processing.Generated;
-import java.util.concurrent.TimeUnit;
 
 import java.util.List;
 import java.util.Objects;
 
 public class GameInterfaceController {
     @FXML
-    private AnchorPane chat;
+    public ChatController chatController;
     @FXML
     private Button x075;
     @FXML
@@ -156,6 +147,10 @@ public class GameInterfaceController {
     
     public BoardController getBoardController() {
         return boardController;
+    }
+    
+    public ChatController getChatController() {
+        return  chatController;
     }
     
     
