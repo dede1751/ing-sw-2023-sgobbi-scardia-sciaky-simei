@@ -17,13 +17,21 @@ public class MainController {
     @FXML
     private GameInterfaceController gameInterfaceController;
     
-    
+    @FXML
+    private AnchorPane anchorPane;
     
     @FXML
     public void initialize() {
+        
+        
+        AnchorPane.setTopAnchor(scrollPane, 0.0);
+        AnchorPane.setBottomAnchor(scrollPane, 0.0);
+        AnchorPane.setLeftAnchor(scrollPane, 0.0);
+        AnchorPane.setRightAnchor(scrollPane, 0.0);
+        
         scrollPane.setBackground(new Background(new BackgroundImage(
                 new Image(ResourcesManager.GraphicalResources.getGraphicalAsset("misc/sfondo_parquet.png")),
-                BackgroundRepeat.SPACE, BackgroundRepeat.ROUND, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
         
     }
     
@@ -40,11 +48,16 @@ public class MainController {
         return scrollPane;
     }
     
-    public void setScrollPane(double x, double y){
-        var content =scrollPane.getContent();
-        scrollPane.setContent(new Group(content));
-        scrollPane.setPrefViewportWidth(x);
-        scrollPane.setPrefViewportHeight(y);
+    public void setScrollPane(double x, double y, Group scaledContentGroup){
+        
+        //scrollPane.setPrefViewportWidth(x);
+        //scrollPane.setPrefViewportHeight(y);
+        scrollPane.setContent(scaledContentGroup);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+       
+        
+        
     }
     
 

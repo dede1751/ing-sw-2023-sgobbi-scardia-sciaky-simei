@@ -4,7 +4,11 @@ import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.gui.GUIApp;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.transform.Scale;
@@ -15,6 +19,12 @@ import java.util.Objects;
 public class GameInterfaceController {
     @FXML
     public ChatController chatController;
+    @FXML
+    public VBox boardAndPlayer;
+    @FXML
+    public VBox chatVbox;
+    @FXML
+    public AnchorPane chat;
     @FXML
     private Button x075;
     @FXML
@@ -27,6 +37,9 @@ public class GameInterfaceController {
     private Button x125;
     @FXML
     private Button x150;
+    
+    @FXML
+    private VBox otherShelfVbox;
     
     @FXML
     private AnchorPane board;
@@ -70,7 +83,7 @@ public class GameInterfaceController {
         shelfControllerList = List.of(otherShelf1Controller, otherShelf2Controller, otherShelf3Controller);
         rootHBox.setBackground(new Background(new BackgroundImage(
                 new Image(ResourcesManager.GraphicalResources.getGraphicalAsset("misc/sfondo_parquet.png")),
-                BackgroundRepeat.SPACE, BackgroundRepeat.ROUND, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
    
         
        
@@ -115,9 +128,14 @@ public class GameInterfaceController {
         scale.setY(x);
         Pane gameInterface=GUIApp.getMainControllerInstance().getGameInterface();
         gameInterface.getTransforms().setAll(scale);
-        double contentWidth = gameInterface.getBoundsInLocal().getWidth();
-        double contentHeight = gameInterface.getBoundsInLocal().getHeight();
-        GUIApp.getMainControllerInstance().setScrollPane(contentWidth,contentHeight);
+        gameInterface.layout();
+        Bounds contentBounds = gameInterface.getBoundsInLocal();
+        Group scaledContentGroup = new Group(gameInterface);
+        
+        GUIApp.getMainControllerInstance().setScrollPane(contentBounds.getWidth(),contentBounds.getHeight(), scaledContentGroup);
+        
+        
+        
     }
     
     /**
