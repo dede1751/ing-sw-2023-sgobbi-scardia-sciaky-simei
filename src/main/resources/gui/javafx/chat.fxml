@@ -13,7 +13,7 @@
         <TextField fx:id="writeMessage" onAction="#handleEnterPressed" layoutX="14.0" layoutY="734.0" prefHeight="71.0"
                    prefWidth="475.0" text="CHAT MESSAGE"/>
         <ChoiceBox fx:id="recipientChoiceBox" layoutX="14" layoutY="704" prefWidth="150.0"></ChoiceBox>
-        <ScrollPane fx:id="readChat" layoutX="14.0" layoutY="14.0" prefHeight="679.0" prefWidth="475.0">
+        <ScrollPane fx:id="readChat" layoutX="14.0" layoutY="14.0" prefHeight="679.0" prefWidth="475.0" style="-fx-background-color: white;">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="687.0" prefWidth="463.0">
                     <children>

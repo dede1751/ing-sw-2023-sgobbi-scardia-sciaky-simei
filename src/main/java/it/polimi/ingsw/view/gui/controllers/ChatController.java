@@ -31,6 +31,7 @@ public class ChatController {
     String recipientName = "Everyone";
     
     
+    
     @FXML
     public void setRecipientName() {
         
