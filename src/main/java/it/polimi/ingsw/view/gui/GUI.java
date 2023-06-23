@@ -93,6 +93,7 @@ public class GUI extends View {
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
                                                                                               otherPlayerShelf,
                                                                                               scores);
+            
           //  GUIApp.getMainControllerInstance().getGameTab().setText(
             //           this.nickname + "| current --> " + model.getCurrentPlayer());
             ///   in teoria da togliere  GUIApp.getMainControllerInstance().getChatController().setRecipientName();
@@ -109,7 +110,6 @@ public class GUI extends View {
             
             boardController.setCommonGoalX(model.getCGXindex());
             boardController.setCommonGoalY(model.getCGYindex());
-            System.out.println(model.getCGXindex()+ " <-x  y->"+ model.getCGYindex());//levare
             boardController.setCommonGoalXStack(model.getTopCGXscore());
             boardController.setCommonGoalYStack(model.getTopCGYscore());
             
