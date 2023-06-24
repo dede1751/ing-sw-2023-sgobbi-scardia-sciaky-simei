@@ -30,6 +30,39 @@ public class GameModelTest {
     }
     
     @Test
+    public void getGameModelTest() {
+        GameModel game = new GameModel(2, 6, 5);
+        int numPlayers = game.getNumPlayers();
+        int CGX = game.getCommonGoalX();
+        int CGY = game.getCommonGoalY();
+        assertEquals(numPlayers, 2);
+        assertEquals(CGX, 6);
+        assertEquals(CGY, 5);
+    }
+    
+    @Test
+    public void popStackTest() {
+        GameModel game = new GameModel(2, 6, 5);
+        int CGXScore = game.popStackCGX();
+        int CGYScore = game.popStackCGY();
+        assertEquals(8, CGXScore);
+        assertEquals(8, CGYScore);
+    }
+    
+    @Test
+    public void setLastTurnTest() {
+        GameModel game = new GameModel(2, 6, 5);
+        game.addPlayer("Lucrezia", 1);
+        game.addPlayer("Luca", 2);
+        int score = game.getCurrentPlayer().getScore();
+        assertFalse(game.isLastTurn());
+        
+        game.setLastTurn();
+        assertTrue(game.isLastTurn());
+        assertEquals(score+1, game.getCurrentPlayer().getScore());
+    }
+    
+    @Test
     public void isLastTurn() {
         GameModel game = new GameModel(4, 0, 0);
         assertFalse(game.isLastTurn());
@@ -45,6 +78,27 @@ public class GameModelTest {
             assertEquals(player.getNickname(), game.getPlayers().get(i).getNickname());
             assertEquals(player.getPg(), game.getPlayers().get(i).getPg());
         }
+    }
+    
+    @Test
+    void getPlayersTest() {
+        GameModel game = new GameModel(2, 5, 6);
+        game.addPlayer("Player 1", 1);
+        game.addPlayer("Player 2", 2);
+        
+        var players = game.getPlayers();
+        assertEquals(players.get(0).getNickname(), "Player 1");
+        assertEquals(players.get(0).getPg(), 1);
+    }
+    
+    @Test
+    void setCurrentPlayerIndex() {
+        GameModel game = new GameModel(2, 5, 6);
+        game.addPlayer("Player 1", 1);
+        game.addPlayer("Player 2", 2);
+        
+        game.setCurrentPlayerIndex(0);
+        assertEquals(0, game.getCurrentPlayerIndex());
     }
     
     @Test
@@ -157,18 +211,62 @@ public class GameModelTest {
     }
     
     @Test
-    public void addCurrentPlayerScoreTest() {
+    public void addCurrentPlayerCommonGoalScoreTest() {
         GameModel game = new GameModel(2, 5, 6);
         game.addPlayer("Player 1", 1);
         game.addPlayer("Player 2", 2);
         
         int startingScore = game.getCurrentPlayer().getScore();
-        int scoreToAdd = 10;
-        int expectedScore = startingScore + scoreToAdd;
+        int CGXScore = game.popStackCGX();
+        int expectedScore = startingScore + CGXScore;
         
-        game.addCurrentPlayerCommongGoalScore(scoreToAdd, GameModel.CGType.X);
+        game.addCurrentPlayerCommongGoalScore(CGXScore, GameModel.CGType.X);
+        assertEquals(expectedScore, game.getCurrentPlayer().getScore());
+        
+        int CGYScore = game.popStackCGY();
+        expectedScore = expectedScore + CGYScore;
+    
+        game.addCurrentPlayerCommongGoalScore(CGYScore, GameModel.CGType.Y);
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
     }
+    
+    
+    @Test
+    public void setCurrentPlayerPersonalScoreTest() {
+        GameModel game = new GameModel(2, 5, 6);
+        game.addPlayer("Player 1", 1);
+        game.addPlayer("Player 2", 2);
+        
+        int score = 10;
+    
+        game.setCurrentPlayerPersonalScore(score);
+        assertEquals(score, game.getCurrentPlayer().getPersonalGoalScore());
+    }
+    
+    @Test
+    public void setCurrentPlayerAdjencyScoreTest() {
+        GameModel game = new GameModel(2, 5, 6);
+        game.addPlayer("Player 1", 1);
+        game.addPlayer("Player 2", 2);
+        
+        int score = 10;
+        
+        game.setCurrentPlayerAdjacencyScore(score);
+        assertEquals(score, game.getCurrentPlayer().getAdjacencyScore());
+    }
+    
+    @Test
+    public void variousBoardTest() throws OutOfBoundCoordinateException, OccupiedTileException {
+        GameModel game = new GameModel(2, 5, 6);
+        Board board = game.getBoard();
+        
+        var coordinates = game.getAllCoordinates();
+        var tile = game.getTile(coordinates.get(0));
+        
+        game.refillBoard();
+        assertEquals(29, game.getOccupied().size());
+    }
+    
     
     @Test
     public void getTileAmountTest() {
