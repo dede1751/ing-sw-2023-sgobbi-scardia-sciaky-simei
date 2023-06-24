@@ -83,9 +83,8 @@ public class GUI extends View {
         }
         
         runLater(() -> {
-            //
-            //
-            // GUIApp.getMainControllerInstance().getGameTab().setText(nickname);
+            
+            GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(nickname);
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().updateShelf(
                     model.getShelf(nickname));
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setPersonalGoal(
@@ -94,9 +93,9 @@ public class GUI extends View {
                                                                                               otherPlayerShelf,
                                                                                               scores);
             
-          //  GUIApp.getMainControllerInstance().getGameTab().setText(
-            //           this.nickname + "| current --> " + model.getCurrentPlayer());
-            ///   in teoria da togliere  GUIApp.getMainControllerInstance().getChatController().setRecipientName();
+            GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(
+                        "     The Current player is " + model.getCurrentPlayer());
+            
             GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().setRecipientName();
             if( model.getPlayersNicknames().get(0).equals(nickname) ) {
                 GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setChairOpacity(
@@ -243,8 +242,8 @@ public class GUI extends View {
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
-      ///  runLater(() -> GUIApp.getMainControllerInstance().getGameTab().setText(
-       //         nickname + "| current --> " + msg.getPayload()));
+        runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(
+                 "     The Current player is " + msg.getPayload()));
     }
     
     @Override
