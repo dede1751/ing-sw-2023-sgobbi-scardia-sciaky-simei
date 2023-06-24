@@ -6,9 +6,12 @@ import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.nio.ByteBuffer;
+import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,12 +44,24 @@ public class GameModelTest {
     }
     
     @Test
-    public void popStackTest() {
+    public void stackTest() {
         GameModel game = new GameModel(2, 6, 5);
+        
         int CGXScore = game.popStackCGX();
         int CGYScore = game.popStackCGY();
         assertEquals(8, CGXScore);
         assertEquals(8, CGYScore);
+    
+        CGXScore = game.peekStackCGX();
+        CGYScore = game.peekStackCGY();
+        assertEquals(4, CGXScore);
+        assertEquals(4, CGYScore);
+        
+        game.popStackCGX();
+        game.popStackCGY();
+        
+        assertEquals(0, game.peekStackCGX());
+        assertEquals(0, game.peekStackCGY());
     }
     
     @Test
@@ -256,12 +271,8 @@ public class GameModelTest {
     }
     
     @Test
-    public void variousBoardTest() throws OutOfBoundCoordinateException, OccupiedTileException {
+    public void getOccupiedTest() {
         GameModel game = new GameModel(2, 5, 6);
-        Board board = game.getBoard();
-        
-        var coordinates = game.getAllCoordinates();
-        var tile = game.getTile(coordinates.get(0));
         
         game.refillBoard();
         assertEquals(29, game.getOccupied().size());
@@ -294,5 +305,17 @@ public class GameModelTest {
                 file.close();
             });
         }
+    }
+    
+    @Test
+    public void endGameTest() {
+        GameModel game = new GameModel(2, 5, 6);
+        
+        var gameEnded = game.getGameEnded();
+        assertFalse(gameEnded);
+        
+        game.setGameEnded(true);
+        gameEnded = game.getGameEnded();
+        assertTrue(gameEnded);
     }
 }

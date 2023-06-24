@@ -98,7 +98,7 @@ public class GameModel {
         this.notifyStartGame();
     }
     
-    private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
+    public GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
         this.numPlayers = numPlayers;
         this.commonGoalNumX = commonGoalNumX;
         this.commonGoalNumY = commonGoalNumY;
