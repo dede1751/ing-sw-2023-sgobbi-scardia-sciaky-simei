@@ -8,9 +8,14 @@ import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 
 import java.util.List;
@@ -25,6 +30,8 @@ public class GameInterfaceController {
     public VBox chatVbox;
     @FXML
     public AnchorPane chat;
+    @FXML
+    public Text currentPlayer;
     @FXML
     private Button x075;
     @FXML
@@ -70,6 +77,8 @@ public class GameInterfaceController {
     private List<OtherShelfController> shelfControllerList;
     private List<Pane> shelfList;
     
+    private double scale;
+    
     @FXML
     public void initialize() {
         x075.setOnAction(event -> changeSize(0.75));
@@ -85,7 +94,8 @@ public class GameInterfaceController {
                 new Image(ResourcesManager.GraphicalResources.getGraphicalAsset("misc/sfondo_parquet.png")),
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
    
-        
+        currentPlayer.setFont(Font.font("Verdana", FontWeight.MEDIUM, 18));
+        currentPlayer.setFill(Color.GOLD);
        
    
     }
@@ -121,21 +131,34 @@ public class GameInterfaceController {
     
     
     private void changeSize(double x){
-        Scale scale = new Scale();
-        scale.setPivotX(0);
-        scale.setPivotY(0);
-        scale.setX(x);
-        scale.setY(x);
-        Pane gameInterface=GUIApp.getMainControllerInstance().getGameInterface();
-        gameInterface.getTransforms().setAll(scale);
-        gameInterface.layout();
-        Bounds contentBounds = gameInterface.getBoundsInLocal();
-        Group scaledContentGroup = new Group(gameInterface);
         
-        GUIApp.getMainControllerInstance().setScrollPane(contentBounds.getWidth(),contentBounds.getHeight(), scaledContentGroup);
-        
-        
-        
+        if(x!=scale){
+            scale=x;
+            Scale scale = new Scale();
+            scale.setPivotX(0);
+            scale.setPivotY(0);
+            scale.setX(x);
+            scale.setY(x);
+            
+            Pane gameInterface=GUIApp.getMainControllerInstance().getGameInterface();
+            
+            gameInterface.getTransforms().setAll(scale);
+            gameInterface.layout();
+            
+            Bounds contentBounds = gameInterface.getBoundsInLocal();
+            Group scaledContentGroup = new Group(gameInterface);
+            
+            ScrollPane scrollPane = GUIApp.getMainControllerInstance().getScrollPane();
+            scrollPane.setContent(new Group(gameInterface));
+            scrollPane.setFitToWidth(true);
+            scrollPane.setFitToHeight(true);
+            
+            
+            double scaledWidth = gameInterface.getPrefWidth() * x;
+            double scaledHeight = gameInterface.getPrefHeight() * x;
+            gameInterface.setPrefSize(scaledWidth, scaledHeight);
+           
+        }
     }
     
     /**
@@ -170,6 +193,8 @@ public class GameInterfaceController {
     public ChatController getChatController() {
         return  chatController;
     }
+    
+    public Text getCurrentPlayer(){return currentPlayer;}
     
     
 }

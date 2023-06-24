@@ -47,18 +47,6 @@ public class MainController {
     public ScrollPane getScrollPane(){
         return scrollPane;
     }
-    
-    public void setScrollPane(double x, double y, Group scaledContentGroup){
-        
-        //scrollPane.setPrefViewportWidth(x);
-        //scrollPane.setPrefViewportHeight(y);
-        scrollPane.setContent(scaledContentGroup);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-       
-        
-        
-    }
-    
+ 
 
 }
