@@ -74,7 +74,7 @@ public class GameModelTest {
         
         game.setLastTurn();
         assertTrue(game.isLastTurn());
-        assertEquals(score+1, game.getCurrentPlayer().getScore());
+        assertEquals(score + 1, game.getCurrentPlayer().getScore());
     }
     
     @Test
@@ -84,7 +84,7 @@ public class GameModelTest {
     }
     
     @Test
-    public void addPlayerTest() {
+    public void addPlayerTest1() {
         GameModel game = new GameModel(4, 0, 0);
         for( int i = 0; i < 4; i++ ) {
             Player player = new Player("nick_" + i, i);
@@ -93,6 +93,14 @@ public class GameModelTest {
             assertEquals(player.getNickname(), game.getPlayers().get(i).getNickname());
             assertEquals(player.getPg(), game.getPlayers().get(i).getPg());
         }
+    }
+    
+    @Test
+    public void addPlayerTest2() {
+        GameModel game = new GameModel(2, 0, 0);
+        Player player = new Player("Player1", 0);
+        game.addPlayer(player);
+        assertEquals(game.getPlayers().get(0).getNickname(), "Player1");
     }
     
     @Test
@@ -228,21 +236,50 @@ public class GameModelTest {
     @Test
     public void addCurrentPlayerCommonGoalScoreTest() {
         GameModel game = new GameModel(2, 5, 6);
-        game.addPlayer("Player 1", 1);
-        game.addPlayer("Player 2", 2);
-        
-        int startingScore = game.getCurrentPlayer().getScore();
+        game.addPlayer("Player 1", 0);
+        game.addPlayer("Player 2", 1);
+    
+        game.setCurrentPlayerIndex(0);
+        int startingScore1 = game.getCurrentPlayer().getScore();
         int CGXScore = game.popStackCGX();
-        int expectedScore = startingScore + CGXScore;
-        
+        int expectedScore = startingScore1 + CGXScore;
+    
         game.addCurrentPlayerCommongGoalScore(CGXScore, GameModel.CGType.X);
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
-        
+    
         int CGYScore = game.popStackCGY();
         expectedScore = expectedScore + CGYScore;
     
         game.addCurrentPlayerCommongGoalScore(CGYScore, GameModel.CGType.Y);
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
+    
+        game.popStackCGX();
+        game.popStackCGY();
+    
+        game.setCurrentPlayerIndex(1);
+        int startingScore2 = game.getCurrentPlayer().getScore();
+        CGXScore = game.peekStackCGX();
+        CGYScore = game.peekStackCGY();
+        game.addCurrentPlayerCommongGoalScore(CGYScore, GameModel.CGType.X);
+        game.addCurrentPlayerCommongGoalScore(CGYScore, GameModel.CGType.Y);
+        assertEquals(startingScore2, game.getCurrentPlayer().getScore());
+    
+    }
+    
+    @Test
+    public void getNicknamesTest() {
+        GameModel game = new GameModel(2, 5, 6);
+        game.addPlayer("Player 1", 0);
+        game.addPlayer("Player 2", 1);
+        var nicknames = game.getNicknames();
+        
+        game.setCurrentPlayerIndex(0);
+        var nickname1 = nicknames.get(0);
+        assertEquals(nickname1, game.getCurrentPlayer().getNickname());
+    
+        game.setCurrentPlayerIndex(1);
+        var nickname2 = nicknames.get(1);
+        assertEquals(nickname2, game.getCurrentPlayer().getNickname());
     }
     
     
@@ -317,5 +354,13 @@ public class GameModelTest {
         game.setGameEnded(true);
         gameEnded = game.getGameEnded();
         assertTrue(gameEnded);
+    }
+    
+    @Test
+    public void getTileBagTest() {
+        GameModel game = new GameModel(2, 5, 6);
+    
+        var tileBag = game.getTileBag();
+        assertEquals(132, tileBag.currentTileNumber());
     }
 }

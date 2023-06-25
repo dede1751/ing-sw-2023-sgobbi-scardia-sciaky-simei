@@ -488,7 +488,7 @@ public class GameModel {
         return this.tileBag;
     }
     
-    private void addPlayer(Player player) {
+    public void addPlayer(Player player) {
         players.add(player);
     }
     
