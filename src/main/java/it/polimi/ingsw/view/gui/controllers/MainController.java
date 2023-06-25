@@ -12,8 +12,8 @@ public class MainController {
     @FXML
     private ScrollPane scrollPane;
     @FXML
-    private Pane gameInterface;
- 
+    private HBox gameInterface;
+    
     @FXML
     private GameInterfaceController gameInterfaceController;
     
@@ -28,25 +28,15 @@ public class MainController {
         AnchorPane.setBottomAnchor(scrollPane, 0.0);
         AnchorPane.setLeftAnchor(scrollPane, 0.0);
         AnchorPane.setRightAnchor(scrollPane, 0.0);
-        
-        scrollPane.setBackground(new Background(new BackgroundImage(
-                new Image(ResourcesManager.GraphicalResources.getGraphicalAsset("misc/sfondo_parquet.png")),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
-        
     }
     
     public GameInterfaceController getGameInterfaceController() {
         return gameInterfaceController;
     }
     
-
-    
-    public Pane getGameInterface(){
-        return gameInterface;
-    }
-    public ScrollPane getScrollPane(){
+    public ScrollPane getScrollPane() {
         return scrollPane;
     }
- 
-
+    
+    
 }

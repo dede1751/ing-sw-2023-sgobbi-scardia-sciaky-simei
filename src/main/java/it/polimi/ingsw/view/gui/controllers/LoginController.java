@@ -75,7 +75,7 @@ public class LoginController {
         public LobbyViewGraphical(LobbyView lobbyView, Color color) {
             this.getChildren().add(new Text(lobbyView.toString()));
             
-            if( !lobbyView.isRecovery() ) {
+            if( !lobbyView.isRecovery() && !lobbyView.isFull() ) {
                 Button joinButton = new Button("JOIN");
                 joinButton.setOnAction(actionEvent -> {
                     if( waitToJoin )
@@ -177,9 +177,13 @@ public class LoginController {
                 .submit(() -> {
                             if( waitToJoin )
                                 return;
-                            String nickname = this.nickname.getText();
-                            if( nickname == null || nickname.equals("") )
+                            String n = this.nickname.getText();
+                            if( n == null || n.equals("") )
                                 return;
+                            if(n.length() > 14){
+                                n = n.substring(0, 13);
+                            }
+                            String nickname = n;
                             gui.setNickname(nickname);
                             Platform.runLater(() -> {
                                 nicknameConfirmBanner.setText("Nickname :" + nickname);

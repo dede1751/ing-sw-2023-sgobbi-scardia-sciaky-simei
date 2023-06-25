@@ -144,7 +144,6 @@ public class Player implements Serializable {
     }
     
     
-    // TODO Add bonus score to json for persistence
     protected static class PlayerSerializer implements JsonSerializer<Player> {
         @Override
         public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/16"
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="931.0" prefWidth="1643.0" xmlns="http://javafx.com/javafx/11.0.14-internal"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.MainController">
 
-
-                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true"  >
-                            <content>
-                                <!--> game content  </!-->
-                                <fx:include fx:id="gameInterface" source="gameInterface.fxml"/>
-                            </content>
-                        </ScrollPane>
+    <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" prefHeight="931.0" prefWidth="1642.0"
+                stylesheets="@mainBackground.css">
+        <content>
+            <!--> game content  </!-->
+            <fx:include fx:id="gameInterface" source="gameInterface.fxml"/>
+        </content>
+    </ScrollPane>
 
 </AnchorPane>

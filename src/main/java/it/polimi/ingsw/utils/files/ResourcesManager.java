@@ -195,20 +195,13 @@ public final class ResourcesManager {
          * @return The absolute URL referencing the [name].fxml file
          */
         public static URL getFXML(String name) {
-            try {
-                return Paths.get(FXMLDir + "/" + name).toUri().toURL();
-            }
-            //FIXME
-            catch( MalformedURLException e ) {
-                throw new RuntimeException(e);
-            }
+                return ResourcesManager.class.getClassLoader().getResource("gui/javafx/" + name);
         }
         
         public static String getGraphicalAsset(String name){
             try {
                 return Paths.get(graphicalAssetDir+ "/" + name).toUri().toURL().toString();
             }
-            //FIXME
             catch( MalformedURLException e ) {
                 throw new RuntimeException(e);
             }

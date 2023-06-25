@@ -1,16 +1,11 @@
 package it.polimi.ingsw.view.gui.controllers;
 
 import it.polimi.ingsw.model.Shelf;
-import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.gui.GUIApp;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -22,32 +17,29 @@ import java.util.List;
 import java.util.Objects;
 
 public class GameInterfaceController {
+    
     @FXML
-    public ChatController chatController;
+    private ChatController chatController;
     @FXML
-    public VBox boardAndPlayer;
+    private VBox boardAndPlayer;
     @FXML
-    public VBox chatVbox;
+    private VBox chatVbox;
     @FXML
-    public AnchorPane chat;
+    private AnchorPane chat;
     @FXML
-    public Text currentPlayer;
+    private Text currentPlayer;
     @FXML
     private Button x075;
     @FXML
     private HBox rootHBox;
-    
-    
     @FXML
     private Button x1;
     @FXML
     private Button x125;
     @FXML
     private Button x150;
-    
     @FXML
     private VBox otherShelfVbox;
-    
     @FXML
     private AnchorPane board;
     @FXML
@@ -64,12 +56,8 @@ public class GameInterfaceController {
     private OtherShelfController otherShelf2Controller;
     @FXML
     private OtherShelfController otherShelf3Controller;
-    
-
-    
     @FXML
     private AnchorPane localPlayer;
-    
     @FXML
     private LocalPlayerController localPlayerController;
     
@@ -79,8 +67,10 @@ public class GameInterfaceController {
     
     private double scale;
     
+    
     @FXML
     public void initialize() {
+        scale = 1;
         x075.setOnAction(event -> changeSize(0.75));
         x1.setOnAction(event -> changeSize(1));
         x125.setOnAction(event -> changeSize(1.25));
@@ -90,21 +80,9 @@ public class GameInterfaceController {
         otherShelf3.setOpacity(0);
         shelfList = List.of(otherShelf1, otherShelf2, otherShelf3);
         shelfControllerList = List.of(otherShelf1Controller, otherShelf2Controller, otherShelf3Controller);
-        rootHBox.setBackground(new Background(new BackgroundImage(
-                new Image(ResourcesManager.GraphicalResources.getGraphicalAsset("misc/sfondo_parquet.png")),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
-   
-        currentPlayer.setFont(Font.font("Verdana", FontWeight.MEDIUM, 18));
+        currentPlayer.setFont(Font.font("Noto Sans", FontWeight.MEDIUM, 18));
         currentPlayer.setFill(Color.GOLD);
-       
-   
     }
-    
-
-    
-    
-    
-    
     
     /**
      * Initialize shelves
@@ -140,24 +118,14 @@ public class GameInterfaceController {
             scale.setX(x);
             scale.setY(x);
             
-            Pane gameInterface=GUIApp.getMainControllerInstance().getGameInterface();
+            rootHBox.getTransforms().setAll(scale);
+            rootHBox.layout();
             
-            gameInterface.getTransforms().setAll(scale);
-            gameInterface.layout();
-            
-            Bounds contentBounds = gameInterface.getBoundsInLocal();
-            Group scaledContentGroup = new Group(gameInterface);
-            
+            Group scaledContentGroup = new Group(rootHBox);
             ScrollPane scrollPane = GUIApp.getMainControllerInstance().getScrollPane();
-            scrollPane.setContent(new Group(gameInterface));
+            scrollPane.setContent(scaledContentGroup);
             scrollPane.setFitToWidth(true);
             scrollPane.setFitToHeight(true);
-            
-            
-            double scaledWidth = gameInterface.getPrefWidth() * x;
-            double scaledHeight = gameInterface.getPrefHeight() * x;
-            gameInterface.setPrefSize(scaledWidth, scaledHeight);
-           
         }
     }
     
@@ -167,7 +135,7 @@ public class GameInterfaceController {
      */
     public void updateScore(int score, String nickname) {
         
-        Boolean flag = true;
+        boolean flag = true;
         for( OtherShelfController otherShelfController : shelfControllerList ) {
             if( Objects.equals(otherShelfController.getPlayerNickname(), nickname) ) {
                 otherShelfController.setScore(score);
