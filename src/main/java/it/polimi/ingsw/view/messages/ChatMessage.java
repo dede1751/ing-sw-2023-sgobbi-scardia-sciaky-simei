@@ -11,11 +11,10 @@ public class ChatMessage extends ViewMessage<String> {
      * Initialize a broadcast ChatMessage object
      * @param s The message string
      * @param playerNick The sender's nickname
-     * @param clientId The sender's client id
      */
-    public ChatMessage(String s, String playerNick, int clientId) {
-        super(s, playerNick, clientId);
-        dest = "BROADCAST";
+    public ChatMessage(String s, String playerNick) {
+        super(s, playerNick);
+        dest = "ALL";
     }
     
     /**
@@ -23,10 +22,9 @@ public class ChatMessage extends ViewMessage<String> {
      * @param s The message string
      * @param PlayerNick The sender's nickname
      * @param playerDestination The receiving player's nickname
-     * @param clientId the sender's client id
      */
-    public ChatMessage(String s, String PlayerNick, String playerDestination, int clientId) {
-        super(s, PlayerNick, clientId);
+    public ChatMessage(String s, String PlayerNick, String playerDestination) {
+        super(s, PlayerNick);
         dest = playerDestination;
     }
     

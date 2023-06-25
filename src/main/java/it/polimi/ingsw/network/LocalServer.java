@@ -4,19 +4,20 @@ import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.model.messages.ServerResponseMessage;
-import it.polimi.ingsw.utils.mvc.ReflectionUtility;
+import it.polimi.ingsw.utils.files.ServerLogger;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class LocalServer extends UnicastRemoteObject implements Server {
     
-    private final Map<Integer, GameController> gameControllers = new HashMap<>();
+    private final Map<Client, GameController> gameControllers = new ConcurrentHashMap<>();
     
     public LocalServer() throws RemoteException {
         super();
@@ -34,49 +35,52 @@ public class LocalServer extends UnicastRemoteObject implements Server {
         LobbyController.getInstance().setServer(this);
     }
     
-    @Override
-    public synchronized void register(Client client) throws RemoteException {
-        LobbyController.getInstance().register(client);
-    }
-    
     /**
      * Add clientID->controller mapping to current map
      *
      * @param mapping client mapping to add
      */
-    public void addGameController(Map<Integer, GameController> mapping) {
+    public void addGameControllers(Map<Client, GameController> mapping) {
         gameControllers.putAll(mapping);
     }
     
+    /**
+     * Remove controller mapping from current map for the given clients
+     *
+     * @param clients clients to remove
+     */
+    public void removeGameControllers(List<Client> clients) {
+        clients.forEach(gameControllers.keySet()::remove);
+    }
+    
     @Override
-    public void update(ViewMessage<?> message) {
-        LobbyController.ClientContext client = LobbyController.ClientContext.getCC(message);
+    public void update(Client client, ViewMessage<?> message) {
         
-        // Ignore messages from unregistered clients
-        if( client.client() == null ) {
+        // First try to see if it's a method handled by the LobbyController
+        if( LobbyController.getInstance().update(client, message) ) {
             return;
         }
         
-        try {
-            // First try to see if it's a method handled by the LobbyController
-            ReflectionUtility.invokeMethod(client, LobbyController.getInstance(), "onMessage", message);
+        // Otherwise, try forwarding it to a GameController
+        GameController controller = gameControllers.get(client);
+        Response r = null;
+        
+        if( controller != null ) {
+            if( !controller.update(message) ) {
+                r = new Response(-1, "Illegal message, no operation defined. Refer to the network manual",
+                                 message.getClass().getSimpleName());
+            }
+        }else {
+            r = new Response(-1, "Ignoring view Events until game is started!", message.getClass().getSimpleName());
         }
-        catch( NoSuchMethodException e ) {
-            // Then, try forwarding it to a GameController
-            GameController controller = gameControllers.get(client.id());
-            
-            if( controller != null ) {
-                try {
-                    ReflectionUtility.invokeMethod(client, controller, "onMessage", message);
-                }
-                catch( NoSuchMethodException f ) {
-                    client.update(new ServerResponseMessage(
-                            new Response(-1, "Illegal message, no operation defined. Refer to the network manual",
-                                         message.getClass().getSimpleName())));
-                }
-            }else {
-                client.update(new ServerResponseMessage(new Response(-1, "Ignoring view Events until game is started!",
-                                                                     message.getClass().getSimpleName())));
+        
+        // If needed, send error message to client
+        if( r != null ) {
+            try {
+                client.update(new ServerResponseMessage(r));
+            }
+            catch( RemoteException e ) {
+                ServerLogger.errorLog(e);
             }
         }
         

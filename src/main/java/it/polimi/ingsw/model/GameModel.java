@@ -3,7 +3,6 @@ package it.polimi.ingsw.model;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import it.polimi.ingsw.model.messages.*;
-import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
@@ -38,6 +37,17 @@ public class GameModel {
     private final Board board;
     
     private final TileBag tileBag;
+    
+    private boolean gameEnded = false;
+    
+    public void setGameEnded(boolean b) {
+        gameEnded = b;
+    }
+    
+    public boolean getGameEnded() {
+        return gameEnded;
+    }
+    
     
     public enum CGType {
         X, Y
@@ -85,10 +95,12 @@ public class GameModel {
     }
     
     public void startGame() {
+        
         this.notifyStartGame();
+        
     }
     
-    private GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
+    public GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
         this.numPlayers = numPlayers;
         this.commonGoalNumX = commonGoalNumX;
         this.commonGoalNumY = commonGoalNumY;
@@ -98,6 +110,7 @@ public class GameModel {
         this.board = board;
         this.tileBag = tileBag;
         this.listeners = new HashMap<>(numPlayers);
+        
     }
     
     /**
@@ -225,38 +238,47 @@ public class GameModel {
      * Adds given score to the current player's score
      *
      * @param score Integer score to give the current player
-     *
-     * @return Total score for current player
      */
-    public int addCurrentPlayerCommongGoalScore(int score, CGType t) {
+    public void addCurrentPlayerCommongGoalScore(int score, CGType t) {
         Player player = this.getCurrentPlayer();
         int i = player.addCommonGoalScore(score);
+        int newScore;
         switch( t ) {
             case X -> {
                 player.setCompletedGoalX(true);
-                notifyAllListeners(new CommonGoalMessage(CGType.X, this.commonGoalStackX.peek()));
+                try {
+                    newScore = this.commonGoalStackX.peek();
+                }
+                catch( EmptyStackException e ) {
+                    newScore = 0;
+                }
+                notifyAllListeners(new CommonGoalMessage(CGType.X, newScore));
             }
             case Y -> {
                 player.setCompletedGoalY(true);
-                notifyAllListeners(new CommonGoalMessage(CGType.Y, this.commonGoalStackY.peek()));
+                
+                try {
+                    newScore = this.commonGoalStackY.peek();
+                }
+                catch( EmptyStackException e ) {
+                    newScore = 0;
+                }
+                notifyAllListeners(new CommonGoalMessage(CGType.Y, newScore));
             }
         }
         notifyAllListeners(new UpdateScoreMessage(i, UpdateScoreMessage.Type.CommonGoal, player.getNickname()));
-        return i;
     }
     
-    public int setCurrentPlayerPersonalScore(int score) {
+    public void setCurrentPlayerPersonalScore(int score) {
         Player player = this.getCurrentPlayer();
-        int i = player.setPersonalGoalScore(score);
+        player.setPersonalGoalScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.PersonalGoal, player.getNickname()));
-        return i;
     }
     
-    public int setCurrentPlayerAdjacencyScore(int score) {
+    public void setCurrentPlayerAdjacencyScore(int score) {
         Player player = this.getCurrentPlayer();
-        int i = player.setAdjacentScore(score);
+        player.setAdjacencyScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.Adjacency, player.getNickname()));
-        return i;
     }
     
     public void refillBoard() {
@@ -342,24 +364,20 @@ public class GameModel {
     }
     
     /**
-     * Add a listener to the model.
+     * Add a listener to the model (or reset the listener with the given name)
      * At least one listener for each player should be supplied.
      * It is necessary for the correct functioning of the networking communication.
      *
      * @param name     Listener name, should be the nickname for listeners relaying information to clients
      * @param listener Reference to the listener
-     *
-     * @throws DuplicateListener if a listener with the given name already exists
      */
-    public void addListener(String name, ModelListener listener) throws DuplicateListener {
-        if( this.listeners.containsKey(name) ) {
-            throw new DuplicateListener(name);
-        }else {
-            this.listeners.put(name, listener);
-        }
+    public void addListener(String name, ModelListener listener) {
+        this.listeners.put(name, listener);
     }
     
     private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
+        if( gameEnded )
+            return;
         for( ModelListener listener : this.listeners.values() ) {
             listener.update(msg);
         }
@@ -372,12 +390,14 @@ public class GameModel {
      */
     public void chatBroker(ChatMessage chat) {
         
-        IncomingChatMessage message = new IncomingChatMessage(chat.getPayload(), chat.getPlayerNickname());
-        if( chat.getDestination().equals("BROADCAST") ) {
+        IncomingChatMessage message = new IncomingChatMessage(
+                chat.getPayload(), chat.getPlayerNickname(), chat.getDestination());
+        if( chat.getDestination().equals("ALL") ) {
             notifyAllListeners(message);
-        }else {
-            ModelListener targetListener = this.listeners.get(chat.getPlayerNickname());
+        }else if( this.listeners.containsKey(chat.getDestination()) ) {
+            ModelListener targetListener = this.listeners.get(chat.getDestination());
             targetListener.update(message);
+            this.listeners.get(chat.getPlayerNickname()).update(message);
         }
     }
     
@@ -406,15 +426,17 @@ public class GameModel {
     }
     
     private void notifyStartGame() {
-        List<String> nicks = this.getNicknames();
-        List<Shelf> shelves = this.getPlayers().stream().map(Player::getShelf).toList();
-        
+        // we have to create separate messages for each client
         for( Player x : players ) {
             ModelListener playerListener = this.listeners.get(x.getNickname());
             playerListener.update(
                     new StartGameMessage(
-                            nicks, x.getPg(), shelves, this.board,
-                            this.commonGoalNumX, this.peekStackCGX(), this.commonGoalNumY, this.peekStackCGY())
+                            this.players,
+                            x.getPg(),
+                            this.board,
+                            this.commonGoalNumX, this.peekStackCGX(),
+                            this.commonGoalNumY, this.peekStackCGY(),
+                            this.getCurrentPlayer().getNickname())
             );
         }
     }
@@ -423,15 +445,23 @@ public class GameModel {
      * Notify the clients that the game is ended by sending a leaderboard.
      */
     public void notifyWinner() {
-        String winner = this.players.stream()
-                .max(Comparator.comparingInt(Player::getScore))
-                .orElseThrow()
-                .getNickname();
+        List<Player> winningPlayers = this.players.stream()
+                //there cannot be any equal element
+                .sorted((x, y) -> {
+                    if( x.getScore() > y.getScore() ) {
+                        return -1;
+                    }else if( x.getScore() == y.getScore() ) {
+                        return this.players.indexOf(x) > this.players.indexOf(y) ? -1 : 1;
+                    }else {
+                        return 1;
+                    }
+                }).toList();
         
-        Map<String, Integer> leaderboard = new HashMap<>();
-        for( Player x : this.getPlayers() ) {
+        Map<String, Integer> leaderboard = new LinkedHashMap<>();
+        for( Player x : winningPlayers ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
+        String winner = winningPlayers.get(0).getNickname();
         notifyAllListeners(new EndGameMessage(winner, leaderboard));
     }
     
@@ -448,11 +478,21 @@ public class GameModel {
     
     // Testing methods
     public int peekStackCGX() {
-        return commonGoalStackX.peek();
+        try {
+            return commonGoalStackX.peek();
+        }
+        catch( EmptyStackException e ) {
+            return 0;
+        }
     }
     
     public int peekStackCGY() {
-        return commonGoalStackY.peek();
+        try {
+            return commonGoalStackY.peek();
+        }
+        catch( EmptyStackException e ) {
+            return 0;
+        }
     }
     
     public Board getBoard() {
@@ -463,7 +503,7 @@ public class GameModel {
         return this.tileBag;
     }
     
-    private void addPlayer(Player player) {
+    public void addPlayer(Player player) {
         players.add(player);
     }
     

@@ -5,7 +5,8 @@ import it.polimi.ingsw.model.GameModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.Channel;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static java.nio.file.StandardOpenOption.*;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
 
 
 /**
@@ -24,11 +26,16 @@ import static java.nio.file.StandardOpenOption.*;
  */
 public final class ResourcesManager {
     
-    public static final String mainResourcesDir = Paths.get("").toAbsolutePath() + "/src/main/resources";
-    public static final String mainRootDir = Paths.get("").toAbsolutePath() + "/src/main/java";
-    public static final String testRootDir = Paths.get("").toAbsolutePath() + "/src/test/java";
+    public static final String testRootDir = Paths.get("src/test/java/it/polimi/ingsw").toString();
     
-    public static final String recoveryDir = mainResourcesDir + "/controller/recovery";
+    public static final String mainResourcesDir = Paths.get("resources").toString();
+    
+    public static final String recoveryDir = mainResourcesDir + "/recovery";
+    
+    public static final String serverLoggerDir = mainResourcesDir + "/server";
+    
+    public static final String clientLoggerDir = mainResourcesDir + "/client";
+    
     
     /**
      * @return the name of the method from which it was called
@@ -38,16 +45,19 @@ public final class ResourcesManager {
         return walker.walk((x) -> x.toList().get(1).getMethodName());
     }
     
-    public static FileChannel openFileWrite(String path) throws IOException {
-        return FileChannel.open(Path.of(path), CREATE, WRITE);
-    }
-    
-    public static FileChannel openFileRead(String path) throws IOException {
-        return FileChannel.open(Path.of(path), READ);
-    }
-    
-    public static void closeChannel(Channel c) throws IOException {
-        c.close();
+    /**
+     * Open a file for writing, creating the directory if necessary
+     *
+     * @param dir  the directory in which to create the file
+     * @param file the name of the file to create
+     *
+     * @return the FileChannel of the created file
+     *
+     * @throws IOException if the file cannot be created (not if the directory already exists)
+     */
+    public static FileChannel openFileWrite(String dir, String file) throws IOException {
+        Files.createDirectories(Paths.get(dir));
+        return FileChannel.open(Path.of(dir, file), CREATE, WRITE);
     }
     
     private static File getRecoveryDir() {
@@ -167,6 +177,34 @@ public final class ResourcesManager {
                     throw new JsonParseException("Json object doesn't have this attribute : " + attribute);
             }else
                 throw new JsonParseException("Json element is not an object");
+        }
+    }
+    
+    public static class GraphicalResources {
+        
+        public static final String graphicalAssetDir =
+                Paths.get("src/main/resources/gui/assets").toAbsolutePath().toString();
+        public static final String FXMLDir = Paths.get("src/main/resources/gui/javafx").toAbsolutePath().toString();
+        
+        /**
+         * Get the valid URL object of the indicated fxml file. <br>
+         * The name must have the format [name].fxml. The method throws a RuntimeException if the file doesn't exist or the name is malformed.
+         *
+         * @param name Name of the .fxml file
+         *
+         * @return The absolute URL referencing the [name].fxml file
+         */
+        public static URL getFXML(String name) {
+                return ResourcesManager.class.getClassLoader().getResource("gui/javafx/" + name);
+        }
+        
+        public static String getGraphicalAsset(String name){
+            try {
+                return Paths.get(graphicalAssetDir+ "/" + name).toUri().toURL().toString();
+            }
+            catch( MalformedURLException e ) {
+                throw new RuntimeException(e);
+            }
         }
     }
     

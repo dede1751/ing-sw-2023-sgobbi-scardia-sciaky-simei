@@ -15,6 +15,10 @@ public class CommonGoalMessage extends ModelMessage<CommonGoalMessage.CommonGoal
      * @param availableTopScore The score on the top the point's stack
      */
     public record CommonGoalPayload(GameModel.CGType type, int availableTopScore) implements Serializable {
+        @Override
+        public String toString() {
+            return type().name() + " , " + availableTopScore;
+        }
     }
     
     /**

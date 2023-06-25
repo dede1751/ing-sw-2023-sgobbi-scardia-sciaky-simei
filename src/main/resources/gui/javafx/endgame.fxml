@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="593.0" prefWidth="1045.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.EndgameController">
+    <children>
+        <ImageView fitHeight="610.0" fitWidth="1077.0" layoutX="-8.0" layoutY="-5.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/endgame_background.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="victoryRoyale" fitHeight="423.0" fitWidth="406.0" layoutX="328.0" layoutY="-138.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/VictoryRoyaleSlate.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="PC1" fitHeight="276.0" fitWidth="364.0" layoutX="419.0" layoutY="125.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/1Player_chair.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="PC4" fitHeight="200.0" fitWidth="207.0" layoutX="310.0" layoutY="401.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/4Player_chair.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="PC3" fitHeight="207.0" fitWidth="182.0" layoutX="184.0" layoutY="221.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/3Player_chair.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="PC2" fitHeight="182.0" fitWidth="155.0" layoutX="680.0" layoutY="292.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/2Player_chair.png" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="P3" fitHeight="150.0" fitWidth="200.0" layoutX="192.0" layoutY="201.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/3Player.gif" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="P4" fitHeight="86.0" fitWidth="77.0" layoutX="381.0" layoutY="419.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/4Player.gif" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="P2" fitHeight="150.0" fitWidth="200.0" layoutX="626.0" layoutY="242.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/2Player.gif" />
+            </image>
+        </ImageView>
+        <ImageView fx:id="P1" fitHeight="150.0" fitWidth="200.0" layoutX="430.0" layoutY="174.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../assets/endgame/1Player.gif" />
+            </image>
+        </ImageView>
+        <Text fx:id="player3" fill="#cd7f32" layoutX="223.0" layoutY="208.0" opacity="0.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.2" text="PLAYER 3">
+         <font>
+            <Font size="20.0" />
+         </font></Text>
+        <Text fx:id="player1" fill="#f2eb1e" layoutX="475.0" layoutY="411.0" opacity="0.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.1" text="PLAYER 1">
+         <font>
+            <Font name="Noto Music Regular" size="20.0" />
+         </font></Text>
+        <Text fx:id="player2" fill="#aaa9ad" layoutX="810.0" layoutY="270.0" opacity="0.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.1" text="PLAYER 2">
+         <font>
+            <Font size="20.0" />
+         </font></Text>
+        <Text fx:id="player4" fill="#7b5804" layoutX="479.0" layoutY="522.0" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="PLAYER 4">
+         <font>
+            <Font size="20.0" />
+         </font></Text>
+    </children>
+</Pane>

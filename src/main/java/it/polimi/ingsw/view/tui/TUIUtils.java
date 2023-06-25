@@ -1,51 +1,164 @@
 package it.polimi.ingsw.view.tui;
 
 import it.polimi.ingsw.model.Board;
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
+import it.polimi.ingsw.model.messages.EndGameMessage;
 import it.polimi.ingsw.view.LocalModel;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class TUIUtils {
     
     private static final LocalModel model = LocalModel.getInstance();
     
     public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
+    
     public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
     public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
     public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
-    //public static final String ANSI_WHITE_BACKGROUND = "\u001B[41m";
     
     
-    public static void printGame(String nickname) {
-        StringBuilder sb = new StringBuilder();
+    public static final String ANSI_GOLD_BACKGROUND = "\033[38;5;16;48;5;228m";
+    public static final String ANSI_SILVER_BACKGROUND = "\033[38;5;16;48;5;253m";
+    public static final String ANSI_BRONZE_BACKGROUND = "\033[38;5;16;48;5;166m";
+    public static final String ANSI_DARK_BRONZE_BACKGROUND = "\033[38;5;16;48;5;94m";
+    
+    public static final String ANSI_YELLOW_BOLD = "\033[1;33m";
+    public static final String ANSI_BROWN_BOLD = "\033[1;38;5;130m";
+    public static final String ANSI_DARK_BROWN_BOLD = "\033[1;38;5;94m";
+    public static final String ANSI_RED_BOLD = "\033[1;31m";
+    
+    
+    private static final String TITLE = "\n" + createBox(
+            ANSI_YELLOW_BOLD + "$$\\      $$\\            $$$$$$\\  $$\\                 $$\\  $$$$$$\\  $$\\" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$$\\    $$$ |          $$  __$$\\ $$ |                $$ |$$  __$$\\ \\__|" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD +
+            "$$$$\\  $$$$ |$$\\   $$\\ $$ /  \\__|$$$$$$$\\   $$$$$$\\  $$ |$$ /  \\__|$$\\  $$$$$$\\" + ANSI_RESET +
+            "\n" +
+            ANSI_YELLOW_BOLD +
+            "$$\\$$\\$$ $$ |$$ |  $$ |\\$$$$$$\\  $$  __$$\\ $$  __$$\\ $$ |$$$$\\     $$ |$$  __$$\\" + ANSI_RESET +
+            "\n" +
+            ANSI_YELLOW_BOLD + "$$ \\$$$  $$ |$$ |  $$ | \\____$$\\ $$ |  $$ |$$$$$$$$ |$$ |$$  _|    $$ |$$$$$$$$ |" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "$$ |\\$  /$$ |$$ |  $$ |$$\\   $$ |$$ |  $$ |$$   ____|$$ |$$ |      $$ |$$   ____|" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD +
+            "$$ | \\_/ $$ |\\$$$$$$$ |\\$$$$$$  |$$ |  $$ |\\$$$$$$$\\ $$ |$$ |      $$ |\\$$$$$$$\\" + ANSI_RESET +
+            "\n" +
+            ANSI_YELLOW_BOLD +
+            "\\__|     \\__| \\____$$ | \\______/ \\__|  \\__| \\_______|\\__|\\__|      \\__| \\_______|" +
+            ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "             $$\\   $$ |" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "             \\$$$$$$  |" + ANSI_RESET + "\n" +
+            ANSI_YELLOW_BOLD + "              \\______/" + ANSI_RESET,
+            ANSI_DARK_BROWN_BOLD);
+    
+    
+    // Note, this does not interact well with the IDE console
+    public static void clearConsole() {
+        try {
+            if( System.getProperty("os.name").contains("Windows") ) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            }else {
+                System.out.print("\033\143");
+            }
+        }
+        catch( Exception ignored ) {
+        }
+    }
+    
+    public static void printLoginScreen(String prompt, String error) {
+        clearConsole();
+        System.out.println(TITLE + "\n");
+        if( error != null ) {
+            System.out.println(ANSI_RED_BOLD + error + ANSI_RESET);
+        }
+        System.out.println(prompt);
+        System.out.print(">> ");
+    }
+    
+    public static void printGame(String nickname, String prompt, String error) {
+        StringBuilder sb = new StringBuilder(TITLE);
         StringBuilder playersb = new StringBuilder();
         
+        String boardCg = concatString(
+                generateBoard(),
+                "\n\n" + generateCommonGoal(model.getCGXindex()),
+                3
+        );
+        boardCg = concatString(
+                boardCg,
+                "\n\n" + generateCommonGoal(model.getCGYindex()),
+                1
+        );
         
-        var boardCg = concatString(generateBoard(),
-                                   generateCommonGoal(model.getCGXindex()), 3);
-        boardCg = concatString(boardCg, generateCommonGoal(model.getCGYindex()), 1);
+        String player = concatString(
+                generateShelf(nickname),
+                playersb.append("\n\n")
+                        .append(generatePersonalGoal(model.getPgid()))
+                        .append(generatePersonalScore(nickname)).toString(),
+                2);
         
-        var player = concatString(generateShelf(model.getShelf(nickname)),
-                                  playersb.append(generatePersonalGoal(model.getPgid()))
-                                          .append(generatePersonalScore()).toString(), 2);
-        
-        sb.append(generateShelves())
-                .append("\n\n")
+        sb.append(generateOtherShelves(nickname))
+                .append("\n")
                 .append(boardCg)
-                .append("\n\n\n")
+                .append("\n")
                 .append(player)
-                .append("\n\n");
+                .append("\n");
         
-        //.append(generateCurrentPlayer(model.getCurrentPlayer(),
-        //                              model.getPoints(model.getCurrentPlayer())));
+        String tui = concatString(createBox(sb.toString(), ANSI_YELLOW_BOLD), generateChat(), 4);
         
-        System.out.println(sb);
+        sb = new StringBuilder(tui);
+        if( error != null ) {
+            sb.append("\n")
+                    .append(ANSI_RED_BOLD)
+                    .append(error)
+                    .append(ANSI_RESET);
+        }
+        sb.append("\n")
+                .append(prompt)
+                .append("\n>> ");
+        
+        clearConsole();
+        System.out.print(sb);
+    }
+    
+    
+    public static void printEndGameScreen(EndGameMessage.EndGamePayload endgame, String firstPlayer) {
+        
+        List<String> color = List.of(ANSI_GOLD_BACKGROUND, ANSI_SILVER_BACKGROUND, ANSI_BRONZE_BACKGROUND,
+                                     ANSI_DARK_BRONZE_BACKGROUND);
+        
+        StringBuilder sb = new StringBuilder(TITLE + "\n");
+        sb.append("CONGRATULATION, THE GAME ENDED!\n")
+                .append("THE WINNER IS : ")
+                .append(ANSI_YELLOW_BOLD)
+                .append(endgame.winner())
+                .append(ANSI_RESET)
+                .append("!\n")
+                .append("LEADERBOARD : \n");
+        
+        Iterator<String> iter = color.iterator();
+        for( var x : endgame.points().entrySet() ) {
+            sb.append(iter.next());
+            String name = String.format(" * %-14.14s", x.getKey());
+            sb.append("\t").append(name).append(" : ").append(x.getValue());
+            sb.append(ANSI_RESET);
+            if( x.getKey().equals(firstPlayer) )
+                sb.append(" ⑁");
+            sb.append("\n");
+        }
+        
+        clearConsole();
+        System.out.print(sb);
     }
     
     public static String concatString(String s1, String s2, int space) {
@@ -73,7 +186,7 @@ public class TUIUtils {
         return sb.toString();
     }
     
-    public static String createBox(String input) {
+    public static String createBox(String input, String color) {
         StringBuilder output = new StringBuilder();
         String[] lines = input.split("\n");
         String[] linesNoColor = input.split("\n");
@@ -87,114 +200,154 @@ public class TUIUtils {
         }
         
         int width = maxLength; // Add 2 for each side of the box
-        String top = "┌" + "─".repeat(width + 2) + "┐\n";
-        String bottom = "└" + "─".repeat(width + 2) + "┘\n";
+        String top = color + "┌" + "─".repeat(width + 2) + "┐" + ANSI_RESET + "\n";
+        String bottom = color + "└" + "─".repeat(width + 2) + "┘" + ANSI_RESET + "\n";
         
         output.append(top);
         
         for( String line : lines ) {
-            output.append("│ ");
+            output.append(color).append("│ ").append(ANSI_RESET);
             // Replace ANSI color codes with empty strings before padding
             String plainLine = line.replaceAll("\u001B\\[[;\\d]*m", "");
             output.append(line);
             output.append(" ".repeat(maxLength - plainLine.length()));
-            output.append(" │\n");
+            output.append(color).append(" │").append(ANSI_RESET).append("\n");
         }
         
         output.append(bottom);
         return output.toString();
     }
     
-    
-    static String generateBoard() {
-        Board board = model.getBoard();
+    public static String generateTiles(List<Tile> tiles) {
         StringBuilder sb = new StringBuilder();
         
-        String colmns = "   0  1  2  3  4  5  6  7  8 ";
-        
-        if( board == null ) {
-            System.out.println("Board still not initialized!");
-        }else {
-            sb.append(colmns).append("\n");
-            var matrix = board.getAsMatrix();
-            for( int i = 0; i < 9; i++ ) {
-                sb.append(i).append(" ");
-                for( int j = 0; j < 9; j++ ) {
-                    if( matrix[i][j] != null ) {
-                        var tile = matrix[i][j].toTile();
-                        sb.append(tile);
-                    }else {
-                        sb.append(Tile.NOTILE.toTile());
-                    }
-                    
-                }
-                sb.append("\n");
-            }
+        for( int i = 0; i < tiles.size(); i++ ) {
+            sb.append(i + 1)
+                    .append(": ")
+                    .append(tiles.get(i).toTile())
+                    .append(" ");
         }
         return sb.toString();
     }
     
-    static String generateShelf(Shelf shelf) {
+    public static String generateSelection(List<Coordinate> selection) {
+        List<Tile> tiles = selection.stream()
+                .map(c -> model.getBoard().getTile(c))
+                .toList();
+        
+        return generateTiles(tiles);
+    }
+    
+    public static String generateChat() {
         StringBuilder sb = new StringBuilder();
-        String top = "┌───┬───┬───┬───┬───┐";
-        String bot = "└───┴───┴───┴───┴───┘";
+        
+        var chat = model.getChat();
+        if( chat.size() == 55 ) {
+            for( int i = 1; i < chat.size(); i++ ) {
+                chat.set(i - 1, chat.get(i));
+            }
+            chat.set(0, " ... ");
+            chat.remove(54);
+        }
+        
+        for( String s : chat ) {
+            sb.append(s).append("\n");
+        }
+        
+        if( chat.size() > 0 ) {
+            return createBox(sb.toString(), ANSI_YELLOW_BOLD);
+        }else {
+            return " ";
+        }
+    }
+    
+    private static String generateBoard() {
+        Board board = model.getBoard();
+        StringBuilder sb = new StringBuilder();
+        
+        String columns = "   0  1  2  3  4  5  6  7  8 \n";
+        
+        sb.append(columns);
+        Tile[][] matrix = board != null ? board.getAsMatrix() : new Tile[9][9];
+        
+        for( int i = 8; i >= 0; i-- ) {
+            sb.append(i).append(" ");
+            
+            for( int j = 0; j < 9; j++ ) {
+                if( matrix[i][j] != null ) {
+                    String tile = matrix[i][j].toTile();
+                    sb.append(tile);
+                }else {
+                    sb.append(Tile.NOTILE.toTile());
+                }
+            }
+            sb.append("\n");
+        }
+        
+        return sb.toString();
+    }
+    
+    private static String generateShelf(String nickname) {
+        Shelf shelf = model.getShelf(nickname);
+        StringBuilder sb = new StringBuilder();
+        String name = String.format(" * %-14.14s", nickname);
+        int score = model.getPoints(nickname);
+        
+        if( nickname.equals(model.getCurrentPlayer()) ) {
+            name = ANSI_YELLOW_BOLD + name + ANSI_RESET;
+        }
+        name = name + "(" + score + ")";
+        name += "\n";
+        
+        String top = ANSI_BROWN_BOLD + "┌───┬───┬───┬───┬───┐" + ANSI_RESET;
+        String bot = ANSI_BROWN_BOLD + "└───┴───┴───┴───┴───┘" + ANSI_RESET;
         
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();
             
-            sb.append(top).append("\n");
+            sb.append(name).append(top).append("\n");
             
             for( int i = Shelf.N_ROW - 1; i >= 0; i-- ) {
                 for( int j = 0; j < Shelf.N_COL; j++ ) {
                     var tile = matrix[i][j].toTile();
-                    sb.append("│").append(tile);
+                    sb.append(ANSI_BROWN_BOLD + "│" + ANSI_RESET).append(tile);
                 }
-                sb.append("│").append("\n");
-                if( i != 0 )
-                    sb.append("├───┼───┼───┼───┼───┤\n");
-                else
+                sb.append(ANSI_BROWN_BOLD + "│" + ANSI_RESET).append("\n");
+                if( i != 0 ) {
+                    sb.append(ANSI_BROWN_BOLD + "├───┼───┼───┼───┼───┤" + ANSI_RESET);
+                    sb.append("\n");
+                }else {
                     sb.append(bot);
+                }
             }
         }else {
             return "no shelf received";
         }
         
+        
         return sb.toString();
     }
     
-    static String generateShelves() {
-        
+    /**
+     * Generate the shelves for all players except the given nickname
+     *
+     * @param nickname nickname to exclude
+     *
+     * @return string containing all shelves
+     */
+    private static String generateOtherShelves(String nickname) {
         String s = "";
-        var playersNickname = model.getPlayersNicknames();
-        var currentPlayer = model.getCurrentPlayer();
         
-        ArrayList<Shelf> shelves = new ArrayList<Shelf>();
-        for( String player : playersNickname ) {
-            if( !player.equals(currentPlayer) ) {
-                shelves.add(model.getShelf(player));
+        for( String n : model.getPlayersNicknames() ) {
+            if( !n.equals(nickname) ) {
+                s = concatString(s, generateShelf(n), 1);
             }
-        }
-        
-        
-        for( Shelf shelf : shelves ) {
-            s = concatString(s, generateShelf(shelf), 1);
         }
         
         return s;
     }
     
-    
-    static String generateCurrentPlayer(String nickname, Integer points) {
-        String top = nickname + ", it's your turn!\n";
-        String mid = nickname + "\n";
-        String bottom = points + "\n";
-        return top + "\n" +
-               mid +
-               bottom;
-    }
-    
-    
-    static String generateCommonGoal(int commonGoal1) {
+    public static String generateCommonGoal(int commonGoal1) {
         StringBuilder sb = new StringBuilder();
         
         switch( commonGoal1 ) {
@@ -259,164 +412,165 @@ public class TUIUtils {
                     "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n\n" +
                     ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
             
-            case 11 -> sb.append("\n █\n" +
-                                 " █ █\n" +
-                                 " █ █ █\n" +
-                                 " █ █ █ █\n" +
-                                 " █ █ █ █ █");
+            case 11 -> sb.append("""
+                                          
+                                          █
+                                          █ █
+                                          █ █ █
+                                          █ █ █ █
+                                          █ █ █ █ █\
+                                         """);
             
         }
-        return createBox(sb.toString());
+        return createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
         
     }
     
     
-    static String generatePersonalScore() {
+    private static String generatePersonalScore(String nickname) {
         StringBuilder sb = new StringBuilder();
-        String grid = """
-                ───┼───┼───┼───┼───┼───""";
+        String grid = "\n" + """
+                ───┼───┼───┼───┼───┼───
+                """;
         
-        for( int i = 1; i <= 6; i++ ) {
-            sb.append(" ").append(i).append(" ");
-            if( i != 6 )
-                sb.append("│");
-        }
-        sb.append("\n").append(grid).append("\n");
-        for( int i = 1; i <= 6; i++ ) {
-            sb.append(" ");
-            switch( i ) {
-                case 1 -> sb.append(1);
-                case 2 -> sb.append(2);
-                case 3 -> sb.append(4);
-                case 4 -> sb.append(6);
-                case 5 -> sb.append(9);
-                case 6 -> sb.append(12);
-            }
-            sb.append(" ");
-            if( i != 6 )
-                sb.append("│");
+        int pgScore = model.getPgScore(nickname);
+        
+        sb.append(" 1 │ 2 │ 3 │ 4 │ 5 │ 6 ")
+                .append(grid);
+        
+        switch( pgScore ) {
+            case 0 -> sb.append(" 1 │ 2 │ 4 │ 6 │ 9 │ 12 ");
+            case 1 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│")
+                    .append(" 2 │ 4 │ 6 │ 9 │ 12 ");
+            case 2 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│")
+                    .append(" 4 │ 6 │ 9 │ 12 ");
+            case 4 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│")
+                    .append(" 6 │ 9 │ 12 ");
+            case 6 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│")
+                    .append(" 9 │ 12 ");
+            case 9 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
+                                ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│")
+                    .append(" 12 ");
+            case 12 -> sb.append(ANSI_BROWN_BOLD + " 1 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 2 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 4 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 6 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 9 " + ANSI_RESET + "│" +
+                                 ANSI_BROWN_BOLD + " 12 " + ANSI_RESET + "│");
         }
         
         return sb.toString();
     }
     
-    static String generatePersonalGoal(int personalGoal) {
+    public static String generatePersonalGoal(int personalGoal) {
         StringBuilder sb = new StringBuilder();
         switch( personalGoal ) {
-            case 0 -> {
-                sb.append(ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
-                          + "    \n" +
-                          "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                          "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          "\n" +
-                          "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    ");
-            }
-            case 1 -> {
-                sb.append(
-                        "\n" +
-                        "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                        ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET +
-                        "    \n" +
-                        "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n"
-                        + "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                        "        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
-                );
-            }
-            case 2 -> {
-                sb.append("\n" +
-                          ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_YELLOW_BACKGROUND + "  " +
-                          ANSI_RESET +
-                          "  \n" +
-                          "    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_CYAN_BACKGROUND + "  " +
-                          ANSI_RESET + "\n" +
-                          "\n" +
-                          ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        ");
-            }
-            case 3 -> {
-                sb.append("        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          "\n" +
-                          ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET +
-                          "    \n" +
-                          "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                          "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET +
-                          "\n     ");
-            }
-            case 4 -> {
-                sb.append("          \n" +
-                          "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          "          \n" +
-                          "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET +
-                          "    \n" +
-                          "        " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_GREEN_BACKGROUND + "  " +
-                          ANSI_RESET +
-                          "  ");
-            }
-            case 5 -> {
-                sb.append("    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_GREEN_BACKGROUND + "  " +
-                          ANSI_RESET + "\n" +
-                          "          \n" +
-                          "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                          "          \n" +
-                          "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
-                          ANSI_RESET + "  \n" +
-                          ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n");
-            }
-            case 6 -> {
-                sb.append(ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET
-                          + "        \n" +
-                          "      " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                          "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                          "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          "    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    ");
-            }
-            case 7 -> {
-                sb.append("        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                          "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                          "      " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  ");
-            }
-            case 8 -> {
-                sb.append("    " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          "          \n" +
-                          "    " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_PURPLE_BACKGROUND + "  " +
-                          ANSI_RESET + "\n" +
-                          ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "        ");
-            }
-            case 9 -> {
-                sb.append("        " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                          "      " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                          "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n");
-            }
-            case 10 -> {
-                sb.append("    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                          "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  ");
-            }
-            case 11 -> {
-                sb.append("    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                          "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                          "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                          "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                          ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "        ");
-            }
+            case 0 -> sb.append(
+                    ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
+                    + "    \n" +
+                    "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                    "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                    "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    "\n" +
+                    "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    ");
+            case 1 -> sb.append(
+                    "\n" +
+                    "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET +
+                    "    \n" +
+                    "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n"
+                    + "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                    "        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
+            );
+            case 2 -> sb.append("\n" +
+                                ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_YELLOW_BACKGROUND + "  " +
+                                ANSI_RESET +
+                                "  \n" +
+                                "    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_CYAN_BACKGROUND +
+                                "  " +
+                                ANSI_RESET + "\n" +
+                                "\n" +
+                                ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        ");
+            case 3 -> sb.append("        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                "\n" +
+                                ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
+                                ANSI_RESET +
+                                "    \n" +
+                                "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                                "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + ANSI_GREEN_BACKGROUND + "  " +
+                                ANSI_RESET +
+                                "\n     ");
+            case 4 -> sb.append("          \n" +
+                                "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                                "          \n" +
+                                "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + ANSI_WHITE_BACKGROUND + "  " +
+                                ANSI_RESET +
+                                "    \n" +
+                                "        " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_GREEN_BACKGROUND + "  " +
+                                ANSI_RESET +
+                                "  ");
+            case 5 ->
+                    sb.append("    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_GREEN_BACKGROUND + "  " +
+                              ANSI_RESET + "\n" +
+                              "          \n" +
+                              "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                              "          \n" +
+                              "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
+                              ANSI_RESET + "  \n" +
+                              ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n");
+            case 6 -> sb.append(ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET
+                                + "        \n" +
+                                "      " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                                "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                                ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                                "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                "    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    ");
+            case 7 -> sb.append("        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                                "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                                "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                                "      " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  ");
+            case 8 -> sb.append("    " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                "          \n" +
+                                "    " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_PURPLE_BACKGROUND +
+                                "  " +
+                                ANSI_RESET + "\n" +
+                                ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "        ");
+            case 9 -> sb.append("        " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                                ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                                "      " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                                "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                                "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n");
+            case 10 -> sb.append("    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                 "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                                 ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                                 "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                 "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                 "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  ");
+            case 11 -> sb.append("    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                 "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                                 "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                                 "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                                 "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                                 ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "        ");
             
         }
-        return createBox(sb.toString());
+        return createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
     }
     
 }

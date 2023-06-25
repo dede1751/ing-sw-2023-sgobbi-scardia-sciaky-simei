@@ -18,6 +18,8 @@ public class Board implements Serializable {
     
     private final Map<Coordinate, Tile> tileOccupancy;
     
+    public static final int maxSize = 9;
+    
     /**
      * Initialize board for the given number of players
      * The player number cannot change dynamically throughout the game
@@ -64,8 +66,6 @@ public class Board implements Serializable {
                 this.tileOccupancy.put(coordinate, Tile.NOTILE);
             }
         }
-        
-        
     }
     
     /**
@@ -226,6 +226,12 @@ public class Board implements Serializable {
     /**
      * Board Custom gson's serializer<br>
      */
+    @Override
+    public String toString() {
+        Gson g = new GsonBuilder().registerTypeAdapter(getClass(), new BoardSerializer()).create();
+        return g.toJson(this, this.getClass());
+    }
+    
     public static class BoardSerializer implements JsonSerializer<Board> {
         
         /**

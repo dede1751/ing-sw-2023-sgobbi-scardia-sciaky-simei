@@ -1,13 +1,17 @@
 package it.polimi.ingsw.network;
 
 import it.polimi.ingsw.model.messages.ModelMessage;
+import it.polimi.ingsw.utils.files.ClientLogger;
 import it.polimi.ingsw.utils.mvc.ReflectionUtility;
 import it.polimi.ingsw.view.View;
+import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Class LocalClient is the main network interface for the client application.
@@ -17,6 +21,8 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     private final Server server;
     private final View view;
+    
+    private final ExecutorService threadPool = Executors.newCachedThreadPool();
     
     public LocalClient(Server server, View view) throws RemoteException {
         super();
@@ -37,33 +43,34 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     }
     
     @Override
-    public void setClientID(int clientID) throws RemoteException {
-        this.view.setClientID(clientID);
+    public void update(ModelMessage<?> msg) {
+        threadPool.submit(() -> {
+            try {
+                ReflectionUtility.invokeMethod(view, "onMessage", msg);
+                ClientLogger.messageLog(msg);
+            }
+            catch( NoSuchMethodException e ) {
+                ClientLogger.errorLog(e, "Error invoking method onMessage" + msg.getClass().getSimpleName());
+            }
+        });
     }
     
     /**
-     * Connect this client to the server
+     * Notify the server of a view's message
+     *
+     * @param msg the message sent by the view
      */
-    public void connectServer() {
-        try {
-            server.register(this);
-            view.setServer(server);
-        }
-        catch( RemoteException e ) {
-            System.err.println("Unable to register to server: " + e.getMessage() + ". Exiting...");
-            System.exit(1);
-        }
-    }
-    
-    @Override
-    public void update(ModelMessage<?> msg) {
-        try {
-            ReflectionUtility.invokeMethod(null, view, "onMessage", msg);
-        }
-        catch( NoSuchMethodException e ) {
-            System.out.println(
-                    "There is no defined methods for handling this class : " + msg.getClass().getSimpleName());
-        }
+    public void update(ViewMessage<?> msg) {
+        threadPool.submit(() -> {
+            try {
+                server.update(this, msg);
+            }
+            catch( RemoteException e ) {
+                ClientLogger.errorLog(e, "Error notifying server, shutting down!");
+                System.exit(1); // kill client when server becomes unreachable
+            }
+            
+        });
     }
     
 }

@@ -19,8 +19,7 @@ public class ClientSkeleton implements Client {
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
     
-    private int clientID = -1;
-    
+
     /**
      * Initialize a ClientSkeleton object with a Socket object
      * @param socket Socket object
@@ -42,29 +41,7 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot create input stream", e);
         }
     }
-    
-    /**
-     * @param clientID The ID number assigned by the server
-     * @throws RemoteException If the client already have an ID <br>
-     *                         If the client id cannot be setted
-     */
-    @Override
-    public void setClientID(int clientID) throws RemoteException {
-        try {
-            if( this.clientID == -1 ) {
-                oos.writeObject(clientID);
-                oos.reset();
-                oos.flush();
-                this.clientID = clientID;
-            }else {
-                throw new RemoteException("ID already setted for this client");
-            }
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot send client id", e);
-        }
-    }
-    
+
     /**
      * Reads the input stream for ViewMessages and forwards them to the server
      * @param server the server to forward the messages to
@@ -73,13 +50,13 @@ public class ClientSkeleton implements Client {
     public void receive(Server server) throws RemoteException {
         
         try {
-            server.update((ViewMessage<?>) ois.readObject());
-        }
-        catch( IOException e ) {
-            throw new RemoteException("Cannot receive message from client", e);
+            server.update(this, (ViewMessage<?>) ois.readObject());
         }
         catch( ClassNotFoundException | ClassCastException e ) {
             throw new RemoteException("Sent message doesn't have the correct type", e);
+        }
+        catch( IOException e ) {
+            throw new RemoteException("Cannot read message from client", e);
         }
         
     }

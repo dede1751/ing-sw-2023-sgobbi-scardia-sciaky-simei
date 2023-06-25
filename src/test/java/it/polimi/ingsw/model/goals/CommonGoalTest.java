@@ -38,7 +38,7 @@ public class CommonGoalTest {
         try {
             result = Files.readString(
                     Path.of(ResourcesManager.testRootDir,
-                            "it/polimi/ingsw/model/goals/resources/" + className + "Test.json"),
+                            "model/goals/resources/" + className + "Test.json"),
                     StandardCharsets.UTF_8);
         }
         catch( IOException e ) {
