@@ -95,7 +95,9 @@ public class GameModel {
     }
     
     public void startGame() {
+        
         this.notifyStartGame();
+        
     }
     
     public GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
@@ -108,6 +110,7 @@ public class GameModel {
         this.board = board;
         this.tileBag = tileBag;
         this.listeners = new HashMap<>(numPlayers);
+        
     }
     
     /**

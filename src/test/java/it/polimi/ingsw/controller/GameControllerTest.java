@@ -12,6 +12,7 @@ import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.MoveMessage;
 
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -70,6 +71,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 assertTrue(controller.needRefill());
             }
             catch( IOException e ) {
@@ -88,6 +90,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 assertFalse(controller.needRefill());
             }
             catch( IOException e ) {
@@ -112,6 +115,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 assertTrue(controller.needRefill());
                 var tiles = model.getBoard().getTiles();
                 var numofNoTiles =
@@ -137,6 +141,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 assertTrue(controller.needRefill());
                 controller.turnManager();
                 var tiles = model.getBoard().getTiles();
@@ -160,6 +165,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 var boardPrev = model.getBoard();
                 assertFalse(controller.needRefill());
                 controller.turnManager();
@@ -182,6 +188,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 controller.turnManager();
                 var gameOver = model.isLastTurn();
                 assertTrue(gameOver);
@@ -203,6 +210,7 @@ class GameControllerTest {
                 
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 controller.turnManager();
                 var gameOver = model.isLastTurn();
                 assertFalse(gameOver);
@@ -224,6 +232,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
@@ -294,6 +303,7 @@ class GameControllerTest {
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
                 
+                
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
                 
@@ -329,6 +339,7 @@ class GameControllerTest {
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
                 
+                
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertFalse(completedGoalY);
                 
@@ -362,6 +373,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertTrue(completedGoalY);
@@ -398,6 +410,7 @@ class GameControllerTest {
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
                 
+                
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalY);
                 
@@ -432,6 +445,7 @@ class GameControllerTest {
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
                 
+                
                 var shelf = model.getCurrentPlayer().getShelf();
                 var pgID = model.getCurrentPlayer().getPg();
                 var personalGoal = new PersonalGoal(pgID);
@@ -459,6 +473,7 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
+                
                 
                 var shelf = model.getCurrentPlayer().getShelf();
                 var pgID = model.getCurrentPlayer().getPg();
@@ -613,32 +628,32 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
-    
+                
                 List<Coordinate> selection = new ArrayList<>();
-                Coordinate coordinate = new Coordinate(4, 0 );
-                selection.add( coordinate );
-                var tiles = model.getTile( selection.get(0) );
+                Coordinate coordinate = new Coordinate(4, 0);
+                selection.add(coordinate);
+                var tiles = model.getTile(selection.get(0));
                 int column = 0;
                 String playerNick = "Luca";
                 
-                assertEquals( model.getPlayers()
-                                      .stream()
-                                      .filter( (x) -> x.getNickname().equals(playerNick) )
-                                      .toList().get(0)
-                                      .getShelf().getTile( 0, 0),
-                              Tile.NOTILE );
+                assertEquals(model.getPlayers()
+                                     .stream()
+                                     .filter((x) -> x.getNickname().equals(playerNick))
+                                     .toList().get(0)
+                                     .getShelf().getTile(0, 0),
+                             Tile.NOTILE);
                 
-                var move = new Move(selection, Collections.singletonList(tiles), column );
-                var moveMessage = new MoveMessage( move, playerNick );
+                var move = new Move(selection, Collections.singletonList(tiles), column);
+                var moveMessage = new MoveMessage(move, playerNick);
                 
-                controller.onMessage( moveMessage );
+                controller.onMessage(moveMessage);
                 
-                assertEquals( model.getPlayers()
-                                      .stream()
-                                      .filter( (x) -> x.getNickname().equals(playerNick) )
-                                      .toList().get(0)
-                                      .getShelf().getTile( 0, 0 ),
-                              tiles );
+                assertEquals(model.getPlayers()
+                                     .stream()
+                                     .filter((x) -> x.getNickname().equals(playerNick))
+                                     .toList().get(0)
+                                     .getShelf().getTile(0, 0),
+                             tiles);
             }
             catch( IOException e ) {
                 e.printStackTrace();
