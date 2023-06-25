@@ -61,4 +61,16 @@ public class BoardTest {
         }
     }
     
+    @Test
+    public void getAsMatrixTest() {
+        Board board = new Board(2);
+        var matrix = board.getAsMatrix();
+        
+        for( int i = 0; i < 9; i++) {
+            for( int j = 0; j < 9; j++ ) {
+                var coord = new Coordinate(i, j);
+                assertEquals(board.getTile(coord), matrix[i][j]);
+            }
+        }
+    }
 }
