@@ -22,7 +22,7 @@
                     <Button text="x1" fx:id="x1" />
                     <Button text="x1.25" fx:id="x125" />
                     <Button text="x1.5" fx:id="x150" />
-                    <Text fx:id="currentPlayer" styleClass="@current_player_font.css" text="The current player is" wrappingWidth="259.0" />
+                    <Text fx:id="currentPlayer" styleClass="@current_player_font.css" text="The current player is" wrappingWidth="658.0" />
                 </HBox>
 
                 <fx:include fx:id="board" source="board.fxml" />

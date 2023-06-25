@@ -136,7 +136,7 @@ public class GUI extends View {
             Popup p = new Popup();
             p.setAutoHide(true);
             p.setAutoFix(true);
-            Label label = new Label(msg.getPayload().msg() + " from action : " + msg.getPayload().Action());
+            Label label = new Label(msg.getPayload().msg());
             label.setStyle(" -fx-background-color: #b06b51;");
             label.setFont(new Font("Noto Sans", 16));
             p.getContent().add(label);
