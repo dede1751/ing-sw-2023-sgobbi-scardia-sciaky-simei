@@ -4,13 +4,13 @@ public class ChatMessage extends ViewMessage<String> {
     
     private final String dest;
     
-    public ChatMessage(String s, String playerNick, int clientId) {
-        super(s, playerNick, clientId);
-        dest = "BROADCAST";
+    public ChatMessage(String s, String playerNick) {
+        super(s, playerNick);
+        dest = "ALL";
     }
     
-    public ChatMessage(String s, String PlayerNick, String playerDestination, int clientId) {
-        super(s, PlayerNick, clientId);
+    public ChatMessage(String s, String PlayerNick, String playerDestination) {
+        super(s, PlayerNick);
         dest = playerDestination;
     }
     

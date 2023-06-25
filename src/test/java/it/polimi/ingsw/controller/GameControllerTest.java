@@ -1,25 +1,24 @@
 package it.polimi.ingsw.controller;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.GameModel;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.Tile;
 import it.polimi.ingsw.model.goals.personal.PersonalGoal;
 import it.polimi.ingsw.network.Client;
-import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.network.Server;
-import it.polimi.ingsw.utils.exceptions.DuplicateListener;
 import it.polimi.ingsw.utils.files.ResourcesManager;
-import it.polimi.ingsw.utils.mvc.ModelListener;
-import it.polimi.ingsw.view.tui.TUI;
+import it.polimi.ingsw.view.messages.Move;
+import it.polimi.ingsw.view.messages.MoveMessage;
+
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,39 +34,29 @@ class GameControllerTest {
     
     private String getResource(String className) throws IOException {
         return Files.readString(
-                Path.of(ResourcesManager.testRootDir,
-                        "it/polimi/ingsw/controller/resources/" + className + "Test.json"),
+                Path.of(ResourcesManager.testRootDir, "controller/resources/" + className + "Test.json"),
                 StandardCharsets.UTF_8);
     }
     
-    private static class GameControllerDebugFactory {
-        public static GameController create(GameModel model) {
-            List<Player> players = model.getPlayers();
-            List<LobbyController.ClientContext> ccs = new ArrayList<>();
-            List<Client> clients = new ArrayList<>();
-            Server server = null;
-            try {
-                server = new LocalServer();
-            }
-            catch( RemoteException e ) {
-                throw new RuntimeException(e);
-            }
-            int i = 0;
-            for( var p : players ) {
-                try {
-                    ModelListener l =
-                            new LobbyController.ClientContext(new LocalClient(server, new TUI()), p.getNickname(), i);
-                    model.addListener(p.getNickname(), l);
-                    i++;
-                }
-                catch( RemoteException | DuplicateListener e ) {
-                    throw new RuntimeException(e);
-                }
-            }
-            return new GameController(model, 0);
+    private static class mockupServer extends LocalServer {
+        public mockupServer() throws RemoteException {
+            super();
+        }
+        
+        @Override
+        public void removeGameControllers(List<Client> clients) {
+        
         }
     }
     
+    static {
+        try {
+            LobbyController.getInstance().setServer(new mockupServer());
+        }
+        catch( RemoteException e ) {
+            fail(e.getCause());
+        }
+    }
     
     @Tag("needRefill")
     @Nested
@@ -78,11 +67,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 assertTrue(controller.needRefill());
             }
             catch( IOException e ) {
@@ -97,11 +86,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 assertFalse(controller.needRefill());
             }
             catch( IOException e ) {
@@ -122,17 +111,15 @@ class GameControllerTest {
             
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 assertTrue(controller.needRefill());
                 var tiles = model.getBoard().getTiles();
-                var numofNoTiles = Collections.frequency(tiles.values()
-                                                                 .stream()
-                                                                 .map(Tile::type)
-                                                                 .toList(), Tile.Type.NOTILE);
+                var numofNoTiles =
+                        Collections.frequency(tiles.values().stream().map(Tile::type).toList(), Tile.Type.NOTILE);
                 controller.turnManager();
                 tiles = model.getBoard().getTiles();
                 var numofTiles = tiles.values().stream().filter((tile) -> tile != Tile.NOTILE).count();
@@ -150,18 +137,15 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 assertTrue(controller.needRefill());
                 controller.turnManager();
                 var tiles = model.getBoard().getTiles();
-                var tilesOnBoard = tiles.values()
-                        .stream()
-                        .filter((tile) -> !tile.equals(Tile.NOTILE))
-                        .count();
+                var tilesOnBoard = tiles.values().stream().filter((tile) -> !tile.equals(Tile.NOTILE)).count();
                 var tilesInTileBag = model.getTileBag().currentTileNumber();
                 assertEquals(tilesInTileBag, tilesOnBoard);
             }
@@ -177,11 +161,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 var boardPrev = model.getBoard();
                 assertFalse(controller.needRefill());
                 controller.turnManager();
@@ -200,11 +184,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 controller.turnManager();
                 var gameOver = model.isLastTurn();
                 assertTrue(gameOver);
@@ -221,12 +205,12 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 controller.turnManager();
                 var gameOver = model.isLastTurn();
                 assertFalse(gameOver);
@@ -244,11 +228,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
@@ -279,11 +263,10 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
                 
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertTrue(completedGoalX);
@@ -315,11 +298,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 
                 var completedGoalX = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalX);
@@ -351,11 +334,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertFalse(completedGoalY);
@@ -386,11 +369,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalY();
                 assertTrue(completedGoalY);
@@ -422,11 +405,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 
                 var completedGoalY = model.getCurrentPlayer().isCompletedGoalX();
                 assertFalse(completedGoalY);
@@ -457,11 +440,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 
                 var shelf = model.getCurrentPlayer().getShelf();
                 var pgID = model.getCurrentPlayer().getPg();
@@ -486,11 +469,11 @@ class GameControllerTest {
             String json;
             try {
                 json = getResource(name);
-                Gson gson =
-                        new GsonBuilder().registerTypeAdapter(GameModel.class,
-                                                              new GameModel.ModelDeserializer()).create();
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
-                var controller = GameControllerDebugFactory.create(model);
+                var controller = new GameController(model);
+                
                 
                 var shelf = model.getCurrentPlayer().getShelf();
                 var pgID = model.getCurrentPlayer().getPg();
@@ -509,6 +492,173 @@ class GameControllerTest {
             }
         }
         
-        //TODO setAdjacentScore testing
+    }
+    
+    
+    @Tag("calculateAdjency")
+    @Nested
+    class calculateAdjencyTest {
+        
+        @Test
+        public void calculateAdjencyTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+                
+                int score = model.getCurrentPlayer().getScore();
+                int adjencyScore = controller.calculateAdjacency(model.getCurrentPlayer().getShelf());
+                
+                controller.turnManager();
+                int newScore = model.getCurrentPlayer().getScore();
+                
+                assertEquals(score + adjencyScore, newScore);
+                assertEquals(adjencyScore, 3);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+        
+        @Test
+        public void calculateAdjencyFalse() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+                
+                int score = model.getCurrentPlayer().getScore();
+                int adjencyScore = controller.calculateAdjacency(model.getCurrentPlayer().getShelf());
+                
+                controller.turnManager();
+                int newScore = model.getCurrentPlayer().getScore();
+                
+                assertNotEquals(score + 5, newScore);
+                assertNotEquals(adjencyScore, 5);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    }
+    
+    
+    @Tag("setNextPlayer")
+    @Nested
+    class setNextPlayerTest {
+        
+        
+        @Test
+        public void setNextPlayerTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+                
+                var currentPlayerIndex = model.getCurrentPlayerIndex();
+                
+                controller.nextPlayerSetter();
+                
+                var newCurrentPlayerIndex = model.getCurrentPlayerIndex();
+                var newCurrentPlayer = model.getCurrentPlayer();
+                
+                assertEquals(currentPlayerIndex + 1, newCurrentPlayerIndex);
+                assertEquals(model.getPlayers().get(currentPlayerIndex + 1), newCurrentPlayer);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+        
+    }
+    
+    
+    @Tag("endGame")
+    @Nested
+    class endGameTest {
+        
+        @Test
+        public void endGameTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+                
+                controller.endGame();
+                
+                assertTrue(model.getGameEnded());
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
+    }
+    
+    @Tag("onMessage")
+    @Nested
+    class onMessageTest {
+        
+        @Test
+        public void onMessageMoveTrue() {
+            var name = ResourcesManager.getCurrentMethod();
+            String json;
+            try {
+                json = getResource(name);
+                Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class,
+                                                                  new GameModel.ModelDeserializer()).create();
+                var model = gson.fromJson(json, GameModel.class);
+                var controller = new GameController(model);
+                
+                List<Coordinate> selection = new ArrayList<>();
+                Coordinate coordinate = new Coordinate(4, 0);
+                selection.add(coordinate);
+                var tiles = model.getTile(selection.get(0));
+                int column = 0;
+                String playerNick = "Luca";
+                
+                assertEquals(model.getPlayers()
+                                     .stream()
+                                     .filter((x) -> x.getNickname().equals(playerNick))
+                                     .toList().get(0)
+                                     .getShelf().getTile(0, 0),
+                             Tile.NOTILE);
+                
+                var move = new Move(selection, Collections.singletonList(tiles), column);
+                var moveMessage = new MoveMessage(move, playerNick);
+                
+                controller.onMessage(moveMessage);
+                
+                assertEquals(model.getPlayers()
+                                     .stream()
+                                     .filter((x) -> x.getNickname().equals(playerNick))
+                                     .toList().get(0)
+                                     .getShelf().getTile(0, 0),
+                             tiles);
+            }
+            catch( IOException e ) {
+                e.printStackTrace();
+                fail();
+            }
+        }
     }
 }

@@ -27,8 +27,8 @@ public class TileBagTest {
     
     @Test
     public void getTileAmountTest() {
-        for ( Tile.Type type : Tile.Type.values() ) {
-            if ( type != Tile.Type.NOTILE ) {
+        for( Tile.Type type : Tile.Type.values() ) {
+            if( type != Tile.Type.NOTILE ) {
                 int count = bag.getTileAmount(new Tile(type, Tile.Sprite.ONE));
                 count += bag.getTileAmount(new Tile(type, Tile.Sprite.TWO));
                 count += bag.getTileAmount(new Tile(type, Tile.Sprite.THREE));
@@ -46,7 +46,7 @@ public class TileBagTest {
                 new Tile(Tile.Type.GAMES, Tile.Sprite.ONE));
         bag.removeSelection(selection);
         
-        for ( Tile tile: selection ) {
+        for( Tile tile : selection ) {
             assertEquals(7, bag.getTileAmount(tile), () -> "tile : " + tile.type().name());
         }
     }

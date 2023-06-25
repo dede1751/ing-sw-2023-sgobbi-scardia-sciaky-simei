@@ -17,8 +17,8 @@ public class ServerLogger {
     
     static {
         try {
-            log = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/server/log.txt");
-            errorLog = ResourcesManager.openFileWrite(ResourcesManager.mainResourcesDir + "/server/error_log.txt");
+            log = ResourcesManager.openFileWrite(ResourcesManager.serverLoggerDir, "log.txt");
+            errorLog = ResourcesManager.openFileWrite(ResourcesManager.serverLoggerDir, "error_log.txt");
         }
         catch( IOException e ) {
             throw new RuntimeException(e);
@@ -55,9 +55,9 @@ public class ServerLogger {
         String s2 = "Cause : " + e.getCause();
         
         if( additionalContext != null ) {
-            ServerLogger.writeLog(s + s1 + s2 + "\n" + additionalContext, errorLog);
+            writeLog(s + s1 + s2 + "\n" + additionalContext, errorLog);
         }else {
-            ServerLogger.writeLog(s + s1 + s2, errorLog);
+            writeLog(s + s1 + s2, errorLog);
         }
     }
     

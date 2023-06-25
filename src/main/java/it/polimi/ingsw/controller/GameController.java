@@ -7,12 +7,13 @@ import it.polimi.ingsw.model.messages.Response;
 import it.polimi.ingsw.model.messages.ServerResponseMessage;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.mvc.IntegrityChecks;
-import it.polimi.ingsw.view.messages.ChatMessage;
-import it.polimi.ingsw.view.messages.DebugMessage;
-import it.polimi.ingsw.view.messages.Move;
-import it.polimi.ingsw.view.messages.MoveMessage;
+import it.polimi.ingsw.utils.mvc.ReflectionUtility;
+import it.polimi.ingsw.view.messages.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * GameController, responsible for modifying the model according to the input from the player views
@@ -26,6 +27,7 @@ public class GameController {
     
     private final Integer playerNumber;
     
+    
     /**
      * Initialize the controller with the given model and start the game
      *
@@ -37,7 +39,40 @@ public class GameController {
         this.lobbyID = lobbyID;
         this.playerNumber = model.getPlayers().size();
         
+        // Reset PersonalGoal/Adjacency scores (this is used because the model could be a recovery one)
+        for( Player p : model.getPlayers() ) {
+            p.setPersonalGoalScore(PersonalGoal.getPersonalGoal(p.getPg()).checkGoal(p.getShelf()));
+            p.setAdjacencyScore(calculateAdjacency(p.getShelf()));
+            p.setBonusScore(0);
+        }
+        // Refill the board (recovery boards may not need refilling
+        if( needRefill() ) {
+            model.refillBoard();
+        }
+        
+        saveModel();
         model.startGame();
+    }
+    
+    /**
+     * Mock GameController class for testing purposes.
+     * This hooks empty listeners to the model to avoid problems when it tries to send data to a client
+     *
+     * @param model Model instance to run
+     */
+    public GameController(GameModel model) {
+        this.model = model;
+        this.lobbyID = 0;
+        this.playerNumber = model.getPlayers().size();
+        
+        for( Player p : model.getPlayers() ) {
+            try {
+                model.addListener(p.getNickname(), (m) -> {
+                });
+            }
+            catch( Exception ignored ) {
+            }
+        }
     }
     
     /**
@@ -46,19 +81,34 @@ public class GameController {
      * @return True if a refill is needed, false otherwise
      */
     public boolean needRefill() {
-        Map<Coordinate, Tile> toBeChecked = model.getBoard().getTiles();
+        Board board = model.getBoard();
         
-        for( var entry : toBeChecked.entrySet() ) {
-            if( !(entry.getValue().equals(Tile.NOTILE)) ) {
-                if( !(model.getBoard().getTile(entry.getKey().getDown()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getUp()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getLeft()) == Tile.NOTILE)
-                    || !(model.getBoard().getTile(entry.getKey().getRight()) == Tile.NOTILE) ) {
-                    return false;
-                }
-            }
+        // get all coordinates with at least one empty side
+        List<Coordinate> removable = board.getTiles()
+                .keySet()
+                .stream()
+                .filter(c -> !board.getTile(c).equals(Tile.NOTILE)
+                             && (board.getTile(c.getDown()) == null
+                                 || board.getTile(c.getDown()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getUp()) == null
+                                 || board.getTile(c.getUp()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getLeft()) == null
+                                 || board.getTile(c.getLeft()).equals(Tile.NOTILE)
+                                 || board.getTile(c.getRight()) == null
+                                 || board.getTile(c.getRight()).equals(Tile.NOTILE)))
+                .toList();
+        
+        // Handle empty boards
+        if( removable.isEmpty() ) {
+            return true;
         }
-        return true;
+        
+        // check if there is at least one where an adjacent coordinate is also removable
+        return removable.stream()
+                .noneMatch(c -> removable.contains(c.getDown())
+                                || removable.contains(c.getUp())
+                                || removable.contains(c.getLeft())
+                                || removable.contains(c.getRight()));
     }
     
     /**
@@ -134,7 +184,7 @@ public class GameController {
                 PersonalGoal.getPersonalGoal(currentPlayer.getPg()).checkGoal(currentPlayer.getShelf()));
         
         //calculate and set in every turn the adjacentTiles and score
-        model.setCurrentPlayerAdiajencyScore(calculateAdjacency(currentPlayer.getShelf()));
+        model.setCurrentPlayerAdjacencyScore(calculateAdjacency(currentPlayer.getShelf()));
         
         if( needRefill() ) {
             model.refillBoard();
@@ -143,6 +193,8 @@ public class GameController {
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
             model.setLastTurn();
         }
+        
+        
     }
     
     /**
@@ -150,7 +202,7 @@ public class GameController {
      */
     public void nextPlayerSetter() {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
-        if( model.isLastTurn() && currentPlayerIndex == 3 ) {
+        if( model.isLastTurn() && currentPlayerIndex == model.getPlayers().size() - 1 ) {
             endGame();
         }else {
             currentPlayerIndex = (currentPlayerIndex + 1) % playerNumber;
@@ -163,6 +215,7 @@ public class GameController {
      */
     public void endGame() {
         model.notifyWinner();
+        this.model.setGameEnded(true);
         LobbyController.getInstance().endGame(this.lobbyID);
     }
     
@@ -170,7 +223,35 @@ public class GameController {
      * Save the model to a file
      */
     private void saveModel() {
+        if( this.model.getGameEnded() )
+            return;
         ResourcesManager.saveModel(model, lobbyID);
+    }
+    
+    /**
+     * Forward a ViewMessage to the GameController
+     * Message handling is synchronized on the full controller
+     *
+     * @param msg Message to forward
+     *
+     * @return true if the message was forwarded, false otherwise
+     */
+    public boolean update(ViewMessage<?> msg) {
+        if( !ReflectionUtility.hasMethod(this, "onMessage", msg) ) {
+            return false;
+        }
+        
+        synchronized(this) {
+            if( !this.model.getGameEnded() ) { // don't update controllers after game ends
+                try {
+                    ReflectionUtility.invokeMethod(this, "onMessage", msg);
+                }
+                catch( NoSuchMethodException ignored ) {
+                } // impossible
+            }
+        }
+        
+        return true;
     }
     
     /**

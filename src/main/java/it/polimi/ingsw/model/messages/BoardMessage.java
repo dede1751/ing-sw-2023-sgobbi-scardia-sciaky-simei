@@ -7,4 +7,5 @@ public class BoardMessage extends ModelMessage<Board> {
     public BoardMessage(GameModel p) {
         super(p.getBoard());
     }
+    
 }

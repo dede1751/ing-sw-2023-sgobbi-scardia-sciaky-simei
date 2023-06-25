@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
+import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -51,6 +53,20 @@ public class BoardTest {
     }
     
     @Test
+    public void insertExceptionTest() throws OutOfBoundCoordinateException, OccupiedTileException {
+        Board board = new Board(2);
+        Coordinate coord = new Coordinate(1, 4);
+        Tile tile1 = new Tile(Tile.Type.CATS, Tile.Sprite.ONE);
+        Tile tile2 = new Tile(Tile.Type.BOOKS, Tile.Sprite.ONE);
+    
+        board.insertTile(coord, tile1);
+        assertThrows(OccupiedTileException.class, () -> board.insertTile(coord, tile2));
+    
+        Coordinate err = new Coordinate(0, 0);
+        assertThrows(OutOfBoundCoordinateException.class, () -> board.insertTile(err, tile2));
+    }
+    
+    @Test
     public void refillTest() {
         Board board = new Board(3);
         TileBag tileBag = new TileBag();
@@ -61,4 +77,16 @@ public class BoardTest {
         }
     }
     
+    @Test
+    public void getAsMatrixTest() {
+        Board board = new Board(2);
+        var matrix = board.getAsMatrix();
+        
+        for( int i = 0; i < 9; i++) {
+            for( int j = 0; j < 9; j++ ) {
+                var coord = new Coordinate(i, j);
+                assertEquals(board.getTile(coord), matrix[i][j]);
+            }
+        }
+    }
 }

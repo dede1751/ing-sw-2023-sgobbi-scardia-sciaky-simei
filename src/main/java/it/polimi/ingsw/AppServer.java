@@ -1,8 +1,8 @@
 package it.polimi.ingsw;
 
 import it.polimi.ingsw.network.LocalServer;
-import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.network.socket.ClientSkeleton;
+import it.polimi.ingsw.utils.files.ServerLogger;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 public class AppServer {
     
     public static void main(String[] args) {
-        Server server;
+        LocalServer server;
         try {
             server = new LocalServer();
         }
@@ -54,15 +54,14 @@ public class AppServer {
         }
     }
     
-    private static void startRMI(Server server) throws RemoteException {
-        LocateRegistry.createRegistry(1099);
-        Registry registry = LocateRegistry.getRegistry();
-        registry.rebind("server", server);
+    private static void startRMI(LocalServer server) throws RemoteException {
+        Registry registry = LocateRegistry.createRegistry(1099);
+        registry.rebind("myshelfie_server", server);
     }
     
-    public static void startSocket(Server server) throws RemoteException {
+    public static void startSocket(LocalServer server) throws RemoteException {
         try( ExecutorService executorService = Executors.newCachedThreadPool();
-             ServerSocket serverSocket = new ServerSocket(1234) ) {
+             ServerSocket serverSocket = new ServerSocket(23456) ) {
             //noinspection InfiniteLoopStatement
             while( true ) {
                 Socket socket = serverSocket.accept();
@@ -70,21 +69,20 @@ public class AppServer {
                     try {
                         ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
                         
-                        server.register(clientSkeleton);
                         //noinspection InfiniteLoopStatement
                         while( true ) {
                             clientSkeleton.receive(server);
                         }
                     }
                     catch( RemoteException e ) {
-                        System.err.println("Cannot receive from client. Closing this connection...");
+                        ServerLogger.errorLog(e, "Cannot receive from client. Closing this connection...");
                     }
                     finally {
                         try {
                             socket.close();
                         }
                         catch( IOException e ) {
-                            System.err.println("Cannot close socket");
+                            ServerLogger.errorLog(e, "Cannot close socket");
                         }
                     }
                 });

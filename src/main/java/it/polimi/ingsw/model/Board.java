@@ -18,13 +18,15 @@ public class Board implements Serializable {
     
     private final Map<Coordinate, Tile> tileOccupancy;
     
+    public static final int maxSize = 9;
+    
     /**
      * Initialize board for the given number of players
      * The player number cannot change dynamically throughout the game
      *
      * @param numPlayers Total number of players for the game
      */
-    protected Board(int numPlayers) {
+    public Board(int numPlayers) {
         this.tileOccupancy = new HashMap<>();
         
         Coordinate[] commonCoordinates = {
@@ -64,6 +66,8 @@ public class Board implements Serializable {
                 this.tileOccupancy.put(coordinate, Tile.NOTILE);
             }
         }
+        
+        
     }
     
     private Board(Map<Coordinate, Tile> map) {
@@ -214,6 +218,12 @@ public class Board implements Serializable {
             }
         }
         return result;
+    }
+    
+    @Override
+    public String toString() {
+        Gson g = new GsonBuilder().registerTypeAdapter(getClass(), new BoardSerializer()).create();
+        return g.toJson(this, this.getClass());
     }
     
     public static class BoardSerializer implements JsonSerializer<Board> {
