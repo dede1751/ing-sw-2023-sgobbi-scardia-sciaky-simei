@@ -12,7 +12,7 @@ import java.net.Socket;
 import java.rmi.RemoteException;
 
 /**
- * Client class implementation for Server side use in the TCP-IP protocol
+ * ClientSkeleton used by a Socket Server to simulate RMI communication with the client.
  */
 public class ClientSkeleton implements Client {
     
@@ -23,8 +23,7 @@ public class ClientSkeleton implements Client {
     /**
      * Initialize a ClientSkeleton object with a Socket object
      * @param socket Socket object
-     * @throws RemoteException If an error occurs while creating the ObjectOutputStream/ObjectInputStream from
-     *                         socket's OutputStream/InputStream
+     * @throws RemoteException If an error occurs while creating the In/Out streams
      */
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {

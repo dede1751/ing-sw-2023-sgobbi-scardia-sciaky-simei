@@ -15,42 +15,74 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Class LocalServer is the main network interface for the server application. <br>
+ * It communicates to either a LocalClient via RMI or a ClientStub via Socket. <br>
+ * This class acts as a router for messages to either the LobbyController or a specific GameController.
+ */
 public class LocalServer extends UnicastRemoteObject implements Server {
     
     private final Map<Client, GameController> gameControllers = new ConcurrentHashMap<>();
     
+    /**
+     * Initialize a LocalServer object.
+     *
+     * @throws RemoteException if an error occurs while exporting the object
+     */
     public LocalServer() throws RemoteException {
         super();
         LobbyController.getInstance().setServer(this);
     }
     
+    /**
+     * Initialize a LocalServer object from port information.
+     *
+     * @param port the port to use for rmi communication
+     * @throws RemoteException if an error occurs while exporting the object
+     */
     public LocalServer(int port) throws RemoteException {
         super(port);
         LobbyController.getInstance().setServer(this);
         
     }
     
+    /**
+     * Initialize a LocalServer object from port and client socket factory information.
+     *
+     * @param port the port to use for rmi communication
+     * @param csf  the client socket factory to use for rmi communication
+     * @param ssf the server socket factory to use for rmi communication
+     * @throws RemoteException if an error occurs while exporting the object
+     */
     public LocalServer(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {
         super(port, csf, ssf);
         LobbyController.getInstance().setServer(this);
     }
     
     /**
-     * Add clientID->controller mapping to current map
+     * Add clientID->controller mapping to current map. <br>
+     * Called by the LobbyController each time a new game starts. <br>
+     * Synchronization is over the lobby controller instance. (the lock is redundant)
      *
      * @param mapping client mapping to add
      */
     public void addGameControllers(Map<Client, GameController> mapping) {
-        gameControllers.putAll(mapping);
+        synchronized( LobbyController.getInstance() ) {
+            gameControllers.putAll(mapping);
+        }
     }
     
     /**
-     * Remove controller mapping from current map for the given clients
+     * Remove controller mapping from current map for the given clients. <br>
+     * Called by the LobbyController each time a game ends. <br>
+     * Synchronization is over the lobby controller instance. (the lock is redundant)
      *
      * @param clients clients to remove
      */
     public void removeGameControllers(List<Client> clients) {
-        clients.forEach(gameControllers.keySet()::remove);
+        synchronized( LobbyController.getInstance() ) {
+            clients.forEach(gameControllers.keySet()::remove);
+        }
     }
     
     @Override
