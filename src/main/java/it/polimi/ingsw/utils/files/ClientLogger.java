@@ -29,6 +29,11 @@ public class ClientLogger {
     }
     
     /**
+     * Unused private constructor to appease Javadoc.
+     */
+    private ClientLogger(){}
+    
+    /**
      * Write a log message to the log file
      * @param s Message to be logged
      * @param channel Channel to write the message to (either messagelog or errorLog)

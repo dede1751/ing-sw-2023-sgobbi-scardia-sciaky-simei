@@ -81,6 +81,7 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     
     /**
+     * Check if the response is OK or an error.
      * @return true if the response is OK, false otherwise
      */
     public boolean isOk() {

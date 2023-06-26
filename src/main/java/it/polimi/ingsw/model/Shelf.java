@@ -14,7 +14,14 @@ public class Shelf implements Serializable {
     
     static final long serialVersionUID = 1L;
     
+    /**
+     * Number of rows in the shelf
+     */
     public final static int N_ROW = 6;
+    
+    /**
+     * Number of columns in the shelf
+     */
     public final static int N_COL = 5;
     
     /**
@@ -24,6 +31,9 @@ public class Shelf implements Serializable {
      */
     private final List<Stack<Tile>> content;
     
+    /**
+     * Create a new empty shelf
+     */
     public Shelf() {
         this.content = new ArrayList<>();
         
@@ -143,6 +153,12 @@ public class Shelf implements Serializable {
      * The names of the attributes are irrelevant.
      */
     protected static class ShelfSerializer implements JsonSerializer<Shelf> {
+        
+        /**
+         * Private unused constructor to appease Javadoc.
+         */
+        private ShelfSerializer(){}
+        
         @Override
         public JsonElement serialize(Shelf shelf, Type typeOfSrc, JsonSerializationContext context) {
             var matrix = shelf.getAllShelf();
@@ -174,6 +190,12 @@ public class Shelf implements Serializable {
      * The names of the attributes are irrelevant
      */
     protected static class ShelfDeserializer implements JsonDeserializer<Shelf> {
+        
+        /**
+         * Private unused constructor to appease Javadoc.
+         */
+        protected ShelfDeserializer(){}
+        
         @Override
         public Shelf deserialize(JsonElement element, Type typeOfDst, JsonDeserializationContext context) throws JsonParseException {
             var result = new Shelf();

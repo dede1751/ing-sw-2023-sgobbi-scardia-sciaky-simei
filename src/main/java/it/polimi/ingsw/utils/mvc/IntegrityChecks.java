@@ -17,11 +17,17 @@ import java.util.List;
 public class IntegrityChecks {
     
     /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private IntegrityChecks(){}
+    
+    /**
      * Checks if the list of coordinates is a well-formed selection.
      * Selections must be a single connected line of 1 to 3 tiles.
      *
      * @param selection List of coordinates selected by the player
-     *
+     * @param board     board to check
+     * @param shelf     shelf to check
      * @return true if the selection is valid, false otherwise
      */
     public static boolean checkSelectionForm(List<Coordinate> selection, Board board, Shelf shelf) {

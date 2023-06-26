@@ -9,8 +9,7 @@ import java.util.function.BinaryOperator;
 
 
 /**
- * Message containing the list of available lobbies <br>
- * Refer to network manual for details
+ * Message containing the list of available lobbies.
  */
 public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.AvailableLobbyPayload> {
     

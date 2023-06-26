@@ -40,10 +40,18 @@ public class GameModel {
     
     private boolean gameEnded = false;
     
+    /**
+     * Set the game-ended status.
+     * @param b true if the game should end, false otherwise
+     */
     public void setGameEnded(boolean b) {
         gameEnded = b;
     }
     
+    /**
+     * Get the game-ended status.
+     * @return true if the game has ended, false otherwise
+     */
     public boolean getGameEnded() {
         return gameEnded;
     }
@@ -52,7 +60,15 @@ public class GameModel {
      * Disambiguation enum for the common goals
      */
     public enum CGType {
-        X, Y
+        /**
+         * Common goal X
+         */
+        X,
+        
+        /**
+         * Common goal Y
+         */
+        Y
     }
     
     /**
@@ -363,6 +379,7 @@ public class GameModel {
      * @param tile        Tile type to insert
      *
      * @throws OccupiedTileException Trying to insert a tile in an already occupied position
+     * @throws OutOfBoundCoordinateException Trying to insert a tile in an invalid position
      */
     public void insertTile(Coordinate coordinates, Tile tile) throws OccupiedTileException, OutOfBoundCoordinateException {
         this.board.insertTile(coordinates, tile);
@@ -575,6 +592,11 @@ public class GameModel {
      */
     protected static class ModelSerializer implements JsonSerializer<GameModel> {
         
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public ModelSerializer(){}
+        
         @Override
         public JsonElement serialize(GameModel model, Type typeOfSrc, JsonSerializationContext context) {
             var result = new JsonObject();
@@ -641,6 +663,11 @@ public class GameModel {
      * GameModel's' custom gson deserializer
      */
     static public class ModelDeserializer implements JsonDeserializer<GameModel> {
+        
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public ModelDeserializer(){}
         
         @Override
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

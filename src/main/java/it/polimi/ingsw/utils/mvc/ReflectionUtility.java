@@ -11,6 +11,11 @@ import java.util.Arrays;
 public class ReflectionUtility {
     
     /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private ReflectionUtility(){}
+    
+    /**
      * Check if the given object has a method with the given name and arguments
      *
      * @param obj        object to check
@@ -36,6 +41,8 @@ public class ReflectionUtility {
      * @param obj        object on which to call the method
      * @param methodName name of the method to call
      * @param args       arguments to pass to the method
+     *
+     * @throws NoSuchMethodException if the method does not exist
      */
     public static void invokeMethod(Object obj, String methodName, Object... args) throws NoSuchMethodException {
         try {

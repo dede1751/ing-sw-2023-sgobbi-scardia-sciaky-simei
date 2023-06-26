@@ -110,6 +110,11 @@ public class TileBag {
      */
     public static class TileBagDeserializer implements JsonDeserializer<TileBag> {
         
+        /**
+         * Protected constructor to appease Javadoc.
+         */
+        protected TileBagDeserializer(){}
+        
         @Override
         public TileBag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             var result = new HashMap<Tile, Integer>();

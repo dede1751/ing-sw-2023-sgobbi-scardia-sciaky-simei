@@ -29,7 +29,12 @@ public class AppClient {
     private static final String byteRegex = "(?:\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])";
     private static final Pattern ipv4Pattern =
             Pattern.compile(String.format("%s\\.%s\\.%s\\.%s", byteRegex, byteRegex, byteRegex, byteRegex));
-
+    
+    /**
+     * Unused private constructor to appease Javadoc.
+     */
+    private AppClient(){}
+    
     /**
      * Client's entry point
      * @param args unused

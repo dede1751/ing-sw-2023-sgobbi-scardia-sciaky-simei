@@ -17,6 +17,13 @@ public class StartGameMessage extends ModelMessage<StartGameMessage.StartGamePay
     /**
      * Record containing the information of a player. <br>
      * Contains the nickname, the shelf and the scores of the player.
+     *
+     * @param nickname The nickname of the player
+     * @param shelf The shelf of the player
+     * @param commonGoalScore The score of the player on the common goals
+     * @param personalGoalScore The score of the player on the personal goal
+     * @param adjacencyScore The adjacency score of the player
+     * @param bonusScore The bonus score of the player
      */
     public record PlayerRecord(
             String nickname,

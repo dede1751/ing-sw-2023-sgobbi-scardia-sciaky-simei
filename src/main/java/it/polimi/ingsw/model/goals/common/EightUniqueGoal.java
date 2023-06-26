@@ -5,12 +5,22 @@ import it.polimi.ingsw.model.Tile;
 
 import java.util.HashMap;
 
+/**
+ * Common goal strategy for the EightUnique goal, involving 8 tiles of the same type in any position.
+ */
 public class EightUniqueGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public EightUniqueGoal(){}
+    
+    @Override
     public String getDescription() {
         return "Eight tiles of the same type, in any position.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         HashMap<Tile.Type, Integer> tileCounter = new HashMap<>();
         

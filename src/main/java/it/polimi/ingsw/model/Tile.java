@@ -10,17 +10,35 @@ import java.util.regex.Pattern;
  * Model's internal shelf representation. <br>
  * Tiles are composed of the Tile Type and the specific Sprite on the physical tile. <br>
  * The Sprite is only used for cosmetic purposes.
+ *
+ * @param type  the type of the tile
+ * @param sprite the sprite of the tile
  */
 public record Tile(Type type, Sprite sprite) implements Serializable {
     
+    /**
+     * Unique tile representing an empty space. <br>
+     * Within a single machine, as long as all empty tiles are obtained from Tile.NOTILE, tiles can be compared with
+     * tile == Tile.NOTILE. If receiving tiles from a diffrent machine, this becomes impossible.
+     */
     public static final Tile NOTILE = new Tile(Type.NOTILE, Sprite.NOSPRITE);
     
+    /**
+     * Create a new tile of the given type, with the default sprite.
+     * @param type the type of the tile
+     */
     public Tile(Type type) {
         this(type, Sprite.ONE);
     }
     
+    /**
+     * Total number of unique tiles.
+     */
     public static final int NUM_TILES = 18;
     
+    /**
+     * List of all unique tiles.
+     */
     public static final Tile[] ALL_TILES = {
             new Tile(Type.CATS, Sprite.ONE), new Tile(Type.CATS, Sprite.TWO), new Tile(Type.CATS, Sprite.THREE),
             new Tile(Type.BOOKS, Sprite.ONE), new Tile(Type.BOOKS, Sprite.TWO), new Tile(Type.BOOKS, Sprite.THREE),
@@ -35,12 +53,33 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
      * Enum for the different types of tiles in the game
      */
     public enum Type {
+        /**
+         * Tile of type CATS
+         */
         CATS,
+        /**
+         * Tile of type BOOKS
+         */
         BOOKS,
+        /**
+         * Tile of type GAMES
+         */
         GAMES,
+        /**
+         * Tile of type FRAMES
+         */
         FRAMES,
+        /**
+         * Tile of type TROPHIES
+         */
         TROPHIES,
+        /**
+         * Tile of type PLANTS
+         */
         PLANTS,
+        /**
+         * Empty tile
+         */
         NOTILE,
     }
     
@@ -49,9 +88,21 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
      * Each tile comes in 3 different sprites.
      */
     public enum Sprite {
+        /**
+         * Sprite ONE
+         */
         ONE,
+        /**
+         * Sprite TWO
+         */
         TWO,
+        /**
+         * Sprite THREE
+         */
         THREE,
+        /**
+         * Empty sprite
+         */
         NOSPRITE,
     }
     

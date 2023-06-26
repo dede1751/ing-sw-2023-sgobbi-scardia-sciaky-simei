@@ -1,7 +1,7 @@
 package it.polimi.ingsw.view.messages;
 
 /**
- * Chat Message
+ * Message containing a chat message. It can be sent to a single player or to all players.
  */
 public class ChatMessage extends ViewMessage<String> {
     

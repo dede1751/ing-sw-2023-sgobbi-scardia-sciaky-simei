@@ -14,6 +14,11 @@ import java.time.Instant;
  */
 public class ServerLogger {
     
+    /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private ServerLogger(){}
+    
     private static final FileChannel log;
     
     private static final FileChannel errorLog;

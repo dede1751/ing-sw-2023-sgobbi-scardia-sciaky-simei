@@ -11,7 +11,22 @@ public class UpdateScoreMessage extends ModelMessage<UpdateScoreMessage.UpdateSc
      * Enum containing the possible types of score updates
      */
     public enum Type {
-        CommonGoal, PersonalGoal, Adjacency, Bonus
+        /**
+         * Common Goal score
+         */
+        CommonGoal,
+        /**
+         * Personal Goal score
+         */
+        PersonalGoal,
+        /**
+         * Adjacency score, based on the size of adjacent clusters of tiles of the same type in the shelf.
+         */
+        Adjacency,
+        /**
+         * Bonus score, point awarded to the player filling his shelf first.
+         */
+        Bonus
     }
     
     /**

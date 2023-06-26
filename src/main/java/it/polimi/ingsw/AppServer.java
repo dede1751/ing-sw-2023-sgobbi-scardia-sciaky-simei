@@ -19,6 +19,11 @@ import java.util.concurrent.Executors;
 public class AppServer {
     
     /**
+     * Unused private constructor to appease Javadoc.
+     */
+    private AppServer(){}
+    
+    /**
      * Server entry point. Sets up both communication protocols and waits.
      * @param args ignored
      */

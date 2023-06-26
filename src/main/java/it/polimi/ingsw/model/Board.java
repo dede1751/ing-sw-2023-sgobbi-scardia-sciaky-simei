@@ -18,7 +18,11 @@ public class Board implements Serializable {
     
     private final Map<Coordinate, Tile> tileOccupancy;
     
-    public static final int maxSize = 9;
+    /**
+     * The maximum size of the board. <br>
+     * Note that not all coordinates with x,y between 0 and MAX_SIZE are valid.
+     */
+    public static final int MAX_SIZE = 9;
     
     /**
      * Initialize board for the given number of players. <br>
@@ -238,6 +242,11 @@ public class Board implements Serializable {
     public static class BoardSerializer implements JsonSerializer<Board> {
         
         /**
+         * Default constructor to appease Javadoc.
+         */
+        public BoardSerializer(){}
+        
+        /**
          * Serialization function
          * @param src the object that needs to be converted to Json.
          * @param typeOfSrc the actual type (fully genericized version) of the source object.
@@ -281,6 +290,11 @@ public class Board implements Serializable {
      * Board's custom gson deserializer <br>
      */
     public static class BoardDeserializer implements JsonDeserializer<Board> {
+        
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public BoardDeserializer(){}
         
         /**
          * Deserialization function

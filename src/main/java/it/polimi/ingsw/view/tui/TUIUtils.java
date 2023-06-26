@@ -10,29 +10,41 @@ import it.polimi.ingsw.view.LocalModel;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Utility class for TUI, responsible for pretty-printing the game state. <br>
+ * Each time we print the board state, we expect to receive a prompt to display for the user input and a possibly null
+ * error message. <br>
+ * The TUI is made up of various elements, each a String separated by newlines. They can be joined vertically and
+ * horizontally to compose the entire menu.
+ */
 public class TUIUtils {
+    
+    /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private TUIUtils(){}
     
     private static final LocalModel model = LocalModel.getInstance();
     
-    public static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_RESET = "\u001B[0m";
     
-    public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
-    public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
-    public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
-    public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
-    public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
-    public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
+    private static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
+    private static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+    private static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
+    private static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
+    private static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
+    private static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     
     
-    public static final String ANSI_GOLD_BACKGROUND = "\033[38;5;16;48;5;228m";
-    public static final String ANSI_SILVER_BACKGROUND = "\033[38;5;16;48;5;253m";
-    public static final String ANSI_BRONZE_BACKGROUND = "\033[38;5;16;48;5;166m";
-    public static final String ANSI_DARK_BRONZE_BACKGROUND = "\033[38;5;16;48;5;94m";
+    private static final String ANSI_GOLD_BACKGROUND = "\033[38;5;16;48;5;228m";
+    private static final String ANSI_SILVER_BACKGROUND = "\033[38;5;16;48;5;253m";
+    private static final String ANSI_BRONZE_BACKGROUND = "\033[38;5;16;48;5;166m";
+    private static final String ANSI_DARK_BRONZE_BACKGROUND = "\033[38;5;16;48;5;94m";
     
-    public static final String ANSI_YELLOW_BOLD = "\033[1;33m";
-    public static final String ANSI_BROWN_BOLD = "\033[1;38;5;130m";
-    public static final String ANSI_DARK_BROWN_BOLD = "\033[1;38;5;94m";
-    public static final String ANSI_RED_BOLD = "\033[1;31m";
+    private static final String ANSI_YELLOW_BOLD = "\033[1;33m";
+    private static final String ANSI_BROWN_BOLD = "\033[1;38;5;130m";
+    private static final String ANSI_DARK_BROWN_BOLD = "\033[1;38;5;94m";
+    private static final String ANSI_RED_BOLD = "\033[1;31m";
     
     
     private static final String TITLE = "\n" + createBox(
@@ -62,7 +74,10 @@ public class TUIUtils {
             ANSI_DARK_BROWN_BOLD);
     
     
-    // Note, this does not interact well with the IDE console
+    /**
+     * Clear the console, by either calling the cls executable on Windows or by using ANSI escape codes on Unix. <br>
+     * Note that this is not necessarily supported on all systems, and may not work depending on your terminal emulator.
+     */
     public static void clearConsole() {
         try {
             if( System.getProperty("os.name").contains("Windows") ) {
@@ -75,6 +90,11 @@ public class TUIUtils {
         }
     }
     
+    /**
+     * Print the login screen.
+     * @param prompt The prompt to display
+     * @param error The error message to display, or null if there is no error
+     */
     public static void printLoginScreen(String prompt, String error) {
         clearConsole();
         System.out.println(TITLE + "\n");
@@ -85,6 +105,13 @@ public class TUIUtils {
         System.out.print(">> ");
     }
     
+    /**
+     * Print the main game state.
+     *
+     * @param nickname The nickname of the player playing the game.
+     * @param prompt The prompt to display
+     * @param error The error message to display, or null if there is no error
+     */
     public static void printGame(String nickname, String prompt, String error) {
         StringBuilder sb = new StringBuilder(TITLE);
         StringBuilder playersb = new StringBuilder();
@@ -131,7 +158,11 @@ public class TUIUtils {
         System.out.print(sb);
     }
     
-    
+    /**
+     * Print the end game leaderboard.
+     * @param endgame The contents of the {@link EndGameMessage} received from the server.
+     * @param firstPlayer The nickname of the first player in the game. (The one who started the game)
+     */
     public static void printEndGameScreen(EndGameMessage.EndGamePayload endgame, String firstPlayer) {
         
         List<String> color = List.of(ANSI_GOLD_BACKGROUND, ANSI_SILVER_BACKGROUND, ANSI_BRONZE_BACKGROUND,
@@ -161,6 +192,13 @@ public class TUIUtils {
         System.out.print(sb);
     }
     
+    /**
+     * Join two TUI elements horizontally
+     * @param s1 The first element
+     * @param s2 The second element
+     * @param space The number of spaces between the two elements
+     * @return The two elements joined horizontally
+     */
     public static String concatString(String s1, String s2, int space) {
         String[] s1Lines = s1.split("\n");
         String[] s2Lines = s2.split("\n");
@@ -186,6 +224,12 @@ public class TUIUtils {
         return sb.toString();
     }
     
+    /**
+     * Create a colored box around the input string.
+     * @param input The string to put in the box
+     * @param color The color of the box
+     * @return The input string surrounded by a box
+     */
     public static String createBox(String input, String color) {
         StringBuilder output = new StringBuilder();
         String[] lines = input.split("\n");
@@ -218,6 +262,13 @@ public class TUIUtils {
         return output.toString();
     }
     
+    /**
+     * Generate the TUI representation of a list of tiles. <br>
+     * Used to display tiles once they have been selected.
+     *
+     * @param tiles The list of tiles to represent
+     * @return The TUI representation of the tiles
+     */
     public static String generateTiles(List<Tile> tiles) {
         StringBuilder sb = new StringBuilder();
         
@@ -230,6 +281,11 @@ public class TUIUtils {
         return sb.toString();
     }
     
+    /**
+     * Weapper for generateTiles(), mapping coordinates to tiles using the board.
+     * @param selection The list of coordinates to represent
+     * @return The TUI representation of the tiles
+     */
     public static String generateSelection(List<Coordinate> selection) {
         List<Tile> tiles = selection.stream()
                 .map(c -> model.getBoard().getTile(c))
@@ -238,29 +294,34 @@ public class TUIUtils {
         return generateTiles(tiles);
     }
     
+    /**
+     * Generate the TUI representation of the chat. <br>
+     * Chat is displayed on the right side of the screen in a separate box.
+     *
+     * @return The TUI representation of the chat
+     */
     public static String generateChat() {
         StringBuilder sb = new StringBuilder();
         
-        var chat = model.getChat();
-        if( chat.size() == 55 ) {
-            for( int i = 1; i < chat.size(); i++ ) {
-                chat.set(i - 1, chat.get(i));
-            }
-            chat.set(0, " ... ");
-            chat.remove(54);
-        }
+        List<String> chat = model.getChat();
+        List<String> latestChat = chat.subList(chat.size()-Math.min(chat.size(),55), chat.size());
+        latestChat.set(0, " ... ");
         
-        for( String s : chat ) {
+        for( String s : latestChat ) {
             sb.append(s).append("\n");
         }
         
-        if( chat.size() > 0 ) {
+        if( latestChat.size() > 0 ) {
             return createBox(sb.toString(), ANSI_YELLOW_BOLD);
         }else {
             return " ";
         }
     }
     
+    /**
+     * Generate the TUI representation of the board.
+     * @return The TUI representation of the board
+     */
     private static String generateBoard() {
         Board board = model.getBoard();
         StringBuilder sb = new StringBuilder();
@@ -287,6 +348,13 @@ public class TUIUtils {
         return sb.toString();
     }
     
+    /**
+     * Generate the TUI representation of a player's shelf. <br>
+     * Also includes the player's name and score. Current player is printed in bright yello.
+     *
+     * @param nickname The nickname of the player whose shelf to represent
+     * @return The TUI representation of the shelf
+     */
     private static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
@@ -329,10 +397,10 @@ public class TUIUtils {
     }
     
     /**
-     * Generate the shelves for all players except the given nickname
+     * Generate the shelves for all players except the given nickname. <br>
+     * Used to display shelves other than the one of the person playing.
      *
      * @param nickname nickname to exclude
-     *
      * @return string containing all shelves
      */
     private static String generateOtherShelves(String nickname) {
@@ -347,10 +415,15 @@ public class TUIUtils {
         return s;
     }
     
-    public static String generateCommonGoal(int commonGoal1) {
+    /**
+     * Generate the TUI representation of the common goals.
+     * @param commonGoal The index of the common goal to print
+     * @return The TUI representation of the common goal
+     */
+    public static String generateCommonGoal(int commonGoal) {
         StringBuilder sb = new StringBuilder();
         
-        switch( commonGoal1 ) {
+        switch( commonGoal ) {
             
             case 0 -> sb.append("\n\n\n    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
@@ -427,6 +500,12 @@ public class TUIUtils {
     }
     
     
+    /**
+     * Generate the TUI representation of the personal goals. <br>
+     * This includes the personal goal "shelf" and a scoreboard, with the current score highlighted.
+     * @param nickname The nickname of the player
+     * @return The TUI representation of the personal goals
+     */
     private static String generatePersonalScore(String nickname) {
         StringBuilder sb = new StringBuilder();
         String grid = "\n" + """
@@ -471,6 +550,13 @@ public class TUIUtils {
         return sb.toString();
     }
     
+    /**
+     * Generate the TUI representation of the personal goals. <br>
+     * Personal goals are a smaller version of the normal shelves.
+     *
+     * @param personalGoal The id of the personal goal
+     * @return The TUI representation of the personal goal
+     */
     public static String generatePersonalGoal(int personalGoal) {
         StringBuilder sb = new StringBuilder();
         switch( personalGoal ) {

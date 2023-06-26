@@ -24,14 +24,34 @@ import static java.nio.file.StandardOpenOption.WRITE;
  */
 public final class ResourcesManager {
     
+    /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private ResourcesManager(){}
+    
+    /**
+     * Test sources root directory.
+     */
     public static final String testRootDir = Paths.get("src/test/java/it/polimi/ingsw").toString();
     
+    /**
+     * Main resources root directory.
+     */
     public static final String mainResourcesDir = Paths.get("resources").toString();
     
+    /**
+     * Recovery files directory.
+     */
     public static final String recoveryDir = mainResourcesDir + "/recovery";
     
+    /**
+     * Server logs directory.
+     */
     public static final String serverLoggerDir = mainResourcesDir + "/server";
     
+    /**
+     * Client logs directory.
+     */
     public static final String clientLoggerDir = mainResourcesDir + "/client";
     
     
@@ -148,6 +168,11 @@ public final class ResourcesManager {
     public static class JsonManager {
         
         /**
+         * Private unused constructor to appease Javadoc.
+         */
+        private JsonManager(){}
+        
+        /**
          * Search for the attribute in the first layer of the json's tree and return the entire subtree.
          * Wrapper for {@link #getElementByAttribute(String, String)}.
          *
@@ -205,6 +230,11 @@ public final class ResourcesManager {
      * Utility class to manage graphical resources used in the GUI.
      */
     public static class GraphicalResources {
+        
+        /**
+         * Private unused constructor to appease Javadoc.
+         */
+        private GraphicalResources(){}
         
         /**
          * Get the valid URL object of the indicated fxml file. <br>

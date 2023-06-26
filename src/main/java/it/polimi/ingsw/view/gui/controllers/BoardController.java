@@ -71,8 +71,8 @@ public class BoardController {
     @FXML
     private void initialize() {
         selection.setSpacing(30);
-        for( int row = 0; row < Board.maxSize; row++ ) {
-            for( int col = 0; col < Board.maxSize; col++ ) {
+        for( int row = 0; row < Board.MAX_SIZE; row++ ) {
+            for( int col = 0; col < Board.MAX_SIZE; col++ ) {
                 
                 //setting buttons
                 Button button = new Button(row + "," + col);
@@ -102,7 +102,7 @@ public class BoardController {
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
         if( selected.contains(coord) ||
-            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) ==
+            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.MAX_SIZE)) ==
             null )
             return;
         button.setBackground(mouseOverBackgound);
@@ -113,7 +113,7 @@ public class BoardController {
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
         if( selected.contains(coord) ||
-            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize)) ==
+            LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.MAX_SIZE)) ==
             null )
             return;
         button.setBackground(null);
@@ -125,7 +125,7 @@ public class BoardController {
         
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
-        Tile tile = LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.maxSize));
+        Tile tile = LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.MAX_SIZE));
         if( tile == null || tile.equals(Tile.NOTILE) )
             return;
         if( selected.contains(coord) ) {
@@ -133,7 +133,7 @@ public class BoardController {
             button.setOpacity(0);
             selected.remove(coord);
             List<Coordinate> fixedCoord =
-                    selected.stream().map((x) -> new Coordinate(Board.maxSize - x.row() - 1, x.col())).toList();
+                    selected.stream().map((x) -> new Coordinate(Board.MAX_SIZE - x.row() - 1, x.col())).toList();
             GUIApp.setCoordinateSelection(fixedCoord);
             GUIApp.setTileSelection(
                     fixedCoord.stream().map((x) -> LocalModel.getInstance().getBoard().getTile(x)).toList()
@@ -144,7 +144,7 @@ public class BoardController {
                 return;
             selected.add(coord);
             List<Coordinate> fixedCoord =
-                    selected.stream().map((x) -> new Coordinate(Board.maxSize - x.row() - 1, x.col())).toList();
+                    selected.stream().map((x) -> new Coordinate(Board.MAX_SIZE - x.row() - 1, x.col())).toList();
             GUIApp.setCoordinateSelection(fixedCoord);
             GUIApp.setTileSelection(
                     fixedCoord.stream().map((x) -> LocalModel.getInstance().getBoard().getTile(x)).toList()
@@ -206,7 +206,7 @@ public class BoardController {
                                     case THREE -> sb.append("3.png");
                                 }
                                 
-                                Coordinate fixedCoord = new Coordinate(-(x - Board.maxSize + 1), y);
+                                Coordinate fixedCoord = new Coordinate(-(x - Board.MAX_SIZE + 1), y);
                                 ImageView image = boardMap.get(fixedCoord).imageView();
                                 boolean finalNoTileFlag = noTileFlag;
                                 //Update images

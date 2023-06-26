@@ -5,12 +5,22 @@ import it.polimi.ingsw.model.Tile;
 
 import java.util.HashSet;
 
+/**
+ * Implements the TwoRowDistinctGoal goal, involving two rows of five tiles of five different types.
+ */
 public class TwoRowDistinctGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public TwoRowDistinctGoal(){}
+    
+    @Override
     public String getDescription() {
         return "Two rows each formed by 5 distinct types of tiles.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         int rowCounter = 0;
         for( int i = 0; i < 6; i++ ) {

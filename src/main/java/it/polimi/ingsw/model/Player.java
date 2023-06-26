@@ -202,6 +202,11 @@ public class Player implements Serializable {
      */
     protected static class PlayerSerializer implements JsonSerializer<Player> {
         
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public PlayerSerializer(){}
+        
         @Override
         public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {
             
@@ -224,6 +229,11 @@ public class Player implements Serializable {
      * Player's custom gson deserializer
      */
     protected static class PlayerDeserializer implements JsonDeserializer<Player> {
+        
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public PlayerDeserializer(){}
         
         @Override
         public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
