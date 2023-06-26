@@ -9,20 +9,41 @@ import javafx.scene.image.ImageView;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+/**
+ * The GUIUtils class provides utility methods for the GUI application.
+ */
 public class GUIUtils {
     
-    
+    /**
+     * The thread pool for executing tasks.
+     */
     public static final ExecutorService threadPool = Executors.newCachedThreadPool();
-    
+    /**
+     * Transforms the given coordinate for GUI representation.
+     *
+     * @param coordinate   The coordinate to transform.
+     * @param maxColSize   The maximum column size.
+     * @return The transformed coordinate.
+     */
     public static Coordinate guiCoordinateTransform(Coordinate coordinate, int maxColSize) {
         return new Coordinate(-(coordinate.row() - maxColSize + 1), coordinate.col());
     }
-    
+    /**
+     * Transforms the given coordinate for model representation.
+     *
+     * @param coordinate   The coordinate to transform.
+     * @param maxColSize   The maximum column size.
+     * @return The transformed coordinate.
+     */
     public static Coordinate modelCoordinateTrasform(Coordinate coordinate, int maxColSize) {
         return new Coordinate(maxColSize - coordinate.row() - 1, coordinate.col());
     }
-    
+    /**
+     * Updates the shelf tiles images with the provided tiles .
+     *
+     * @param shelf       The shelf to update.
+     * @param imageMap    The map of coordinates and image views.
+     */
     public static void updateShelf(Shelf shelf, Map<Coordinate, ImageView> imageMap) {
         if( shelf != null ) {
             var matrix = shelf.getAllShelf();

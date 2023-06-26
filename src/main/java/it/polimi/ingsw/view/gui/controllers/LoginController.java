@@ -17,7 +17,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.List;
-
+/**
+ 
+ The LoginController class is responsible for managing the login and lobby selection process in the game interface.
+ 
+ It handles nickname confirmation, lobby creation, lobby joining, lobby refreshing, lobby view updates, and game waiting animation.
+ */
 public class LoginController {
     
     private static final View gui = AppClient.getViewInstance();
@@ -63,12 +68,19 @@ public class LoginController {
     private ChoiceBox<Integer> nPlayerChoice;
     
     private final List<Color> backgroundColorArray = List.of(Color.CYAN, Color.LIGHTBLUE);
-    
+    /**
+     
+     Sets the waitToJoin flag.
+     @param b The flag value to set.
+     */
     public void setWaitToJoin(boolean b) {
         waitToJoin = b;
     }
     
-    
+    /**
+     
+     Represents the graphical view of the lobby.
+     */
     private class LobbyViewGraphical extends HBox {
         
         public LobbyViewGraphical(LobbyView lobbyView, Color color) {
@@ -91,7 +103,12 @@ public class LoginController {
             this.setBackground(new Background(new BackgroundFill(color, new CornerRadii(1), new Insets(1))));
         }
     }
-    
+    /**
+     
+     Initializes the login interface and lobby selection.
+     
+     Configures button actions, choice box actions, and background update thread.
+     */
     @FXML
     public void initialize() {
         
@@ -158,7 +175,11 @@ public class LoginController {
         );
         
     }
+    /**
     
+    Updates the lobby view list with the given lobby views.
+    @param lobbyViewList The list of lobby views.
+            */
     @FXML
     public void updateLobbies(List<LobbyView> lobbyViewList) {
         this.lobbyViewList.getChildren().clear();
@@ -168,7 +189,11 @@ public class LoginController {
             color++;
         }
     }
-    
+    /**
+     
+     Sets the nickname for the player.
+     @param event The action event.
+     */
     @FXML
     public void setNickname(ActionEvent event) {
         GUIUtils
@@ -197,12 +222,19 @@ public class LoginController {
                         }
                 );
     }
-    
+    /**
+     
+     Refreshes the lobby view list.
+     @param event The action event.
+     */
     @FXML
     public void refreshLobbies(ActionEvent event) {
         gui.notifyRequestLobby(null);
     }
-    
+    /**
+     
+     Displays the waiting game animation.
+     */
     public void waitingGameAnimation() {
         try {
             int i = 0;
