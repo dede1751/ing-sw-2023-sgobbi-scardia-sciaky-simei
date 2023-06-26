@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * Tiles are composed of the Tile Type and the specific Sprite on the physical tile. <br>
  * The Sprite is only used for cosmetic purposes.
  *
- * @param type  the type of the tile
+ * @param type   the type of the tile
  * @param sprite the sprite of the tile
  */
 public record Tile(Type type, Sprite sprite) implements Serializable {
@@ -25,6 +25,7 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
     
     /**
      * Create a new tile of the given type, with the default sprite.
+     *
      * @param type the type of the tile
      */
     public Tile(Type type) {
@@ -156,6 +157,7 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
      * Return a tile from a valid string representation.
      *
      * @param string string that represent the Tile
+     *
      * @return Tile object
      *
      * @throws InvalidStringException if the string is invald

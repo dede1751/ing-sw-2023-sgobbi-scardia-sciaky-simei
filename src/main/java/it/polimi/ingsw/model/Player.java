@@ -48,10 +48,10 @@ public class Player implements Serializable {
      * Initialize player from given state. <br>
      * Used to initialize players when recovering games.
      *
-     * @param nickname Player's nickname
-     * @param pgID     Integer id of the player's personal goal (0-11)
-     * @param score    Player's total score
-     * @param shelf    Player's shelf
+     * @param nickname        Player's nickname
+     * @param pgID            Integer id of the player's personal goal (0-11)
+     * @param score           Player's total score
+     * @param shelf           Player's shelf
      * @param commonGoalScore Player's common goal score
      */
     private Player(String nickname, int pgID, int score, Shelf shelf, int commonGoalScore) {
@@ -102,6 +102,7 @@ public class Player implements Serializable {
      * Add given score to the player's common goal score.
      *
      * @param score Integer score to add to common goal score
+     *
      * @return Updated integer score
      */
     public int addCommonGoalScore(int score) {
@@ -111,6 +112,7 @@ public class Player implements Serializable {
     
     /**
      * Get the player's common goal score.
+     *
      * @return Integer common goal score
      */
     public int getCommonGoalScore() {
@@ -119,6 +121,7 @@ public class Player implements Serializable {
     
     /**
      * Set the player's personal goal score.
+     *
      * @param score Integer personal goal score
      */
     public void setPersonalGoalScore(int score) {
@@ -127,6 +130,7 @@ public class Player implements Serializable {
     
     /**
      * Get the player's personal goal score.
+     *
      * @return Integer personal goal score
      */
     public int getPersonalGoalScore() {
@@ -135,6 +139,7 @@ public class Player implements Serializable {
     
     /**
      * Get the player's adjacency score.
+     *
      * @return Integer adjacency score
      */
     public int getAdjacencyScore() {
@@ -143,6 +148,7 @@ public class Player implements Serializable {
     
     /**
      * Set the player's adjacency score.
+     *
      * @param score Integer adjacency score
      */
     public void setAdjacencyScore(int score) {
@@ -151,6 +157,7 @@ public class Player implements Serializable {
     
     /**
      * Check if the player has completed the common goal X.
+     *
      * @return true if the player has completed the common goal X, false otherwise
      */
     public boolean isCompletedGoalX() {
@@ -159,6 +166,7 @@ public class Player implements Serializable {
     
     /**
      * Set the player's completion status of the common goal X.
+     *
      * @param completedGoalX true if the player has completed the common goal X, false otherwise
      */
     public void setCompletedGoalX(boolean completedGoalX) {
@@ -167,6 +175,7 @@ public class Player implements Serializable {
     
     /**
      * Check if the player has completed the common goal Y.
+     *
      * @return true if the player has completed the common goal Y, false otherwise
      */
     public boolean isCompletedGoalY() {
@@ -175,6 +184,7 @@ public class Player implements Serializable {
     
     /**
      * Set the player's completion status of the common goal Y.
+     *
      * @param completedGoalY true if the player has completed the common goal Y, false otherwise
      */
     public void setCompletedGoalY(boolean completedGoalY) {
@@ -183,6 +193,7 @@ public class Player implements Serializable {
     
     /**
      * Get the player's bonus score.
+     *
      * @return Integer bonus score
      */
     public int getBonusScore() {
@@ -191,6 +202,7 @@ public class Player implements Serializable {
     
     /**
      * Set the player's bonus score.
+     *
      * @param bonusScore Integer bonus score
      */
     public void setBonusScore(int bonusScore) {
@@ -205,7 +217,8 @@ public class Player implements Serializable {
         /**
          * Default constructor to appease Javadoc.
          */
-        public PlayerSerializer(){}
+        public PlayerSerializer() {
+        }
         
         @Override
         public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {
@@ -233,7 +246,8 @@ public class Player implements Serializable {
         /**
          * Default constructor to appease Javadoc.
          */
-        public PlayerDeserializer(){}
+        public PlayerDeserializer() {
+        }
         
         @Override
         public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

@@ -28,7 +28,7 @@ public class ServerStub implements Server {
     /**
      * Initialize a ServerStub object from socket information.
      *
-     * @param ip  the ip address of the server
+     * @param ip   the ip address of the server
      * @param port the port opened for communication by the server
      */
     public ServerStub(String ip, int port) {
@@ -111,6 +111,7 @@ public class ServerStub implements Server {
     
     /**
      * Closes the socket
+     *
      * @throws RemoteException if the socket cannot be closed
      */
     public void close() throws RemoteException {

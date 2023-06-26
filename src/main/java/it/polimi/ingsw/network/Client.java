@@ -15,6 +15,7 @@ public interface Client extends Remote {
      * Notify the client of a model message
      *
      * @param msg Message from the server or describing a model change
+     *
      * @throws RemoteException If an error occurs while updating the client
      */
     void update(ModelMessage<?> msg) throws RemoteException;

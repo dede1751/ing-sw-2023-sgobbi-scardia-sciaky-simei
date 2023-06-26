@@ -38,6 +38,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
      * Initialize a LocalServer object from port information.
      *
      * @param port the port to use for rmi communication
+     *
      * @throws RemoteException if an error occurs while exporting the object
      */
     public LocalServer(int port) throws RemoteException {
@@ -51,7 +52,8 @@ public class LocalServer extends UnicastRemoteObject implements Server {
      *
      * @param port the port to use for rmi communication
      * @param csf  the client socket factory to use for rmi communication
-     * @param ssf the server socket factory to use for rmi communication
+     * @param ssf  the server socket factory to use for rmi communication
+     *
      * @throws RemoteException if an error occurs while exporting the object
      */
     public LocalServer(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {
@@ -67,7 +69,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
      * @param mapping client mapping to add
      */
     public void addGameControllers(Map<Client, GameController> mapping) {
-        synchronized( LobbyController.getInstance() ) {
+        synchronized(LobbyController.getInstance()) {
             gameControllers.putAll(mapping);
         }
     }
@@ -80,7 +82,7 @@ public class LocalServer extends UnicastRemoteObject implements Server {
      * @param clients clients to remove
      */
     public void removeGameControllers(List<Client> clients) {
-        synchronized( LobbyController.getInstance() ) {
+        synchronized(LobbyController.getInstance()) {
             clients.forEach(gameControllers.keySet()::remove);
         }
     }

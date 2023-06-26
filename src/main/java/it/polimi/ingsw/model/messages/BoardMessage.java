@@ -10,6 +10,7 @@ public class BoardMessage extends ModelMessage<Board> {
     
     /**
      * Initialize a new BoardMessage object from a GameModel object.
+     *
      * @param p The GameModel object.
      */
     public BoardMessage(GameModel p) {

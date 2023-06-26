@@ -42,6 +42,7 @@ public class GameModel {
     
     /**
      * Set the game-ended status.
+     *
      * @param b true if the game should end, false otherwise
      */
     public void setGameEnded(boolean b) {
@@ -50,6 +51,7 @@ public class GameModel {
     
     /**
      * Get the game-ended status.
+     *
      * @return true if the game has ended, false otherwise
      */
     public boolean getGameEnded() {
@@ -122,13 +124,13 @@ public class GameModel {
     /**
      * Initilize a model from the entire state of the game.
      *
-     * @param numPlayers number of players for the game
+     * @param numPlayers     number of players for the game
      * @param commonGoalNumX id for the first common goal
      * @param commonGoalNumY id for the second common goal
-     * @param CGXS stack of scores for the first common goal
-     * @param CGYS stack of scores for the second common goal
-     * @param board board of the game
-     * @param tileBag tile bag of the game
+     * @param CGXS           stack of scores for the first common goal
+     * @param CGYS           stack of scores for the second common goal
+     * @param board          board of the game
+     * @param tileBag        tile bag of the game
      */
     public GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
         this.numPlayers = numPlayers;
@@ -335,6 +337,7 @@ public class GameModel {
      * Gets the amount of tiles left in play for the given type of tile.
      *
      * @param tile Type of tile to check
+     *
      * @return Amount of tile left (counts both bag and board)
      *
      * @throws ClassCastException if used with {@link Tile#NOTILE}
@@ -347,6 +350,7 @@ public class GameModel {
      * Get tile on the board at the given coordinate
      *
      * @param coordinate Coordinate on board to check
+     *
      * @return Tile at coordinate, or null if the coordinate is not on the board
      */
     public Tile getTile(Coordinate coordinate) {
@@ -378,7 +382,7 @@ public class GameModel {
      * @param coordinates Coordinate at which to insert the tile
      * @param tile        Tile type to insert
      *
-     * @throws OccupiedTileException Trying to insert a tile in an already occupied position
+     * @throws OccupiedTileException         Trying to insert a tile in an already occupied position
      * @throws OutOfBoundCoordinateException Trying to insert a tile in an invalid position
      */
     public void insertTile(Coordinate coordinates, Tile tile) throws OccupiedTileException, OutOfBoundCoordinateException {
@@ -565,6 +569,7 @@ public class GameModel {
     
     /**
      * Get the entire Board object.
+     *
      * @return The Board object.
      */
     public Board getBoard() {
@@ -573,6 +578,7 @@ public class GameModel {
     
     /**
      * Get the TileBag object.
+     *
      * @return The TileBag object.
      */
     public TileBag getTileBag() {
@@ -581,6 +587,7 @@ public class GameModel {
     
     /**
      * Add an already created player to the game. (used to restore a game from a save file)
+     *
      * @param player The player to add.
      */
     public void addPlayer(Player player) {
@@ -595,7 +602,8 @@ public class GameModel {
         /**
          * Default constructor to appease Javadoc.
          */
-        public ModelSerializer(){}
+        public ModelSerializer() {
+        }
         
         @Override
         public JsonElement serialize(GameModel model, Type typeOfSrc, JsonSerializationContext context) {
@@ -648,6 +656,7 @@ public class GameModel {
      * Write the serialized json string of the object directly to the specified file.
      *
      * @param path The path to file to be written
+     *
      * @throws IOException If an error occur while writing the file
      */
     public void toJson(String path) throws IOException {
@@ -667,7 +676,8 @@ public class GameModel {
         /**
          * Default constructor to appease Javadoc.
          */
-        public ModelDeserializer(){}
+        public ModelDeserializer() {
+        }
         
         @Override
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

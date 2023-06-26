@@ -384,6 +384,7 @@ public class TUI extends View {
      * Ask the user to pick the order in which the tiles get put on the shelf.
      *
      * @param selection the list of coordinates already selected by the player
+     *
      * @return the ordered list of tiles at those coordinates picked by the player
      */
     private List<Tile> askSelectionOrder(List<Coordinate> selection) {
@@ -421,6 +422,7 @@ public class TUI extends View {
      * Ask the user to pick a column in the shelf to put the tiles in.
      *
      * @param tiles the list of tiles to be put on the shelf
+     *
      * @return the column number picked by the user
      */
     public int askColumn(List<Tile> tiles) {

@@ -21,10 +21,12 @@ public class AppServer {
     /**
      * Unused private constructor to appease Javadoc.
      */
-    private AppServer(){}
+    private AppServer() {
+    }
     
     /**
      * Server entry point. Sets up both communication protocols and waits.
+     *
      * @param args ignored
      */
     public static void main(String[] args) {
@@ -71,6 +73,7 @@ public class AppServer {
      * Server is called "myshelfie_server" and is published on port 1099.
      *
      * @param server The server instance to publish.
+     *
      * @throws RemoteException In case of errors binding to the registry.
      */
     private static void startRMI(LocalServer server) throws RemoteException {
@@ -82,6 +85,7 @@ public class AppServer {
      * Starts the socket protocol, by listening on port 23456.
      *
      * @param server The server instance to use.
+     *
      * @throws RemoteException In case of errors starting/running the socket.
      */
     private static void startSocket(LocalServer server) throws RemoteException {

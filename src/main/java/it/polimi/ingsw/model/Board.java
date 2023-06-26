@@ -74,6 +74,7 @@ public class Board implements Serializable {
     
     /**
      * Private Board contructor for an already initialized board.
+     *
      * @param map Map to initialize the board.
      */
     private Board(Map<Coordinate, Tile> map) {
@@ -84,6 +85,7 @@ public class Board implements Serializable {
      * Get the tile on the board at the given coordinate
      *
      * @param coordinate Coordinate to search for a tile
+     *
      * @return Tile at coordinate, null if coordinate is not in the board
      */
     public Tile getTile(Coordinate coordinate) {
@@ -120,8 +122,8 @@ public class Board implements Serializable {
      * @param coordinate Coordinate to set the tile at
      * @param tile       Tile to set at given coordinate
      *
-     * @throws OutOfBoundCoordinateException    If the coordinate doesn't belong to the board
-     * @throws OccupiedTileException            If the coordinate is already occupied
+     * @throws OutOfBoundCoordinateException If the coordinate doesn't belong to the board
+     * @throws OccupiedTileException         If the coordinate is already occupied
      */
     public void insertTile(Coordinate coordinate, Tile tile) throws OutOfBoundCoordinateException, OccupiedTileException {
         if( tileOccupancy.containsKey(coordinate) )
@@ -244,13 +246,16 @@ public class Board implements Serializable {
         /**
          * Default constructor to appease Javadoc.
          */
-        public BoardSerializer(){}
+        public BoardSerializer() {
+        }
         
         /**
          * Serialization function
-         * @param src the object that needs to be converted to Json.
+         *
+         * @param src       the object that needs to be converted to Json.
          * @param typeOfSrc the actual type (fully genericized version) of the source object.
-         * @param context Serialization context utility
+         * @param context   Serialization context utility
+         *
          * @return the serialized object as a JsonElement
          * <p>
          * A valid json representation is provided: <br>
@@ -294,25 +299,29 @@ public class Board implements Serializable {
         /**
          * Default constructor to appease Javadoc.
          */
-        public BoardDeserializer(){}
+        public BoardDeserializer() {
+        }
         
         /**
          * Deserialization function
-         * @param json The Json data being deserialized <br>
-         * A valid json representation is provided: <br>
          *
-         * "Board": [ ["(-,-)", "(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)"], <br>
-         *            ["(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)"], <br>
-         *            ["(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)"], <br>
-         *            ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(-,-)"], <br>
-         *            ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"], <br>
-         *            ["(-,-)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"], <br>
-         *            ["(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)"], <br>
-         *            ["(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)"], <br>
-         *            ["(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)", "(-,-)"] ],
+         * @param json    The Json data being deserialized <br>
+         *                A valid json representation is provided: <br>
+         *                <p>
+         *                "Board": [ ["(-,-)", "(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)"], <br>
+         *                ["(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)"], <br>
+         *                ["(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)"], <br>
+         *                ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(-,-)"], <br>
+         *                ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"], <br>
+         *                ["(-,-)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"], <br>
+         *                ["(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)"], <br>
+         *                ["(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)"], <br>
+         *                ["(-,-)", "(-,-)", "(-,-)", "(N,0)", "(N,0)", "(-,-)", "(-,-)", "(-,-)", "(-,-)"] ],
          * @param typeOfT The type of the Object to deserialize to
          * @param context Deserialization context utility
+         *
          * @return The deserializer Board object
+         *
          * @throws JsonParseException If an invalid json object is provided
          */
         @Override

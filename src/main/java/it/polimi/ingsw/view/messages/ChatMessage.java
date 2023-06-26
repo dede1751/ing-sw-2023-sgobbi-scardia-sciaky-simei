@@ -9,7 +9,8 @@ public class ChatMessage extends ViewMessage<String> {
     
     /**
      * Initialize a broadcast ChatMessage object
-     * @param s The message string
+     *
+     * @param s          The message string
      * @param playerNick The sender's nickname
      */
     public ChatMessage(String s, String playerNick) {
@@ -19,8 +20,9 @@ public class ChatMessage extends ViewMessage<String> {
     
     /**
      * Initialize a ChatMessage to be sent to a single player
-     * @param s The message string
-     * @param PlayerNick The sender's nickname
+     *
+     * @param s                 The message string
+     * @param PlayerNick        The sender's nickname
      * @param playerDestination The receiving player's nickname
      */
     public ChatMessage(String s, String PlayerNick, String playerDestination) {
@@ -30,6 +32,7 @@ public class ChatMessage extends ViewMessage<String> {
     
     /**
      * Get the nickname of the receiving player
+     *
      * @return The nickname of the receiving player as a string
      */
     public String getDestination() {

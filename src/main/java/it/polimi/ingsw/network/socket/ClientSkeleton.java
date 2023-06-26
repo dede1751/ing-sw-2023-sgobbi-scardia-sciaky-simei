@@ -19,10 +19,12 @@ public class ClientSkeleton implements Client {
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
     
-
+    
     /**
      * Initialize a ClientSkeleton object with a Socket object
+     *
      * @param socket Socket object
+     *
      * @throws RemoteException If an error occurs while creating the In/Out streams
      */
     public ClientSkeleton(Socket socket) throws RemoteException {
@@ -40,10 +42,12 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot create input stream", e);
         }
     }
-
+    
     /**
      * Reads the input stream for ViewMessages and forwards them to the server
+     *
      * @param server the server to forward the messages to
+     *
      * @throws RemoteException if the message cannot be read or is not a ViewMessage
      */
     public void receive(Server server) throws RemoteException {
@@ -63,7 +67,9 @@ public class ClientSkeleton implements Client {
     /**
      * Send a ModelMessage object to the remote client via TCP-IP socket. <br>
      * Default java serialization is used.
+     *
      * @param msg Message from the server or describing a model change
+     *
      * @throws RemoteException If an error occur during the TCP-IP communication
      */
     @Override

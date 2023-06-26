@@ -12,8 +12,8 @@ public class IncomingChatMessage extends ModelMessage<String> {
     /**
      * Initialize a new IncomingChatMessage object with the given sender and destination.
      *
-     * @param p The message
-     * @param sender The sender
+     * @param p           The message
+     * @param sender      The sender
      * @param destination The destination (either a player's nickname or "all")
      */
     public IncomingChatMessage(String p, String sender, String destination) {
@@ -24,6 +24,7 @@ public class IncomingChatMessage extends ModelMessage<String> {
     
     /**
      * Get the sender of the message
+     *
      * @return The sender
      */
     public String getSender() {
@@ -32,6 +33,7 @@ public class IncomingChatMessage extends ModelMessage<String> {
     
     /**
      * Get the destination of the message
+     *
      * @return The nickname of the recipient or "all"
      */
     public String getDestination() {

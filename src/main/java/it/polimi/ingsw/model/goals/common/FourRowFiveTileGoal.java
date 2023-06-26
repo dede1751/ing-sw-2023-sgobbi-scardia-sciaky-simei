@@ -13,7 +13,8 @@ public class FourRowFiveTileGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public FourRowFiveTileGoal(){}
+    public FourRowFiveTileGoal() {
+    }
     
     @Override
     public String getDescription() {

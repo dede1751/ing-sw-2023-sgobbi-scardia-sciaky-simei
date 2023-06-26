@@ -125,7 +125,8 @@ public class BoardController {
         
         Button button = (Button) event.getSource();
         Coordinate coord = new Coordinate(GridPane.getRowIndex(button), GridPane.getColumnIndex(button));
-        Tile tile = LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.MAX_SIZE));
+        Tile tile =
+                LocalModel.getInstance().getBoard().getTile(GUIUtils.modelCoordinateTrasform(coord, Board.MAX_SIZE));
         if( tile == null || tile.equals(Tile.NOTILE) )
             return;
         if( selected.contains(coord) ) {

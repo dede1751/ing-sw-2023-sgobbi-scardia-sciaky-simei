@@ -116,6 +116,7 @@ public class GameController {
      * Compute shelf adjacency score for the final score.
      *
      * @param shelf Shelf to check for the score
+     *
      * @return Integer score assigned for adjacent similar tiles in the given shelf
      */
     public int calculateAdjacency(Shelf shelf) {
@@ -236,6 +237,7 @@ public class GameController {
      * This method is synchronized over the GameController instance only if it's a message it can handle.
      *
      * @param msg Message to forward
+     *
      * @return true if the message was forwarded succesfully, false otherwise
      */
     public boolean update(ViewMessage<?> msg) {
@@ -304,6 +306,7 @@ public class GameController {
     
     /**
      * Respond to a debug ping from a client by notifying it back.
+     *
      * @param message Ping message
      */
     @SuppressWarnings("unused")

@@ -22,7 +22,8 @@ public class TUIUtils {
     /**
      * Private unused constructor to appease Javadoc.
      */
-    private TUIUtils(){}
+    private TUIUtils() {
+    }
     
     private static final LocalModel model = LocalModel.getInstance();
     
@@ -92,8 +93,9 @@ public class TUIUtils {
     
     /**
      * Print the login screen.
+     *
      * @param prompt The prompt to display
-     * @param error The error message to display, or null if there is no error
+     * @param error  The error message to display, or null if there is no error
      */
     public static void printLoginScreen(String prompt, String error) {
         clearConsole();
@@ -109,8 +111,8 @@ public class TUIUtils {
      * Print the main game state.
      *
      * @param nickname The nickname of the player playing the game.
-     * @param prompt The prompt to display
-     * @param error The error message to display, or null if there is no error
+     * @param prompt   The prompt to display
+     * @param error    The error message to display, or null if there is no error
      */
     public static void printGame(String nickname, String prompt, String error) {
         StringBuilder sb = new StringBuilder(TITLE);
@@ -160,7 +162,8 @@ public class TUIUtils {
     
     /**
      * Print the end game leaderboard.
-     * @param endgame The contents of the {@link EndGameMessage} received from the server.
+     *
+     * @param endgame     The contents of the {@link EndGameMessage} received from the server.
      * @param firstPlayer The nickname of the first player in the game. (The one who started the game)
      */
     public static void printEndGameScreen(EndGameMessage.EndGamePayload endgame, String firstPlayer) {
@@ -194,9 +197,11 @@ public class TUIUtils {
     
     /**
      * Join two TUI elements horizontally
-     * @param s1 The first element
-     * @param s2 The second element
+     *
+     * @param s1    The first element
+     * @param s2    The second element
      * @param space The number of spaces between the two elements
+     *
      * @return The two elements joined horizontally
      */
     public static String concatString(String s1, String s2, int space) {
@@ -226,8 +231,10 @@ public class TUIUtils {
     
     /**
      * Create a colored box around the input string.
+     *
      * @param input The string to put in the box
      * @param color The color of the box
+     *
      * @return The input string surrounded by a box
      */
     public static String createBox(String input, String color) {
@@ -267,6 +274,7 @@ public class TUIUtils {
      * Used to display tiles once they have been selected.
      *
      * @param tiles The list of tiles to represent
+     *
      * @return The TUI representation of the tiles
      */
     public static String generateTiles(List<Tile> tiles) {
@@ -283,7 +291,9 @@ public class TUIUtils {
     
     /**
      * Weapper for generateTiles(), mapping coordinates to tiles using the board.
+     *
      * @param selection The list of coordinates to represent
+     *
      * @return The TUI representation of the tiles
      */
     public static String generateSelection(List<Coordinate> selection) {
@@ -304,7 +314,7 @@ public class TUIUtils {
         StringBuilder sb = new StringBuilder();
         
         List<String> chat = model.getChat();
-        List<String> latestChat = chat.subList(chat.size()-Math.min(chat.size(),55), chat.size());
+        List<String> latestChat = chat.subList(chat.size() - Math.min(chat.size(), 55), chat.size());
         latestChat.set(0, " ... ");
         
         for( String s : latestChat ) {
@@ -320,6 +330,7 @@ public class TUIUtils {
     
     /**
      * Generate the TUI representation of the board.
+     *
      * @return The TUI representation of the board
      */
     private static String generateBoard() {
@@ -353,6 +364,7 @@ public class TUIUtils {
      * Also includes the player's name and score. Current player is printed in bright yello.
      *
      * @param nickname The nickname of the player whose shelf to represent
+     *
      * @return The TUI representation of the shelf
      */
     private static String generateShelf(String nickname) {
@@ -401,6 +413,7 @@ public class TUIUtils {
      * Used to display shelves other than the one of the person playing.
      *
      * @param nickname nickname to exclude
+     *
      * @return string containing all shelves
      */
     private static String generateOtherShelves(String nickname) {
@@ -417,7 +430,9 @@ public class TUIUtils {
     
     /**
      * Generate the TUI representation of the common goals.
+     *
      * @param commonGoal The index of the common goal to print
+     *
      * @return The TUI representation of the common goal
      */
     public static String generateCommonGoal(int commonGoal) {
@@ -503,7 +518,9 @@ public class TUIUtils {
     /**
      * Generate the TUI representation of the personal goals. <br>
      * This includes the personal goal "shelf" and a scoreboard, with the current score highlighted.
+     *
      * @param nickname The nickname of the player
+     *
      * @return The TUI representation of the personal goals
      */
     private static String generatePersonalScore(String nickname) {
@@ -555,6 +572,7 @@ public class TUIUtils {
      * Personal goals are a smaller version of the normal shelves.
      *
      * @param personalGoal The id of the personal goal
+     *
      * @return The TUI representation of the personal goal
      */
     public static String generatePersonalGoal(int personalGoal) {

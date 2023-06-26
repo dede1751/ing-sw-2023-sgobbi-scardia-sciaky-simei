@@ -45,6 +45,7 @@ public class CommonGoal {
      * Get instance of common goal with given id.
      *
      * @param goalIndex Unique integer id of goal to get
+     *
      * @return Goal with given id
      */
     public static CommonGoal getCommonGoal(int goalIndex) {
@@ -64,6 +65,7 @@ public class CommonGoal {
      * Check whether the goal has been completed on the given shelf.
      *
      * @param shelf Shelf to check for the goal
+     *
      * @return True if the shelf satisfies the goal, else false
      */
     public boolean checkGoal(Shelf shelf) {

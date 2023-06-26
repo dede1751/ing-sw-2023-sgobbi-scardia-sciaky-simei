@@ -33,8 +33,8 @@ public class UpdateScoreMessage extends ModelMessage<UpdateScoreMessage.UpdateSc
      * Specific payload for UpdateScoreMessage. <br>
      * Contains the type of the score update, the new score and nickname of the player having its score updated.
      *
-     * @param type The type of the score update
-     * @param score The new score
+     * @param type   The type of the score update
+     * @param score  The new score
      * @param player The nickname of the player having its score updated
      */
     public record UpdateScorePayload(Type type, int score, String player) implements Serializable {
@@ -47,8 +47,8 @@ public class UpdateScoreMessage extends ModelMessage<UpdateScoreMessage.UpdateSc
     /**
      * Initialize a UpdateScoreMessage object with the payload parameters
      *
-     * @param score The new score
-     * @param type The type of the score update
+     * @param score    The new score
+     * @param type     The type of the score update
      * @param nickname The nickname of the player having its score updated
      */
     public UpdateScoreMessage(Integer score, Type type, String nickname) {

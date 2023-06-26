@@ -47,6 +47,7 @@ public class Shelf implements Serializable {
      *
      * @param row Row of the desired tile
      * @param col Column of the desired tile
+     *
      * @return Tile in the position [row, col], NOTILE if out of bounds or empty
      */
     public Tile getTile(int row, int col) {
@@ -157,7 +158,8 @@ public class Shelf implements Serializable {
         /**
          * Private unused constructor to appease Javadoc.
          */
-        private ShelfSerializer(){}
+        private ShelfSerializer() {
+        }
         
         @Override
         public JsonElement serialize(Shelf shelf, Type typeOfSrc, JsonSerializationContext context) {
@@ -194,7 +196,8 @@ public class Shelf implements Serializable {
         /**
          * Private unused constructor to appease Javadoc.
          */
-        protected ShelfDeserializer(){}
+        protected ShelfDeserializer() {
+        }
         
         @Override
         public Shelf deserialize(JsonElement element, Type typeOfDst, JsonDeserializationContext context) throws JsonParseException {
@@ -230,6 +233,7 @@ public class Shelf implements Serializable {
      * Create a Shelf object from a Json string
      *
      * @param json a valid json string
+     *
      * @return Shelf
      */
     public static Shelf fromJson(String json) {
@@ -253,6 +257,7 @@ public class Shelf implements Serializable {
      * Serialize the given shelf.
      *
      * @param shelf Shelf to serialize
+     *
      * @return Serialized shelf
      */
     public static String toJson(Shelf shelf) {

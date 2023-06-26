@@ -1,11 +1,9 @@
 package it.polimi.ingsw.view.gui.controllers;
 
-import it.polimi.ingsw.utils.files.ResourcesManager;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 
 public class MainController {
     

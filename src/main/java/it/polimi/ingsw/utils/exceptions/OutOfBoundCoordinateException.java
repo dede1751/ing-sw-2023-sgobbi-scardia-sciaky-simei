@@ -11,6 +11,7 @@ public class OutOfBoundCoordinateException extends CommonException {
     
     /**
      * Initialize the exception with the coordinate that caused it.
+     *
      * @param coor the coordinate that caused the exception
      */
     public OutOfBoundCoordinateException(Coordinate coor) {

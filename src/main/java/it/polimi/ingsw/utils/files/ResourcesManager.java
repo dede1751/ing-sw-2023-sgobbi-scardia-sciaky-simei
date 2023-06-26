@@ -27,7 +27,8 @@ public final class ResourcesManager {
     /**
      * Private unused constructor to appease Javadoc.
      */
-    private ResourcesManager(){}
+    private ResourcesManager() {
+    }
     
     /**
      * Test sources root directory.
@@ -58,6 +59,7 @@ public final class ResourcesManager {
     /**
      * Get the name of the method currently being executed.<br>
      * Used to fetch resource files for specific testing methods.
+     *
      * @return the name of the method from which it was called
      */
     public static String getCurrentMethod() {
@@ -82,6 +84,7 @@ public final class ResourcesManager {
     
     /**
      * Fetch the directory containing recovery files. If it does not exist, create it.
+     *
      * @return the recovery directory if it exists or was created, null otherwise
      */
     private static File getRecoveryDir() {
@@ -170,7 +173,8 @@ public final class ResourcesManager {
         /**
          * Private unused constructor to appease Javadoc.
          */
-        private JsonManager(){}
+        private JsonManager() {
+        }
         
         /**
          * Search for the attribute in the first layer of the json's tree and return the entire subtree.
@@ -190,9 +194,11 @@ public final class ResourcesManager {
         /**
          * Get json element by attribute name from the first level of the json tree.
          *
-         * @param json json string to search in
+         * @param json      json string to search in
          * @param attribute parameter name to search for
+         *
          * @return the json element of the attribute
+         *
          * @throws JsonParseException if the attribute is not found in the json root node
          */
         public static JsonElement getElementByAttribute(String json, String attribute) throws JsonParseException {
@@ -210,9 +216,11 @@ public final class ResourcesManager {
         /**
          * Get json element by attribute name from the first level of the json tree.
          *
-         * @param json json element to search in
+         * @param json      json element to search in
          * @param attribute parameter name to search for
+         *
          * @return the json element of the attribute
+         *
          * @throws JsonParseException if the attribute is not found in the json root node or the element is not a json object
          */
         public static JsonElement getElementByAttribute(JsonElement json, String attribute) throws JsonParseException {
@@ -234,7 +242,8 @@ public final class ResourcesManager {
         /**
          * Private unused constructor to appease Javadoc.
          */
-        private GraphicalResources(){}
+        private GraphicalResources() {
+        }
         
         /**
          * Get the valid URL object of the indicated fxml file. <br>
@@ -245,9 +254,9 @@ public final class ResourcesManager {
          * @return The absolute URL referencing the [name].fxml file
          */
         public static URL getFXML(String name) {
-                return ResourcesManager.class.getClassLoader().getResource("gui/javafx/" + name);
+            return ResourcesManager.class.getClassLoader().getResource("gui/javafx/" + name);
         }
-
+        
     }
     
     

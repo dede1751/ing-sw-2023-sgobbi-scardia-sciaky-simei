@@ -11,7 +11,8 @@ public class ShelfMessage extends ModelMessage<Shelf> {
     
     /**
      * Initialize a new ShelfMessage object with the given Shelf and player
-     * @param p The Shelf
+     *
+     * @param p      The Shelf
      * @param player The player linked to the shelf
      */
     public ShelfMessage(Shelf p, String player) {
@@ -21,6 +22,7 @@ public class ShelfMessage extends ModelMessage<Shelf> {
     
     /**
      * Get the player linked to the shelf
+     *
      * @return The player's nickname
      */
     public String getPlayer() {

@@ -14,7 +14,8 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public FourGroupFourTileGoal(){}
+    public FourGroupFourTileGoal() {
+    }
     
     @Override
     public String getDescription() {

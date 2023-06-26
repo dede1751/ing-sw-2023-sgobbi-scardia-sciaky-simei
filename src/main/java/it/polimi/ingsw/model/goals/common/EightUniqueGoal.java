@@ -13,7 +13,8 @@ public class EightUniqueGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public EightUniqueGoal(){}
+    public EightUniqueGoal() {
+    }
     
     @Override
     public String getDescription() {

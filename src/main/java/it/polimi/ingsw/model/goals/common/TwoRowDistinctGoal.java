@@ -13,7 +13,8 @@ public class TwoRowDistinctGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public TwoRowDistinctGoal(){}
+    public TwoRowDistinctGoal() {
+    }
     
     @Override
     public String getDescription() {

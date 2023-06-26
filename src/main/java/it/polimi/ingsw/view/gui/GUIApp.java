@@ -7,11 +7,9 @@ import it.polimi.ingsw.view.gui.controllers.LocalPlayerController;
 import it.polimi.ingsw.view.gui.controllers.LoginController;
 import it.polimi.ingsw.view.gui.controllers.MainController;
 import javafx.application.Application;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -76,19 +74,16 @@ public class GUIApp extends Application {
         mainControllerInstance = mainLoader.getController();
         
         
-        
         Scene scene = new Scene(loginRoot);
         
         //set and show stage
         stage.setTitle("My Shelfie");
         stage.setScene(scene);
-       
+        
         stage.setMaxHeight(490.0);
         stage.setMaxWidth(936.0);
         stage.show();
     }
-    
-    
     
     
     @Override

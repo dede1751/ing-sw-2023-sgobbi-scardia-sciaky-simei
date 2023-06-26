@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -114,7 +113,7 @@ public class LoginController {
         scrollPaneLobbies.setOpacity(0.90);
         AppClient.getViewInstance().notifyRequestLobby(null);
         
-            
+        
         selectNumberBanner.setFill(Color.BLACK);
         selectNumberBanner.setFont(new Font("Noto Sans", 15));
         
@@ -180,7 +179,7 @@ public class LoginController {
                             String n = this.nickname.getText();
                             if( n == null || n.equals("") )
                                 return;
-                            if(n.length() > 14){
+                            if( n.length() > 14 ) {
                                 n = n.substring(0, 13);
                             }
                             String nickname = n;

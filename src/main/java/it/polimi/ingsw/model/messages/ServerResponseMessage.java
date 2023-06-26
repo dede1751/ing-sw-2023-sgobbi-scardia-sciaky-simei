@@ -7,6 +7,7 @@ public class ServerResponseMessage extends ModelMessage<Response> {
     
     /**
      * Initialize a new ServerResponseMessage object with the given Response object.
+     *
      * @param response The Response object.
      */
     public ServerResponseMessage(Response response) {

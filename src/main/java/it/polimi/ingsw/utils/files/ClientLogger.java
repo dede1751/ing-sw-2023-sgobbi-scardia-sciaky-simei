@@ -31,11 +31,13 @@ public class ClientLogger {
     /**
      * Unused private constructor to appease Javadoc.
      */
-    private ClientLogger(){}
+    private ClientLogger() {
+    }
     
     /**
      * Write a log message to the log file
-     * @param s Message to be logged
+     *
+     * @param s       Message to be logged
      * @param channel Channel to write the message to (either messagelog or errorLog)
      */
     private static void writeLog(String s, FileChannel channel) {
@@ -54,6 +56,7 @@ public class ClientLogger {
     
     /**
      * Log a message being sent to the server.
+     *
      * @param message Message to be logged
      */
     public static void messageLog(ModelMessage<?> message) {
@@ -64,7 +67,8 @@ public class ClientLogger {
     
     /**
      * Log an exception
-     * @param e Exception to be logged
+     *
+     * @param e                 Exception to be logged
      * @param additionalContext Additional context to be logged
      */
     public static void errorLog(Exception e, String additionalContext) {

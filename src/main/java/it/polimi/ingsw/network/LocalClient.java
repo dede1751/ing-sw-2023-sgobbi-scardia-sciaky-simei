@@ -4,7 +4,6 @@ import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.utils.files.ClientLogger;
 import it.polimi.ingsw.utils.mvc.ReflectionUtility;
-import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.rmi.RemoteException;
@@ -26,7 +25,9 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     /**
      * Initialize a LocalClient object from server and view information.
+     *
      * @param server the server to connect to
+     *
      * @throws RemoteException if an error occurs while exporting the object
      */
     public LocalClient(Server server) throws RemoteException {
@@ -36,8 +37,10 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     /**
      * Initialize a LocalClient object from server, view and port information.
+     *
      * @param server the server to connect to
-     * @param port the port to use for rmi communication
+     * @param port   the port to use for rmi communication
+     *
      * @throws RemoteException if an error occurs while exporting the object
      */
     public LocalClient(Server server, int port) throws RemoteException {
@@ -47,10 +50,12 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     
     /**
      * Initialize a LocalClient object from server, view, port, client socket factory and server socket factory information.
+     *
      * @param server the server to connect to
-     * @param port the port to use for rmi communication
-     * @param csf the client socket factory to use for rmi communication
-     * @param ssf the server socket factory to use for rmi communication
+     * @param port   the port to use for rmi communication
+     * @param csf    the client socket factory to use for rmi communication
+     * @param ssf    the server socket factory to use for rmi communication
+     *
      * @throws RemoteException if an error occurs while exporting the object
      */
     public LocalClient(Server server, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {

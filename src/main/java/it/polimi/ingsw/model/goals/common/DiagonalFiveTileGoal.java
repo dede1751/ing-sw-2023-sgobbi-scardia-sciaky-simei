@@ -11,7 +11,8 @@ public class DiagonalFiveTileGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public DiagonalFiveTileGoal(){}
+    public DiagonalFiveTileGoal() {
+    }
     
     @Override
     public String getDescription() {

@@ -6,7 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -108,10 +111,10 @@ public class GameInterfaceController {
     }
     
     
-    private void changeSize(double x){
+    private void changeSize(double x) {
         
-        if(x!=scale){
-            scale=x;
+        if( x != scale ) {
+            scale = x;
             Scale scale = new Scale();
             scale.setPivotX(0);
             scale.setPivotY(0);
@@ -159,10 +162,12 @@ public class GameInterfaceController {
     }
     
     public ChatController getChatController() {
-        return  chatController;
+        return chatController;
     }
     
-    public Text getCurrentPlayer(){return currentPlayer;}
+    public Text getCurrentPlayer() {
+        return currentPlayer;
+    }
     
     
 }

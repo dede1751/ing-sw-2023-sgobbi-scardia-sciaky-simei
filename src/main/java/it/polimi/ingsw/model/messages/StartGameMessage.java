@@ -18,12 +18,12 @@ public class StartGameMessage extends ModelMessage<StartGameMessage.StartGamePay
      * Record containing the information of a player. <br>
      * Contains the nickname, the shelf and the scores of the player.
      *
-     * @param nickname The nickname of the player
-     * @param shelf The shelf of the player
-     * @param commonGoalScore The score of the player on the common goals
+     * @param nickname          The nickname of the player
+     * @param shelf             The shelf of the player
+     * @param commonGoalScore   The score of the player on the common goals
      * @param personalGoalScore The score of the player on the personal goal
-     * @param adjacencyScore The adjacency score of the player
-     * @param bonusScore The bonus score of the player
+     * @param adjacencyScore    The adjacency score of the player
+     * @param bonusScore        The bonus score of the player
      */
     public record PlayerRecord(
             String nickname,
@@ -46,14 +46,15 @@ public class StartGameMessage extends ModelMessage<StartGameMessage.StartGamePay
     
     /**
      * Specific payload of the StartGameMessage.
-     * @param board The board
-     * @param players The list of players playing
-     * @param currentPlayer The nickname of the current player
+     *
+     * @param board          The board
+     * @param players        The list of players playing
+     * @param currentPlayer  The nickname of the current player
      * @param personalGoalId The id of the personal goal of the client receiving the message
-     * @param CGXIndex The index of the common goal X
-     * @param topCGXScore The score on the top of the stack of the common goal X
-     * @param CGYIndex The index of the common goal Y
-     * @param topCGYScore The score on the top of the stack of the common goal Y
+     * @param CGXIndex       The index of the common goal X
+     * @param topCGXScore    The score on the top of the stack of the common goal X
+     * @param CGYIndex       The index of the common goal Y
+     * @param topCGYScore    The score on the top of the stack of the common goal Y
      */
     public record StartGamePayload(
             Board board,
@@ -75,14 +76,15 @@ public class StartGameMessage extends ModelMessage<StartGameMessage.StartGamePay
     
     /**
      * Initialize a new StartGameMessage object with the given parameters
-     * @param board The board
-     * @param players The list of players playing
-     * @param currentPlayer The nickname of the current player
+     *
+     * @param board          The board
+     * @param players        The list of players playing
+     * @param currentPlayer  The nickname of the current player
      * @param personalGoalId The id of the personal goal of the client receiving the message
-     * @param CGXIndex The index of the common goal X
-     * @param topCGXScore The score on the top of the stack of the common goal X
-     * @param CGYIndex The index of the common goal Y
-     * @param topCGYScore The score on the top of the stack of the common goal Y
+     * @param CGXIndex       The index of the common goal X
+     * @param topCGXScore    The score on the top of the stack of the common goal X
+     * @param CGYIndex       The index of the common goal Y
+     * @param topCGYScore    The score on the top of the stack of the common goal Y
      */
     public StartGameMessage(
             Board board,

@@ -13,7 +13,8 @@ public class TwoColumnDistinctGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public TwoColumnDistinctGoal(){}
+    public TwoColumnDistinctGoal() {
+    }
     
     @Override
     public String getDescription() {

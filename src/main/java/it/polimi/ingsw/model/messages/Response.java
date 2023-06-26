@@ -15,16 +15,20 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     /**
      * Create a new OK response
+     *
      * @param Action The type of action that generated this response
+     *
      * @return A new OK response
      */
     public static Response Ok(String Action) {
         return new Response(0, "OK", Action);
     }
     
-/**
+    /**
      * Create a new NicknameTaken response, notifying the client the specified nickname is not available.
+     *
      * @param Action The type of action that generated this response
+     *
      * @return A new Error response
      */
     public static Response NicknameTaken(String Action) {
@@ -33,7 +37,9 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     /**
      * Create a new LobbyUnavailable response, notifying the client the specified lobby is not available.
+     *
      * @param Action The type of action that generated this response
+     *
      * @return A new Error response
      */
     public static Response LobbyUnavailable(String Action) {
@@ -42,6 +48,7 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     /**
      * Create a new Invalid Lobby Size response.
+     *
      * @return A new Error response
      */
     public static Response InvalidLobbySize() {
@@ -50,8 +57,10 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     /**
      * Create a new IllegalMove response, notifying the client the specified move is not valid.
+     *
      * @param playerNick The nickname of the player that sent the illegal move
-     * @param Action The type of action that generated this response
+     * @param Action     The type of action that generated this response
+     *
      * @return A new Error response
      */
     public static Response IllegalMove(String playerNick, String Action) {
@@ -61,8 +70,10 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     /**
      * Create a new NotCurrentPlayer response, notifying the client that he is not the current player.
+     *
      * @param playerNick The nickname of the player that sent the illegal move
-     * @param Action The type of action that generated this response
+     * @param Action     The type of action that generated this response
+     *
      * @return A new Error response
      */
     public static Response NotCurrentPlayer(String playerNick, String Action) {
@@ -72,7 +83,9 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     /**
      * Create a new NicknameNull response, notifying the client that the message did not contain a nickname.
+     *
      * @param Action The type of action that generated this response
+     *
      * @return A new Error response
      */
     public static Response NicknameNull(String Action) {
@@ -82,6 +95,7 @@ public record Response(int status, String msg, String Action) implements Seriali
     
     /**
      * Check if the response is OK or an error.
+     *
      * @return true if the response is OK, false otherwise
      */
     public boolean isOk() {

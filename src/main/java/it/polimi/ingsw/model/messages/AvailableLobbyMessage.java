@@ -15,6 +15,7 @@ public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.Av
     
     /**
      * Specific payload of the AvailableLobbyMessage
+     *
      * @param lobbyViewList LobbyView list object wrapped inside the record
      */
     public record AvailableLobbyPayload(List<LobbyController.LobbyView> lobbyViewList) implements Serializable {
@@ -30,6 +31,7 @@ public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.Av
     
     /**
      * Create an AvailableLobbyMessage object from a LobbyView list
+     *
      * @param p List of LobbyView objects to send
      */
     public AvailableLobbyMessage(List<LobbyController.LobbyView> p) {

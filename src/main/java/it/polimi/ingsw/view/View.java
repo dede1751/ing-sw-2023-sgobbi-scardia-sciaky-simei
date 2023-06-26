@@ -19,7 +19,8 @@ public abstract class View implements Runnable {
     /**
      * Default constructor to appease Javadoc.
      */
-    public View(){}
+    public View() {
+    }
     
     /**
      * A reference to the local model instance.
@@ -63,6 +64,7 @@ public abstract class View implements Runnable {
     
     /**
      * Get the client's list of lobbies received from the server.
+     *
      * @return The list of lobbies
      */
     public List<LobbyController.LobbyView> getLobbies() {
@@ -71,6 +73,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a BoardMessage
+     *
      * @param msg received BoardMessage
      */
     @SuppressWarnings("unused")
@@ -78,6 +81,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a AvailableLobbyMessage
+     *
      * @param msg received AvailableLobbyMessage
      */
     @SuppressWarnings("unused")
@@ -85,6 +89,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a EndGameMessage
+     *
      * @param msg received EndGameMessage
      */
     @SuppressWarnings("unused")
@@ -93,6 +98,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a StartGameMessage
+     *
      * @param msg received StartGameMessage
      */
     @SuppressWarnings("unused")
@@ -100,6 +106,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a ServerResponseMessage
+     *
      * @param msg received ServerResponseMessage
      */
     @SuppressWarnings("unused")
@@ -107,6 +114,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a ShelfMessage
+     *
      * @param msg received StartGameMessage
      */
     @SuppressWarnings("unused")
@@ -114,6 +122,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a IncomingChatMessage
+     *
      * @param msg received IncomingChatMessage
      */
     @SuppressWarnings("unused")
@@ -121,6 +130,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a UpdateScoreMessage
+     *
      * @param msg received UpdateScoreMessage
      */
     @SuppressWarnings("unused")
@@ -128,6 +138,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a CommonGoalMessage
+     *
      * @param msg received CommonGoalMessage
      */
     @SuppressWarnings("unused")
@@ -135,6 +146,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a CurrentPlayerMessage
+     *
      * @param msg received CurrentPlayerMessage
      */
     @SuppressWarnings("unused")
@@ -213,6 +225,7 @@ public abstract class View implements Runnable {
     
     /**
      * Ping the server with a debug message.
+     *
      * @param info The debug message
      */
     public void notifyDebugMessage(String info) {

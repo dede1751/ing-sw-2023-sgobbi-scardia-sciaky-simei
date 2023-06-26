@@ -51,6 +51,7 @@ public class LocalModel {
     
     /**
      * Get the instance of the singleton
+     *
      * @return The local model instance
      */
     public static LocalModel getInstance() {
@@ -115,6 +116,7 @@ public class LocalModel {
     
     /**
      * Check if the game has started (client received a {@link StartGameMessage}).
+     *
      * @return True if the game has started, false otherwise
      */
     public boolean isStarted() {
@@ -123,6 +125,7 @@ public class LocalModel {
     
     /**
      * Set the game's started state.
+     *
      * @param started True if the game should start, false to stop
      */
     public void setStarted(boolean started) {
@@ -134,8 +137,9 @@ public class LocalModel {
     
     /**
      * Add an incoming chat message to the chat buffer.
-     * @param nickname The nickname of the sender
-     * @param message The message
+     *
+     * @param nickname    The nickname of the sender
+     * @param message     The message
      * @param destination The recipient of the message (can be "all" or a player's nickname)
      */
     public void addChatMessage(String nickname, String message, String destination) {
@@ -144,6 +148,7 @@ public class LocalModel {
     
     /**
      * Get the full game chat buffer.
+     *
      * @return The chat buffer
      */
     public List<String> getChat() {
@@ -153,6 +158,7 @@ public class LocalModel {
     /**
      * Set the model's board. <br>
      * Called when receiving {@link it.polimi.ingsw.model.messages.BoardMessage}
+     *
      * @param board The board received
      */
     public void setBoard(Board board) {
@@ -161,6 +167,7 @@ public class LocalModel {
     
     /**
      * Get the current board state.
+     *
      * @return The current board
      */
     public Board getBoard() {
@@ -171,7 +178,7 @@ public class LocalModel {
      * Set the given player's shelf. <br>
      * Called when receiving {@link it.polimi.ingsw.model.messages.ShelfMessage}
      *
-     * @param shelf The new shelf
+     * @param shelf    The new shelf
      * @param nickname The player's nickname
      */
     public void setShelf(Shelf shelf, String nickname) {
@@ -184,7 +191,9 @@ public class LocalModel {
     
     /**
      * Get the given player's shelf
+     *
      * @param nickname The player's nickname
+     *
      * @return The player's shelf
      */
     public Shelf getShelf(String nickname) {
@@ -195,9 +204,9 @@ public class LocalModel {
      * Update the score of the given type for the given player <br>
      * Called when receiving {@link UpdateScoreMessage}
      *
-     * @param type The type of score to update
+     * @param type     The type of score to update
      * @param nickname The player's nickname
-     * @param score The new score
+     * @param score    The new score
      */
     public void setPoints(UpdateScoreMessage.Type type, String nickname, int score) {
         switch( type ) {
@@ -221,6 +230,7 @@ public class LocalModel {
      * With total score we include: CommonGoal, PersonalGoal, Adjacency and Bonus scores.
      *
      * @param nickname The player's nickname
+     *
      * @return The player's score
      */
     public int getPoints(String nickname) {
@@ -233,7 +243,8 @@ public class LocalModel {
     
     /**
      * Set the Common Goal score for the given player
-     * @param points The new score
+     *
+     * @param points   The new score
      * @param nickname The player's nickname
      */
     public void setCgScore(Integer points, String nickname) {
@@ -247,7 +258,9 @@ public class LocalModel {
     
     /**
      * Get the Common Goal score for the given player
+     *
      * @param nickname The player's nickname
+     *
      * @return The player's Common Goal score
      */
     public int getCgScore(String nickname) {
@@ -256,7 +269,8 @@ public class LocalModel {
     
     /**
      * Set the Personal Goal score for the given player
-     * @param points The new score
+     *
+     * @param points   The new score
      * @param nickname The player's nickname
      */
     public void setPgScore(Integer points, String nickname) {
@@ -269,7 +283,9 @@ public class LocalModel {
     
     /**
      * Get the Personal Goal score for the given player
+     *
      * @param nickname The player's nickname
+     *
      * @return The player's Personal Goal score
      */
     public int getPgScore(String nickname) {
@@ -278,7 +294,8 @@ public class LocalModel {
     
     /**
      * Set the Adjacency score for the given player
-     * @param points The new score
+     *
+     * @param points   The new score
      * @param nickname The player's nickname
      */
     public void setAdjacencyScore(Integer points, String nickname) {
@@ -291,7 +308,9 @@ public class LocalModel {
     
     /**
      * Get the Adjacency score for the given player
+     *
      * @param nickname The player's nickname
+     *
      * @return The player's Adjacency score
      */
     public int getAdjacencyScore(String nickname) {
@@ -300,7 +319,8 @@ public class LocalModel {
     
     /**
      * Set the Bonus score for the given player
-     * @param points The new score
+     *
+     * @param points   The new score
      * @param nickname The player's nickname
      */
     public void setBonusScore(Integer points, String nickname) {
@@ -313,7 +333,9 @@ public class LocalModel {
     
     /**
      * Get the Bonus score for the given player
+     *
      * @param nickname The player's nickname
+     *
      * @return The player's Bonus score
      */
     public int getBonusScore(String nickname) {
@@ -332,6 +354,7 @@ public class LocalModel {
     
     /**
      * Get the personal goal id for this client.
+     *
      * @return The personal goal id of the person playing.
      */
     public int getPgid() {
@@ -340,6 +363,7 @@ public class LocalModel {
     
     /**
      * Set the Common Goal X index.
+     *
      * @param CGXindex The integer id of Common Goal X.
      */
     public void setCGXindex(int CGXindex) {
@@ -348,6 +372,7 @@ public class LocalModel {
     
     /**
      * Get the Common Goal X index.
+     *
      * @return The integer id of Common Goal X.
      */
     public int getCGXindex() {
@@ -356,6 +381,7 @@ public class LocalModel {
     
     /**
      * Set the Common Goal Y index.
+     *
      * @param CGYindex The integer id of Common Goal Y.
      */
     public void setCGYindex(int CGYindex) {
@@ -364,6 +390,7 @@ public class LocalModel {
     
     /**
      * Get the Common Goal Y index.
+     *
      * @return The integer id of Common Goal Y.
      */
     public int getCGYindex() {
@@ -372,6 +399,7 @@ public class LocalModel {
     
     /**
      * Get the score at the top of the Common Goal X stack.
+     *
      * @return The score at the top of the Common Goal stack.
      */
     public int getTopCGXscore() {
@@ -381,6 +409,7 @@ public class LocalModel {
     /**
      * Set the score at the top of the Common Goal X stack. <br>
      * Called when receiving {@link it.polimi.ingsw.model.messages.CommonGoalMessage}
+     *
      * @param topCGXscore The new score.
      */
     public void setTopCGXscore(int topCGXscore) {
@@ -389,6 +418,7 @@ public class LocalModel {
     
     /**
      * Get the score at the top of the Common Goal Y stack.
+     *
      * @return The score at the top of the Common Goal stack.
      */
     public int getTopCGYscore() {
@@ -398,6 +428,7 @@ public class LocalModel {
     /**
      * Set the score at the top of the Common Goal Y stack. <br>
      * Called when receiving {@link it.polimi.ingsw.model.messages.CommonGoalMessage}
+     *
      * @param topCGYscore The new score.
      */
     public void setTopCGYscore(int topCGYscore) {
@@ -406,6 +437,7 @@ public class LocalModel {
     
     /**
      * Get the list of players' nicknames.
+     *
      * @return The list of players' nicknames.
      */
     public List<String> getPlayersNicknames() {
@@ -415,6 +447,7 @@ public class LocalModel {
     /**
      * Set the list of players' nicknames. <br>
      * Called when receiving {@link StartGameMessage}
+     *
      * @param playersNicknames The list of players' nicknames.
      */
     public void setPlayersNicknames(List<String> playersNicknames) {
@@ -423,6 +456,7 @@ public class LocalModel {
     
     /**
      * Get the nickname of the current player.
+     *
      * @return The nickname of the current player.
      */
     public String getCurrentPlayer() {
@@ -432,6 +466,7 @@ public class LocalModel {
     /**
      * Set the nickname of the current player. <br>
      * Called when receiving {@link it.polimi.ingsw.model.messages.CurrentPlayerMessage}
+     *
      * @param currentPlayer The nickname of the current player.
      */
     public void setCurrentPlayer(String currentPlayer) {

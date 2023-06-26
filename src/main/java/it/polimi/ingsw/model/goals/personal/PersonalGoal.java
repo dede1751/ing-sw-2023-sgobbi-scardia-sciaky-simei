@@ -136,6 +136,7 @@ public class PersonalGoal {
      * Get instance of personal goal with given id
      *
      * @param goalIndex Unique integer id of goal to get
+     *
      * @return Goal with given id
      */
     public static PersonalGoal getPersonalGoal(int goalIndex) {
@@ -146,6 +147,7 @@ public class PersonalGoal {
      * Checks the goal against the given shelf and compute the score.
      *
      * @param shelf Shelf to check for goal achievement
+     *
      * @return Score obtained from goal completion
      */
     public int checkGoal(Shelf shelf) {

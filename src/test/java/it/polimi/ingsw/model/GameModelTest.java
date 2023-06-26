@@ -6,12 +6,9 @@ import it.polimi.ingsw.utils.files.ResourcesManager;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.nio.ByteBuffer;
-import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Stack;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -50,7 +47,7 @@ public class GameModelTest {
         int CGYScore = game.popStackCGY();
         assertEquals(8, CGXScore);
         assertEquals(8, CGYScore);
-    
+        
         CGXScore = game.peekStackCGX();
         CGYScore = game.peekStackCGY();
         assertEquals(4, CGXScore);
@@ -237,24 +234,24 @@ public class GameModelTest {
         GameModel game = new GameModel(2, 5, 6);
         game.addPlayer("Player 1", 0);
         game.addPlayer("Player 2", 1);
-    
+        
         game.setCurrentPlayerIndex(0);
         int startingScore1 = game.getCurrentPlayer().getScore();
         int CGXScore = game.popStackCGX();
         int expectedScore = startingScore1 + CGXScore;
-    
+        
         game.addCurrentPlayerCommongGoalScore(CGXScore, GameModel.CGType.X);
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
-    
+        
         int CGYScore = game.popStackCGY();
         expectedScore = expectedScore + CGYScore;
-    
+        
         game.addCurrentPlayerCommongGoalScore(CGYScore, GameModel.CGType.Y);
         assertEquals(expectedScore, game.getCurrentPlayer().getScore());
-    
+        
         game.popStackCGX();
         game.popStackCGY();
-    
+        
         game.setCurrentPlayerIndex(1);
         int startingScore2 = game.getCurrentPlayer().getScore();
         CGXScore = game.peekStackCGX();
@@ -262,7 +259,7 @@ public class GameModelTest {
         game.addCurrentPlayerCommongGoalScore(CGYScore, GameModel.CGType.X);
         game.addCurrentPlayerCommongGoalScore(CGYScore, GameModel.CGType.Y);
         assertEquals(startingScore2, game.getCurrentPlayer().getScore());
-    
+        
     }
     
     @Test
@@ -275,7 +272,7 @@ public class GameModelTest {
         game.setCurrentPlayerIndex(0);
         var nickname1 = nicknames.get(0);
         assertEquals(nickname1, game.getCurrentPlayer().getNickname());
-    
+        
         game.setCurrentPlayerIndex(1);
         var nickname2 = nicknames.get(1);
         assertEquals(nickname2, game.getCurrentPlayer().getNickname());
@@ -289,7 +286,7 @@ public class GameModelTest {
         game.addPlayer("Player 2", 2);
         
         int score = 10;
-    
+        
         game.setCurrentPlayerPersonalScore(score);
         assertEquals(score, game.getCurrentPlayer().getPersonalGoalScore());
     }
@@ -358,7 +355,7 @@ public class GameModelTest {
     @Test
     public void getTileBagTest() {
         GameModel game = new GameModel(2, 5, 6);
-    
+        
         var tileBag = game.getTileBag();
         assertEquals(132, tileBag.currentTileNumber());
     }

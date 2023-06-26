@@ -63,7 +63,7 @@ public class LobbyController {
          * Add a client with the chosen nickname to the lobby. <br>
          * Takes care of including the client within the lobby's model.
          *
-         * @param client  Client to add
+         * @param client   Client to add
          * @param nickname Nickname of the client
          */
         public void addClient(Client client, String nickname) {
@@ -91,6 +91,7 @@ public class LobbyController {
         /**
          * Transform a recovery lobby into a normal lobby. <br>
          * Used when all players have reconnected.
+         *
          * @return A normal lobby
          */
         public Lobby recoverLobby() {
@@ -99,6 +100,7 @@ public class LobbyController {
         
         /**
          * Transform a Lobby into its serializable LobbyView.
+         *
          * @return A LobbyView of the lobby
          */
         public LobbyView getLobbyView() {
@@ -451,6 +453,7 @@ public class LobbyController {
      * If size is null, return all lobbies.
      *
      * @param size the desired size of the lobby
+     *
      * @return a list of lobbyView of all the lobbies that match info parameters
      */
     private static List<LobbyView> searchForLobbies(Integer size) {
@@ -465,6 +468,7 @@ public class LobbyController {
      * Check if a nickname is already taken, looking at both recovery and normal lobbies
      *
      * @param nickname Nickname to check
+     *
      * @return True if the nickname is already present in any lobby
      */
     private static boolean nicknameTaken(String nickname) {

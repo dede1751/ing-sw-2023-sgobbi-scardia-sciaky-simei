@@ -11,7 +11,8 @@ public class DecreasingColumnsGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public DecreasingColumnsGoal(){}
+    public DecreasingColumnsGoal() {
+    }
     
     @Override
     public String getDescription() {

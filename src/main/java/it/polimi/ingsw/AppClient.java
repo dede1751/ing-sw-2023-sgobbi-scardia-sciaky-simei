@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * Main entry point for the client application.
  */
 public class AppClient {
-
+    
     private static View view;
     
     // Regex for IPv4 address, 4 repeats of '(?:\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])' which matches 0-255
@@ -33,12 +33,15 @@ public class AppClient {
     /**
      * Unused private constructor to appease Javadoc.
      */
-    private AppClient(){}
+    private AppClient() {
+    }
     
     /**
      * Client's entry point
+     *
      * @param args unused
-     * @throws RemoteException Should an error occur in RMI comunication, the program will stop.
+     *
+     * @throws RemoteException   Should an error occur in RMI comunication, the program will stop.
      * @throws NotBoundException If the "server" object is not found in the RMI register.
      */
     public static void main(String[] args) throws RemoteException, NotBoundException {
@@ -98,7 +101,8 @@ public class AppClient {
      * Looks for a registry on default port 1099 of the server.
      *
      * @param ip The server's IP address.
-     * @throws RemoteException In case of communication error.
+     *
+     * @throws RemoteException   In case of communication error.
      * @throws NotBoundException If the "server" object is not found in the RMI registry
      */
     private static void runRMI(String ip) throws RemoteException, NotBoundException {
@@ -114,6 +118,7 @@ public class AppClient {
      * Communication happens on default port 23456.
      *
      * @param ip The server's IP address.
+     *
      * @throws RemoteException In case of communication error.
      */
     private static void runSocket(String ip) throws RemoteException {
@@ -145,6 +150,7 @@ public class AppClient {
     
     /**
      * Get the singleton instance of the view running in the client application.
+     *
      * @return The view instance.
      */
     public static View getViewInstance() {

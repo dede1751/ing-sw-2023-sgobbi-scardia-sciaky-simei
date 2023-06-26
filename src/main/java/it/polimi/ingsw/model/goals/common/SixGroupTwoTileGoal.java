@@ -17,7 +17,8 @@ public class SixGroupTwoTileGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public SixGroupTwoTileGoal(){}
+    public SixGroupTwoTileGoal() {
+    }
     
     @Override
     public String getDescription() {

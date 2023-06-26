@@ -12,5 +12,5 @@ public class InvalidStringException extends CommonException {
     public InvalidStringException() {
         super();
     }
-
+    
 }

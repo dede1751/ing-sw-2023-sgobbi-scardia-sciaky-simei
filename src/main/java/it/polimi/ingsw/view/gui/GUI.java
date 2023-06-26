@@ -94,7 +94,7 @@ public class GUI extends View {
                                                                                               scores);
             
             GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(
-                        "     The Current player is " + model.getCurrentPlayer());
+                    "     The Current player is " + model.getCurrentPlayer());
             
             GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().setRecipientName();
             if( model.getPlayersNicknames().get(0).equals(nickname) ) {
@@ -187,16 +187,19 @@ public class GUI extends View {
         this.model.addChatMessage(msg.getSender(), msg.getPayload(), msg.getDestination());
         
         if( this.model.isStarted() ) {
-            if(msg.getDestination().equals(nickname)){
+            if( msg.getDestination().equals(nickname) ) {
                 
-                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                        msg.getSender() + ": " + msg.getPayload(), Color.BLUEVIOLET));
-            }else if(msg.getSender().equals(nickname)){
-                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                        msg.getSender() + ": " + msg.getPayload(), Color.INDIGO));
+                runLater(
+                        () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
+                                msg.getSender() + ": " + msg.getPayload(), Color.BLUEVIOLET));
+            }else if( msg.getSender().equals(nickname) ) {
+                runLater(
+                        () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
+                                msg.getSender() + ": " + msg.getPayload(), Color.INDIGO));
             }else {
-                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                        msg.getSender() + ": " + msg.getPayload(), Color.BLACK));
+                runLater(
+                        () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
+                                msg.getSender() + ": " + msg.getPayload(), Color.BLACK));
             }
             
         }
@@ -243,7 +246,7 @@ public class GUI extends View {
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
         runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(
-                 "     The Current player is " + msg.getPayload()));
+                "     The Current player is " + msg.getPayload()));
     }
     
     @Override

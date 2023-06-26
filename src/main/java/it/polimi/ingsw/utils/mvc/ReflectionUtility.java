@@ -13,7 +13,8 @@ public class ReflectionUtility {
     /**
      * Private unused constructor to appease Javadoc.
      */
-    private ReflectionUtility(){}
+    private ReflectionUtility() {
+    }
     
     /**
      * Check if the given object has a method with the given name and arguments

@@ -11,7 +11,8 @@ public class CrossGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public CrossGoal(){}
+    public CrossGoal() {
+    }
     
     @Override
     public String getDescription() {

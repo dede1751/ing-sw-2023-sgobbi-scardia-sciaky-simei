@@ -31,7 +31,6 @@ public class ChatController {
     String recipientName = "Everyone";
     
     
-    
     @FXML
     public void setRecipientName() {
         
@@ -50,7 +49,8 @@ public class ChatController {
     
     public void handleEnterPressed(ActionEvent event) {
         String enteredText = writeMessage.getText();
-        if(enteredText == null || enteredText.equals("")) return;
+        if( enteredText == null || enteredText.equals("") )
+            return;
         if( LocalModel.getInstance().getPlayersNicknames().contains(recipientName) ) {
             AppClient.getViewInstance().notifyChatMessage(enteredText, recipientName);
             writeMessage.clear();

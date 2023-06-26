@@ -39,6 +39,7 @@ public class TileBag {
     
     /**
      * Initialize a tile bag from a map of tiles specifying their amount.
+     *
      * @param tileBag Existing tile count map.
      */
     private TileBag(Map<Tile, Integer> tileBag) {
@@ -49,6 +50,7 @@ public class TileBag {
      * Get the number of tiles of the given type in play.
      *
      * @param tile The type of tile (both kind and sprite value) to count occurrences of.
+     *
      * @return Number of tiles of type tile currently in the bag and in the board, if NOTILE 0
      */
     public int getTileAmount(Tile tile) {
@@ -113,7 +115,8 @@ public class TileBag {
         /**
          * Protected constructor to appease Javadoc.
          */
-        protected TileBagDeserializer(){}
+        protected TileBagDeserializer() {
+        }
         
         @Override
         public TileBag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

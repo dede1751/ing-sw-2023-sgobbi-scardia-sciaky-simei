@@ -11,7 +11,8 @@ public class FourCornersGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public FourCornersGoal(){}
+    public FourCornersGoal() {
+    }
     
     @Override
     public String getDescription() {

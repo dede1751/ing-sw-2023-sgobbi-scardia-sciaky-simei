@@ -19,7 +19,8 @@ public class IntegrityChecks {
     /**
      * Private unused constructor to appease Javadoc.
      */
-    private IntegrityChecks(){}
+    private IntegrityChecks() {
+    }
     
     /**
      * Checks if the list of coordinates is a well-formed selection.
@@ -28,6 +29,7 @@ public class IntegrityChecks {
      * @param selection List of coordinates selected by the player
      * @param board     board to check
      * @param shelf     shelf to check
+     *
      * @return true if the selection is valid, false otherwise
      */
     public static boolean checkSelectionForm(List<Coordinate> selection, Board board, Shelf shelf) {

@@ -13,7 +13,8 @@ public class ThreeColumnSixTileGoal implements CommonGoalStrategy {
     /**
      * Default constructor to appease Javadoc.
      */
-    public ThreeColumnSixTileGoal(){}
+    public ThreeColumnSixTileGoal() {
+    }
     
     @Override
     public String getDescription() {

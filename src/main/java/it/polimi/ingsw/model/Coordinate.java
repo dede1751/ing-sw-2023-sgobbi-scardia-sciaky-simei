@@ -78,6 +78,7 @@ public record Coordinate(int row, int col) implements Serializable {
      * Get the sum of the current coordinate with the given offset
      *
      * @param offset Offset to be summed
+     *
      * @return The sum of this and offset
      */
     public Coordinate sum(Coordinate offset) {
@@ -88,6 +89,7 @@ public record Coordinate(int row, int col) implements Serializable {
      * Subtract the offset to the current object and return the result of the operation as a new Coordinate
      *
      * @param offset The offset to be subtracted
+     *
      * @return This - offset
      */
     public Coordinate sub(Coordinate offset) {
@@ -99,6 +101,7 @@ public record Coordinate(int row, int col) implements Serializable {
      * This is used to producee more complex structures represented as lists of coordinates.
      *
      * @param offset The list of offset to be summed
+     *
      * @return the list of coordinates obtained by applying all the offsets to the current coordinate
      */
     public List<Coordinate> sumList(List<Coordinate> offset) {
