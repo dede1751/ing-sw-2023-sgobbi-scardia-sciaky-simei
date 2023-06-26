@@ -53,7 +53,13 @@ public class BoardController {
     @FXML
     private ImageView commonGoalY;
     
-   
+    /**
+     * Constructs a new BoardController.
+     */
+    public BoardController() {
+        // Default constructor
+    }
+    
     /**
      * Sets the image for the common goal X stack based on the given ID.
      *

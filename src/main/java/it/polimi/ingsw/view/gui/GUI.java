@@ -33,7 +33,12 @@ public class GUI extends View {
     
     private final List<String> otherPlayersNicks = new ArrayList<>(3);
     
+    /**
+     * Constructs a new GUI instance.
+     */
+    public GUI() {
     
+    }
     /**
      * Respond to a {@link BoardMessage}, receiving a board update from the server
      *

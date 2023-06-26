@@ -76,6 +76,14 @@ public class GameInterfaceController {
     private double scale;
     
     /**
+     * Constructs a new GameInterfaceController.
+     */
+    public GameInterfaceController() {
+    
+    }
+    
+    
+    /**
      
      Initializes the game interface screen.
      Configures button actions, opacity, and player labels.

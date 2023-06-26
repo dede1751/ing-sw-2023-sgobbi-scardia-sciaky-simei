@@ -44,7 +44,17 @@ public class EndgameController {
     @FXML
     private ImageView victoryRoyale;
     
+    
+    
     private static EndGameMessage.EndGamePayload payload;
+    
+    
+    /**
+     * Constructs a new EndgameController.
+     */
+    public EndgameController() {
+    
+    }
     /**
      
      Sets the endgame payload containing the final scores and winners.

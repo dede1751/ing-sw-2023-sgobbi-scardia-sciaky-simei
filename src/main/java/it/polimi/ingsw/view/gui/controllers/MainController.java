@@ -22,6 +22,13 @@ public class MainController {
     
     @FXML
     private AnchorPane anchorPane;
+    
+    /**
+     * Constructs a new MainController instance.
+     */
+    public MainController() {
+    
+    }
     /**
      
      Initializes the main game interface.

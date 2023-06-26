@@ -48,6 +48,14 @@ public class LocalPlayerController {
     private GridPane localPlayerGrid;
     
     private final Map<Coordinate, ImageView> imageMap = new HashMap<>();
+    
+    
+    /**
+     * Constructs a new LocalPlayerController instance.
+     */
+    public LocalPlayerController() {
+    
+    }
     /**
      
      Initializes the local player's shelf and buttons.

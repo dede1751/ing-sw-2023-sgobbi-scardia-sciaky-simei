@@ -34,6 +34,14 @@ public class GUIApp extends Application {
     private static List<Tile> tileSelection;
     private static List<Coordinate> coordinateSelection;
     
+    
+    /**
+     * Constructs a new GUIApp instance.
+     */
+    public GUIApp() {
+    
+    }
+    
     /**
      * Returns the instance of the MainController.
      *

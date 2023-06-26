@@ -19,20 +19,41 @@ import javafx.scene.text.TextFlow;
  The ChatController class is responsible for managing the chat functionality in the GUI.
  */
 public class ChatController {
-    
+    /**
+     * The ScrollPane used to display the chat messages.
+     */
     @FXML
     public ScrollPane readChat;
+    /**
+     * The TextField used for writing chat messages.
+     */
     @FXML
     public TextField writeMessage;
     
+    /**
+     * The VBox that contains the chat messages.
+     */
     @FXML
     public VBox chatBox;
+    
+    /**
+     * The recipientChoiceBox field represents a choice box for selecting the recipient of a chat message.
+     */
     public ChoiceBox<String> recipientChoiceBox;
     @FXML
     private TextFlow writeChat;
     @FXML
     private TextArea messageArea;
     String recipientName = "Everyone";
+    
+    
+    /**
+     * Constructs a new ChatController.
+     */
+    public ChatController() {
+    
+    }
+    
     /**
      
      Sets the recipient name and initializes the recipient choice box.

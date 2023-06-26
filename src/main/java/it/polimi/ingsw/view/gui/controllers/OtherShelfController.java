@@ -31,6 +31,15 @@ public class OtherShelfController {
     private Text score;
     
     private final Map<Coordinate, ImageView> imageMap = new HashMap<>();
+    
+    
+    /**
+     * Constructs a new OtherShelfController instance.
+     */
+    public OtherShelfController() {
+    
+    }
+    
     /**
      
      Sets the player name to be displayed.

@@ -15,6 +15,13 @@ import java.util.concurrent.Executors;
 public class GUIUtils {
     
     /**
+     * Constructs a new GUIUtils instance.
+     */
+    public GUIUtils() {
+ 
+    }
+    
+    /**
      * The thread pool for executing tasks.
      */
     public static final ExecutorService threadPool = Executors.newCachedThreadPool();

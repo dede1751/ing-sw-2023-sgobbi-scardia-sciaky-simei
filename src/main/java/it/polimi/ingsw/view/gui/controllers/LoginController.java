@@ -68,6 +68,14 @@ public class LoginController {
     private ChoiceBox<Integer> nPlayerChoice;
     
     private final List<Color> backgroundColorArray = List.of(Color.CYAN, Color.LIGHTBLUE);
+    
+    
+    /**
+     * Constructs a new LoginController instance.
+     */
+    public LoginController() {
+    
+    }
     /**
      
      Sets the waitToJoin flag.
