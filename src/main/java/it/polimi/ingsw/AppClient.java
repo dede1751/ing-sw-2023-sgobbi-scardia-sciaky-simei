@@ -19,15 +19,11 @@ import java.util.regex.Pattern;
 
 
 /**
- * Client main class
+ * Main entry point for the client application.
  */
 public class AppClient {
 
     private static View view;
-    
-    public static View getViewInstance() {
-        return view;
-    }
     
     // Regex for IPv4 address, 4 repeats of '(?:\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])' which matches 0-255
     private static final String byteRegex = "(?:\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])";
@@ -85,24 +81,39 @@ public class AppClient {
             String input = scanner.next().trim().toUpperCase();
             
             if( input.equals("RMI") ) {
-                runRMI(view, ip);
+                runRMI(ip);
             }else if( input.equals("SOCKET") ) {
-                runSocket(view, ip);
+                runSocket(ip);
             }
         }
     }
     
-    private static void runRMI(View view, String ip) throws RemoteException, NotBoundException {
+    /**
+     * Run the client application using the RMI protocol. <br>
+     * Looks for a registry on default port 1099 of the server.
+     *
+     * @param ip The server's IP address.
+     * @throws RemoteException In case of communication error.
+     * @throws NotBoundException If the "server" object is not found in the RMI registry
+     */
+    private static void runRMI(String ip) throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry(ip); // use default port 1099
         Server server = (Server) registry.lookup("myshelfie_server");
         
-        view.setClient(new LocalClient(server, view));
+        view.setClient(new LocalClient(server));
         view.run();
     }
     
-    private static void runSocket(View view, String ip) throws RemoteException {
+    /**
+     * Run the client application using the socket protocol. <br>
+     * Communication happens on default port 23456.
+     *
+     * @param ip The server's IP address.
+     * @throws RemoteException In case of communication error.
+     */
+    private static void runSocket(String ip) throws RemoteException {
         ServerStub serverStub = new ServerStub(ip, 23456);
-        LocalClient client = new LocalClient(serverStub, view);
+        LocalClient client = new LocalClient(serverStub);
         view.setClient(client);
         serverStub.setClient(client);
         
@@ -125,5 +136,13 @@ public class AppClient {
             }
         }).start();
         view.run();
+    }
+    
+    /**
+     * Get the singleton instance of the view running in the client application.
+     * @return The view instance.
+     */
+    public static View getViewInstance() {
+        return view;
     }
 }

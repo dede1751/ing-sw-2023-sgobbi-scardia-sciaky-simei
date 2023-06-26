@@ -11,7 +11,8 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * IntegrityChecks unifies player input validation over game actions, to be used by both the client and server.
+ * IntegrityChecks unifies player input validation over game actions. <br>
+ * This class is a utility meant to abstract away the details of the game rules from the client and server.
  */
 public class IntegrityChecks {
     

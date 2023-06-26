@@ -4,6 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * Class ReflectionUtility provides utility methods for reflection. <br>
+ * Reflection is mainly used to call the correct message-handling methods when receiving data from the network.
+ */
 public class ReflectionUtility {
     
     /**
