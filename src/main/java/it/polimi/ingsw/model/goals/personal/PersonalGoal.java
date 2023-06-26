@@ -8,12 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing the game's personal goals
- * This class is immutable
+ * Class representing the game's personal goals. <br>
+ * Goals are singleton objects retrieved using their unique id.
  */
 public class PersonalGoal {
-    
-    private final int goalIndex;
     
     private final Map<Coordinate, Tile.Type> goal;
     
@@ -31,7 +29,6 @@ public class PersonalGoal {
      * @param goalIndex Unique integer ID of the goal
      */
     public PersonalGoal(int goalIndex) {
-        this.goalIndex = goalIndex;
         this.goal = new HashMap<>();
         
         switch( goalIndex ) {
@@ -139,7 +136,6 @@ public class PersonalGoal {
      * Get instance of personal goal with given id
      *
      * @param goalIndex Unique integer id of goal to get
-     *
      * @return Goal with given id
      */
     public static PersonalGoal getPersonalGoal(int goalIndex) {
@@ -147,28 +143,9 @@ public class PersonalGoal {
     }
     
     /**
-     * Get the unique id of the goal
-     *
-     * @return Unique integer id of goal
-     */
-    public int getGoalIndex() {
-        return this.goalIndex;
-    }
-    
-    /**
-     * Get the contents of the goal as a map of coordinates and their contents.
-     *
-     * @return Copy of coordinate->Tile.Type mapping
-     */
-    public Map<Coordinate, Tile.Type> getGoal() {
-        return new HashMap<>(this.goal);
-    }
-    
-    /**
-     * Checks the goal against the given shelf and computes the score
+     * Checks the goal against the given shelf and compute the score.
      *
      * @param shelf Shelf to check for goal achievement
-     *
      * @return Score obtained from goal completion
      */
     public int checkGoal(Shelf shelf) {

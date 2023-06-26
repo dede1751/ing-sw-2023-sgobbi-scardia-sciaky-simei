@@ -21,10 +21,10 @@ public class Board implements Serializable {
     public static final int maxSize = 9;
     
     /**
-     * Initialize board for the given number of players
-     * The player number cannot change dynamically throughout the game
+     * Initialize board for the given number of players. <br>
+     * The player number cannot change dynamically throughout the game.
      *
-     * @param numPlayers Total number of players for the game
+     * @param numPlayers Total number of players for the game.
      */
     public Board(int numPlayers) {
         this.tileOccupancy = new HashMap<>();
@@ -69,7 +69,7 @@ public class Board implements Serializable {
     }
     
     /**
-     * Private Board contructor.
+     * Private Board contructor for an already initialized board.
      * @param map Map to initialize the board.
      */
     private Board(Map<Coordinate, Tile> map) {
@@ -80,7 +80,6 @@ public class Board implements Serializable {
      * Get the tile on the board at the given coordinate
      *
      * @param coordinate Coordinate to search for a tile
-     *
      * @return Tile at coordinate, null if coordinate is not in the board
      */
     public Tile getTile(Coordinate coordinate) {
@@ -88,7 +87,7 @@ public class Board implements Serializable {
     }
     
     /**
-     * Get Coordinate to File mapping for the current board
+     * Get Coordinate to File mapping for the current board. <br>
      * The map only contains "legal" coordinates, meaning coordinates usable when playing with the number of players
      * the board has been initialized with.
      *
@@ -99,7 +98,7 @@ public class Board implements Serializable {
     }
     
     /**
-     * Remove the tiles the list of selected coordinates.
+     * Remove the tiles in the list of selected coordinates. <br>
      * Coordinates must be already present in the board.
      *
      * @param selection List of coordinates to be emptied
@@ -111,7 +110,7 @@ public class Board implements Serializable {
     }
     
     /**
-     * Insert tile at given coordinate.
+     * Insert tile at given coordinate. <br>
      * Coordinate must be already present in the board.
      *
      * @param coordinate Coordinate to set the tile at
@@ -131,10 +130,10 @@ public class Board implements Serializable {
     }
     
     /**
-     * Refill the board using the given tilebag.
-     * The bag will not be modified, as the contents of the tilebag include the contents of the board.
-     * If not enough tiles are present to refill the board, it will only be partially refilled.
-     * Refilling happens in a breadth-first approach starting at a random coordinate
+     * Refill the board using the given tilebag. <br>
+     * The bag will not be modified, as the contents of the tilebag include the contents of the board. <br>
+     * If not enough tiles are present to refill the board, it will only be partially refilled. <br>
+     * Refilling happens in a breadth-first approach starting at a random coordinate.
      *
      * @param tileBag Bag to draw the tiles from.
      */
@@ -206,10 +205,11 @@ public class Board implements Serializable {
     
     
     /**
-     * Get the matrix representation of the board as a 9*9 tiles Matrix
+     * Get the matrix representation of the board as a 9*9 tiles Matrix. <br>
+     * Invalid positions in the board are represented with null values within the matrix, while unoccupied positions
+     * contain {@link Tile#NOTILE}
      *
-     * @return Tile[][] The matrix rapresentation of the board.
-     * Invalid positions in the board are represented with null values
+     * @return The tile-matrix rapresentation of the board.
      */
     
     public Tile[][] getAsMatrix() {
@@ -224,7 +224,7 @@ public class Board implements Serializable {
     }
     
     /**
-     * Board Custom gson's serializer<br>
+     * Board's custom gson serializer<br>
      */
     @Override
     public String toString() {
@@ -232,6 +232,9 @@ public class Board implements Serializable {
         return g.toJson(this, this.getClass());
     }
     
+    /**
+     * Board's custom gson serializer
+     */
     public static class BoardSerializer implements JsonSerializer<Board> {
         
         /**
@@ -275,11 +278,12 @@ public class Board implements Serializable {
     }
     
     /**
-     * Board Custom gson's deserializer <br>
+     * Board's custom gson deserializer <br>
      */
     public static class BoardDeserializer implements JsonDeserializer<Board> {
+        
         /**
-         *
+         * Deserialization function
          * @param json The Json data being deserialized <br>
          * A valid json representation is provided: <br>
          *
@@ -315,5 +319,6 @@ public class Board implements Serializable {
             }
             return new Board(hashMap);
         }
+        
     }
 }

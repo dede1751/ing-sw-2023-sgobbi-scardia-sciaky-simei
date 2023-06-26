@@ -3,12 +3,10 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 
 /**
- * Class representing the game's common goals
- * This class is immutable
+ * Class representing the game's common goals. <br>
+ * Goals are singleton objects retrieved using their unique id.
  */
 public class CommonGoal {
-    
-    private final int goalIndex;
     
     private final CommonGoalStrategy strategy;
     
@@ -20,14 +18,12 @@ public class CommonGoal {
     };
     
     /**
-     * Initialize common goal from unique goal index.
+     * Initialize common goal from unique goal index. <br>
      * Goals can only be created internally, only pre-initialized ones can actually be used.
      *
      * @param goalIndex Unique integer ID of the goal
      */
     private CommonGoal(int goalIndex) {
-        this.goalIndex = goalIndex;
-        
         switch( goalIndex ) {
             case 0 -> this.strategy = new SixGroupTwoTileGoal();
             case 1 -> this.strategy = new FourGroupFourTileGoal();
@@ -46,23 +42,13 @@ public class CommonGoal {
     }
     
     /**
-     * Get instance of common goal with given id
+     * Get instance of common goal with given id.
      *
      * @param goalIndex Unique integer id of goal to get
-     *
      * @return Goal with given id
      */
     public static CommonGoal getCommonGoal(int goalIndex) {
         return goalList[goalIndex];
-    }
-    
-    /**
-     * Get the unique id of the goal
-     *
-     * @return Unique integer id of goal
-     */
-    public int getGoalIndex() {
-        return this.goalIndex;
     }
     
     /**
@@ -75,10 +61,9 @@ public class CommonGoal {
     }
     
     /**
-     * Check whether the goal has been completed on the given shelf
+     * Check whether the goal has been completed on the given shelf.
      *
      * @param shelf Shelf to check for the goal
-     *
      * @return True if the shelf satisfies the goal, else false
      */
     public boolean checkGoal(Shelf shelf) {

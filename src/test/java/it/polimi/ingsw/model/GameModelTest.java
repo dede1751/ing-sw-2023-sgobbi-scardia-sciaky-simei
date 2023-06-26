@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * This class tests {@link GameModel}
  */
-
 @Tag("GameModel")
 @Tag("Model")
 public class GameModelTest {

@@ -9,10 +9,11 @@ import java.util.function.BinaryOperator;
 
 
 /**
- * Available Lobby Message <br>
+ * Message containing the list of available lobbies <br>
  * Refer to network manual for details
  */
 public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.AvailableLobbyPayload> {
+    
     /**
      * Specific payload of the AvailableLobbyMessage
      * @param lobbyViewList LobbyView list object wrapped inside the record
@@ -27,11 +28,13 @@ public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.Av
         }
         
     }
+    
     /**
-     * Create an AvailableLobbyMessage object from a LobbyView
-     * @param p LobbyView object
+     * Create an AvailableLobbyMessage object from a LobbyView list
+     * @param p List of LobbyView objects to send
      */
     public AvailableLobbyMessage(List<LobbyController.LobbyView> p) {
         super(new AvailableLobbyPayload(p));
     }
+    
 }

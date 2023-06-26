@@ -139,7 +139,7 @@ public class GameController {
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
-                    current.sumDir().stream()
+                    current.adjacent().stream()
                             .filter((x) -> x.row() < Shelf.N_ROW &&
                                            x.row() > -1 &&
                                            x.col() < Shelf.N_COL &&

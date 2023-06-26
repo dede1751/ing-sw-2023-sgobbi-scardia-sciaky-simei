@@ -6,6 +6,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+/**
+ * Model's internal shelf representation. <br>
+ * Tiles are composed of the Tile Type and the specific Sprite on the physical tile. <br>
+ * The Sprite is only used for cosmetic purposes.
+ */
 public record Tile(Type type, Sprite sprite) implements Serializable {
     
     public static final Tile NOTILE = new Tile(Type.NOTILE, Sprite.NOSPRITE);
@@ -26,6 +31,9 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
             new Tile(Type.PLANTS, Sprite.ONE), new Tile(Type.PLANTS, Sprite.TWO), new Tile(Type.PLANTS, Sprite.THREE),
     };
     
+    /**
+     * Enum for the different types of tiles in the game
+     */
     public enum Type {
         CATS,
         BOOKS,
@@ -36,6 +44,10 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
         NOTILE,
     }
     
+    /**
+     * Enum for the different sprites of tiles in the game. <br>
+     * Each tile comes in 3 different sprites.
+     */
     public enum Sprite {
         ONE,
         TWO,
@@ -44,8 +56,8 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
     }
     
     /**
-     * Return the textual representation of the Tile, as in (X,Y) where :
-     * - X is the first letter of the Type enum value
+     * Return the textual representation of the Tile, as in (X,Y) where : <br>
+     * - X is the first letter of the Type enum value<br>
      * - Y is the digit of the corrisponding Sprite number, where NOSPRITE is 0
      *
      * @return a valid string object
@@ -72,7 +84,11 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
     private static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     private static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
     
-    
+    /**
+     * Return a string representation of the Tile used by the view.
+     *
+     * @return a pretty printed tile
+     */
     public String toTile() {
         return switch( type() ) {
             case CATS -> ANSI_GREEN_BACKGROUND + ANSI_BLACK + " C " + ANSI_RESET;
@@ -86,10 +102,9 @@ public record Tile(Type type, Sprite sprite) implements Serializable {
     }
     
     /**
-     * Return a tile from a valid string representation
+     * Return a tile from a valid string representation.
      *
      * @param string string that represent the Tile
-     *
      * @return Tile object
      *
      * @throws InvalidStringException if the string is invald
