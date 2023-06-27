@@ -11,8 +11,6 @@ import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.view.messages.Move;
 import it.polimi.ingsw.view.messages.MoveMessage;
-
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;

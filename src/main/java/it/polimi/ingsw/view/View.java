@@ -10,18 +10,37 @@ import java.util.List;
 
 
 /**
- * Abstract class View defines the methods that must be implemented by each view.
- * Each view must override the onMessage methods to handle the messages received from the server
+ * Abstract class View defines the methods that must be implemented by each view. <br>
+ * Each view must override the onMessage methods to handle the messages received from the server. <br>
  * Methods to notify the server are already defined.
  */
 public abstract class View implements Runnable {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public View() {
+    }
+    
+    /**
+     * A reference to the local model instance.
+     */
     protected final LocalModel model = LocalModel.getInstance();
     
+    /**
+     * The client associated with this view. <br>
+     * Protected access is granted to the view implementation to directly communicate with the client.
+     */
     protected LocalClient client;
     
+    /**
+     * The nickname associated with the person playing.
+     */
     protected String nickname;
     
+    /**
+     * The list of lobbies received from the server.
+     */
     protected List<LobbyController.LobbyView> lobbies = new ArrayList<>();
     
     /**
@@ -43,13 +62,18 @@ public abstract class View implements Runnable {
         return nickname;
     }
     
-    
+    /**
+     * Get the client's list of lobbies received from the server.
+     *
+     * @return The list of lobbies
+     */
     public List<LobbyController.LobbyView> getLobbies() {
         return lobbies;
     }
     
     /**
      * Define view behaviour upon receiving a BoardMessage
+     *
      * @param msg received BoardMessage
      */
     @SuppressWarnings("unused")
@@ -57,6 +81,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a AvailableLobbyMessage
+     *
      * @param msg received AvailableLobbyMessage
      */
     @SuppressWarnings("unused")
@@ -64,6 +89,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a EndGameMessage
+     *
      * @param msg received EndGameMessage
      */
     @SuppressWarnings("unused")
@@ -72,6 +98,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a StartGameMessage
+     *
      * @param msg received StartGameMessage
      */
     @SuppressWarnings("unused")
@@ -79,6 +106,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a ServerResponseMessage
+     *
      * @param msg received ServerResponseMessage
      */
     @SuppressWarnings("unused")
@@ -86,6 +114,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a ShelfMessage
+     *
      * @param msg received StartGameMessage
      */
     @SuppressWarnings("unused")
@@ -93,6 +122,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a IncomingChatMessage
+     *
      * @param msg received IncomingChatMessage
      */
     @SuppressWarnings("unused")
@@ -100,6 +130,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a UpdateScoreMessage
+     *
      * @param msg received UpdateScoreMessage
      */
     @SuppressWarnings("unused")
@@ -107,6 +138,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a CommonGoalMessage
+     *
      * @param msg received CommonGoalMessage
      */
     @SuppressWarnings("unused")
@@ -114,6 +146,7 @@ public abstract class View implements Runnable {
     
     /**
      * Define view behaviour upon receiving a CurrentPlayerMessage
+     *
      * @param msg received CurrentPlayerMessage
      */
     @SuppressWarnings("unused")
@@ -190,6 +223,11 @@ public abstract class View implements Runnable {
         client.update(new MoveMessage(move, this.nickname));
     }
     
+    /**
+     * Ping the server with a debug message.
+     *
+     * @param info The debug message
+     */
     public void notifyDebugMessage(String info) {
         client.update(new DebugMessage(info, this.nickname));
     }

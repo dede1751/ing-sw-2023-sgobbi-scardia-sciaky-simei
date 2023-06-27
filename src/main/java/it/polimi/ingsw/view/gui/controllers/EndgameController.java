@@ -10,7 +10,12 @@ import javafx.scene.text.Text;
 
 import java.util.Iterator;
 import java.util.List;
-
+/**
+ 
+ The EndgameController class is responsible for managing the endgame screen in the GUI.
+ 
+ It displays the final scores and winners of the game.
+ */
 public class EndgameController {
     @FXML
     private ImageView PC1;
@@ -39,12 +44,29 @@ public class EndgameController {
     @FXML
     private ImageView victoryRoyale;
     
+    
+    
     private static EndGameMessage.EndGamePayload payload;
     
+    
+    /**
+     * Constructs a new EndgameController.
+     */
+    public EndgameController() {
+    
+    }
+    /**
+     
+     Sets the endgame payload containing the final scores and winners.
+     @param payload The endgame payload.
+     */
     public static void setEndgame(EndGameMessage.EndGamePayload payload) {
         EndgameController.payload = payload;
     }
-    
+    /**
+     
+     Initializes the endgame screen by displaying the final scores and winners.
+     */
     @FXML
     public void initialize() {
         GUIUtils.threadPool.submit(() -> {

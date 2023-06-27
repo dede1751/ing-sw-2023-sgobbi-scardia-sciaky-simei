@@ -3,12 +3,23 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
+/**
+ * Common goal strategy for the Cross goal, involving 5 tiles of the same type forming an X shape.
+ */
 public class CrossGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public CrossGoal() {
+    }
+    
+    @Override
     public String getDescription() {
         return "Five tiles of the same type forming an X shape.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         for( int i = 2; i < 6; i++ ) {
             for( int j = 0; j < 3; j++ ) {

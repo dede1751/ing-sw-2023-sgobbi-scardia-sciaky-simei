@@ -5,12 +5,23 @@ import it.polimi.ingsw.model.Tile;
 
 import java.util.HashSet;
 
+/**
+ * Implements the TwoColumnDistinctGoal goal, involving two columns of six tiles of six different types.
+ */
 public class TwoColumnDistinctGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public TwoColumnDistinctGoal() {
+    }
+    
+    @Override
     public String getDescription() {
         return "Two columns each formed by 6 distinct types of tiles.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         int colCounter = 0;
         for( int j = 0; j < 5; j++ ) {

@@ -3,12 +3,23 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
+/**
+ * Common goal strategy for the DiagonalFiveTile goal, involving 5 tiles of the same type forming a diagonal.
+ */
 public class DiagonalFiveTileGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public DiagonalFiveTileGoal() {
+    }
+    
+    @Override
     public String getDescription() {
         return "Five tiles of the same type forming a diagonal.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         return (shelf.getTile(5, 0) != Tile.NOTILE
                 && shelf.getTile(5, 0).type() == shelf.getTile(4, 1).type()

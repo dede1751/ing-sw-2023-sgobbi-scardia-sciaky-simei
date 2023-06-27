@@ -18,7 +18,12 @@ import javafx.scene.text.Text;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ 
+ The LocalPlayerController class is responsible for managing the local player's shelf and actions in the game interface.
+ 
+ It handles button actions, shelf updates, score display, personal goal display, and chair opacity.
+ */
 public class LocalPlayerController {
     
     @FXML
@@ -44,6 +49,19 @@ public class LocalPlayerController {
     
     private final Map<Coordinate, ImageView> imageMap = new HashMap<>();
     
+    
+    /**
+     * Constructs a new LocalPlayerController instance.
+     */
+    public LocalPlayerController() {
+    
+    }
+    /**
+     
+     Initializes the local player's shelf and buttons.
+     
+     Configures button actions and initializes image views for the shelf.
+     */
     @FXML
     public void initialize() {
         
@@ -67,29 +85,49 @@ public class LocalPlayerController {
         
         
     }
-    
+    /**
+     
+     Updates the local player's shelf with the given shelf.
+     @param shelf The updated shelf.
+     */
     @FXML
     public void updateShelf(Shelf shelf) {
         GUIUtils.threadPool.submit(() -> GUIUtils.updateShelf(shelf, imageMap));
     }
-    
+    /**
+     
+     Sets the score of the local player.
+     @param score The score to set.
+     */
     @FXML
     public void setScore(int score) {
         this.score.setFont(new Font("Noto Sans", 25));
         this.score.setText("Score: " + score);
     }
-    
+    /**
+     
+     Notify a move message when the column is selected.
+     @param column The selected column.
+     */
     private void buttonAction(int column) {
         AppClient.getViewInstance().notifyMove(
                 new Move(GUIApp.getCoordinateSelection(), GUIApp.getTileSelection(), column));
     }
     
-    
+    /**
+     
+     Sets the personal goal image of the local player.
+     @param id The ID of the personal goal.
+     */
     public void setPersonalGoal(int id) {
         id = id + 1;
         this.personalGoal.setImage(new Image("gui/assets/personal_goal_cards/Personal_Goals" + id + ".png"));
     }
-    
+    /**
+     
+     Sets the opacity of the chair image of the local player.
+     @param opacity The opacity value to set.
+     */
     public void setChairOpacity(double opacity) {
         chairImage.setOpacity(opacity);
     }

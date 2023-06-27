@@ -4,7 +4,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+/**
+ * Class ReflectionUtility provides utility methods for reflection. <br>
+ * Reflection is mainly used to call the correct message-handling methods when receiving data from the network.
+ */
 public class ReflectionUtility {
+    
+    /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private ReflectionUtility() {
+    }
     
     /**
      * Check if the given object has a method with the given name and arguments
@@ -32,6 +42,8 @@ public class ReflectionUtility {
      * @param obj        object on which to call the method
      * @param methodName name of the method to call
      * @param args       arguments to pass to the method
+     *
+     * @throws NoSuchMethodException if the method does not exist
      */
     public static void invokeMethod(Object obj, String methodName, Object... args) throws NoSuchMethodException {
         try {

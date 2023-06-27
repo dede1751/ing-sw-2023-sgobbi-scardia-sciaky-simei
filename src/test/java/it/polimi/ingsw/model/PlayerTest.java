@@ -109,7 +109,7 @@ class PlayerTest {
         p.setCompletedGoalY(true);
         assertTrue(p.isCompletedGoalX());
         assertTrue(p.isCompletedGoalY());
-    
+        
         p.setCompletedGoalX(false);
         p.setCompletedGoalY(false);
         assertFalse(p.isCompletedGoalX());

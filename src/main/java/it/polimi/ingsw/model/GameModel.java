@@ -40,21 +40,41 @@ public class GameModel {
     
     private boolean gameEnded = false;
     
+    /**
+     * Set the game-ended status.
+     *
+     * @param b true if the game should end, false otherwise
+     */
     public void setGameEnded(boolean b) {
         gameEnded = b;
     }
     
+    /**
+     * Get the game-ended status.
+     *
+     * @return true if the game has ended, false otherwise
+     */
     public boolean getGameEnded() {
         return gameEnded;
     }
     
-    
+    /**
+     * Disambiguation enum for the common goals
+     */
     public enum CGType {
-        X, Y
+        /**
+         * Common goal X
+         */
+        X,
+        
+        /**
+         * Common goal Y
+         */
+        Y
     }
     
     /**
-     * Initialize an empty model
+     * Initialize an empty model for the given number of players.
      *
      * @param numPlayers  number of players for the game
      * @param commonGoalX id for the first common goal
@@ -94,12 +114,24 @@ public class GameModel {
         this.listeners = new HashMap<>(numPlayers);
     }
     
+    /**
+     * Notify all listeners of the start of the game
+     */
     public void startGame() {
-        
         this.notifyStartGame();
-        
     }
     
+    /**
+     * Initilize a model from the entire state of the game.
+     *
+     * @param numPlayers     number of players for the game
+     * @param commonGoalNumX id for the first common goal
+     * @param commonGoalNumY id for the second common goal
+     * @param CGXS           stack of scores for the first common goal
+     * @param CGYS           stack of scores for the second common goal
+     * @param board          board of the game
+     * @param tileBag        tile bag of the game
+     */
     public GameModel(int numPlayers, int commonGoalNumX, int commonGoalNumY, Stack<Integer> CGXS, Stack<Integer> CGYS, Board board, TileBag tileBag) {
         this.numPlayers = numPlayers;
         this.commonGoalNumX = commonGoalNumX;
@@ -110,7 +142,6 @@ public class GameModel {
         this.board = board;
         this.tileBag = tileBag;
         this.listeners = new HashMap<>(numPlayers);
-        
     }
     
     /**
@@ -159,8 +190,7 @@ public class GameModel {
     }
     
     /**
-     * Checks if the game is on its final turn and set gameOver to true if the turn is final
-     * (although some players might still have to play)
+     * Set the game state to LastTurn. Assigns the current player the bonus point for finishing first.
      */
     public void setLastTurn() {
         lastTurn = true;
@@ -188,7 +218,7 @@ public class GameModel {
     }
     
     /**
-     * Returns the entire player list
+     * Returns the entire player list <br>
      * Internal player indices are guaranteed to be consistent with the ones from this list.
      *
      * @return Full list of players
@@ -235,9 +265,11 @@ public class GameModel {
     }
     
     /**
-     * Adds given score to the current player's score
+     * Adds given score to the current player's common goal score. <br>
+     * Notifies all listeners of the change.
      *
      * @param score Integer score to give the current player
+     * @param t     CGType of the common goal to add the score to
      */
     public void addCurrentPlayerCommongGoalScore(int score, CGType t) {
         Player player = this.getCurrentPlayer();
@@ -269,30 +301,46 @@ public class GameModel {
         notifyAllListeners(new UpdateScoreMessage(i, UpdateScoreMessage.Type.CommonGoal, player.getNickname()));
     }
     
+    /**
+     * Set the new score for the current player's personal goal. <br>
+     * Notifies all listeners of the change.
+     *
+     * @param score Integer score to give the current player
+     */
     public void setCurrentPlayerPersonalScore(int score) {
         Player player = this.getCurrentPlayer();
         player.setPersonalGoalScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.PersonalGoal, player.getNickname()));
     }
     
+    /**
+     * Set the new score for the current player's adjacency score. <br>
+     * Notifies all listeners of the change.
+     *
+     * @param score Integer score to give the current player
+     */
     public void setCurrentPlayerAdjacencyScore(int score) {
         Player player = this.getCurrentPlayer();
         player.setAdjacencyScore(score);
         notifyAllListeners(new UpdateScoreMessage(score, UpdateScoreMessage.Type.Adjacency, player.getNickname()));
     }
     
+    /**
+     * Performa a board refill and notify all listeners of the new board.
+     */
     public void refillBoard() {
         this.board.refill(this.tileBag);
         notifyAllListeners(new BoardMessage(this));
     }
     
     /**
-     * Gets the amount of tiles left in play for the given type of tile
-     * Will throw a class cast exception if being used with Tile.NOTILE
+     * Gets the amount of tiles left in play for the given type of tile.
      *
      * @param tile Type of tile to check
      *
      * @return Amount of tile left (counts both bag and board)
+     *
+     * @throws ClassCastException if used with {@link Tile#NOTILE}
      */
     public int getTileAmount(Tile tile) {
         return this.tileBag.getTileAmount(tile);
@@ -310,7 +358,7 @@ public class GameModel {
     }
     
     /**
-     * Gets the list of all coordinates of the board, regardless of their contents
+     * Gets the list of all legal coordinates of the board, regardless of their contents.
      *
      * @return List of all legal coordinates
      */
@@ -334,16 +382,18 @@ public class GameModel {
      * @param coordinates Coordinate at which to insert the tile
      * @param tile        Tile type to insert
      *
-     * @throws OccupiedTileException Trying to insert a tile in an already occupied position
+     * @throws OccupiedTileException         Trying to insert a tile in an already occupied position
+     * @throws OutOfBoundCoordinateException Trying to insert a tile in an invalid position
      */
     public void insertTile(Coordinate coordinates, Tile tile) throws OccupiedTileException, OutOfBoundCoordinateException {
         this.board.insertTile(coordinates, tile);
     }
     
     /**
-     * Remove tiles at the selected coordinates from the board
+     * Remove tiles at the selected coordinates from the board.
+     * Notifies all listeners of the board change.
      *
-     * @param selection List of tiles to empty on the board
+     * @param selection List of coordinates to remove tiles from
      */
     public void removeSelection(List<Coordinate> selection) {
         this.board.removeSelection(selection);
@@ -351,8 +401,9 @@ public class GameModel {
     }
     
     /**
-     * Shelves the given list of tiles on the current player's shelf at the given column.
-     * Assumes that the column has enough space for the entire list.
+     * Shelves the given list of tiles on the current player's shelf at the given column. <br>
+     * Assumes that the column has enough space for the entire list. <br>
+     * Notifies all listeners of the shelf change.
      *
      * @param orderedTiles List of tiles to put on shelf, from first to last
      * @param column       Column of the shelf to insert the tiles at
@@ -364,9 +415,8 @@ public class GameModel {
     }
     
     /**
-     * Add a listener to the model (or reset the listener with the given name)
+     * Add a listener to the model (or reset the listener with the given name). <br>
      * At least one listener for each player should be supplied.
-     * It is necessary for the correct functioning of the networking communication.
      *
      * @param name     Listener name, should be the nickname for listeners relaying information to clients
      * @param listener Reference to the listener
@@ -375,6 +425,13 @@ public class GameModel {
         this.listeners.put(name, listener);
     }
     
+    /**
+     * Notify all listeners with a message.<br>
+     * Only works if the game isn't terminated yet.
+     *
+     * @param msg Message to send to all listeners
+     * @param <T> Type of message to send
+     */
     private <T extends ModelMessage<?>> void notifyAllListeners(T msg) {
         if( gameEnded )
             return;
@@ -384,14 +441,14 @@ public class GameModel {
     }
     
     /**
-     * Broker a chat message to the correct client
+     * Broker a chat message to the correct client.
      *
-     * @param chat Message to be sent
+     * @param chat Message to be sent.
      */
     public void chatBroker(ChatMessage chat) {
-        
         IncomingChatMessage message = new IncomingChatMessage(
                 chat.getPayload(), chat.getPlayerNickname(), chat.getDestination());
+        
         if( chat.getDestination().equals("ALL") ) {
             notifyAllListeners(message);
         }else if( this.listeners.containsKey(chat.getDestination()) ) {
@@ -401,36 +458,53 @@ public class GameModel {
         }
     }
     
+    /**
+     * Notify all clients of a change in the board. <br>
+     * A new Board object is sent to all clients.
+     */
     private void notifyBoardChange() {
         notifyAllListeners(new BoardMessage(this));
     }
     
+    /**
+     * Notify all clients when the current player is changed. <br>
+     * The nickname of the new current player is notified to all clients.
+     */
     private void notifyCurrentPlayerChange() {
         notifyAllListeners(new CurrentPlayerMessage(this.getCurrentPlayer().getNickname()));
     }
     
+    /**
+     * Notify all client of a change in the shelf of the current player. <br>
+     * A shelf object is sent to all clients.
+     */
     private void notifyShelfChange() {
         notifyAllListeners(new ShelfMessage(this.getCurrentPlayer().getShelf(), this.getCurrentPlayer().getNickname()));
     }
     
+    /**
+     * Notify all clients of the start of the game. <br>
+     * Sends the entire game state to each client (this is done separately, to keep personal goals secret).
+     */
     private void notifyStartGame() {
         // we have to create separate messages for each client
         for( Player x : players ) {
             ModelListener playerListener = this.listeners.get(x.getNickname());
             playerListener.update(
                     new StartGameMessage(
-                            this.players,
-                            x.getPg(),
                             this.board,
+                            this.players,
+                            this.getCurrentPlayer().getNickname(),
+                            x.getPg(),
                             this.commonGoalNumX, this.peekStackCGX(),
-                            this.commonGoalNumY, this.peekStackCGY(),
-                            this.getCurrentPlayer().getNickname())
+                            this.commonGoalNumY, this.peekStackCGY())
             );
         }
     }
     
     /**
-     * Notify the clients that the game is ended by sending a leaderboard.
+     * Notify the clients of the end of the game. <br>
+     * Sends the nickname of the winner and the leaderboard to all clients.
      */
     public void notifyWinner() {
         List<Player> winningPlayers = this.players.stream()
@@ -449,12 +523,13 @@ public class GameModel {
         for( Player x : winningPlayers ) {
             leaderboard.put(x.getNickname(), x.getScore());
         }
+        
         String winner = winningPlayers.get(0).getNickname();
         notifyAllListeners(new EndGameMessage(winner, leaderboard));
     }
     
     /**
-     * Notify a single client of a server message
+     * Notify the client with the given nickname with a server message.
      *
      * @param listenerName Name of the listener to notify
      * @param msg          Server Response Message to send
@@ -464,7 +539,11 @@ public class GameModel {
         listener.update(msg);
     }
     
-    // Testing methods
+    /**
+     * Peek the top of the CGX score stack.
+     *
+     * @return The top of the stack, or 0 if the stack is empty.
+     */
     public int peekStackCGX() {
         try {
             return commonGoalStackX.peek();
@@ -474,6 +553,11 @@ public class GameModel {
         }
     }
     
+    /**
+     * Peek the top of the CGY score stack.
+     *
+     * @return The top of the stack, or 0 if the stack is empty.
+     */
     public int peekStackCGY() {
         try {
             return commonGoalStackY.peek();
@@ -483,19 +567,44 @@ public class GameModel {
         }
     }
     
+    /**
+     * Get the entire Board object.
+     *
+     * @return The Board object.
+     */
     public Board getBoard() {
         return this.board;
     }
     
+    /**
+     * Get the TileBag object.
+     *
+     * @return The TileBag object.
+     */
     public TileBag getTileBag() {
         return this.tileBag;
     }
     
+    /**
+     * Add an already created player to the game. (used to restore a game from a save file)
+     *
+     * @param player The player to add.
+     */
     public void addPlayer(Player player) {
         players.add(player);
     }
     
+    /**
+     * GameModel's custom gson serializer
+     */
     protected static class ModelSerializer implements JsonSerializer<GameModel> {
+        
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public ModelSerializer() {
+        }
+        
         @Override
         public JsonElement serialize(GameModel model, Type typeOfSrc, JsonSerializationContext context) {
             var result = new JsonObject();
@@ -530,13 +639,26 @@ public class GameModel {
             
             return result;
         }
+        
     }
     
+    /**
+     * Return the json serialization of the object.
+     *
+     * @return The state of the GameModel object in a json-formatted string
+     */
     public String toJson() {
         Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new ModelSerializer()).create();
         return gson.toJson(this, GameModel.class);
     }
     
+    /**
+     * Write the serialized json string of the object directly to the specified file.
+     *
+     * @param path The path to file to be written
+     *
+     * @throws IOException If an error occur while writing the file
+     */
     public void toJson(String path) throws IOException {
         Gson gson = new GsonBuilder().registerTypeAdapter(GameModel.class, new ModelSerializer()).create();
         FileWriter writer = new FileWriter(path);
@@ -546,7 +668,17 @@ public class GameModel {
         writer.close();
     }
     
+    /**
+     * GameModel's' custom gson deserializer
+     */
     static public class ModelDeserializer implements JsonDeserializer<GameModel> {
+        
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public ModelDeserializer() {
+        }
+        
         @Override
         public GameModel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             Gson gson = new GsonBuilder().registerTypeAdapter(Shelf.class,
@@ -580,4 +712,5 @@ public class GameModel {
             return result;
         }
     }
+    
 }

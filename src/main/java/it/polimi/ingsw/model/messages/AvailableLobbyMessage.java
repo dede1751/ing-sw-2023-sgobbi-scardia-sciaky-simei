@@ -7,8 +7,17 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.function.BinaryOperator;
 
+
+/**
+ * Message containing the list of available lobbies.
+ */
 public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.AvailableLobbyPayload> {
     
+    /**
+     * Specific payload of the AvailableLobbyMessage
+     *
+     * @param lobbyViewList LobbyView list object wrapped inside the record
+     */
     public record AvailableLobbyPayload(List<LobbyController.LobbyView> lobbyViewList) implements Serializable {
         
         @Override
@@ -20,6 +29,11 @@ public class AvailableLobbyMessage extends ModelMessage<AvailableLobbyMessage.Av
         
     }
     
+    /**
+     * Create an AvailableLobbyMessage object from a LobbyView list
+     *
+     * @param p List of LobbyView objects to send
+     */
     public AvailableLobbyMessage(List<LobbyController.LobbyView> p) {
         super(new AvailableLobbyPayload(p));
     }

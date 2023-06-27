@@ -6,7 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -15,7 +18,12 @@ import javafx.scene.transform.Scale;
 
 import java.util.List;
 import java.util.Objects;
-
+/**
+ 
+ The GameInterfaceController class is responsible for managing the game interface screen in the GUI.
+ 
+ It handles various components such as the game board, player shelves, and chat.
+ */
 public class GameInterfaceController {
     
     @FXML
@@ -67,7 +75,19 @@ public class GameInterfaceController {
     
     private double scale;
     
+    /**
+     * Constructs a new GameInterfaceController.
+     */
+    public GameInterfaceController() {
     
+    }
+    
+    
+    /**
+     
+     Initializes the game interface screen.
+     Configures button actions, opacity, and player labels.
+     */
     @FXML
     public void initialize() {
         scale = 1;
@@ -85,11 +105,11 @@ public class GameInterfaceController {
     }
     
     /**
-     * Initialize shelves
-     *
-     * @param nicknames Ordered list of all other players
-     * @param shelves
-     * @param scores
+     
+     Initializes the player shelves with their respective nicknames, shelves, and scores.
+     @param nicknames Ordered list of all other players' nicknames.
+     @param shelves List of shelves for each player.
+     @param scores List of scores for each player.
      */
     public void initializeShelves(List<String> nicknames, List<Shelf> shelves, List<Integer> scores) {
         for( int i = 0; i < nicknames.size(); i++ ) {
@@ -101,17 +121,27 @@ public class GameInterfaceController {
         }
         localPlayerController.setScore(0);
     }
-    
+    /**
+     
+     Updates the shelf of a specific player with the given shelf and nickname.
+     @param shelf The updated shelf for the player.
+     @param nickname The nickname of the player.
+     */
     public void updateShelf(Shelf shelf, String nickname) {
         shelfControllerList.stream().filter((x) -> x.getPlayerNickname().equals(nickname)).forEach(
                 (x) -> x.updateOtherShelf(shelf));
     }
     
-    
-    private void changeSize(double x){
+    /**
+     
+     Changes the scale of the game interface.
+     
+     @param x The new scale value.
+     */
+    private void changeSize(double x) {
         
-        if(x!=scale){
-            scale=x;
+        if( x != scale ) {
+            scale = x;
             Scale scale = new Scale();
             scale.setPivotX(0);
             scale.setPivotY(0);
@@ -130,8 +160,10 @@ public class GameInterfaceController {
     }
     
     /**
-     * @param score
-     * @param nickname
+     
+     Updates the score of a player with the given score and nickname.
+     @param score The updated score.
+     @param nickname The nickname of the player.
      */
     public void updateScore(int score, String nickname) {
         
@@ -149,20 +181,38 @@ public class GameInterfaceController {
         
         
     }
-    
+    /**
+     
+     Returns the local player controller.
+     @return The local player controller.
+     */
     public LocalPlayerController getLocalPlayerController() {
         return localPlayerController;
     }
-    
+    /**
+     
+     Returns the board controller.
+     @return The board controller.
+     */
     public BoardController getBoardController() {
         return boardController;
     }
-    
+    /**
+     
+     Returns the chat controller.
+     @return The chat controller.
+     */
     public ChatController getChatController() {
-        return  chatController;
+        return chatController;
     }
-    
-    public Text getCurrentPlayer(){return currentPlayer;}
+    /**
+     
+     Returns the current player text.
+     @return The current player text.
+     */
+    public Text getCurrentPlayer() {
+        return currentPlayer;
+    }
     
     
 }

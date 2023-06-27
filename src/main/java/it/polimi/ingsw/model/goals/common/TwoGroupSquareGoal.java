@@ -6,12 +6,22 @@ import it.polimi.ingsw.model.Tile;
 
 import java.util.*;
 
+/**
+ * Implements the TwoGroupSquareGoal goal, involving two 2x2 squares of tiles of the same type.
+ */
 public class TwoGroupSquareGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public TwoGroupSquareGoal(){}
+    
+    @Override
     public String getDescription() {
         return "Two 2x2 squares of tiles of the same type.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         
         int totalCount = 0;
@@ -39,7 +49,7 @@ public class TwoGroupSquareGoal implements CommonGoalStrategy {
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
-                    current.sumDir().stream()
+                    current.adjacent().stream()
                             .filter((x) -> x.row() < Shelf.N_ROW &&
                                            x.row() > -1 &&
                                            x.col() < Shelf.N_COL &&

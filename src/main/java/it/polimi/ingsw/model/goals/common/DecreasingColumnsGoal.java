@@ -3,12 +3,23 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 import it.polimi.ingsw.model.Tile;
 
+/**
+ * Common goal strategy for the DecreasingColumns goal, involving 5 columns of decreasing/increasing height.
+ */
 public class DecreasingColumnsGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public DecreasingColumnsGoal() {
+    }
+    
+    @Override
     public String getDescription() {
         return "Five columns of increasing or decreasing height, with tiles of any type.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         return (((shelf.getTile(5, 0) == Tile.NOTILE && shelf.getTile(4, 0) != Tile.NOTILE) &&
                  (shelf.getTile(4, 1) == Tile.NOTILE && shelf.getTile(3, 1) != Tile.NOTILE) &&

@@ -18,20 +18,21 @@ import java.util.*;
 
 
 /**
- * Handles registration to multiple lobbies for concurrent play
- * LobbyController receives RequestLobby, RecoverLobby, CreateLobby and JoinLobby messages.
- * It always directly responds to each of these messages with a ServerResponseMessage, both in case of success and failure.
- * - Synchronization:
+ * Handles registration to multiple lobbies for concurrent play. <br>
+ * LobbyController receives RequestLobby, RecoverLobby, CreateLobby and JoinLobby messages. <br>
+ * It always directly responds to each of these messages with a ServerResponseMessage, both in case of success and failure.<br>
  * LobbyController constitutes a single synchronization lock, through which all login actions have to go through,
  * and also single-handedly controls the controller mapping on the LocalServer.
  */
 public class LobbyController {
     
     /**
-     * Lobby record, representing both recovery and normal lobbies
+     * Lobby record, representing both recovery and normal lobbies. <br>
+     * Recovery lobbies are identified by the isRecovery flag, with the only difference is them not needing new players
+     * being added to the model.
      *
-     * @param model         Game model
-     * @param clients       List of clients for the lobby
+     * @param model         Game model for the lobby
+     * @param clients       List of clients in the lobby
      * @param personalGoals List of personal goals, null for recovery lobbies
      * @param lobbySize     Lobby size
      * @param lobbyID       Unique lobby id
@@ -45,6 +46,11 @@ public class LobbyController {
             int lobbyID,
             boolean isRecovery
     ) {
+        /**
+         * Returns true if the lobby can still fit more clients
+         *
+         * @return True if the lobby can accept clients, false otherwise
+         */
         public boolean isEmpty() {
             if( isRecovery ) {
                 return clients.containsValue(null);
@@ -53,6 +59,13 @@ public class LobbyController {
             }
         }
         
+        /**
+         * Add a client with the chosen nickname to the lobby. <br>
+         * Takes care of including the client within the lobby's model.
+         *
+         * @param client   Client to add
+         * @param nickname Nickname of the client
+         */
         public void addClient(Client client, String nickname) {
             clients.put(nickname, client);
             
@@ -75,17 +88,29 @@ public class LobbyController {
             });
         }
         
+        /**
+         * Transform a recovery lobby into a normal lobby. <br>
+         * Used when all players have reconnected.
+         *
+         * @return A normal lobby
+         */
         public Lobby recoverLobby() {
             return new Lobby(model, clients, personalGoals, lobbySize, lobbyID, false);
         }
         
+        /**
+         * Transform a Lobby into its serializable LobbyView.
+         *
+         * @return A LobbyView of the lobby
+         */
         public LobbyView getLobbyView() {
             return new LobbyView(model.getNicknames(), lobbySize, lobbyID, isRecovery);
         }
     }
     
     /**
-     * LobbyView is a serializable version of Lobby to be sent to the client for information
+     * LobbyView is a serializable version of Lobby to be sent to the client for information. <br>
+     * This is an object meant to be handled by the Client.
      *
      * @param nicknames  List of nicknames
      * @param lobbySize  Lobby size
@@ -136,7 +161,7 @@ public class LobbyController {
     private Client client = null;
     
     /**
-     * Init LobbyController by reading all the saved models from disk
+     * Init LobbyController by reading all the saved models from disk.
      */
     private LobbyController() {
         for( GameModel model : ResourcesManager.getSavedModels() ) {
@@ -156,7 +181,7 @@ public class LobbyController {
     }
     
     /**
-     * Get the singleton instance of the LobbyController
+     * Get the singleton instance of the running LobbyController.
      *
      * @return LobbyController instance
      */
@@ -169,7 +194,8 @@ public class LobbyController {
     }
     
     /**
-     * Set the server reference, only possible once
+     * Set the server reference, only possible once. <br>
+     * This is needed because the LobbyController has to pass mappings to the server once the game starts.
      *
      * @param server Server reference
      */
@@ -180,7 +206,10 @@ public class LobbyController {
     }
     
     /**
-     * Disconnect a client when it's impossible to update it (ends the game for everyone)
+     * Disconnect a client when it's impossible to update it (ends the game for everyone). <br>
+     * This is a failsafe called whenever a client is unreachable, meant to be called during the game when a specific
+     * model listener fails to update its client. <br>
+     * It notifies everyone else that the game is over and stops the model from receiving further updates.
      */
     private synchronized void disconnectClient(Lobby lobby) {
         lobby.model.notifyWinner(); // we can safely modify this since we are still sync'd on the controller
@@ -189,7 +218,9 @@ public class LobbyController {
     }
     
     /**
-     * End a game, removing the lobby from the tracked list of lobbies
+     * Quietly remove all records of a Lobby from the server. <br>
+     * Gets rid of all the mappings and the saved model.<br>
+     * Does not notify clients in any way.
      *
      * @param lobbyID Lobby to stop tracking
      */
@@ -212,8 +243,9 @@ public class LobbyController {
     }
     
     /**
-     * Forward a ViewMessage to the LobbyController
-     * Message handling is synchronized on the full controller
+     * Forward a ViewMessage to the LobbyController.<br>
+     * Executes the corresponding onMessage() method if it exists.<br>
+     * This method is synchronized over the LobbyController instance only if it's a message it can handle.
      *
      * @param client Client that sent the message
      * @param msg    Message to forward
@@ -264,7 +296,8 @@ public class LobbyController {
     }
     
     /**
-     * Add the client to a recovery lobby
+     * Add the client to a recovery lobby.<br>
+     * If the lobby is full, start the game.
      *
      * @param msg Lobby parameters
      */
@@ -326,7 +359,7 @@ public class LobbyController {
     }
     
     /**
-     * Create a new lobby
+     * Create a new lobby.
      *
      * @param msg Lobby creation message
      */
@@ -372,9 +405,10 @@ public class LobbyController {
     }
     
     /**
-     * Join a lobby with the supplied id, and if needed start the game
+     * Join the chosen lobby.<br>
+     * If the lobby is full, start the game.
      *
-     * @param msg Description of lobby to join
+     * @param msg Join Lobby Message
      */
     @SuppressWarnings("unused")
     public void onMessage(JoinLobbyMessage msg) {
@@ -415,9 +449,8 @@ public class LobbyController {
     }
     
     /**
-     * Search for all lobbies with the information given in info.
-     * With null size return all the available lobby
-     * Normal and recovery lobbies are merged.
+     * Search for all lobbies of the given size.<br>
+     * If size is null, return all lobbies.
      *
      * @param size the desired size of the lobby
      *

@@ -9,7 +9,16 @@ import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+/**
+ * Class ServerLogger saves log data for the server.
+ */
 public class ServerLogger {
+    
+    /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private ServerLogger() {
+    }
     
     private static final FileChannel log;
     
@@ -25,6 +34,12 @@ public class ServerLogger {
         }
     }
     
+    /**
+     * Write a log message to the log file
+     *
+     * @param s       Message to be logged
+     * @param channel Channel to write the message to (either log or errorLog)
+     */
     private static void writeLog(String s, FileChannel channel) {
         String logString = Timestamp.from(Instant.now()) + " - " + s + "\n";
         
@@ -39,16 +54,33 @@ public class ServerLogger {
         }
     }
     
+    /**
+     * Write a log message to the log file
+     *
+     * @param s Message to be logged
+     */
     public static void log(String s) {
         ServerLogger.writeLog(s, log);
     }
     
+    /**
+     * Log a message being sent to a client.
+     *
+     * @param clientContext String describing the client
+     * @param message       Message being sent
+     */
     public static void messageLog(String clientContext, ModelMessage<?> message) {
         String s = "Updated Client : " + clientContext + " with message type : " + message.getClass().getSimpleName() +
                    "\n";
         ServerLogger.writeLog(s, log);
     }
     
+    /**
+     * Log an error message
+     *
+     * @param e                 Exception being logged
+     * @param additionalContext Additional context to be logged
+     */
     public static void errorLog(Exception e, String additionalContext) {
         String s = "Server encountered exception of type : " + e.getClass() + "\n";
         String s1 = "Message : " + e.getMessage() + "\n";
@@ -61,6 +93,11 @@ public class ServerLogger {
         }
     }
     
+    /**
+     * Log a simple error message
+     *
+     * @param e Exception being logged
+     */
     public static void errorLog(Exception e) {
         ServerLogger.errorLog(e, null);
     }

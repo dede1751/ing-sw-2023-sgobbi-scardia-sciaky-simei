@@ -10,6 +10,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * This class tests {@link PersonalGoal}
+ */
 public class PersonalGoalTest {
     Shelf shelf;
     

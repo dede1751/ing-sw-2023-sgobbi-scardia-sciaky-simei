@@ -3,7 +3,7 @@ package it.polimi.ingsw.model.goals.common;
 import it.polimi.ingsw.model.Shelf;
 
 /**
- * Interface implemented by each specific type of {@link CommonGoal}
+ * Interface implemented by each specific type of {@link CommonGoal} instance
  */
 public interface CommonGoalStrategy {
     

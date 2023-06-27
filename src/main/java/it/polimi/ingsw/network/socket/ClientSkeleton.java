@@ -11,11 +11,22 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
+/**
+ * ClientSkeleton used by a Socket Server to simulate RMI communication with the client.
+ */
 public class ClientSkeleton implements Client {
     
     private final ObjectOutputStream oos;
     private final ObjectInputStream ois;
     
+    
+    /**
+     * Initialize a ClientSkeleton object with a Socket object
+     *
+     * @param socket Socket object
+     *
+     * @throws RemoteException If an error occurs while creating the In/Out streams
+     */
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
             this.oos = new ObjectOutputStream(socket.getOutputStream());
@@ -53,6 +64,14 @@ public class ClientSkeleton implements Client {
         
     }
     
+    /**
+     * Send a ModelMessage object to the remote client via TCP-IP socket. <br>
+     * Default java serialization is used.
+     *
+     * @param msg Message from the server or describing a model change
+     *
+     * @throws RemoteException If an error occur during the TCP-IP communication
+     */
     @Override
     public void update(ModelMessage<?> msg) throws RemoteException {
         try {

@@ -16,6 +16,8 @@ public interface Server extends Remote {
      *
      * @param client  the client that sent the message
      * @param message the message sent by the client
+     *
+     * @throws RemoteException any connection error
      */
     void update(Client client, ViewMessage<?> message) throws RemoteException;
     

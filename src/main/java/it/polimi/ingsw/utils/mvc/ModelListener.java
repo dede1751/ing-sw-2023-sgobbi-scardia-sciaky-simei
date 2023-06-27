@@ -8,6 +8,11 @@ import it.polimi.ingsw.model.messages.ModelMessage;
  */
 public interface ModelListener {
     
+    /**
+     * Notify the listener of a model message
+     *
+     * @param msg Message from the server or describing a model change
+     */
     void update(ModelMessage<?> msg);
     
 }

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Queue;
 
 /**
- * GameController, responsible for modifying the model according to the input from the player views
+ * GameController, responsible for modifying the model according to the input from the player views.
  */
 public class GameController {
     
@@ -29,7 +29,8 @@ public class GameController {
     
     
     /**
-     * Initialize the controller with the given model and start the game
+     * Initialize the controller with the given model and start the game.<br>
+     * This constructor is used when the game is started from the lobby, whether it's a new game or a recovery.
      *
      * @param model   Model instance to run
      * @param lobbyID Lobby identifier, used to close lobby on exit
@@ -55,7 +56,7 @@ public class GameController {
     }
     
     /**
-     * Mock GameController class for testing purposes.
+     * Mock GameController constructor for testing purposes.<br>
      * This hooks empty listeners to the model to avoid problems when it tries to send data to a client
      *
      * @param model Model instance to run
@@ -112,7 +113,7 @@ public class GameController {
     }
     
     /**
-     * Compute adjacency score for final scores
+     * Compute shelf adjacency score for the final score.
      *
      * @param shelf Shelf to check for the score
      *
@@ -139,7 +140,7 @@ public class GameController {
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
-                    current.sumDir().stream()
+                    current.adjacent().stream()
                             .filter((x) -> x.row() < Shelf.N_ROW &&
                                            x.row() > -1 &&
                                            x.col() < Shelf.N_COL &&
@@ -160,10 +161,10 @@ public class GameController {
     }
     
     /**
-     * Turn bookkeeping:
-     * - checks common/personal/adjacency scores and updates them accordingly.
-     * - refills the board if needed
-     * - checks if the game is on its last turn
+     * Turn bookkeeping: <br>
+     * - checks common/personal/adjacency scores and updates them accordingly. <br>
+     * - refills the board if needed.<br>
+     * - checks if the game is on its last turn.
      */
     public void turnManager() {
         
@@ -198,7 +199,8 @@ public class GameController {
     }
     
     /**
-     * Update the current player, handling game termination
+     * Move over to the next player.<br>
+     * If this looped back to the first player during the last turn, end the game.
      */
     public void nextPlayerSetter() {
         int currentPlayerIndex = model.getCurrentPlayerIndex();
@@ -211,7 +213,8 @@ public class GameController {
     }
     
     /**
-     * Notify the views of the winner and close the lobby
+     * Notify the views of the game ending.<br>
+     * Sets the model's state to GameEnded and shuts down the lobby.
      */
     public void endGame() {
         model.notifyWinner();
@@ -229,12 +232,13 @@ public class GameController {
     }
     
     /**
-     * Forward a ViewMessage to the GameController
-     * Message handling is synchronized on the full controller
+     * Forward a ViewMessage to the GameController.<br>
+     * Executes the corresponding onMessage() method if it exists.<br>
+     * This method is synchronized over the GameController instance only if it's a message it can handle.
      *
      * @param msg Message to forward
      *
-     * @return true if the message was forwarded, false otherwise
+     * @return true if the message was forwarded succesfully, false otherwise
      */
     public boolean update(ViewMessage<?> msg) {
         if( !ReflectionUtility.hasMethod(this, "onMessage", msg) ) {
@@ -265,7 +269,7 @@ public class GameController {
     }
     
     /**
-     * Respond to a move message received from a client
+     * Respond to a move message received from a client<br>
      * In case of error, notify the client through the model with a ServerMessage.
      *
      * @param msg Move received
@@ -300,6 +304,11 @@ public class GameController {
         saveModel();
     }
     
+    /**
+     * Respond to a debug ping from a client by notifying it back.
+     *
+     * @param message Ping message
+     */
     @SuppressWarnings("unused")
     public void onMessage(DebugMessage message) {
         System.out.println("Debug message just arrived hurray! It says : " + message.getPayload());

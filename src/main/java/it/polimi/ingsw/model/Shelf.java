@@ -8,22 +8,32 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * Shelf representation within the model
+ * Model's internal shelf representation
  */
 public class Shelf implements Serializable {
     
     static final long serialVersionUID = 1L;
     
+    /**
+     * Number of rows in the shelf
+     */
     public final static int N_ROW = 6;
+    
+    /**
+     * Number of columns in the shelf
+     */
     public final static int N_COL = 5;
     
     /**
-     * Shelf represented as a list of stacks, where each stack represents a column.
-     * Row: 0 is the bottom row, 5 is the top row
+     * Shelf represented as a list of stacks, where each stack represents a column. <br>
+     * Row: 0 is the bottom row, 5 is the top row <br>
      * Col: 0 is the leftmost column, 4 is the rightmost
      */
     private final List<Stack<Tile>> content;
     
+    /**
+     * Create a new empty shelf
+     */
     public Shelf() {
         this.content = new ArrayList<>();
         
@@ -33,7 +43,7 @@ public class Shelf implements Serializable {
     }
     
     /**
-     * Get tile at given x, y coordinates
+     * Get tile at given x, y coordinates.
      *
      * @param row Row of the desired tile
      * @param col Column of the desired tile
@@ -132,18 +142,25 @@ public class Shelf implements Serializable {
     }
     
     /**
-     * Protected class that contains the gson custom serializer logic for Shelf.
-     * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile}
-     * Each column is represented as a json Array in objects each named column_i, where i is the index of the column.
-     * The json is expected to have the structure {shelf : {
-     * column_0 : [...],
-     * column_1 : [...],
-     * ...
-     * }
-     * }
-     * The names of the attributes are irrelevant
+     * Protected class that contains the gson custom serializer logic for Shelf. <br>
+     * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile} <br>
+     * Each column is represented as a json Array in objects each named column_i, where i is the index of the column. <br>
+     * The json is expected to have the structure {shelf : { <br>
+     * column_0 : [...], <br>
+     * column_1 : [...], <br>
+     * ... <br>
+     * }<br>
+     * }<br>
+     * The names of the attributes are irrelevant.
      */
     protected static class ShelfSerializer implements JsonSerializer<Shelf> {
+        
+        /**
+         * Private unused constructor to appease Javadoc.
+         */
+        private ShelfSerializer() {
+        }
+        
         @Override
         public JsonElement serialize(Shelf shelf, Type typeOfSrc, JsonSerializationContext context) {
             var matrix = shelf.getAllShelf();
@@ -162,19 +179,26 @@ public class Shelf implements Serializable {
     }
     
     /**
-     * Protected class that contains the gson custom deserializer logic for Shelf.
-     * The valid Json element tree representing the object has the following structure:
-     * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile}
-     * Each column is represented as a json Array in objects each named column_i, where i is the index of the column.
-     * The json is expected to have the structure {shelf : {
-     * column_0 : [...],
-     * column_1 : [...],
-     * ...
-     * }
-     * }
+     * Protected class that contains the gson custom deserializer logic for Shelf.<br>
+     * The valid Json element tree representing the object has the following structure:<br>
+     * Each tile is represented as its string representation (see Tile.toString()) {@linkplain Tile}<br>
+     * Each column is represented as a json Array in objects each named column_i, where i is the index of the column.<br>
+     * The json is expected to have the structure {shelf : {<br>
+     * column_0 : [...],<br>
+     * column_1 : [...],<br>
+     * ...<br>
+     * }<br>
+     * }<br>
      * The names of the attributes are irrelevant
      */
     protected static class ShelfDeserializer implements JsonDeserializer<Shelf> {
+        
+        /**
+         * Private unused constructor to appease Javadoc.
+         */
+        protected ShelfDeserializer() {
+        }
+        
         @Override
         public Shelf deserialize(JsonElement element, Type typeOfDst, JsonDeserializationContext context) throws JsonParseException {
             var result = new Shelf();
@@ -219,9 +243,9 @@ public class Shelf implements Serializable {
     }
     
     /**
-     * Serialize the object to a Json string
+     * Get the serialized version of this shelf
      *
-     * @return String
+     * @return Serialized shelf
      */
     public String toJson() {
         GsonBuilder gson = new GsonBuilder();
@@ -230,9 +254,11 @@ public class Shelf implements Serializable {
     }
     
     /**
-     * Serialize the object to a Json string
+     * Serialize the given shelf.
      *
-     * @return String
+     * @param shelf Shelf to serialize
+     *
+     * @return Serialized shelf
      */
     public static String toJson(Shelf shelf) {
         GsonBuilder gson = new GsonBuilder();

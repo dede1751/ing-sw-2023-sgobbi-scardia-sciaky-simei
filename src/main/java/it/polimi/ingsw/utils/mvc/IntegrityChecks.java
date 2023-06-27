@@ -11,15 +11,24 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * IntegrityChecks unifies player input validation over game actions, to be used by both the client and server.
+ * IntegrityChecks unifies player input validation over game actions. <br>
+ * This class is a utility meant to abstract away the details of the game rules from the client and server.
  */
 public class IntegrityChecks {
+    
+    /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private IntegrityChecks() {
+    }
     
     /**
      * Checks if the list of coordinates is a well-formed selection.
      * Selections must be a single connected line of 1 to 3 tiles.
      *
      * @param selection List of coordinates selected by the player
+     * @param board     board to check
+     * @param shelf     shelf to check
      *
      * @return true if the selection is valid, false otherwise
      */

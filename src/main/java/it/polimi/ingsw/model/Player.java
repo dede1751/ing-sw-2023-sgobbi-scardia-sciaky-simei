@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.lang.reflect.Type;
 
 /**
- * Player representation within model
+ * Model's internal Player representation.
  */
 public class Player implements Serializable {
     
@@ -33,16 +33,27 @@ public class Player implements Serializable {
     private boolean completedGoalY;
     
     /**
-     * Initialized player with given nickname and personal goal.
+     * Initialize player with given nickname and personal goal. <br>
+     * Used to initialize players within fresh games. <br>
      * Nickname uniqueness within game must be externally checked
      *
-     * @param nickname String of the player's nickname
+     * @param nickname Player's nickname
      * @param pgID     Integer id of the player's personal goal (0-11)
      */
     protected Player(String nickname, int pgID) {
         this(nickname, pgID, 0, new Shelf(), 0);
     }
     
+    /**
+     * Initialize player from given state. <br>
+     * Used to initialize players when recovering games.
+     *
+     * @param nickname        Player's nickname
+     * @param pgID            Integer id of the player's personal goal (0-11)
+     * @param score           Player's total score
+     * @param shelf           Player's shelf
+     * @param commonGoalScore Player's common goal score
+     */
     private Player(String nickname, int pgID, int score, Shelf shelf, int commonGoalScore) {
         this.nickname = nickname;
         this.pgID = pgID;
@@ -61,7 +72,7 @@ public class Player implements Serializable {
     }
     
     /**
-     * Get the player's current score
+     * Get the player's current total score.
      *
      * @return Integer player score
      */
@@ -70,7 +81,7 @@ public class Player implements Serializable {
     }
     
     /**
-     * Get the player's personal goal id
+     * Get the player's personal goal id.
      *
      * @return Integer id for the player's personal goal
      */
@@ -79,7 +90,7 @@ public class Player implements Serializable {
     }
     
     /**
-     * Get the player's shelf
+     * Get the player's shelf.
      *
      * @return Reference to player's shelf
      */
@@ -88,9 +99,9 @@ public class Player implements Serializable {
     }
     
     /**
-     * Add given score to the player's total
+     * Add given score to the player's common goal score.
      *
-     * @param score Integer score to add to running total
+     * @param score Integer score to add to common goal score
      *
      * @return Updated integer score
      */
@@ -99,52 +110,116 @@ public class Player implements Serializable {
         return this.commonGoalScore;
     }
     
+    /**
+     * Get the player's common goal score.
+     *
+     * @return Integer common goal score
+     */
     public int getCommonGoalScore() {
         return this.commonGoalScore;
     }
     
+    /**
+     * Set the player's personal goal score.
+     *
+     * @param score Integer personal goal score
+     */
     public void setPersonalGoalScore(int score) {
         this.personalGoalScore = score;
     }
     
+    /**
+     * Get the player's personal goal score.
+     *
+     * @return Integer personal goal score
+     */
     public int getPersonalGoalScore() {
         return this.personalGoalScore;
     }
     
+    /**
+     * Get the player's adjacency score.
+     *
+     * @return Integer adjacency score
+     */
     public int getAdjacencyScore() {
         return adjacencyScore;
     }
     
+    /**
+     * Set the player's adjacency score.
+     *
+     * @param score Integer adjacency score
+     */
     public void setAdjacencyScore(int score) {
         this.adjacencyScore = score;
     }
     
+    /**
+     * Check if the player has completed the common goal X.
+     *
+     * @return true if the player has completed the common goal X, false otherwise
+     */
     public boolean isCompletedGoalX() {
         return completedGoalX;
     }
     
+    /**
+     * Set the player's completion status of the common goal X.
+     *
+     * @param completedGoalX true if the player has completed the common goal X, false otherwise
+     */
     public void setCompletedGoalX(boolean completedGoalX) {
         this.completedGoalX = completedGoalX;
     }
     
+    /**
+     * Check if the player has completed the common goal Y.
+     *
+     * @return true if the player has completed the common goal Y, false otherwise
+     */
     public boolean isCompletedGoalY() {
         return completedGoalY;
     }
     
+    /**
+     * Set the player's completion status of the common goal Y.
+     *
+     * @param completedGoalY true if the player has completed the common goal Y, false otherwise
+     */
     public void setCompletedGoalY(boolean completedGoalY) {
         this.completedGoalY = completedGoalY;
     }
     
+    /**
+     * Get the player's bonus score.
+     *
+     * @return Integer bonus score
+     */
     public int getBonusScore() {
         return bonusScore;
     }
     
+    /**
+     * Set the player's bonus score.
+     *
+     * @param bonusScore Integer bonus score
+     */
     public void setBonusScore(int bonusScore) {
         this.bonusScore = bonusScore;
     }
     
-    
+    /**
+     * Player's custom gson serializer
+     */
     protected static class PlayerSerializer implements JsonSerializer<Player> {
+        
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public PlayerSerializer() {
+        }
+        
         @Override
         public JsonElement serialize(Player player, Type typeOfSrc, JsonSerializationContext context) {
             
@@ -160,9 +235,20 @@ public class Player implements Serializable {
             result.addProperty("CGYCompleted", player.completedGoalY);
             return result;
         }
+        
     }
     
+    /**
+     * Player's custom gson deserializer
+     */
     protected static class PlayerDeserializer implements JsonDeserializer<Player> {
+        
+        /**
+         * Default constructor to appease Javadoc.
+         */
+        public PlayerDeserializer() {
+        }
+        
         @Override
         public Player deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             
@@ -179,5 +265,6 @@ public class Player implements Serializable {
             result.setCompletedGoalY(GCYcompleted.getAsBoolean());
             return result;
         }
+        
     }
 }

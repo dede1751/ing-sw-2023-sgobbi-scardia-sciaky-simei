@@ -16,6 +16,10 @@ import java.util.*;
 import java.util.function.Predicate;
 
 
+/**
+ * Textual User Interface (TUI) class. <br>
+ * This class is responsible for running the view in TUI mode.
+ */
 public class TUI extends View {
     
     private final Queue<Response> responseList = new LinkedList<>();
@@ -23,10 +27,16 @@ public class TUI extends View {
     private final Object loginLock = new Object();
     
     private final Object lobbyLock = new Object();
-    protected boolean newLobbies = false;
+    private boolean newLobbies = false;
     
     private String prompt = null;
     private String error = null;
+    
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public TUI() {
+    }
     
     /**
      * Runs the main TUI thread.
@@ -100,6 +110,9 @@ public class TUI extends View {
         return choice;
     }
     
+    /**
+     * Ask the user to input a broadcast message.
+     */
     private void askBroadcastMessage() {
         Scanner scanner = new Scanner(System.in);
         
@@ -120,6 +133,9 @@ public class TUI extends View {
         notifyChatMessage(msg);
     }
     
+    /**
+     * Ask the user to input a private message.
+     */
     private void askPrivateMessage() {
         Scanner scanner = new Scanner(System.in);
         
@@ -157,8 +173,8 @@ public class TUI extends View {
     
     
     /**
-     * Take care of user login to a lobby on the server
-     * This will set up the player's nickname and sign them up to an active lobby
+     * Take care of user login to a lobby on the server. <br>
+     * This will set up the player's nickname and sign them up to an active lobby.
      */
     private void userLogin() {
         Scanner scanner = new Scanner(System.in);
@@ -462,7 +478,8 @@ public class TUI extends View {
     }
     
     /**
-     * Wait until the lobby list is updated by the server
+     * Wait until the lobby list is updated by the server with a {@link AvailableLobbyMessage}. <br>
+     * Synchronizes on lobbyLock.
      */
     private void waitLobbies() {
         synchronized(lobbyLock) {
@@ -479,7 +496,7 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to a BoardMessage, receiving a board update from the server
+     * Respond to a {@link BoardMessage}, receiving a board update from the server
      *
      * @param msg the message received
      */
@@ -490,8 +507,8 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to an AvailableLobbyMessage, updating the list of available lobbies.
-     * This frees up the newLobby lock, allowing the client to read the updated lobbies.
+     * Respond to an {@link AvailableLobbyMessage}, updating the list of available lobbies. <br>
+     * This frees up the lobbyLock, allowing the client to read the updated lobbies.
      *
      * @param msg the message received
      */
@@ -506,7 +523,7 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to an EndGameMessage, printing the leaderboard and terminating the game.
+     * Respond to an {@link EndGameMessage}, printing the leaderboard and terminating the game.
      *
      * @param msg the message received
      */
@@ -518,7 +535,8 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to a StartGameMessage, setting up the model's initial state and starting the game.
+     * Respond to a {@link StartGameMessage}, setting up the model's initial state and starting the game. <br>
+     * Triggers a print of the game state.
      *
      * @param msg the message received
      */
@@ -531,8 +549,8 @@ public class TUI extends View {
     }
     
     /**
-     * Responde to a ServerResponseMessage.
-     * These messages are received as a response to various requests to the server.
+     * Respond to a {@link ServerResponseMessage}, adding the response to the response list. <br>
+     * These messages are received as a response to various requests to the server. <br>
      * Messages involving registration always receive a response, while during the game one is received only for errors.
      *
      * @param msg the message received
@@ -556,7 +574,7 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to a ShelfMessage, updating the current player's shelf.
+     * Respond to a {@link ShelfMessage}, updating the current player's shelf.
      *
      * @param msg the message received
      */
@@ -566,7 +584,8 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to an incoming chat message
+     * Respond to a {@link IncomingChatMessage}. <br>
+     * Triggers a print of the game state.
      *
      * @param msg the message received
      */
@@ -579,7 +598,7 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to an UpdateScoreMessage, providing score updates at the end of the turn.
+     * Respond to an {@link UpdateScoreMessage}, providing score updates at the end of the turn.
      *
      * @param msg the message received
      */
@@ -589,7 +608,7 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to a CommonGoalMessage, updating the score of the common goal stacks.
+     * Respond to a {@link CommonGoalMessage}, updating the score of the common goal stacks.
      *
      * @param msg the message received
      */
@@ -603,7 +622,8 @@ public class TUI extends View {
     }
     
     /**
-     * Respond to a CurrentPlayerMessage, updating the current player
+     * Respond to a {@link CurrentPlayerMessage}, updating the current player. <br>
+     * Triggers a print of the game state.
      *
      * @param msg the message received
      */
@@ -615,4 +635,5 @@ public class TUI extends View {
             TUIUtils.printGame(nickname, prompt, error);
         }
     }
+    
 }

@@ -24,11 +24,26 @@ import static it.polimi.ingsw.model.messages.CommonGoalMessage.CommonGoalPayload
 import static javafx.application.Platform.runLater;
 
 
+
+/**
+ * The GUI class extends the View class and represents the graphical user interface of the application.
+ */
 public class GUI extends View {
     
     
     private final List<String> otherPlayersNicks = new ArrayList<>(3);
     
+    /**
+     * Constructs a new GUI instance.
+     */
+    public GUI() {
+    
+    }
+    /**
+     * Respond to a {@link BoardMessage}, receiving a board update from the server
+     *
+     * @param msg The BoardMessage received.
+     */
     @Override
     public void onMessage(BoardMessage msg) {
         model.setBoard(msg.getPayload());
@@ -41,13 +56,21 @@ public class GUI extends View {
                      
                  });
     }
-    
+    /**
+     * Respond to an {@link AvailableLobbyMessage}, updating the list of available lobbies.
+     *
+     * @param msg The AvailableLobbyMessage received.
+     */
     @Override
     public void onMessage(AvailableLobbyMessage msg) {
         this.lobbies = msg.getPayload().lobbyViewList();
         runLater(() -> GUIApp.getLoginController().updateLobbies(msg.getPayload().lobbyViewList()));
     }
-    
+    /**
+     *Respond to an {@link EndGameMessage}, printing the leaderboard and terminating the game.
+     *
+     * @param msg The EndGameMessage received.
+     */
     @Override
     public void onMessage(EndGameMessage msg) {
         try {
@@ -67,7 +90,11 @@ public class GUI extends View {
         }
         
     }
-    
+    /**
+     * Respond to a {@link StartGameMessage}, setting up the model's initial state and starting the game. <br>
+     *
+     * @param msg The StartGameMessage received.
+     */
     @Override
     public void onMessage(StartGameMessage msg) {
         model.setModel(msg);
@@ -94,7 +121,7 @@ public class GUI extends View {
                                                                                               scores);
             
             GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(
-                        "     The Current player is " + model.getCurrentPlayer());
+                    "     The Current player is " + model.getCurrentPlayer());
             
             GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().setRecipientName();
             if( model.getPlayersNicknames().get(0).equals(nickname) ) {
@@ -120,7 +147,11 @@ public class GUI extends View {
     }
     
     /**
-     * @param msg
+     Respond to a {@link ServerResponseMessage}, adding the response to the response list. <br>
+     * These messages are received as a response to various requests to the server. <br>
+     * Messages involving registration always receive a response, while during the game one is received only for errors.
+     *
+     * @param msg The ServerResponseMessage received.
      */
     @Override
     public void onMessage(ServerResponseMessage msg) {
@@ -162,7 +193,9 @@ public class GUI extends View {
     }
     
     /**
-     * @param msg
+     * Respond to a {@link ShelfMessage}, updating the current player's shelf.
+     *
+     * @param msg The ShelfMessage received.
      */
     @Override
     public void onMessage(ShelfMessage msg) {
@@ -180,23 +213,28 @@ public class GUI extends View {
     }
     
     /**
-     * @param msg
+     *  Respond to a {@link IncomingChatMessage}. <br>
+     *
+     * @param msg The IncomingChatMessage received.
      */
     @Override
     public void onMessage(IncomingChatMessage msg) {
         this.model.addChatMessage(msg.getSender(), msg.getPayload(), msg.getDestination());
         
         if( this.model.isStarted() ) {
-            if(msg.getDestination().equals(nickname)){
+            if( msg.getDestination().equals(nickname) ) {
                 
-                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                        msg.getSender() + ": " + msg.getPayload(), Color.BLUEVIOLET));
-            }else if(msg.getSender().equals(nickname)){
-                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                        msg.getSender() + ": " + msg.getPayload(), Color.INDIGO));
+                runLater(
+                        () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
+                                msg.getSender() + ": " + msg.getPayload(), Color.BLUEVIOLET));
+            }else if( msg.getSender().equals(nickname) ) {
+                runLater(
+                        () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
+                                msg.getSender() + ": " + msg.getPayload(), Color.INDIGO));
             }else {
-                runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                        msg.getSender() + ": " + msg.getPayload(), Color.BLACK));
+                runLater(
+                        () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
+                                msg.getSender() + ": " + msg.getPayload(), Color.BLACK));
             }
             
         }
@@ -204,7 +242,9 @@ public class GUI extends View {
     }
     
     /**
-     * @param msg
+     * Respond to an {@link UpdateScoreMessage}, providing score updates at the end of the turn.
+     *      *
+     * @param msg The UpdateScoreMessage received.
      */
     @Override
     public void onMessage(UpdateScoreMessage msg) {
@@ -215,7 +255,11 @@ public class GUI extends View {
         runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().updateScore(
                 this.model.getPoints(msg.getPayload().player()), msg.getPayload().player()));
     }
-    
+    /**
+     * Respond to a {@link CommonGoalMessage}, updating the score of the common goal stacks.
+     *      *
+     * @param msg The CommonGoalMessage received.
+     */
     @Override
     public void onMessage(CommonGoalMessage msg) {
         CommonGoalPayload p = msg.getPayload();
@@ -237,15 +281,19 @@ public class GUI extends View {
     }
     
     /**
-     * @param msg
+     * Respond to a {@link CurrentPlayerMessage}, updating the current player. <br>
+     *
+     * @param msg The CurrentPlayerMessage received.
      */
     @Override
     public void onMessage(CurrentPlayerMessage msg) {
         model.setCurrentPlayer(msg.getPayload());
         runLater(() -> GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(
-                 "     The Current player is " + msg.getPayload()));
+                "     The Current player is " + msg.getPayload()));
     }
-    
+    /**
+     * Runs the GUI application.
+     */
     @Override
     public void run() {
         try {

@@ -13,8 +13,22 @@ import java.rmi.registry.Registry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Main entry point for the server application
+ */
 public class AppServer {
     
+    /**
+     * Unused private constructor to appease Javadoc.
+     */
+    private AppServer() {
+    }
+    
+    /**
+     * Server entry point. Sets up both communication protocols and waits.
+     *
+     * @param args ignored
+     */
     public static void main(String[] args) {
         LocalServer server;
         try {
@@ -54,12 +68,27 @@ public class AppServer {
         }
     }
     
+    /**
+     * Starts the RMI protocol, by publishing the server instance on the registry. <br>
+     * Server is called "myshelfie_server" and is published on port 1099.
+     *
+     * @param server The server instance to publish.
+     *
+     * @throws RemoteException In case of errors binding to the registry.
+     */
     private static void startRMI(LocalServer server) throws RemoteException {
         Registry registry = LocateRegistry.createRegistry(1099);
         registry.rebind("myshelfie_server", server);
     }
     
-    public static void startSocket(LocalServer server) throws RemoteException {
+    /**
+     * Starts the socket protocol, by listening on port 23456.
+     *
+     * @param server The server instance to use.
+     *
+     * @throws RemoteException In case of errors starting/running the socket.
+     */
+    private static void startSocket(LocalServer server) throws RemoteException {
         try( ExecutorService executorService = Executors.newCachedThreadPool();
              ServerSocket serverSocket = new ServerSocket(23456) ) {
             //noinspection InfiniteLoopStatement
@@ -92,5 +121,4 @@ public class AppServer {
             throw new RemoteException("Cannot start socket server", e);
         }
     }
-    
 }

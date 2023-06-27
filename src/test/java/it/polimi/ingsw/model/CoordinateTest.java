@@ -4,10 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.rmi.ConnectIOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -82,7 +80,7 @@ public class CoordinateTest {
         coordinates.add(coord1);
         coordinates.add(coord2);
         coordinates.add(coord3);
-    
+        
         Coordinate newCoord1 = new Coordinate(2, 3);
         Coordinate newCoord2 = new Coordinate(3, 2);
         Coordinate newCoord3 = new Coordinate(4, 3);
@@ -110,6 +108,6 @@ public class CoordinateTest {
         expected.add(left);
         expected.add(right);
         
-        assertEquals(expected, coord.sumDir());
+        assertEquals(expected, coord.adjacent());
     }
 }

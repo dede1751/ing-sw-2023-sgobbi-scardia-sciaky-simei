@@ -9,8 +9,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+/**
+ * Common goal strategy for the SixGroupTwoTile goal, involving 6 groups of at least 2 tiles of the same type.
+ */
 public class SixGroupTwoTileGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public SixGroupTwoTileGoal() {
+    }
+    
+    @Override
     public String getDescription() {
         return "Six groups, each containing at least 2 tiles of the same type.";
     }
@@ -37,7 +47,7 @@ public class SixGroupTwoTileGoal implements CommonGoalStrategy {
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
-                    current.sumDir().stream()
+                    current.adjacent().stream()
                             .filter((x) -> x.row() < Shelf.N_ROW &&
                                            x.row() > -1 &&
                                            x.col() < Shelf.N_COL &&

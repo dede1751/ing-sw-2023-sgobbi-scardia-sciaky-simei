@@ -1,16 +1,20 @@
 package it.polimi.ingsw.utils.exceptions;
 
+/**
+ * CommonException is the base class for all exceptions in the project.
+ */
 public class CommonException extends Exception {
     
+    /**
+     * Initialize an empty CommonException object.
+     */
     public CommonException() {
         super();
     }
     
-    public CommonException(String message) {
-        super(message);
-    }
-    
-    //not sure that it will always work
+    /**
+     * Print a stack trace of the exception.
+     */
     public void stackPrintOrigin() {
         int depth_level = 1;
         System.err.println("===============");

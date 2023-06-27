@@ -13,6 +13,9 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
+/**
+ * ServerStub used by a Socket Client to simulate RMI communication with the server.
+ */
 public class ServerStub implements Server {
     
     private ObjectOutputStream oos;
@@ -22,6 +25,12 @@ public class ServerStub implements Server {
     
     private Client client;
     
+    /**
+     * Initialize a ServerStub object from socket information.
+     *
+     * @param ip   the ip address of the server
+     * @param port the port opened for communication by the server
+     */
     public ServerStub(String ip, int port) {
         try {
             this.socket = new Socket(ip, port);
@@ -49,7 +58,12 @@ public class ServerStub implements Server {
         
     }
     
-    public void setClient(Client client) throws RemoteException {
+    /**
+     * Sets the client to forward the messages received from the server to.
+     *
+     * @param client the client to forward the messages to
+     */
+    public void setClient(Client client) {
         this.client = client;
     }
     
@@ -95,6 +109,11 @@ public class ServerStub implements Server {
         
     }
     
+    /**
+     * Closes the socket
+     *
+     * @throws RemoteException if the socket cannot be closed
+     */
     public void close() throws RemoteException {
         try {
             socket.close();

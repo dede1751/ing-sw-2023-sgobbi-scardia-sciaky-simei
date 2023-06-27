@@ -5,12 +5,23 @@ import it.polimi.ingsw.model.Tile;
 
 import java.util.HashSet;
 
+/**
+ * Implements the FourRowFiveTileGoal goal, involving four rows of five tiles of maximum three different types.
+ */
 public class FourRowFiveTileGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public FourRowFiveTileGoal() {
+    }
+    
+    @Override
     public String getDescription() {
         return "Four rows, each formed by 5 tiles of maximum 3 different types.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         int rowCounter = 0;
         for( int i = 0; i < 6; i++ ) {

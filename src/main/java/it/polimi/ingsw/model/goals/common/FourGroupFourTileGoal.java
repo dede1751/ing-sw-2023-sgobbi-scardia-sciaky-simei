@@ -6,12 +6,23 @@ import it.polimi.ingsw.model.Tile;
 
 import java.util.*;
 
+/**
+ * Common goal strategy for the FourGroupFourTile goal, involving 4 groups of at least 4 tiles of the same type.
+ */
 public class FourGroupFourTileGoal implements CommonGoalStrategy {
     
+    /**
+     * Default constructor to appease Javadoc.
+     */
+    public FourGroupFourTileGoal() {
+    }
+    
+    @Override
     public String getDescription() {
         return "Four groups, each containing at least 4 tiles of the same type.";
     }
     
+    @Override
     public boolean checkShelf(Shelf shelf) {
         Tile[][] mat = shelf.getAllShelf();
         boolean[][] checked = new boolean[Shelf.N_ROW][Shelf.N_COL];
@@ -45,7 +56,7 @@ public class FourGroupFourTileGoal implements CommonGoalStrategy {
                 while( !visited.isEmpty() ) {
                     current = visited.poll();
                     selected.add(current);
-                    current.sumDir().stream()
+                    current.adjacent().stream()
                             .filter((x) -> x.row() < Shelf.N_ROW &&
                                            x.row() > -1 &&
                                            x.col() < Shelf.N_COL &&

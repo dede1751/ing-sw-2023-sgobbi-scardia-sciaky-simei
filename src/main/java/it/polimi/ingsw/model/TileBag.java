@@ -11,10 +11,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Model's internal representation of the tile bag. <br>
+ * Since tiles are drawn from a bag with limited capacity to refill the board, the distribution of tiles over time changes. <br>
+ * To better model this behaviour, the tiles in the bag must be kept track of. <br>
+ * Note that all contents of the Tile Bag include the tiles on the board. Tiles are removed from the bag when put on shelves.
+ */
 public class TileBag {
     
     private final Map<Tile, Integer> bag;
     
+    /**
+     * Initialize a full tile bag.
+     */
     public TileBag() {
         this.bag = new HashMap<>();
         
@@ -27,6 +37,11 @@ public class TileBag {
         }
     }
     
+    /**
+     * Initialize a tile bag from a map of tiles specifying their amount.
+     *
+     * @param tileBag Existing tile count map.
+     */
     private TileBag(Map<Tile, Integer> tileBag) {
         bag = tileBag;
     }
@@ -79,7 +94,29 @@ public class TileBag {
                 .sum();
     }
     
+    
+    /**
+     * TileBag's custom Gson Deserializer class. <br>
+     * Serialization is left to the standard gson's Map serialization. <br>
+     * An example of a valid serialized json class is thus provided : <br>
+     * <code>
+     * "TileBag": { <br>
+     * "(C,3)": 7, "(C,1)": 8, "(B,3)": 7, <br>
+     * "(F,3)": 7, "(B,1)": 8, "(G,3)": 7, <br>
+     * "(F,1)": 8, "(G,2)": 7, "(P,3)": 7, <br>
+     * "(P,1)": 8, "(F,2)": 7, "(P,2)": 7, <br>
+     * "(T,2)": 7, "(C,2)": 7, "(T,1)": 8, <br>
+     * "(T,3)": 7, "(B,2)": 7, "(G,1)": 8  <br>
+     * } <br>
+     * </code>
+     */
     public static class TileBagDeserializer implements JsonDeserializer<TileBag> {
+        
+        /**
+         * Protected constructor to appease Javadoc.
+         */
+        protected TileBagDeserializer() {
+        }
         
         @Override
         public TileBag deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

@@ -5,7 +5,6 @@ import it.polimi.ingsw.model.GameModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
@@ -21,23 +20,46 @@ import static java.nio.file.StandardOpenOption.WRITE;
 
 
 /**
- * Collection of utitility function to manage resources
- * All function should be static
+ * Class ResourcesManager is responsible for all interactions with the file system and generic server resources.
  */
 public final class ResourcesManager {
     
+    /**
+     * Private unused constructor to appease Javadoc.
+     */
+    private ResourcesManager() {
+    }
+    
+    /**
+     * Test sources root directory.
+     */
     public static final String testRootDir = Paths.get("src/test/java/it/polimi/ingsw").toString();
     
+    /**
+     * Main resources root directory.
+     */
     public static final String mainResourcesDir = Paths.get("resources").toString();
     
+    /**
+     * Recovery files directory.
+     */
     public static final String recoveryDir = mainResourcesDir + "/recovery";
     
+    /**
+     * Server logs directory.
+     */
     public static final String serverLoggerDir = mainResourcesDir + "/server";
     
+    /**
+     * Client logs directory.
+     */
     public static final String clientLoggerDir = mainResourcesDir + "/client";
     
     
     /**
+     * Get the name of the method currently being executed.<br>
+     * Used to fetch resource files for specific testing methods.
+     *
      * @return the name of the method from which it was called
      */
     public static String getCurrentMethod() {
@@ -60,6 +82,11 @@ public final class ResourcesManager {
         return FileChannel.open(Path.of(dir, file), CREATE, WRITE);
     }
     
+    /**
+     * Fetch the directory containing recovery files. If it does not exist, create it.
+     *
+     * @return the recovery directory if it exists or was created, null otherwise
+     */
     private static File getRecoveryDir() {
         File dir = new File(ResourcesManager.recoveryDir);
         
@@ -139,12 +166,19 @@ public final class ResourcesManager {
     }
     
     /**
-     * Utility function to manage Json objects, powered by GSON
+     * Utility function to manage Json objects, powered by GSON.
      */
     public static class JsonManager {
         
         /**
-         * search for the attribute in the first layer of the json's tree and return the child node
+         * Private unused constructor to appease Javadoc.
+         */
+        private JsonManager() {
+        }
+        
+        /**
+         * Search for the attribute in the first layer of the json's tree and return the entire subtree.
+         * Wrapper for {@link #getElementByAttribute(String, String)}.
          *
          * @param json      json string to search in
          * @param attribute parameter name to search for
@@ -157,6 +191,16 @@ public final class ResourcesManager {
             return getElementByAttribute(json, attribute).toString();
         }
         
+        /**
+         * Get json element by attribute name from the first level of the json tree.
+         *
+         * @param json      json string to search in
+         * @param attribute parameter name to search for
+         *
+         * @return the json element of the attribute
+         *
+         * @throws JsonParseException if the attribute is not found in the json root node
+         */
         public static JsonElement getElementByAttribute(String json, String attribute) throws JsonParseException {
             var jsonTree = JsonParser.parseString(json).getAsJsonObject();
             if( jsonTree.has(attribute) ) {
@@ -169,6 +213,16 @@ public final class ResourcesManager {
             }
         }
         
+        /**
+         * Get json element by attribute name from the first level of the json tree.
+         *
+         * @param json      json element to search in
+         * @param attribute parameter name to search for
+         *
+         * @return the json element of the attribute
+         *
+         * @throws JsonParseException if the attribute is not found in the json root node or the element is not a json object
+         */
         public static JsonElement getElementByAttribute(JsonElement json, String attribute) throws JsonParseException {
             if( json.isJsonObject() ) {
                 if( json.getAsJsonObject().has(attribute) ) {
@@ -180,11 +234,16 @@ public final class ResourcesManager {
         }
     }
     
+    /**
+     * Utility class to manage graphical resources used in the GUI.
+     */
     public static class GraphicalResources {
         
-        public static final String graphicalAssetDir =
-                Paths.get("src/main/resources/gui/assets").toAbsolutePath().toString();
-        public static final String FXMLDir = Paths.get("src/main/resources/gui/javafx").toAbsolutePath().toString();
+        /**
+         * Private unused constructor to appease Javadoc.
+         */
+        private GraphicalResources() {
+        }
         
         /**
          * Get the valid URL object of the indicated fxml file. <br>
@@ -195,17 +254,9 @@ public final class ResourcesManager {
          * @return The absolute URL referencing the [name].fxml file
          */
         public static URL getFXML(String name) {
-                return ResourcesManager.class.getClassLoader().getResource("gui/javafx/" + name);
+            return ResourcesManager.class.getClassLoader().getResource("gui/javafx/" + name);
         }
         
-        public static String getGraphicalAsset(String name){
-            try {
-                return Paths.get(graphicalAssetDir+ "/" + name).toUri().toURL().toString();
-            }
-            catch( MalformedURLException e ) {
-                throw new RuntimeException(e);
-            }
-        }
     }
     
     
