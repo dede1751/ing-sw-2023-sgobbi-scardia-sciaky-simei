@@ -38,7 +38,7 @@ class GameControllerTest {
                 StandardCharsets.UTF_8);
     }
     
-    private static class mockupServer extends LocalServer {
+    static class mockupServer extends LocalServer {
         public mockupServer() throws RemoteException {
             super();
         }
