@@ -33,6 +33,12 @@ public class TUI extends View {
     private String error = null;
     
     /**
+     * Default constructor to appease Javadoc.
+     */
+    public TUI() {
+    }
+    
+    /**
      * Runs the main TUI thread.
      */
     @Override
