@@ -168,9 +168,7 @@ public class LobbyControllerTest {
     
             LobbyController.Lobby lobby = new LobbyController.Lobby(
                     game, clients, personalGoals, lobbySize, lobbyID, isRecovery);
-    
-            clientStub client1 = new clientStub();
-            clientStub client2 = new clientStub();
+            
             lobby.model().addPlayer( "Lucrezia", 1 );
             lobby.model().addPlayer( "Luca", 2 );
             
@@ -198,10 +196,41 @@ public class LobbyControllerTest {
                                  \tLuca
                                  """,
                          lobbyView.toString() );
+        }
+        
+        
+        @Test
+        public void isFullTest() throws RemoteException {
     
+            GameModel game = new GameModel(2, 5, 6);
+            Map<String, Client> clients = new HashMap<>();
+    
+            Stack<Integer> personalGoals = new Stack<>();
+            int pg1 = 1;
+            int pg2 = 2;
+            personalGoals.add(pg1);
+            personalGoals.add(pg2);
+    
+            int lobbySize = 2;
+            int lobbyID = 0;
+            boolean isRecovery = false;
+    
+            LobbyController.Lobby lobby = new LobbyController.Lobby(
+                    game, clients, personalGoals, lobbySize, lobbyID, isRecovery);
+    
+            clientStub client1 = new clientStub();
+            clientStub client2 = new clientStub();
+            lobby.addClient(client1, "Lucrezia");
+            lobby.addClient(client2, "Luca");
+    
+            LobbyController.LobbyView lobbyView = lobby.getLobbyView();
             
+            assertTrue( lobbyView.isFull() );
         }
         
     }
+    
+    
+    
     
 }
