@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.GsonBuilder;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import org.junit.jupiter.api.Tag;
@@ -86,6 +87,30 @@ public class BoardTest {
             for( int j = 0; j < 9; j++ ) {
                 var coord = new Coordinate(i, j);
                 assertEquals(board.getTile(coord), matrix[i][j]);
+            }
+        }
+    }
+    
+    
+    @Test
+    public void serDeserTest() {
+        Board board = new Board( 2 );
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(Board.class, new Board.BoardSerializer());
+        var ser = gson.create().toJson(board, Board.class);
+    
+        gson.registerTypeAdapter(Board.class, new Board.BoardDeserializer());
+        var deser = gson.create().fromJson(ser, Board.class);
+    
+        var json = board.toString();
+        assertEquals(json, ser);
+        
+        var mat1 = board.getAsMatrix();
+        var mat2 = board.getAsMatrix();
+        
+        for( int i = 0; i < 9; i++ ) {
+            for( int j = 0; j < 9; j++ ) {
+                assertSame( mat1[i][j], mat2[i][j] );
             }
         }
     }
