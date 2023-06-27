@@ -138,7 +138,7 @@ public class LobbyController {
     /**
      * Init LobbyController by reading all the saved models from disk
      */
-    private LobbyController() {
+    LobbyController() {
         for( GameModel model : ResourcesManager.getSavedModels() ) {
             int lobbyID = lobbies.size();
             

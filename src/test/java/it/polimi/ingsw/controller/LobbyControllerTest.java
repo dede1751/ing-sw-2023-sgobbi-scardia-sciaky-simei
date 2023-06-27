@@ -9,8 +9,11 @@ import it.polimi.ingsw.network.LocalClient;
 import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.network.socket.ClientSkeleton;
 import it.polimi.ingsw.utils.files.ClientLogger;
+import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.view.messages.CreateLobbyMessage;
 import it.polimi.ingsw.view.messages.JoinLobbyMessage;
 import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
+import it.polimi.ingsw.view.messages.ViewMessage;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -85,7 +88,7 @@ public class LobbyControllerTest {
             lobby.addClient(client1, "Lucrezia");
             lobby.addClient(client2, "Luca");
     
-            assertFalse(lobby.isEmpty());
+            assertFalse( lobby.isEmpty() );
         }
     
     
@@ -230,6 +233,75 @@ public class LobbyControllerTest {
         
     }
     
+    
+    @Test
+    public void endGameTest() throws RemoteException {
+    
+        GameModel game = new GameModel(2, 5, 6);
+        Map<String, Client> clients = new HashMap<>();
+    
+        Stack<Integer> personalGoals = new Stack<>();
+        int pg1 = 1;
+        int pg2 = 2;
+        personalGoals.add(pg1);
+        personalGoals.add(pg2);
+    
+        int lobbySize = 2;
+        int lobbyID = 0;
+        boolean isRecovery = false;
+    
+        LobbyController.Lobby lobby = new LobbyController.Lobby(
+                game, clients, personalGoals, lobbySize, lobbyID, isRecovery);
+    
+        clientStub client1 = new clientStub();
+        clientStub client2 = new clientStub();
+        lobby.addClient(client1, "Lucrezia");
+        lobby.addClient(client2, "Luca");
+    
+        LobbyController lobbyController = new LobbyController();
+    
+        lobbyController.endGame( 0 );
+        
+        //TODO
+        
+    }
+    
+    
+    @Test
+    public void updateTest() throws RemoteException {
+    
+        GameModel game = new GameModel(2, 5, 6);
+        Map<String, Client> clients = new HashMap<>();
+    
+        Stack<Integer> personalGoals = new Stack<>();
+        int pg1 = 1;
+        int pg2 = 2;
+        personalGoals.add(pg1);
+        personalGoals.add(pg2);
+    
+        int lobbySize = 2;
+        int lobbyID = 0;
+        boolean isRecovery = false;
+    
+        LobbyController.Lobby lobby = new LobbyController.Lobby(
+                game, clients, personalGoals, lobbySize, lobbyID, isRecovery);
+    
+        LobbyController lobbyController = new LobbyController();
+    
+        clientStub client1 = new clientStub();
+        clientStub client2 = new clientStub();
+        
+        lobby.addClient(client1, "Lucrezia");
+        JoinLobbyMessage msg1 = new JoinLobbyMessage( 0, "Lucrezia" );
+        lobbyController.update( client1, msg1 );
+        
+        lobby.addClient(client2, "Luca");
+        JoinLobbyMessage msg2 = new JoinLobbyMessage( 0, "Lucrezia" );
+        lobbyController.update( client2, msg2 );
+        
+        assertFalse( lobby.isEmpty() );
+        
+    }
     
     
     
