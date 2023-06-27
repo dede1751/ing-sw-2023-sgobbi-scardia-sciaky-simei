@@ -8,17 +8,17 @@ Objective of this project is to build a distributed version of the game [MyShelf
 
 ### Implemented Features
 | Feature                  | Status |
-|:-------------------------|:--:|
-| Simplified rules         | ✅ |
-| Complete rules           | ✅ |
-| RMI                      | ✅ |
-| Socket                   | ✅ |
-| GUI                      | ✅ |
-| TUI                      | ✅ |
-| Multiple games           | ✅ |
-| Server Persistence       | ✅ |
-| Chat                     | ✅ |
-| Disconneciton Resilience | ❌ |
+|:-------------------------|:------:|
+| Simplified rules         |   ✅    |
+| Complete rules           |   ✅    |
+| RMI                      |   ✅    |
+| Socket                   |   ✅    |
+| GUI                      |   ✅    |
+| TUI                      |   ✅    |
+| Multiple games           |   ✅    |
+| Server Persistence       |   ✅    |
+| Chat                     |   ✅    |
+| Disconneciton Resilience |   ❌    |
 
 ### Testing Coverage
 [PLACEHOLDER][tests-image]
