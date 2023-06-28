@@ -42,7 +42,7 @@ public class PersonalGoal {
             }
             case 1 -> {
                 this.goal.put(new Coordinate(3, 0), Tile.Type.CATS);
-                this.goal.put(new Coordinate(4, 2), Tile.Type.BOOKS);
+                this.goal.put(new Coordinate(2, 4), Tile.Type.BOOKS);
                 this.goal.put(new Coordinate(3, 2), Tile.Type.GAMES);
                 this.goal.put(new Coordinate(0, 4), Tile.Type.FRAMES);
                 this.goal.put(new Coordinate(1, 3), Tile.Type.TROPHIES);
@@ -68,7 +68,7 @@ public class PersonalGoal {
                 this.goal.put(new Coordinate(0, 3), Tile.Type.CATS);
                 this.goal.put(new Coordinate(2, 2), Tile.Type.BOOKS);
                 this.goal.put(new Coordinate(0, 0), Tile.Type.GAMES);
-                this.goal.put(new Coordinate(3, 1), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(2, 1), Tile.Type.FRAMES);
                 this.goal.put(new Coordinate(4, 1), Tile.Type.TROPHIES);
                 this.goal.put(new Coordinate(1, 4), Tile.Type.PLANTS);
             }
@@ -156,7 +156,7 @@ public class PersonalGoal {
                 .filter(coordinateTileEntry -> {
                     Coordinate c = coordinateTileEntry.getKey();
                     Tile.Type type = shelf.getTile(c.row(), c.col()).type();
-                    
+
                     return type == coordinateTileEntry.getValue();
                 })
                 .count();

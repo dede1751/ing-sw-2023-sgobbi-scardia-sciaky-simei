@@ -42,7 +42,7 @@ public class AppServer {
      */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Insert the server's IPV4 address:");
+        System.out.print("Insert the server's IPV4 address: ");
         String ip;
         while( true ) {
             System.out.print("\n>>  ");
@@ -94,6 +94,8 @@ public class AppServer {
             }
         });
         socketThread.start();
+
+        System.out.println("Server started! Waiting for connections...");
         
         try {
             rmiThread.join();
