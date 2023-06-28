@@ -50,7 +50,10 @@
     },
     "CommonGoalScore": 0,
     "CGXCompleted": false,
-    "CGYCompleted": false
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
   },
   "Lucrezia": {
     "Nickname": "Lucrezia",
@@ -65,7 +68,10 @@
     },
     "CommonGoalScore": 8,
     "CGXCompleted": true,
-    "CGYCompleted": false
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
   },
   "Andrea": {
     "Nickname": "Andrea",
@@ -80,7 +86,10 @@
     },
     "CommonGoalScore": 0,
     "CGXCompleted": false,
-    "CGYCompleted": false
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
   },
   "Camilla": {
     "Nickname": "Camilla",
@@ -95,6 +104,10 @@
     },
     "CommonGoalScore": 0,
     "CGXCompleted": false,
-    "CGYCompleted": false
-  }
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
+  },
+  "LastTurn" : false
 }

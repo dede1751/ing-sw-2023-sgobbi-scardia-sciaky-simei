@@ -627,6 +627,7 @@ public class GameModel {
             //Global Players properties
             result.addProperty("PlayersNumber", model.numPlayers);
             result.addProperty("CurrentPlayer", model.currentPlayerIndex);
+            result.addProperty("LastTurn", model.lastTurn);
             var playerNicks = new JsonArray();
             for( var x : model.players ) {
                 playerNicks.add(x.getNickname());
@@ -709,6 +710,11 @@ public class GameModel {
             var currentPlayer =
                     gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "CurrentPlayer"), int.class);
             result.setCurrentPlayerIndex(currentPlayer);
+            var lastTurn = gson.fromJson(ResourcesManager.JsonManager.getElementByAttribute(json, "LastTurn"), boolean.class);
+
+            if(lastTurn) {
+                result.setLastTurn();
+            }
             return result;
         }
     }

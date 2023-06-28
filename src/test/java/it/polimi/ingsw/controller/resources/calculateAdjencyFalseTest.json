@@ -40,7 +40,6 @@
   "Luca": {
     "Nickname": "Luca",
     "PersonalGoal": 5,
-    "Score": 0,
     "Shelf": {
       "column_0": ["(C,1)", "(C,1)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
       "column_1": ["(C,1)", "(C,1)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
@@ -50,7 +49,10 @@
     },
     "CommonGoalScore": 0,
     "CGXCompleted": false,
-    "CGYCompleted": false
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
   },
   "Lucrezia": {
     "Nickname": "Lucrezia",
@@ -65,7 +67,10 @@
     },
     "CommonGoalScore": 0,
     "CGXCompleted": false,
-    "CGYCompleted": false
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
   },
   "Andrea": {
     "Nickname": "Andrea",
@@ -80,7 +85,10 @@
     },
     "CommonGoalScore": 0,
     "CGXCompleted": false,
-    "CGYCompleted": false
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
   },
   "Camilla": {
     "Nickname": "Camilla",
@@ -95,6 +103,10 @@
     },
     "CommonGoalScore": 0,
     "CGXCompleted": false,
-    "CGYCompleted": false
-  }
+    "CGYCompleted": false,
+    "AdjacencyScore": 0,
+    "PersonalGoalScore": 0,
+    "BonusScore": 0
+  },
+  "LastTurn" : false
 }

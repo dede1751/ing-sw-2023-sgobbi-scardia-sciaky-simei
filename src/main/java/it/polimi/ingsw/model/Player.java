@@ -15,8 +15,6 @@ public class Player implements Serializable {
     
     final private String nickname;
     
-    private final int score;
-    
     private int commonGoalScore;
     
     private int personalGoalScore;
@@ -41,7 +39,7 @@ public class Player implements Serializable {
      * @param pgID     Integer id of the player's personal goal (0-11)
      */
     protected Player(String nickname, int pgID) {
-        this(nickname, pgID, 0, new Shelf(), 0);
+        this(nickname, pgID, 0, new Shelf(), 0, 0,0);
     }
     
     /**
@@ -50,17 +48,20 @@ public class Player implements Serializable {
      *
      * @param nickname        Player's nickname
      * @param pgID            Integer id of the player's personal goal (0-11)
-     * @param score           Player's total score
+     * @param bonusScore      Player's total score
      * @param shelf           Player's shelf
      * @param commonGoalScore Player's common goal score
      */
-    private Player(String nickname, int pgID, int score, Shelf shelf, int commonGoalScore) {
+    private Player(String nickname, int pgID, int bonusScore, Shelf shelf, int commonGoalScore, int adjacencyScore, int personalGoalScore) {
         this.nickname = nickname;
         this.pgID = pgID;
-        this.score = score;
+        this.bonusScore = bonusScore;
         this.shelf = shelf;
         this.commonGoalScore = commonGoalScore;
+        this.adjacencyScore = adjacencyScore;
+        this.personalGoalScore = personalGoalScore;
     }
+
     
     /**
      * Get the player's nickname
@@ -226,13 +227,17 @@ public class Player implements Serializable {
             var result = new JsonObject();
             result.addProperty("Nickname", player.nickname);
             result.addProperty("PersonalGoal", player.pgID);
-            result.addProperty("Score", player.score);
+
             result.add("Shelf", ResourcesManager.JsonManager.getElementByAttribute(player.getShelf().toJson(),
                                                                                    "shelf").getAsJsonObject().get(
                     "shelf"));
             result.addProperty("CommonGoalScore", player.commonGoalScore);
             result.addProperty("CGXCompleted", player.completedGoalX);
             result.addProperty("CGYCompleted", player.completedGoalY);
+            result.addProperty("BonusScore", player.bonusScore);
+            result.addProperty("AdjacencyScore", player.adjacencyScore);
+            result.addProperty("PersonalGoalScore",player.personalGoalScore);
+
             return result;
         }
         
@@ -254,13 +259,16 @@ public class Player implements Serializable {
             
             var nickname = ResourcesManager.JsonManager.getElementByAttribute(json, "Nickname");
             var pgID = ResourcesManager.JsonManager.getElementByAttribute(json, "PersonalGoal");
-            var score = ResourcesManager.JsonManager.getElementByAttribute(json, "Score");
             var shelf = Shelf.fromJson(ResourcesManager.JsonManager.getObjectByAttribute(json.toString(), "Shelf"));
             var commonGoalScore = ResourcesManager.JsonManager.getElementByAttribute(json, "CommonGoalScore");
             var GCXcompleted = ResourcesManager.JsonManager.getElementByAttribute(json, "CGXCompleted");
             var GCYcompleted = ResourcesManager.JsonManager.getElementByAttribute(json, "CGYCompleted");
-            var result = new Player(nickname.getAsString(), pgID.getAsInt(), score.getAsInt(), shelf,
-                                    commonGoalScore.getAsInt());
+            var adjacencyScore = ResourcesManager.JsonManager.getElementByAttribute(json, "AdjacencyScore");
+            var personalGoalScore = ResourcesManager.JsonManager.getElementByAttribute(json, "PersonalGoalScore");
+            var bonusScore = ResourcesManager.JsonManager.getElementByAttribute(json, "BonusScore");
+            var result = new Player(nickname.getAsString(), pgID.getAsInt(), bonusScore.getAsInt(), shelf,
+                                    commonGoalScore.getAsInt(), adjacencyScore.getAsInt(), personalGoalScore.getAsInt());
+
             result.setCompletedGoalX(GCXcompleted.getAsBoolean());
             result.setCompletedGoalY(GCYcompleted.getAsBoolean());
             return result;
