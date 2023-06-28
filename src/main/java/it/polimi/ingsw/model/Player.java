@@ -21,7 +21,7 @@ public class Player implements Serializable {
     
     private int adjacencyScore;
     
-    private int bonusScore = 0;//is the 1 point given to the first who finishes the shelf
+    private int bonusScore;//is the 1 point given to the first who finishes the shelf
     
     final private int pgID;
     

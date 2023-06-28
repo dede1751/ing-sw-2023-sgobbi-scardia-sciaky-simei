@@ -188,8 +188,6 @@ public class GameController {
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
             model.setLastTurn();
         }
-        
-        
     }
     
     /**
