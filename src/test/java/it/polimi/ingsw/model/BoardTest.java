@@ -106,11 +106,11 @@ public class BoardTest {
         assertEquals(json, ser);
         
         var mat1 = board.getAsMatrix();
-        var mat2 = board.getAsMatrix();
+        var mat2 = deser.getAsMatrix();
         
         for( int i = 0; i < 9; i++ ) {
             for( int j = 0; j < 9; j++ ) {
-                assertSame( mat1[i][j], mat2[i][j] );
+                assertEquals( mat1[i][j], mat2[i][j] );
             }
         }
     }
