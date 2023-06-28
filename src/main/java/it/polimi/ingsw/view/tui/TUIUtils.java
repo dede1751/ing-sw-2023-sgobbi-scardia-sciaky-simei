@@ -120,12 +120,12 @@ public class TUIUtils {
         
         String boardCg = concatString(
                 generateBoard(),
-                "\n\n" + generateCommonGoal(model.getCGXindex()),
+                "\n\n" + generateCommonGoal(model.getCGXindex(), model.getTopCGXscore()),
                 3
         );
         boardCg = concatString(
                 boardCg,
-                "\n\n" + generateCommonGoal(model.getCGYindex()),
+                "\n\n" + generateCommonGoal(model.getCGYindex(), model.getTopCGYscore()),
                 1
         );
         
@@ -268,6 +268,49 @@ public class TUIUtils {
         output.append(bottom);
         return output.toString();
     }
+    
+    /**
+     * Create a colored box around the input string.
+     *
+     * @param input The string to put in the box
+     * @param color The color of the box
+     * @param space Number of spaces between the strinf input
+     *
+     * @return The input string surrounded by a box
+     */
+    public static String createBox(String input, String color, int space) {
+        StringBuilder output = new StringBuilder();
+        String[] lines = input.split("\n");
+        String[] linesNoColor = input.split("\n");
+        int maxLength = 0;
+        
+        // Iterate over each line to calculate the max length
+        for( String line : linesNoColor ) {
+            // Remove ANSI color codes before measuring length
+            String plainLine = line.replaceAll("\u001B\\[[;\\d]*m", "");
+            maxLength = Math.max(maxLength, plainLine.length());
+        }
+        
+        int width = maxLength; // Add 2 for each side of the box
+        String top = color + "┌" + "─".repeat(width + 2) + "┐" + ANSI_RESET + " ".repeat(space) + "\n";
+        String bottom = color + "└" + "─".repeat(width + 2) + "┘" + ANSI_RESET + " ".repeat(space)+"\n" ;
+        
+        output.append(top);
+        
+        for( String line : lines ) {
+            output.append(color).append("│ ").append(ANSI_RESET);
+            // Replace ANSI color codes with empty strings before padding
+            String plainLine = line.replaceAll("\u001B\\[[;\\d]*m", "");
+            output.append(line);
+            output.append(" ".repeat(maxLength - plainLine.length()));
+            output.append(color).append(" │").append(ANSI_RESET).append( " ".repeat(space)).append("\n");
+        }
+        
+        output.append(bottom);
+        return output.toString();
+    }
+    
+    
     
     /**
      * Generate the TUI representation of a list of tiles. <br>
@@ -433,37 +476,39 @@ public class TUIUtils {
      *
      * @param commonGoal The index of the common goal to print
      *
+     * @param score  The current score of the top stack of the common goal
+     *
      * @return The TUI representation of the common goal
      */
-    public static String generateCommonGoal(int commonGoal) {
+    public static String generateCommonGoal(int commonGoal1, int score) {
         StringBuilder sb = new StringBuilder();
+    
+        switch( commonGoal1 ) {
         
-        switch( commonGoal ) {
-            
             case 0 -> sb.append("\n\n\n    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
                                 "    x6     \n");
-            
+        
             case 1 -> sb.append("\n\n    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "  x4\n");
-            
+        
             case 2 -> sb.append(
                     ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET +
                     "\n\n\n\n\n" +
                     ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
-            
+        
             case 3 -> sb.append("\n\n\n\n   " + ANSI_WHITE_BACKGROUND + " = = " + ANSI_RESET + "\n   " +
                                 ANSI_WHITE_BACKGROUND + " = = " + ANSI_RESET + "x2 \n\n");
-            
+        
             case 4 -> sb.append("█\n" +
                                 "█\n" +
                                 "█   max 3 " + ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 "█   x3\n" +
                                 "█\n" +
                                 "█\n");
-            
+        
             case 5 -> sb.append(
                     "\n  " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + " = " +
                     ANSI_RESET +
@@ -473,17 +518,17 @@ public class TUIUtils {
                     "\n\n" +
                     ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET +
                     " " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
-            
+        
             case 6 -> sb.append(ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
                                 "  " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
                                 "      " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
                                 "        " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n ");
-            
+        
             case 7 -> sb.append("\n\n\n   █████   \n" +
                                 " max 3 " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + "\n" +
                                 "   x4  ");
-            
+        
             case 8 -> sb.append("    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
@@ -492,14 +537,14 @@ public class TUIUtils {
                                 "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " ");
             case 9 -> sb.append("\n\n\n\n" + ANSI_WHITE_BACKGROUND + " ≠ ≠ ≠ ≠ ≠ " + ANSI_RESET + "\n" +
                                 "     x2 ");
-            
+        
             case 10 -> sb.append(
                     "\n" + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " +
                     ANSI_RESET +
                     "\n\n" +
                     "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n\n" +
                     ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
-            
+        
             case 11 -> sb.append("""
                                           
                                           █
@@ -508,12 +553,11 @@ public class TUIUtils {
                                           █ █ █ █
                                           █ █ █ █ █\
                                          """);
-            
-        }
-        return createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
         
-    }
+        }
+        return createBox(" "+ANSI_RED_BOLD+String.valueOf(score)+ ANSI_RESET+" ", ANSI_RED_BOLD,9)+ createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
     
+    }
     
     /**
      * Generate the TUI representation of the personal goals. <br>

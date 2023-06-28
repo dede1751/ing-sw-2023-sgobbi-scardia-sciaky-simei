@@ -71,29 +71,29 @@ class TUITest {
     */
     @Test
     void commonGoals() {
-        System.out.println(TUIUtils.generateCommonGoal(0));
+        System.out.println(TUIUtils.generateCommonGoal(0,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(1));
+        System.out.println(TUIUtils.generateCommonGoal(1,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(2));
+        System.out.println(TUIUtils.generateCommonGoal(2,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(3));
+        System.out.println(TUIUtils.generateCommonGoal(3,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(4));
+        System.out.println(TUIUtils.generateCommonGoal(4,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(5));
+        System.out.println(TUIUtils.generateCommonGoal(5,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(6));
+        System.out.println(TUIUtils.generateCommonGoal(6,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(7));
+        System.out.println(TUIUtils.generateCommonGoal(7,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(8));
+        System.out.println(TUIUtils.generateCommonGoal(8,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(9));
+        System.out.println(TUIUtils.generateCommonGoal(9,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(10));
+        System.out.println(TUIUtils.generateCommonGoal(10,8));
         System.out.println("\n\n\n\n");
-        System.out.println(TUIUtils.generateCommonGoal(11));
+        System.out.println(TUIUtils.generateCommonGoal(11,8));
     }
     
     @Test
