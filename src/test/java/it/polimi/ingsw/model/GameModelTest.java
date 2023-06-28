@@ -1,17 +1,21 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.controller.LobbyController;
+import it.polimi.ingsw.model.messages.*;
+import it.polimi.ingsw.network.Client;
+import it.polimi.ingsw.network.LocalServer;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
+import it.polimi.ingsw.utils.mvc.ModelListener;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import java.nio.ByteBuffer;
-import java.util.EmptyStackException;
-import java.util.List;
-import java.util.Stack;
+import java.rmi.RemoteException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +26,74 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GameModel")
 @Tag("Model")
 public class GameModelTest {
+    
+    
+    private static class MockupServer extends LocalServer {
+        public MockupServer() throws RemoteException {
+            super();
+        }
+        @Override
+        public void removeGameControllers(List<Client> clients) {
+        }
+    }
+    static {
+        try {
+            LobbyController.getInstance().setServer(new GameModelTest.MockupServer());
+        }
+        catch( RemoteException e ) {
+            fail(e.getCause());
+        }
+    }
+    
+    private static class MockupListener implements ModelListener {
+        
+        private String nickname;
+        @Override
+        public void update(ModelMessage<?> msg) {
+            if( msg instanceof StartGameMessage ) {
+                var players = ((StartGameMessage) msg).getPayload().players()
+                                .stream()
+                                .map(StartGameMessage.PlayerRecord::nickname)
+                                .toList();
+                assertTrue( players.contains(this.getNickname()) );
+            }
+        }
+        
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
+        public String getNickname() {
+            return this.nickname;
+        }
+        
+        
+    }
+    
+    @Test
+    void startGameTest() {
+        
+        Stack<Integer> CGXS = new Stack<>();
+        Stack<Integer> CGYS = new Stack<>();
+        Board board = new Board( 2 );
+        TileBag tileBag = new TileBag();
+        GameModel game = new GameModel( 2, 5, 6,
+                                        CGXS, CGYS, board, tileBag );
+        
+        Player player1 = new Player( "Lucrezia", 0 );
+        Player player2 = new Player( "Luca", 1 );
+        game.addPlayer( player1 );
+        game.addPlayer( player2 );
+        
+        MockupListener listener1 = new MockupListener();
+        MockupListener listener2 = new MockupListener();
+        listener1.setNickname( "Lucrezia" );
+        listener2.setNickname( "Luca" );
+        game.addListener( "Lucrezia", listener1 );
+        game.addListener( "Luca", listener2 );
+        
+        game.startGame();
+        
+    }
     
     @Test
     void testInitialization() {
@@ -363,4 +435,6 @@ public class GameModelTest {
         var tileBag = game.getTileBag();
         assertEquals(132, tileBag.currentTileNumber());
     }
+    
+    
 }
