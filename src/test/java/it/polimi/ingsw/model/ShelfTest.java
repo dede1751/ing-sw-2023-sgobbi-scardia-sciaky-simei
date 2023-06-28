@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParseException;
+import com.google.gson.annotations.JsonAdapter;
 import it.polimi.ingsw.utils.exceptions.InvalidStringException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -139,7 +142,33 @@ public class ShelfTest {
         var deserializedShelf = Shelf.fromJson(ser);
         assertEquals(shelf, deserializedShelf);
         assertEquals(shelf, Shelf.fromJson(shelf.toJson()));
+    
+        String invalidString = "I'm not a json object!";
+        assertThrows( JsonParseException.class, () -> Shelf.fromJson(invalidString) );
+        
+        String shelf1 = """
+                    {"shelf": {
+                      "column_0": ["(M,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
+                      "column_1": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
+                      "column_2": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
+                      "column_3": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
+                      "column_4": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"]
+                    }}
+                """;
+        assertThrows( JsonParseException.class, () -> Shelf.fromJson(shelf1) );
+    
+        String shelf2 = """
+                    {"shelf": {
+                      "column_0": error,
+                      "column_1": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
+                      "column_2": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
+                      "column_3": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"],
+                      "column_4": ["(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)", "(N,0)"]
+                    }}
+                """;
+        assertThrows( JsonParseException.class, () -> Shelf.fromJson(shelf2) );
     }
+    
     
     @Nested
     class TileTest {
@@ -155,6 +184,29 @@ public class ShelfTest {
             assertDoesNotThrow(() -> assertEquals(new Tile(Tile.Type.CATS, Tile.Sprite.TWO), Tile.fromString(
                     new Tile(Tile.Type.CATS, Tile.Sprite.TWO).toString())));
         }
+    }
+    
+    @Test
+    public void equalsTest1() {
+        Shelf shelf = new Shelf();
+        Board board = new Board( 2 );
+        assertFalse( shelf.equals(board) );
+    }
+    
+    @Test
+    public void equalsTest2() {
+        
+        Shelf shelf1 = new Shelf();
+        Shelf shelf2 = new Shelf();
+        
+        Tile tile1 = new Tile( Tile.Type.CATS, Tile.Sprite.ONE );
+        Tile tile2 = new Tile( Tile.Type.BOOKS, Tile.Sprite.ONE );
+        List<Tile> tiles = new ArrayList<>();
+        tiles.add( tile1 );
+        tiles.add( tile2 );
+        shelf1.addTiles( tiles, 0 );
+    
+        assertFalse( shelf1.equals(shelf2) );
     }
     
     

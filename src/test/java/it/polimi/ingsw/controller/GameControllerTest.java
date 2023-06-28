@@ -36,14 +36,14 @@ class GameControllerTest {
                 StandardCharsets.UTF_8);
     }
     
-    private static class mockupServer extends LocalServer {
+    static class mockupServer extends LocalServer {
         public mockupServer() throws RemoteException {
             super();
         }
         
         @Override
         public void removeGameControllers(List<Client> clients) {
-        
+    
         }
     }
     
@@ -615,7 +615,7 @@ class GameControllerTest {
     @Tag("onMessage")
     @Nested
     class onMessageTest {
-        
+    
         @Test
         public void onMessageMoveTrue() {
             var name = ResourcesManager.getCurrentMethod();
@@ -626,26 +626,27 @@ class GameControllerTest {
                                                                   new GameModel.ModelDeserializer()).create();
                 var model = gson.fromJson(json, GameModel.class);
                 var controller = new GameController(model);
-                
+    
                 List<Coordinate> selection = new ArrayList<>();
                 Coordinate coordinate = new Coordinate(4, 0);
                 selection.add(coordinate);
                 var tiles = model.getTile(selection.get(0));
                 int column = 0;
                 String playerNick = "Luca";
-                
+    
                 assertEquals(model.getPlayers()
                                      .stream()
                                      .filter((x) -> x.getNickname().equals(playerNick))
                                      .toList().get(0)
                                      .getShelf().getTile(0, 0),
                              Tile.NOTILE);
-                
+    
                 var move = new Move(selection, Collections.singletonList(tiles), column);
                 var moveMessage = new MoveMessage(move, playerNick);
-                
+    
                 controller.onMessage(moveMessage);
-                
+                controller.update( moveMessage );
+    
                 assertEquals(model.getPlayers()
                                      .stream()
                                      .filter((x) -> x.getNickname().equals(playerNick))
@@ -659,4 +660,6 @@ class GameControllerTest {
             }
         }
     }
+    
+    
 }

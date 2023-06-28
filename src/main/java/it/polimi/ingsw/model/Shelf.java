@@ -223,7 +223,7 @@ public class Shelf implements Serializable {
                     }
                 }
             }else {
-                throw new JsonParseException("Invalid JsonElement : not an  object");
+                throw new JsonParseException("Invalid JsonElement : not an object");
             }
             return result;
         }

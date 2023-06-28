@@ -204,9 +204,7 @@ public class Board implements Serializable {
                 bag.put(randomTile, bag.get(randomTile) - 1);
             }
         }
-        catch( CommonException ex ) {
-            System.err.println("there shouldn't be an error in there...");
-        }
+        catch( CommonException ignored ) { }
     }
     
     
