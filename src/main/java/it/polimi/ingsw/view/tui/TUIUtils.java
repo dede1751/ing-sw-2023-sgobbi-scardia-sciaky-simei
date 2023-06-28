@@ -358,8 +358,10 @@ public class TUIUtils {
         
         List<String> chat = model.getChat();
         List<String> latestChat = chat.subList(chat.size() - Math.min(chat.size(), 55), chat.size());
-        latestChat.set(0, " ... ");
-        
+        if (latestChat.size() == 55) {
+            latestChat.set(0, " ... ");
+        }
+
         for( String s : latestChat ) {
             sb.append(s).append("\n");
         }
@@ -480,10 +482,10 @@ public class TUIUtils {
      *
      * @return The TUI representation of the common goal
      */
-    public static String generateCommonGoal(int commonGoal1, int score) {
+    public static String generateCommonGoal(int commonGoal, int score) {
         StringBuilder sb = new StringBuilder();
     
-        switch( commonGoal1 ) {
+        switch( commonGoal ) {
         
             case 0 -> sb.append("\n\n\n    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
                                 "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
