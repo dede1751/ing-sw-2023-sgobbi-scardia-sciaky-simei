@@ -47,7 +47,8 @@ public class GameModelTest {
     
     private static class MockupListener implements ModelListener {
         
-        private String nickname;
+        private List<String> nicknames = new ArrayList<String>();
+    
         @Override
         public void update(ModelMessage<?> msg) {
             if( msg instanceof StartGameMessage ) {
@@ -55,17 +56,13 @@ public class GameModelTest {
                                 .stream()
                                 .map(StartGameMessage.PlayerRecord::nickname)
                                 .toList();
-                assertTrue( players.contains(this.getNickname()) );
+                assertEquals( nicknames, players );
             }
         }
         
-        public void setNickname(String nickname) {
-            this.nickname = nickname;
+        public void setNicknames(List<String> nicknames) {
+            this.nicknames.addAll(nicknames);
         }
-        public String getNickname() {
-            return this.nickname;
-        }
-        
         
     }
     
@@ -86,8 +83,11 @@ public class GameModelTest {
         
         MockupListener listener1 = new MockupListener();
         MockupListener listener2 = new MockupListener();
-        listener1.setNickname( "Lucrezia" );
-        listener2.setNickname( "Luca" );
+        List<String> nicknames = new ArrayList<String>();
+        nicknames.add( "Lucrezia" );
+        nicknames.add( "Luca" );
+        listener1.setNicknames( nicknames );
+        listener2.setNicknames( nicknames );
         game.addListener( "Lucrezia", listener1 );
         game.addListener( "Luca", listener2 );
         
