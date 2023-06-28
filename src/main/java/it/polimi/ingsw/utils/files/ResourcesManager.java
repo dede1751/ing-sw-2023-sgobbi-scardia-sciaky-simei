@@ -60,7 +60,7 @@ public final class ResourcesManager {
         return FileChannel.open(Path.of(dir, file), CREATE, WRITE);
     }
     
-    private static File getRecoveryDir() {
+    public static File getRecoveryDir() {
         File dir = new File(ResourcesManager.recoveryDir);
         
         if( !dir.exists() && !dir.mkdir() ) {

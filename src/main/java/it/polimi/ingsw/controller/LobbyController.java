@@ -271,7 +271,7 @@ public class LobbyController {
     @SuppressWarnings("unused")
     public void onMessage(RecoverLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
-        if( nickname == null ) {
+        if( nickname == null || nickname.equals("") ) {
             updateClient("No Nickname",
                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
             return;
@@ -333,7 +333,7 @@ public class LobbyController {
     @SuppressWarnings("unused")
     public void onMessage(CreateLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
-        if( nickname == null ) {
+        if( nickname == null || nickname.equals("") ) {
             updateClient("No Nickname",
                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
             return;
@@ -387,7 +387,7 @@ public class LobbyController {
             return;
         }
         
-        if( msg.getPlayerNickname() == null ) {
+        if( nickname == null || nickname.equals("") ) {
             updateClient(nickname,
                          new ServerResponseMessage(Response.NicknameNull(JoinLobbyMessage.class.getSimpleName())));
             return;
@@ -438,7 +438,7 @@ public class LobbyController {
      *
      * @return True if the nickname is already present in any lobby
      */
-    private static boolean nicknameTaken(String nickname) {
+    public static boolean nicknameTaken(String nickname) {
         return lobbies.values()
                 .stream()
                 .anyMatch((l) -> l.model.getNicknames().contains(nickname));
