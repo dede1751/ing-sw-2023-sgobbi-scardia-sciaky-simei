@@ -100,12 +100,10 @@ public class GUI extends View {
         model.setModel(msg);
         model.setStarted(true);
         List<Shelf> otherPlayerShelf = new ArrayList<>(3);
-        List<Integer> scores = new ArrayList<>(3);
         for( var x : model.getPlayersNicknames() ) {
             if( !x.equals(this.getNickname()) ) {
                 otherPlayersNicks.add(x);
                 otherPlayerShelf.add(model.getShelf(x));
-                scores.add(model.getPoints(x));
             }
         }
         
@@ -117,8 +115,7 @@ public class GUI extends View {
             GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setPersonalGoal(
                     model.getPgid());
             GUIApp.getMainControllerInstance().getGameInterfaceController().initializeShelves(otherPlayersNicks,
-                                                                                              otherPlayerShelf,
-                                                                                              scores);
+                                                                                              otherPlayerShelf);
             
             GUIApp.getMainControllerInstance().getGameInterfaceController().getCurrentPlayer().setText(
                     "     The Current player is " + model.getCurrentPlayer());

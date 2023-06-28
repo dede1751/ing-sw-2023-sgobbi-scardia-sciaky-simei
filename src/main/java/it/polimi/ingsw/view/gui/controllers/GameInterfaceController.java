@@ -1,6 +1,8 @@
 package it.polimi.ingsw.view.gui.controllers;
 
+import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.view.LocalModel;
 import it.polimi.ingsw.view.gui.GUIApp;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -109,17 +111,17 @@ public class GameInterfaceController {
      Initializes the player shelves with their respective nicknames, shelves, and scores.
      @param nicknames Ordered list of all other players' nicknames.
      @param shelves List of shelves for each player.
-     @param scores List of scores for each player.
      */
-    public void initializeShelves(List<String> nicknames, List<Shelf> shelves, List<Integer> scores) {
+    public void initializeShelves(List<String> nicknames, List<Shelf> shelves) {
+        LocalModel model = LocalModel.getInstance();
         for( int i = 0; i < nicknames.size(); i++ ) {
             shelfControllerList.get(i).setPlayerName(nicknames.get(i));
             shelfControllerList.get(i).updateOtherShelf(shelves.get(i));
-            shelfControllerList.get(i).setScore(scores.get(i));
+            shelfControllerList.get(i).setScore(model.getPoints(nicknames.get(i)));
             
             shelfList.get(i).setOpacity(1);
         }
-        localPlayerController.setScore(0);
+        localPlayerController.setScore(model.getPoints(AppClient.getViewInstance().getNickname()));
     }
     /**
      
