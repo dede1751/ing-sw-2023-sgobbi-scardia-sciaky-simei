@@ -47,21 +47,30 @@ public class GameModelTest {
     
     private static class MockupListener implements ModelListener {
         
-        private List<String> nicknames = new ArrayList<String>();
+        private List<String> expectedPlayers = new ArrayList<>();
+        private String expectedWinner;
     
         @Override
         public void update(ModelMessage<?> msg) {
+            
             if( msg instanceof StartGameMessage ) {
                 var players = ((StartGameMessage) msg).getPayload().players()
                                 .stream()
                                 .map(StartGameMessage.PlayerRecord::nickname)
                                 .toList();
-                assertEquals( nicknames, players );
+                assertEquals( expectedPlayers, players );
+                
+            } else if( msg instanceof EndGameMessage ) {
+                var winner = ((EndGameMessage) msg).getPayload().winner();
+                assertEquals( expectedWinner, winner );
             }
         }
         
         public void setNicknames(List<String> nicknames) {
-            this.nicknames.addAll(nicknames);
+            this.expectedPlayers.addAll(nicknames);
+        }
+        public void setWinner(String winner) {
+            this.expectedWinner = winner;
         }
         
     }
@@ -83,7 +92,7 @@ public class GameModelTest {
         
         MockupListener listener1 = new MockupListener();
         MockupListener listener2 = new MockupListener();
-        List<String> nicknames = new ArrayList<String>();
+        List<String> nicknames = new ArrayList<>();
         nicknames.add( "Lucrezia" );
         nicknames.add( "Luca" );
         listener1.setNicknames( nicknames );
@@ -93,6 +102,34 @@ public class GameModelTest {
         
         game.startGame();
         
+    }
+    
+    
+    @Test
+    void notifyWinnerTest() {
+        Stack<Integer> CGXS = new Stack<>();
+        Stack<Integer> CGYS = new Stack<>();
+        Board board = new Board( 2 );
+        TileBag tileBag = new TileBag();
+        GameModel game = new GameModel( 2, 5, 6,
+                                        CGXS, CGYS, board, tileBag );
+    
+        Player player1 = new Player( "Lucrezia", 0 );
+        Player player2 = new Player( "Luca", 1 );
+        game.addPlayer( player1 );
+        game.addPlayer( player2 );
+        player1.setPersonalGoalScore(8);
+        player2.setPersonalGoalScore(4);
+    
+        MockupListener listener1 = new MockupListener();
+        MockupListener listener2 = new MockupListener();
+        String winner = "Lucrezia";
+        listener1.setWinner( winner );
+        listener2.setWinner( winner );
+        game.addListener( "Lucrezia", listener1 );
+        game.addListener( "Luca", listener2 );
+        
+        game.notifyWinner();
     }
     
     @Test
