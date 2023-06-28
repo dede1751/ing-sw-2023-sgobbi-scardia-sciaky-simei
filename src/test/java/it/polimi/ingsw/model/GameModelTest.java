@@ -134,6 +134,60 @@ public class GameModelTest {
     
             game.notifyWinner();
         }
+
+        @Test
+        void notifyWinnerTest2() {
+            Stack<Integer> CGXS = new Stack<>();
+            Stack<Integer> CGYS = new Stack<>();
+            Board board = new Board(2);
+            TileBag tileBag = new TileBag();
+            GameModel game = new GameModel(2, 5, 6,
+                    CGXS, CGYS, board, tileBag);
+
+            Player player1 = new Player("Lucrezia", 0);
+            Player player2 = new Player("Luca", 1);
+            game.addPlayer(player1);
+            game.addPlayer(player2);
+            player1.setPersonalGoalScore(4);
+            player2.setPersonalGoalScore(8);
+
+            MockupListener listener1 = new MockupListener();
+            MockupListener listener2 = new MockupListener();
+            String winner = "Luca";
+            listener1.setWinner(winner);
+            listener2.setWinner(winner);
+            game.addListener("Lucrezia", listener1);
+            game.addListener("Luca", listener2);
+
+            game.notifyWinner();
+        }
+
+        @Test
+        void notifyWinnerTest3() {
+            Stack<Integer> CGXS = new Stack<>();
+            Stack<Integer> CGYS = new Stack<>();
+            Board board = new Board(2);
+            TileBag tileBag = new TileBag();
+            GameModel game = new GameModel(2, 5, 6,
+                    CGXS, CGYS, board, tileBag);
+
+            Player player1 = new Player("Lucrezia", 0);
+            Player player2 = new Player("Luca", 1);
+            game.addPlayer(player1);
+            game.addPlayer(player2);
+            player1.setPersonalGoalScore(8);
+            player2.setPersonalGoalScore(8);
+
+            MockupListener listener1 = new MockupListener();
+            MockupListener listener2 = new MockupListener();
+            String winner = "Luca";
+            listener1.setWinner(winner);
+            listener2.setWinner(winner);
+            game.addListener("Lucrezia", listener1);
+            game.addListener("Luca", listener2);
+
+            game.notifyWinner();
+        }
     }
     
     @Test
