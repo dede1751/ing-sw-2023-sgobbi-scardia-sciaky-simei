@@ -4,10 +4,13 @@ import it.polimi.ingsw.controller.LobbyController;
 import it.polimi.ingsw.model.messages.*;
 import it.polimi.ingsw.network.Client;
 import it.polimi.ingsw.network.LocalServer;
+import it.polimi.ingsw.network.Server;
 import it.polimi.ingsw.utils.exceptions.OccupiedTileException;
 import it.polimi.ingsw.utils.exceptions.OutOfBoundCoordinateException;
 import it.polimi.ingsw.utils.files.ResourcesManager;
 import it.polimi.ingsw.utils.mvc.ModelListener;
+import it.polimi.ingsw.view.messages.ChatMessage;
+import it.polimi.ingsw.view.messages.RecoverLobbyMessage;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -49,6 +52,10 @@ public class GameModelTest {
         
         private List<String> expectedPlayers = new ArrayList<>();
         private String expectedWinner;
+        private String expectedMessage;
+        private String expectedSender;
+        private String expectedDestination;
+        private String expectedResponse;
     
         @Override
         public void update(ModelMessage<?> msg) {
@@ -63,6 +70,18 @@ public class GameModelTest {
             } else if( msg instanceof EndGameMessage ) {
                 var winner = ((EndGameMessage) msg).getPayload().winner();
                 assertEquals( expectedWinner, winner );
+
+            } else if( msg instanceof IncomingChatMessage ) {
+                var s = ((IncomingChatMessage) msg).getPayload();
+                var sender = ((IncomingChatMessage) msg).getSender();
+                var dest = ((IncomingChatMessage) msg).getDestination();
+                assertEquals( expectedMessage, s );
+                assertEquals( expectedSender, sender );
+                assertEquals( expectedDestination, dest );
+
+            } else if(msg instanceof ServerResponseMessage ) {
+                var response = ((ServerResponseMessage) msg).getPayload().msg();
+                assertEquals( expectedResponse, response );
             }
         }
         
@@ -72,9 +91,87 @@ public class GameModelTest {
         public void setWinner(String winner) {
             this.expectedWinner = winner;
         }
+        public void setMessage(String msg) {
+            this.expectedMessage = msg;
+        }
+        public void setSender(String sender) {
+            this.expectedSender = sender;
+        }
+        public void setDestination(String dest) {
+            this.expectedDestination = dest;
+        }
+        public void setResponse(String response) {
+            this.expectedResponse = response;
+        }
         
     }
-    
+
+    @Test
+    void notifyServerMessageTest() {
+        Stack<Integer> CGXS = new Stack<>();
+        Stack<Integer> CGYS = new Stack<>();
+        Board board = new Board( 2 );
+        TileBag tileBag = new TileBag();
+        GameModel game = new GameModel( 2, 5, 6,
+                CGXS, CGYS, board, tileBag );
+
+        MockupListener listener1 = new MockupListener();
+        MockupListener listener2 = new MockupListener();
+        game.addListener( "Lucrezia", listener1 );
+        game.addListener( "Luca", listener2 );
+
+        ServerResponseMessage msg = new ServerResponseMessage( Response.NicknameTaken(
+                RecoverLobbyMessage.class.getSimpleName()) );
+
+        Player player1 = new Player( "Lucrezia", 0 );
+        Player player2 = new Player( "Lucrezia", 1 );
+        game.addPlayer( player1 );
+        game.addPlayer( player2 );
+
+        listener1.setResponse( "NicknameTaken");
+        listener2.setResponse( "NicknameTaken");
+        game.notifyServerMessage( "Lucrezia", msg );
+    }
+
+    @Test
+    void chatBrokerTest() {
+
+        Stack<Integer> CGXS = new Stack<>();
+        Stack<Integer> CGYS = new Stack<>();
+        Board board = new Board( 2 );
+        TileBag tileBag = new TileBag();
+        GameModel game = new GameModel( 2, 5, 6,
+                CGXS, CGYS, board, tileBag );
+
+        Player player1 = new Player( "Lucrezia", 0 );
+        Player player2 = new Player( "Luca", 1 );
+        game.addPlayer( player1 );
+        game.addPlayer( player2 );
+
+        MockupListener listener1 = new MockupListener();
+        MockupListener listener2 = new MockupListener();
+        game.addListener( "Lucrezia", listener1 );
+        game.addListener( "Luca", listener2 );
+
+        ChatMessage msg1 = new ChatMessage( "Hello world", "Lucrezia" );
+        listener1.setMessage( "Hello world" );
+        listener1.setSender( "Lucrezia" );
+        listener1.setDestination( "ALL" );
+        listener2.setMessage( "Hello world" );
+        listener2.setSender( "Lucrezia" );
+        listener2.setDestination( "ALL" );
+        game.chatBroker( msg1 );
+
+        ChatMessage msg2 = new ChatMessage( "Hi Luca", "Lucrezia", "Luca" );
+        listener1.setMessage( "Hi Luca" );
+        listener1.setSender( "Lucrezia" );
+        listener1.setDestination( "Luca" );
+        listener2.setMessage( "Hi Luca" );
+        listener2.setSender( "Lucrezia" );
+        listener2.setDestination( "Luca" );
+        game.chatBroker( msg2 );
+    }
+
     @Test
     void startGameTest() {
         
