@@ -7,18 +7,16 @@ Objective of this project is to build a distributed version of the game [MyShelf
 **Cranio Creations** using a Model-View-Controller architecture.
 
 ### Implemented Features
-| Feature                  | Status |
-|:-------------------------|:------:|
-|Simplified rules|                     ✔️                    |
-|Complete rules |                    ✔️                    |
-|RMI |                     ✔️                     |
-|Socket |                      ✔️                     |
-|GUI |                           ✔️                 | 
-|TUI  |                    ✔️                     |
-|Multiple games |                     ✔️                    |
-|Server Persistence  |                    ✔️                     |
-|Chat|                     ✔️                     |
-|Disconnection Resilience |                    🔴                    |
+- [x] Simplified rules
+- [x] Complete rules
+- [x] RMI
+- [x] Socket
+- [x] GUI
+- [x] TUI
+- [x] Multiple games
+- [x] Server Persistence
+- [x] Chat
+- [ ] Disconnection Resilience
 
 ### Testing Coverage
 ![Full project coverage][tests-image]
