@@ -6,13 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 /**
  
@@ -113,6 +111,7 @@ public class ChatController {
         mex.setFill(color);
         mex.setFont(new Font("Noto Sans", 15));
         chatBox.getChildren().add(mex);
+        readChat.setVvalue(1.0);
     }
     
 }

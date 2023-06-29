@@ -10,9 +10,9 @@
     <children>
         <TextField fx:id="writeMessage" layoutX="14.0" layoutY="734.0" onAction="#handleEnterPressed" prefHeight="71.0" prefWidth="475.0" text="CHAT MESSAGE" />
         <ChoiceBox fx:id="recipientChoiceBox" layoutX="14" layoutY="704" prefWidth="150.0" />
-        <ScrollPane fx:id="readChat" layoutX="14.0" layoutY="14.0" prefHeight="679.0" prefWidth="475.0" style="-fx-background-color: white;">
+        <ScrollPane fx:id="readChat" layoutX="14.0" layoutY="14.0" prefHeight="679.0" prefWidth="475.0" style="-fx-background-color: white;" vbarPolicy="ALWAYS">
          <content>
-            <VBox fx:id="chatBox" prefHeight="676.0" prefWidth="461.0" />
+            <VBox fx:id="chatBox" prefHeight="676.0" prefWidth="458.0" />
          </content>
         </ScrollPane>
     </children>

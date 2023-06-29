@@ -224,7 +224,7 @@ public class GUI extends View {
                 
                 runLater(
                         () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
-                                msg.getSender() + ": " + msg.getPayload(), Color.BLUEVIOLET));
+                                msg.getSender() + ": " + msg.getPayload(), Color.FLORALWHITE));
             }else if( msg.getSender().equals(nickname) ) {
                 runLater(
                         () -> GUIApp.getMainControllerInstance().getGameInterfaceController().getChatController().writeChatMessage(
