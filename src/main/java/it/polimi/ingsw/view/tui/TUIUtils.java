@@ -274,7 +274,7 @@ public class TUIUtils {
      *
      * @param input The string to put in the box
      * @param color The color of the box
-     * @param space Number of spaces between the strinf input
+     * @param space Number of spaces between the string input
      *
      * @return The input string surrounded by a box
      */
@@ -333,7 +333,7 @@ public class TUIUtils {
     }
     
     /**
-     * Weapper for generateTiles(), mapping coordinates to tiles using the board.
+     * Wrapper for generateTiles(), mapping coordinates to tiles using the board.
      *
      * @param selection The list of coordinates to represent
      *
@@ -357,8 +357,8 @@ public class TUIUtils {
         StringBuilder sb = new StringBuilder();
         
         List<String> chat = model.getChat();
-        List<String> latestChat = chat.subList(chat.size() - Math.min(chat.size(), 55), chat.size());
-        if (latestChat.size() == 55) {
+        List<String> latestChat = chat.subList(chat.size() - Math.min(chat.size(), 57), chat.size());
+        if (latestChat.size() == 57) {
             latestChat.set(0, " ... ");
         }
 
@@ -406,7 +406,7 @@ public class TUIUtils {
     
     /**
      * Generate the TUI representation of a player's shelf. <br>
-     * Also includes the player's name and score. Current player is printed in bright yello.
+     * Also includes the player's name and score. Current player is printed in bright yellow.
      *
      * @param nickname The nickname of the player whose shelf to represent
      *
@@ -415,7 +415,7 @@ public class TUIUtils {
     private static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
-        String name = String.format(" * %-14.14s", nickname);
+        String name = String.format(" * %-15.14s", nickname);
         int score = model.getPoints(nickname);
         
         if( nickname.equals(model.getCurrentPlayer()) ) {

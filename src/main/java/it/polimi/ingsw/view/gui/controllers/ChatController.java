@@ -86,9 +86,13 @@ public class ChatController {
      @param event The action event triggered by the enter key press.
      */
     public void handleEnterPressed(ActionEvent event) {
-        String enteredText = writeMessage.getText().substring(0, 69);
+        String enteredText = writeMessage.getText();
         if( enteredText == null || enteredText.equals("") )
             return;
+        if (enteredText.length() > 70) {
+            enteredText = enteredText.substring(0, 69);
+        }
+
         if( LocalModel.getInstance().getPlayersNicknames().contains(recipientName) ) {
             AppClient.getViewInstance().notifyChatMessage(enteredText, recipientName);
             writeMessage.clear();
