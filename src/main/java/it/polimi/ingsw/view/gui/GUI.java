@@ -125,6 +125,7 @@ public class GUI extends View {
                 GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setChairOpacity(
                         1.0);
             }
+            GUIApp.getMainControllerInstance().getGameInterfaceController().getLocalPlayerController().setNickname();
             
             BoardController boardController =
                     GUIApp.getMainControllerInstance().getGameInterfaceController().getBoardController();

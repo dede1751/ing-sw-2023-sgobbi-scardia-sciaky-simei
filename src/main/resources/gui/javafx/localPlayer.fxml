@@ -1,75 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.effect.GaussianBlur?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="449.0"
-            prefWidth="705.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="it.polimi.ingsw.view.gui.controllers.LocalPlayerController">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="486.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.LocalPlayerController">
     <children>
-        <GridPane fx:id="localPlayerGrid" layoutX="58.0" layoutY="36.0" prefHeight="349.0" prefWidth="336.0"
-                  AnchorPane.leftAnchor="58.0" AnchorPane.topAnchor="36.0">
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#619e47" height="470.0" layoutX="-7.0" layoutY="-8.0" opacity="0.83" stroke="#e8d43d" strokeType="INSIDE" strokeWidth="10.0" width="710.0">
+         <effect>
+            <GaussianBlur radius="6.17" />
+         </effect></Rectangle>
+      <Text fx:id="playerNick" fill="WHITE" fontSmoothingType="LCD" layoutX="422.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="NICKNAME" wrappingWidth="282.13000106811523">
+         <font>
+            <Font name="Noto Sans Regular" size="18.0" />
+         </font>
+      </Text>
+        <GridPane fx:id="localPlayerGrid" layoutX="58.0" layoutY="36.0" prefHeight="349.0" prefWidth="336.0" AnchorPane.leftAnchor="58.0" AnchorPane.topAnchor="36.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="77.0" minWidth="10.0" prefWidth="69.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="65.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="82.0" minWidth="10.0" prefWidth="68.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="68.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="89.0" minWidth="10.0" prefWidth="67.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="77.0" minWidth="10.0" prefWidth="69.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="65.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="82.0" minWidth="10.0" prefWidth="68.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="78.0" minWidth="10.0" prefWidth="68.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="89.0" minWidth="10.0" prefWidth="67.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="89.0" minHeight="10.0" prefHeight="64.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="91.0" minHeight="10.0" prefHeight="58.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="90.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="68.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="66.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="89.0" minHeight="10.0" prefHeight="64.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="91.0" minHeight="10.0" prefHeight="58.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="90.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="54.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="68.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="66.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
             </rowConstraints>
         </GridPane>
-        <ImageView fitHeight="428.0" fitWidth="480.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true"
-                   preserveRatio="true" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+        <ImageView fitHeight="428.0" fitWidth="480.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
             <image>
-                <Image url="@../assets/boards/bookshelf.png"/>
+                <Image url="@../assets/boards/bookshelf.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="personalGoal" fitHeight="236.0" fitWidth="313.0" layoutX="505.0" layoutY="36.0"
-                   pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="36.0">
+        <ImageView fx:id="personalGoal" fitHeight="236.0" fitWidth="313.0" layoutX="422.0" layoutY="36.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="422.0" AnchorPane.topAnchor="36.0">
             <image>
-                <Image url="@../assets/personal_goal_cards/Personal_Goals10.png"/>
+                <Image url="@../assets/personal_goal_cards/Personal_Goals10.png" />
             </image>
         </ImageView>
-        <Text fx:id="score" layoutX="515.0" layoutY="308.0" strokeType="OUTSIDE" strokeWidth="0.0"/>
-        <ImageView fx:id="chairImage" fitHeight="87.0" fitWidth="79.0" layoutX="505.0" layoutY="354.0" opacity="0.0"
-                   pickOnBounds="true" preserveRatio="true">
+        <Text fx:id="score" layoutX="515.0" layoutY="308.0" strokeType="OUTSIDE" strokeWidth="0.0" />
+        <ImageView fx:id="chairImage" fitHeight="87.0" fitWidth="79.0" layoutX="476.0" layoutY="347.0" opacity="0.0" pickOnBounds="true" preserveRatio="true">
             <image>
-                <Image url="@../assets/misc/firstplayertoken.png"/>
+                <Image url="@../assets/misc/firstplayertoken.png" />
             </image>
         </ImageView>
         <GridPane layoutX="54.0" layoutY="26.0" prefHeight="363.0" prefWidth="344.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.0" minWidth="10.0" prefWidth="71.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="84.0" minWidth="10.0" prefWidth="67.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="10.0" prefWidth="68.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" prefWidth="67.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="72.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="86.0" minWidth="10.0" prefWidth="71.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="84.0" minWidth="10.0" prefWidth="67.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="85.0" minWidth="10.0" prefWidth="68.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" prefWidth="67.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="10.0" prefWidth="72.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="363.0" minHeight="10.0" prefHeight="363.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="363.0" minHeight="10.0" prefHeight="363.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Button fx:id="b0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" opacity="0.0"/>
-                <Button fx:id="b1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" opacity="0.0" GridPane.columnIndex="1"/>
-                <Button fx:id="b2" layoutX="82.0" layoutY="10.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0"
-                        GridPane.columnIndex="2"/>
-                <Button fx:id="b3" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0"
-                        GridPane.columnIndex="3"/>
-                <Button fx:id="b4" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" prefHeight="363.0"
-                        prefWidth="80.0" GridPane.columnIndex="4"/>
+                <Button fx:id="b0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" />
+                <Button fx:id="b1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" GridPane.columnIndex="1" />
+                <Button fx:id="b2" layoutX="82.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" GridPane.columnIndex="2" />
+                <Button fx:id="b3" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" GridPane.columnIndex="3" />
+                <Button fx:id="b4" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" opacity="0.0" prefHeight="363.0" prefWidth="80.0" GridPane.columnIndex="4" />
             </children>
         </GridPane>
 
