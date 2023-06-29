@@ -9,22 +9,23 @@ Objective of this project is to build a distributed version of the game [MyShelf
 ### Implemented Features
 | Feature                  | Status |
 |:-------------------------|:------:|
-| Simplified rules         |   ✅    |
-| Complete rules           |   ✅    |
-| RMI                      |   ✅    |
-| Socket                   |   ✅    |
-| GUI                      |   ✅    |
-| TUI                      |   ✅    |
-| Multiple games           |   ✅    |
-| Server Persistence       |   ✅    |
-| Chat                     |   ✅    |
-| Disconnection Resilience |   ❌    |
+|Simplified rules|                     ✔️                    |
+|Complete rules |                    ✔️                    |
+|RMI |                     ✔️                     |
+|Socket |                      ✔️                     |
+|GUI |                           ✔️                 | 
+|TUI  |                    ✔️                     |
+|Multiple games |                     ✔️                    |
+|Server Persistence  |                    ✔️                     |
+|Chat|                     ✔️                     |
+|Disconnection Resilience |                    🔴                    |
 
 ### Testing Coverage
-[Full project coverage][tests-image]
+![Full project coverage][tests-image]
 
 ### Dependencies
 The game runs on **JavaSE19** downloadable [here][java-link]. To build the project also download [Maven][maven-link].
+All dependencies are bundled in the provided JARs.
 
 ### Installation
 Either download the client/server *.jar* in the deliverables folder, or build the app from source:
@@ -35,7 +36,8 @@ mvn package
 ```
 
 ### Playing the game
-To be able to run the game, one player must host an instance of the MyShelfie Server:
+To be able to run the game, one player must host an instance of the MyShelfie Server.
+They will be prompted for the ip address of the interface they want to expose for communication with the clients.
 
 ```bash
 java -jar softeng-gc05-server.jar
@@ -47,7 +49,7 @@ java -jar softeng-gc05-client.jar
 ```
 
 They will then be prompted for View type (GUI or TUI) and the type of connection to use (RMI or Socket). Clients must
-know the IP address of the server to be able to connect to it.
+also know the IP address of the server to be able to connect to it.
 
 [title-image]:images/title.jpeg
 [tests-image]:images/coverage.png
