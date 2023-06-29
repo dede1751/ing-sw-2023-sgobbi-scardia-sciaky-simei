@@ -84,7 +84,7 @@ public class PersonalGoal {
                 this.goal.put(new Coordinate(5, 0), Tile.Type.CATS);
                 this.goal.put(new Coordinate(0, 2), Tile.Type.BOOKS);
                 this.goal.put(new Coordinate(1, 4), Tile.Type.GAMES);
-                this.goal.put(new Coordinate(4, 4), Tile.Type.FRAMES);
+                this.goal.put(new Coordinate(4, 3), Tile.Type.FRAMES);
                 this.goal.put(new Coordinate(2, 0), Tile.Type.TROPHIES);
                 this.goal.put(new Coordinate(3, 1), Tile.Type.PLANTS);
             }
