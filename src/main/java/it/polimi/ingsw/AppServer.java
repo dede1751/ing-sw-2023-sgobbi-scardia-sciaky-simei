@@ -5,19 +5,30 @@ import it.polimi.ingsw.network.socket.ClientSkeleton;
 import it.polimi.ingsw.utils.files.ServerLogger;
 
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Main entry point for the server application
  */
 public class AppServer {
-    
+
+    // Regex for IPv4 address, 4 repeats of '(?:\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])' which matches 0-255
+    private static final String byteRegex = "(?:\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])";
+    private static final Pattern ipv4Pattern =
+            Pattern.compile(String.format("%s\\.%s\\.%s\\.%s", byteRegex, byteRegex, byteRegex, byteRegex));
+
+
     /**
      * Unused private constructor to appease Javadoc.
      */
@@ -30,6 +41,31 @@ public class AppServer {
      * @param args ignored
      */
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Insert the server's IPV4 address: ");
+        String ip;
+        while( true ) {
+            System.out.print("\n>>  ");
+            ip = scanner.next().trim().toUpperCase();
+            if( ip.equals("LOCALHOST") ) {
+                try {
+                    ip = Inet4Address.getLocalHost().getHostAddress();
+                }
+                catch( UnknownHostException e ) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            }
+            Matcher matcher = ipv4Pattern.matcher(ip);
+
+            if( matcher.matches() ) {
+                break;
+            }
+        }
+
+        // Set the system property to the server's IP address, so that the client can connect to it
+        System.setProperty("java.rmi.server.hostname", ip);
+
         LocalServer server;
         try {
             server = new LocalServer();
@@ -58,6 +94,8 @@ public class AppServer {
             }
         });
         socketThread.start();
+
+        System.out.println("Server started! Waiting for connections...");
         
         try {
             rmiThread.join();

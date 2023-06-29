@@ -218,7 +218,7 @@ public class LoginController {
                             String nickname = n;
                             gui.setNickname(nickname);
                             Platform.runLater(() -> {
-                                nicknameConfirmBanner.setText("Nickname :" + nickname);
+                                nicknameConfirmBanner.setText("Nickname: " + nickname);
                                 nicknameConfirmBanner.setOpacity(1);
                                 this.nickname.setText("");
                             });

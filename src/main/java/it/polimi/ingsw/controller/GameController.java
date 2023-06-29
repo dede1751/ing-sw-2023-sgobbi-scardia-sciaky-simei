@@ -40,12 +40,6 @@ public class GameController {
         this.lobbyID = lobbyID;
         this.playerNumber = model.getPlayers().size();
         
-        // Reset PersonalGoal/Adjacency scores (this is used because the model could be a recovery one)
-        for( Player p : model.getPlayers() ) {
-            p.setPersonalGoalScore(PersonalGoal.getPersonalGoal(p.getPg()).checkGoal(p.getShelf()));
-            p.setAdjacencyScore(calculateAdjacency(p.getShelf()));
-            p.setBonusScore(0);
-        }
         // Refill the board (recovery boards may not need refilling
         if( needRefill() ) {
             model.refillBoard();
@@ -194,8 +188,6 @@ public class GameController {
         if( currentPlayer.getShelf().isFull() && !model.isLastTurn() ) {
             model.setLastTurn();
         }
-        
-        
     }
     
     /**

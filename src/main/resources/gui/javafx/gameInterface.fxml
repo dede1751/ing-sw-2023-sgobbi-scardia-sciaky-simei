@@ -2,43 +2,46 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-<HBox fx:id="rootHBox" cache="true" cacheHint="SCALE" minHeight="-Infinity" minWidth="-Infinity" prefHeight="963.0"
-      prefWidth="1650.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="it.polimi.ingsw.view.gui.controllers.GameInterfaceController">
+
+<HBox fx:id="rootHBox" cache="true" cacheHint="SCALE" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1030.0" prefWidth="1650.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.view.gui.controllers.GameInterfaceController">
     <children>
-        <VBox fx:id="otherShelfVbox" minWidth="300" prefHeight="978.0" prefWidth="400.0">
+        <VBox fx:id="otherShelfVbox" minWidth="300" prefHeight="978.0" prefWidth="366.0" spacing="45.0">
             <children>
-                <fx:include fx:id="otherShelf1" source="otherShelfs.fxml"/>
-                <fx:include fx:id="otherShelf2" source="otherShelfs.fxml"/>
-                <fx:include fx:id="otherShelf3" source="otherShelfs.fxml"/>
+                <fx:include fx:id="otherShelf1" source="otherShelfs.fxml" />
+                <fx:include fx:id="otherShelf2" source="otherShelfs.fxml" />
+                <fx:include fx:id="otherShelf3" source="otherShelfs.fxml" />
             </children>
         </VBox>
-        <VBox fx:id="boardAndPlayer" minHeight="-Infinity" minWidth="-Infinity">
+        <VBox fx:id="boardAndPlayer" minHeight="-Infinity" minWidth="-Infinity" spacing="35.0">
             <children>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Zoom"/>
                 <HBox prefHeight="26.0" prefWidth="796.0">
-                    <Button text="x0.75" fx:id="x075"/>
-                    <Button text="x1" fx:id="x1"/>
-                    <Button text="x1.25" fx:id="x125"/>
-                    <Button text="x1.5" fx:id="x150"/>
-                    <Text fx:id="currentPlayer" styleClass="@current_player_font.css" text="The current player is"
-                          wrappingWidth="658.0"/>
+                    <Button text="x0.75" fx:id="x075" />
+                    <Button text="x1" fx:id="x1" />
+                    <Button text="x1.25" fx:id="x125" />
+                    <Button text="x1.5" fx:id="x150" />
+               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="          " />
+                    <Text fx:id="currentPlayer" styleClass="@current_player_font.css" text="The current player is" wrappingWidth="624.6666259765625">
+                  <HBox.margin>
+                     <Insets />
+                  </HBox.margin>
+               </Text>
                 </HBox>
 
-                <fx:include fx:id="board" source="board.fxml"/>
-                <fx:include fx:id="localPlayer" source="localPlayer.fxml"/>
+                <fx:include fx:id="board" source="board.fxml" />
+                <fx:include fx:id="localPlayer" source="localPlayer.fxml" />
 
             </children>
             <padding>
-                <Insets top="20.0"/>
+                <Insets top="20.0" />
             </padding>
         </VBox>
         <VBox fx:id="chatVbox">
 
 
-            <fx:include fx:id="chat" source="chat.fxml"/>
+            <fx:include fx:id="chat" source="chat.fxml" />
 
 
         </VBox>

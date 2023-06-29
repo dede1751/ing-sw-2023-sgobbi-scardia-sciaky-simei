@@ -3,6 +3,7 @@ package it.polimi.ingsw.view.gui.controllers;
 import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.Coordinate;
 import it.polimi.ingsw.model.Shelf;
+import it.polimi.ingsw.view.LocalModel;
 import it.polimi.ingsw.view.gui.GUIApp;
 import it.polimi.ingsw.view.gui.GUIUtils;
 import it.polimi.ingsw.view.messages.Move;
@@ -25,7 +26,9 @@ import java.util.Map;
  It handles button actions, shelf updates, score display, personal goal display, and chair opacity.
  */
 public class LocalPlayerController {
-    
+
+    @FXML
+    private Text playerNick;
     @FXML
     private ImageView chairImage;
     @FXML
@@ -40,13 +43,12 @@ public class LocalPlayerController {
     private Button b3;
     @FXML
     private Button b4;
-    
     @FXML
     private Text score;
-    
     @FXML
     private GridPane localPlayerGrid;
-    
+
+
     private final Map<Coordinate, ImageView> imageMap = new HashMap<>();
     
     
@@ -131,5 +133,11 @@ public class LocalPlayerController {
     public void setChairOpacity(double opacity) {
         chairImage.setOpacity(opacity);
     }
-    
+
+    /**
+     * Set the player's nickname from view's nickname
+     */
+    public void setNickname(){
+        playerNick.setText(AppClient.getViewInstance().getNickname());
+    }
 }

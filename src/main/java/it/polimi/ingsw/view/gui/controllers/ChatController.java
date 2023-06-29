@@ -6,13 +6,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 
 /**
  
@@ -40,10 +38,6 @@ public class ChatController {
      * The recipientChoiceBox field represents a choice box for selecting the recipient of a chat message.
      */
     public ChoiceBox<String> recipientChoiceBox;
-    @FXML
-    private TextFlow writeChat;
-    @FXML
-    private TextArea messageArea;
     String recipientName = "Everyone";
     
     
@@ -89,6 +83,10 @@ public class ChatController {
         String enteredText = writeMessage.getText();
         if( enteredText == null || enteredText.equals("") )
             return;
+        if (enteredText.length() > 70) {
+            enteredText = enteredText.substring(0, 69);
+        }
+
         if( LocalModel.getInstance().getPlayersNicknames().contains(recipientName) ) {
             AppClient.getViewInstance().notifyChatMessage(enteredText, recipientName);
             writeMessage.clear();
@@ -113,6 +111,7 @@ public class ChatController {
         mex.setFill(color);
         mex.setFont(new Font("Noto Sans", 15));
         chatBox.getChildren().add(mex);
+        readChat.setVvalue(1.0);
     }
     
 }

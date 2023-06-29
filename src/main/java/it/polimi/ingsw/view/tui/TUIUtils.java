@@ -31,6 +31,7 @@ public class TUIUtils {
     
     private static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
     private static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
+    private static final String ANSI_RED_BACKGROUND = "\u001B[41m";
     private static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
     private static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
     private static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
@@ -274,7 +275,7 @@ public class TUIUtils {
      *
      * @param input The string to put in the box
      * @param color The color of the box
-     * @param space Number of spaces between the strinf input
+     * @param space Number of spaces between the string input
      *
      * @return The input string surrounded by a box
      */
@@ -333,7 +334,7 @@ public class TUIUtils {
     }
     
     /**
-     * Weapper for generateTiles(), mapping coordinates to tiles using the board.
+     * Wrapper for generateTiles(), mapping coordinates to tiles using the board.
      *
      * @param selection The list of coordinates to represent
      *
@@ -357,9 +358,11 @@ public class TUIUtils {
         StringBuilder sb = new StringBuilder();
         
         List<String> chat = model.getChat();
-        List<String> latestChat = chat.subList(chat.size() - Math.min(chat.size(), 55), chat.size());
-        latestChat.set(0, " ... ");
-        
+        List<String> latestChat = chat.subList(chat.size() - Math.min(chat.size(), 57), chat.size());
+        if (latestChat.size() == 57) {
+            latestChat.set(0, " ... ");
+        }
+
         for( String s : latestChat ) {
             sb.append(s).append("\n");
         }
@@ -404,7 +407,7 @@ public class TUIUtils {
     
     /**
      * Generate the TUI representation of a player's shelf. <br>
-     * Also includes the player's name and score. Current player is printed in bright yello.
+     * Also includes the player's name and score. Current player is printed in bright yellow.
      *
      * @param nickname The nickname of the player whose shelf to represent
      *
@@ -413,7 +416,7 @@ public class TUIUtils {
     private static String generateShelf(String nickname) {
         Shelf shelf = model.getShelf(nickname);
         StringBuilder sb = new StringBuilder();
-        String name = String.format(" * %-14.14s", nickname);
+        String name = String.format(" * %-15.14s", nickname);
         int score = model.getPoints(nickname);
         
         if( nickname.equals(model.getCurrentPlayer()) ) {
@@ -480,70 +483,70 @@ public class TUIUtils {
      *
      * @return The TUI representation of the common goal
      */
-    public static String generateCommonGoal(int commonGoal1, int score) {
+    public static String generateCommonGoal(int commonGoal, int score) {
         StringBuilder sb = new StringBuilder();
     
-        switch( commonGoal1 ) {
+        switch( commonGoal ) {
         
-            case 0 -> sb.append("\n\n\n    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "    \n" +
+            case 0 -> sb.append("\n\n\n    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "    \n" +
+                                "    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "    \n" +
                                 "    x6     \n");
         
-            case 1 -> sb.append("\n\n    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "  x4\n");
+            case 1 -> sb.append("\n\n    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + " \n" +
+                                "    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + " \n" +
+                                "    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + " \n" +
+                                "    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "  x4\n");
         
             case 2 -> sb.append(
-                    ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET +
+                    ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET +
                     "\n\n\n\n\n" +
-                    ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
+                    ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET);
         
-            case 3 -> sb.append("\n\n\n\n   " + ANSI_WHITE_BACKGROUND + " = = " + ANSI_RESET + "\n   " +
-                                ANSI_WHITE_BACKGROUND + " = = " + ANSI_RESET + "x2 \n\n");
+            case 3 -> sb.append("\n\n\n\n   " + ANSI_RED_BACKGROUND + " = = " + ANSI_RESET + "\n   " +
+                                ANSI_RED_BACKGROUND + " = = " + ANSI_RESET + "x2 \n\n");
         
             case 4 -> sb.append("█\n" +
                                 "█\n" +
-                                "█   max 3 " + ANSI_WHITE_BACKGROUND + "≠" + ANSI_RESET + "\n" +
+                                "█   max 3 " + ANSI_RED_BACKGROUND + "≠" + ANSI_RESET + "\n" +
                                 "█   x3\n" +
                                 "█\n" +
                                 "█\n");
         
             case 5 -> sb.append(
-                    "\n  " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + " = " +
+                    "\n  " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_RED_BACKGROUND + " = " +
                     ANSI_RESET +
                     " \n\n" +
-                    ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET +
-                    " " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET +
+                    ANSI_RED_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET +
+                    " " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET +
                     "\n\n" +
-                    ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET +
-                    " " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
+                    ANSI_RED_BACKGROUND + " = " + ANSI_RESET + " " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET +
+                    " " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET);
         
-            case 6 -> sb.append(ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
-                                "  " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
-                                "      " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n" +
-                                "        " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "\n ");
+            case 6 -> sb.append(ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "\n" +
+                                "  " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "\n" +
+                                "    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "\n" +
+                                "      " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "\n" +
+                                "        " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "\n ");
         
             case 7 -> sb.append("\n\n\n   █████   \n" +
-                                " max 3 " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + "\n" +
+                                " max 3 " + ANSI_RED_BACKGROUND + " ≠ " + ANSI_RESET + "\n" +
                                 "   x4  ");
         
-            case 8 -> sb.append("    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " x2 \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
-                                "    " + ANSI_WHITE_BACKGROUND + " ≠ " + ANSI_RESET + " ");
-            case 9 -> sb.append("\n\n\n\n" + ANSI_WHITE_BACKGROUND + " ≠ ≠ ≠ ≠ ≠ " + ANSI_RESET + "\n" +
+            case 8 -> sb.append("    " + ANSI_RED_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
+                                "    " + ANSI_RED_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
+                                "    " + ANSI_RED_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
+                                "    " + ANSI_RED_BACKGROUND + " ≠ " + ANSI_RESET + " x2 \n" +
+                                "    " + ANSI_RED_BACKGROUND + " ≠ " + ANSI_RESET + " \n" +
+                                "    " + ANSI_RED_BACKGROUND + " ≠ " + ANSI_RESET + " ");
+            case 9 -> sb.append("\n\n\n\n" + ANSI_RED_BACKGROUND + " ≠ ≠ ≠ ≠ ≠ " + ANSI_RESET + "\n" +
                                 "     x2 ");
         
             case 10 -> sb.append(
-                    "\n" + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " +
+                    "\n" + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_RED_BACKGROUND + " = " +
                     ANSI_RESET +
                     "\n\n" +
-                    "    " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + " \n\n" +
-                    ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_WHITE_BACKGROUND + " = " + ANSI_RESET);
+                    "    " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET + " \n\n" +
+                    ANSI_RED_BACKGROUND + " = " + ANSI_RESET + "     " + ANSI_RED_BACKGROUND + " = " + ANSI_RESET);
         
             case 11 -> sb.append("""
                                           
@@ -558,7 +561,7 @@ public class TUIUtils {
         return createBox(" "+ANSI_RED_BOLD+String.valueOf(score)+ ANSI_RESET+" ", ANSI_RED_BOLD,9)+ createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
     
     }
-    
+
     /**
      * Generate the TUI representation of the personal goals. <br>
      * This includes the personal goal "shelf" and a scoreboard, with the current score highlighted.
@@ -624,99 +627,99 @@ public class TUIUtils {
         switch( personalGoal ) {
             case 0 -> sb.append(
                     ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
-                    + "    \n" +
-                    "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                    "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                    "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                    "\n" +
-                    "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    ");
+                            + "    \n" +
+                            "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                            "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                            "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                            "\n" +
+                            "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    ");
             case 1 -> sb.append(
                     "\n" +
-                    "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                    ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET +
-                    "    \n" +
-                    "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n"
-                    + "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                    "        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
+                            "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                            ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET +
+                            "    \n" +
+                            "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n"
+                            + "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                            "        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET
             );
             case 2 -> sb.append("\n" +
-                                ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_YELLOW_BACKGROUND + "  " +
-                                ANSI_RESET +
-                                "  \n" +
-                                "    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_CYAN_BACKGROUND +
-                                "  " +
-                                ANSI_RESET + "\n" +
-                                "\n" +
-                                ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        ");
+                    ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_YELLOW_BACKGROUND + "  " +
+                    ANSI_RESET +
+                    "  \n" +
+                    "    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                    "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_CYAN_BACKGROUND +
+                    "  " +
+                    ANSI_RESET + "\n" +
+                    "\n" +
+                    ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        ");
             case 3 -> sb.append("        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                "\n" +
-                                ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
-                                ANSI_RESET +
-                                "    \n" +
-                                "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                                "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + ANSI_GREEN_BACKGROUND + "  " +
-                                ANSI_RESET +
-                                "\n     ");
+                    "\n" +
+                    ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
+                    ANSI_RESET +
+                    "    \n" +
+                    "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                    "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + ANSI_GREEN_BACKGROUND + "  " +
+                    ANSI_RESET +
+                    "\n     ");
             case 4 -> sb.append("          \n" +
-                                "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                                "          \n" +
-                                "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + ANSI_WHITE_BACKGROUND + "  " +
-                                ANSI_RESET +
-                                "    \n" +
-                                "        " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_GREEN_BACKGROUND + "  " +
-                                ANSI_RESET +
-                                "  ");
+                    "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    "          \n" +
+                    "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + ANSI_WHITE_BACKGROUND + "  " +
+                    ANSI_RESET +
+                    "    \n" +
+                    "        " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                    ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_GREEN_BACKGROUND + "  " +
+                    ANSI_RESET +
+                    "  ");
             case 5 ->
                     sb.append("    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_GREEN_BACKGROUND + "  " +
-                              ANSI_RESET + "\n" +
-                              "          \n" +
-                              "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                              "          \n" +
-                              "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
-                              ANSI_RESET + "  \n" +
-                              ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n");
+                            ANSI_RESET + "\n" +
+                            "          \n" +
+                            "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                            "          \n" +
+                            "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  " + ANSI_BLUE_BACKGROUND + "  " +
+                            ANSI_RESET + "  \n" +
+                            ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n");
             case 6 -> sb.append(ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET
-                                + "        \n" +
-                                "      " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                                "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                                ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                                "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                "    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    ");
+                    + "        \n" +
+                    "      " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                    "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                    "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                    "    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    ");
             case 7 -> sb.append("        " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                                "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                                "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                                "      " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  ");
+                    "  " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    "    " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                    ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                    "      " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                    "      " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "  ");
             case 8 -> sb.append("    " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                "          \n" +
-                                "    " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_PURPLE_BACKGROUND +
-                                "  " +
-                                ANSI_RESET + "\n" +
-                                ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "        ");
+                    "          \n" +
+                    "    " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                    "        " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                    "  " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "    " + ANSI_PURPLE_BACKGROUND +
+                    "  " +
+                    ANSI_RESET + "\n" +
+                    ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "        ");
             case 9 -> sb.append("        " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                                ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                                "      " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                                "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                                "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n");
+                    "  " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                    "      " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                    "  " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    "      " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "  \n");
             case 10 -> sb.append("    " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                 "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                                 ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "        \n" +
-                                 "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                 "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                 "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  ");
+                    "  " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "        \n" +
+                    "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                    "        " + ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                    "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  ");
             case 11 -> sb.append("    " + ANSI_WHITE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                 "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
-                                 "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
-                                 "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
-                                 "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
-                                 ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "        ");
-            
+                    "  " + ANSI_PURPLE_BACKGROUND + "  " + ANSI_RESET + "      \n" +
+                    "    " + ANSI_BLUE_BACKGROUND + "  " + ANSI_RESET + "    \n" +
+                    "      " + ANSI_CYAN_BACKGROUND + "  " + ANSI_RESET + "  \n" +
+                    "        " + ANSI_YELLOW_BACKGROUND + "  " + ANSI_RESET + "\n" +
+                    ANSI_GREEN_BACKGROUND + "  " + ANSI_RESET + "        ");
+
         }
         return createBox(sb.toString(), ANSI_DARK_BROWN_BOLD);
     }

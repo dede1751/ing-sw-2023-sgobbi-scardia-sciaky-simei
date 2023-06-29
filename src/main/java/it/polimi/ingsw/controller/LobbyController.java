@@ -159,13 +159,18 @@ public class LobbyController {
     private LocalServer server = null;
     
     private Client client = null;
+
+    // A global counter is used to avoid new lobbies getting the same id's as old, possibly still active lobbies
+    // in case any terminate.
+    int lobbyIDCounter = 0;
     
     /**
      * Init LobbyController by reading all the saved models from disk.
      */
-    private LobbyController() {
+    LobbyController() {
         for( GameModel model : ResourcesManager.getSavedModels() ) {
-            int lobbyID = lobbies.size();
+            int lobbyID = lobbyIDCounter;
+            lobbyIDCounter++;
             
             // Create a new recovery lobby for the model
             Map<String, Client> clients = new HashMap<>();
@@ -304,7 +309,7 @@ public class LobbyController {
     @SuppressWarnings("unused")
     public void onMessage(RecoverLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
-        if( nickname == null ) {
+        if( nickname == null || nickname.equals("") ) {
             updateClient("No Nickname",
                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
             return;
@@ -366,7 +371,7 @@ public class LobbyController {
     @SuppressWarnings("unused")
     public void onMessage(CreateLobbyMessage msg) {
         String nickname = msg.getPlayerNickname();
-        if( nickname == null ) {
+        if( nickname == null || nickname.equals("") ) {
             updateClient("No Nickname",
                          new ServerResponseMessage(Response.NicknameNull(CreateLobbyMessage.class.getSimpleName())));
             return;
@@ -384,7 +389,8 @@ public class LobbyController {
         }
         
         // initialize lobby and model
-        int lobbyID = lobbies.size();
+        int lobbyID = lobbyIDCounter;
+        lobbyIDCounter++;
         int[] commonGoalIndices = randDistinctIndices(2);
         int[] personalGoalIndices = randDistinctIndices(lobbySize);
         
@@ -421,7 +427,7 @@ public class LobbyController {
             return;
         }
         
-        if( msg.getPlayerNickname() == null ) {
+        if( nickname == null || nickname.equals("") ) {
             updateClient(nickname,
                          new ServerResponseMessage(Response.NicknameNull(JoinLobbyMessage.class.getSimpleName())));
             return;
@@ -471,7 +477,7 @@ public class LobbyController {
      *
      * @return True if the nickname is already present in any lobby
      */
-    private static boolean nicknameTaken(String nickname) {
+    public static boolean nicknameTaken(String nickname) {
         return lobbies.values()
                 .stream()
                 .anyMatch((l) -> l.model.getNicknames().contains(nickname));

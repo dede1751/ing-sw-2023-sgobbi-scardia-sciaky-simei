@@ -23,9 +23,7 @@ public class LocalModel {
     private String currentPlayer;
     
     private final Map<String, Shelf> shelves = new HashMap<>();
-    
-    private final Map<String, Integer> points = new HashMap<>();
-    
+
     private final Map<String, Integer> cgScore = new HashMap<>();
     private final Map<String, Integer> pgScore = new HashMap<>();
     private final Map<String, Integer> adjacencyScore = new HashMap<>();
@@ -215,14 +213,6 @@ public class LocalModel {
             case PersonalGoal -> setPgScore(score, nickname);
             case Bonus -> setBonusScore(score, nickname);
         }
-        
-        int point =
-                getAdjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
-        if( this.points.containsKey(nickname) ) {
-            this.points.replace(nickname, point);
-        }else {
-            this.points.put(nickname, point);
-        }
     }
     
     /**
@@ -234,11 +224,7 @@ public class LocalModel {
      * @return The player's score
      */
     public int getPoints(String nickname) {
-        if( this.points.get(nickname) == null ) {
-            return 0;
-        }else {
-            return this.points.get(nickname);
-        }
+        return getAdjacencyScore(nickname) + getCgScore(nickname) + getPgScore(nickname) + getBonusScore(nickname);
     }
     
     /**
@@ -248,12 +234,7 @@ public class LocalModel {
      * @param nickname The player's nickname
      */
     public void setCgScore(Integer points, String nickname) {
-        if( this.cgScore.containsKey(nickname) ) {
-            this.cgScore.replace(nickname, points);
-        }else {
-            this.cgScore.put(nickname, points);
-        }
-        
+        this.cgScore.put(nickname, points);
     }
     
     /**
@@ -274,11 +255,7 @@ public class LocalModel {
      * @param nickname The player's nickname
      */
     public void setPgScore(Integer points, String nickname) {
-        if( this.pgScore.containsKey(nickname) ) {
-            this.pgScore.replace(nickname, points);
-        }else {
-            this.pgScore.put(nickname, points);
-        }
+        this.pgScore.put(nickname, points);
     }
     
     /**
@@ -299,11 +276,7 @@ public class LocalModel {
      * @param nickname The player's nickname
      */
     public void setAdjacencyScore(Integer points, String nickname) {
-        if( this.adjacencyScore.containsKey(nickname) ) {
-            this.adjacencyScore.replace(nickname, points);
-        }else {
-            this.adjacencyScore.put(nickname, points);
-        }
+        this.adjacencyScore.put(nickname, points);
     }
     
     /**
@@ -324,11 +297,7 @@ public class LocalModel {
      * @param nickname The player's nickname
      */
     public void setBonusScore(Integer points, String nickname) {
-        if( this.bonusScore.containsKey(nickname) ) {
-            this.bonusScore.replace(nickname, points);
-        }else {
-            this.bonusScore.put(nickname, points);
-        }
+        this.bonusScore.put(nickname, points);
     }
     
     /**

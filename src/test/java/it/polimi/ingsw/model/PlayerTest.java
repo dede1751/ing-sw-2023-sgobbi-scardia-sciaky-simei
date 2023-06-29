@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -114,6 +115,35 @@ class PlayerTest {
         p.setCompletedGoalY(false);
         assertFalse(p.isCompletedGoalX());
         assertFalse(p.isCompletedGoalY());
+    }
+    
+    @Test
+    public void serDeserTest() {
+        Player player = new Player("Lucrezia", 0);
+        GsonBuilder gson = new GsonBuilder();
+        gson.registerTypeAdapter(Player.class, new Player.PlayerSerializer());
+        var ser = gson.create().toJson(player, Player.class);
+    
+        gson.registerTypeAdapter(Player.class, new Player.PlayerDeserializer());
+        var deser = gson.create().fromJson(ser, Player.class);
+        
+        assertEquals( player.getNickname(), deser.getNickname() );
+        assertEquals( player.getPg(), deser.getPg() );
+        assertEquals( player.getScore(), deser.getScore() );
+        assertEquals( player.getBonusScore(), deser.getBonusScore() );
+        assertEquals( player.getAdjacencyScore(), deser.getAdjacencyScore() );
+        assertEquals( player.getCommonGoalScore(), deser.getCommonGoalScore() );
+        assertEquals( player.getPersonalGoalScore(), deser.getPersonalGoalScore() );
+        assertEquals( player.isCompletedGoalX(), deser.isCompletedGoalX() );
+        assertEquals( player.isCompletedGoalY(), deser.isCompletedGoalY() );
+        
+        var mat1 = player.getShelf().getAllShelf();
+        var mat2 = deser.getShelf().getAllShelf();
+        for( int i = 0; i < 6; i++ ) {
+            for( int j = 0; j < 5; j++ ) {
+                assertSame( mat1[i][j], mat2[i][j] );
+            }
+        }
     }
     
 }
