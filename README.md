@@ -18,10 +18,10 @@ Objective of this project is to build a distributed version of the game [MyShelf
 | Multiple games           |   ✅    |
 | Server Persistence       |   ✅    |
 | Chat                     |   ✅    |
-| Disconneciton Resilience |   ❌    |
+| Disconnection Resilience |   ❌    |
 
 ### Testing Coverage
-[PLACEHOLDER][tests-image]
+[Full project coverage][tests-image]
 
 ### Dependencies
 The game runs on **JavaSE19** downloadable [here][java-link]. To build the project also download [Maven][maven-link].
@@ -50,7 +50,7 @@ They will then be prompted for View type (GUI or TUI) and the type of connection
 know the IP address of the server to be able to connect to it.
 
 [title-image]:images/title.jpeg
-[tests-image]:images/tests.jpeg
+[tests-image]:images/coverage.png
 
 [game-link]:https://www.craniocreations.it/prodotto/my-shelfie
 [java-link]:https://www.oracle.com/java/technologies/javase/jdk19-archive-downloads.html
