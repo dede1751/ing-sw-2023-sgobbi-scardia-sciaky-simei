@@ -40,10 +40,6 @@ public class ChatController {
      * The recipientChoiceBox field represents a choice box for selecting the recipient of a chat message.
      */
     public ChoiceBox<String> recipientChoiceBox;
-    @FXML
-    private TextFlow writeChat;
-    @FXML
-    private TextArea messageArea;
     String recipientName = "Everyone";
     
     

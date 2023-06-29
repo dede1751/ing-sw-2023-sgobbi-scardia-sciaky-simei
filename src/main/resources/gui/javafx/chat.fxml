@@ -11,13 +11,9 @@
         <TextField fx:id="writeMessage" layoutX="14.0" layoutY="734.0" onAction="#handleEnterPressed" prefHeight="71.0" prefWidth="475.0" text="CHAT MESSAGE" />
         <ChoiceBox fx:id="recipientChoiceBox" layoutX="14" layoutY="704" prefWidth="150.0" />
         <ScrollPane fx:id="readChat" layoutX="14.0" layoutY="14.0" prefHeight="679.0" prefWidth="475.0" style="-fx-background-color: white;">
-            <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="677.0" prefWidth="464.0" style="-fx-background-color: white;">
-                    <children>
-                        <VBox fx:id="chatBox" style="-fx-background-color: white;" />
-                    </children>
-                </AnchorPane>
-            </content>
+         <content>
+            <VBox fx:id="chatBox" prefHeight="676.0" prefWidth="461.0" />
+         </content>
         </ScrollPane>
     </children>
 </AnchorPane>
