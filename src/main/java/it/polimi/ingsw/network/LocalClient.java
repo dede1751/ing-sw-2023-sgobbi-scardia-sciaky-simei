@@ -4,6 +4,7 @@ import it.polimi.ingsw.AppClient;
 import it.polimi.ingsw.model.messages.ModelMessage;
 import it.polimi.ingsw.utils.files.ClientLogger;
 import it.polimi.ingsw.utils.mvc.ReflectionUtility;
+import it.polimi.ingsw.view.View;
 import it.polimi.ingsw.view.messages.ViewMessage;
 
 import java.rmi.RemoteException;
@@ -67,7 +68,9 @@ public class LocalClient extends UnicastRemoteObject implements Client {
     public void update(ModelMessage<?> msg) {
         threadPool.submit(() -> {
             try {
-                ReflectionUtility.invokeMethod(AppClient.getViewInstance(), "onMessage", msg);
+                synchronized (AppClient.getViewInstance()) {
+                    ReflectionUtility.invokeMethod(AppClient.getViewInstance(), "onMessage", msg);
+                }
                 ClientLogger.messageLog(msg);
             }
             catch( NoSuchMethodException e ) {
