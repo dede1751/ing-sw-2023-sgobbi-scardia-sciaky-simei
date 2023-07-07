@@ -49,6 +49,13 @@ java -jar softeng-gc05-client.jar
 They will then be prompted for View type (GUI or TUI) and the type of connection to use (RMI or Socket). Clients must
 also know the IP address of the server to be able to connect to it.
 
+### Copyright Notice
+My Shelfie è un gioco da tavolo sviluppato ed edito da Cranio Creations Srl. I contenuti grafici di questo progetto riconducibili
+al prodotto editoriale da tavolo sono utilizzati previa approvazione di Cranio Creations Srl a solo scopo didattico.
+È vietata la distribuzione, la copia o la riproduzione dei contenuti e immagini in qualsiasi forma al di fuori del progetto, così
+come la redistribuzione e la pubblicazione dei contenuti e immagini a fini diversi da quello sopracitato.
+È inoltre vietato l'utilizzo commerciale di suddetti contenuti.
+
 [title-image]:images/title.jpeg
 [tests-image]:images/coverage.png
 
