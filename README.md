@@ -4,7 +4,8 @@
 
 This is the final project for the Software Engineering course @ Politecnico di Milano.
 Objective of this project is to build a distributed version of the game [MyShelfie][game-link] by 
-**Cranio Creations** using a Model-View-Controller architecture.
+**Cranio Creations** using a Model-View-Controller architecture. This project has been awarded the
+maximum grade of **30L**.
 
 ### Implemented Features
 - [x] Simplified rules
